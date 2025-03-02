@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,6 +19,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,7 +37,15 @@ class MainActivity : ComponentActivity() {
             TheD_ck_LickerTheme {
                 val clicks = rememberSaveable() { mutableIntStateOf(0) }
                 val workers = rememberSaveable() { mutableIntStateOf(0) }
+                val workerworkers = rememberSaveable() { mutableIntStateOf(0) }
+                val workerworkerExistanceState = remember {
+                    MutableTransitionState(false)
+                }
                 val modifier = Modifier
+
+                if (workers.intValue > 10) {
+                    workerworkerExistanceState.apply { targetState = true }
+                }
 
                 Scaffold(
                     modifier = modifier
@@ -47,8 +59,20 @@ class MainActivity : ComponentActivity() {
                         )
                         TheClickButtonAndText(modifier, clicks)
                         HorizontalDivider()
-                        TheShop(modifier, clicks, workers)
-                        TheWorkers(modifier, clicks, workers)
+                        TheShop(
+                            modifier,
+                            clicks,
+                            workers,
+                            workerworkers,
+                            workerworkerExistanceState
+                        ) //There should not be this many params, it should be its own carry class
+                        TheWorkers(
+                            modifier,
+                            clicks,
+                            workers,
+                            workerworkers,
+                            workerworkerExistanceState
+                        )
 
                     }
                 }
@@ -59,19 +83,36 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun TheShop(modifier: Modifier, clicks: MutableIntState, workers: MutableIntState) {
+fun TheShop(
+    modifier: Modifier,
+    clicks: MutableIntState,
+    workers: MutableIntState,
+    workerworkers: MutableIntState,
+    workerworkerExistanceState: MutableTransitionState<Boolean>
+) {
     Column(modifier = modifier.padding(16.dp)) {
         Text("Shop")
-        Button(onClick =  {
+        Button(onClick = {
             if (clicks.intValue >= 10) {
                 clicks.intValue -= 10
                 workers.intValue++
             }
-        }){
+        }) {
             Text("Buy Worker")
         }
-    }
 
+        AnimatedVisibility(visibleState = workerworkerExistanceState) {
+            Button(onClick = {
+                if (workers.intValue >= 10) {
+                    workers.intValue -= 10
+                    workerworkers.intValue++
+                }
+            }) {
+                Text("Buy WorkerWorker")
+            }
+        }
+
+    }
 }
 
 @Preview(showBackground = true)
@@ -92,22 +133,26 @@ fun TheClickButtonAndText(
 }
 
 
-@Preview(showBackground = true)
 @Composable
 fun TheWorkers(
     modifier: Modifier = Modifier,
     clicks: MutableState<Int> = mutableIntStateOf(0),
     workers: MutableState<Int> = mutableIntStateOf(0),
+    workerworkers: MutableIntState,
+    workerworkerExistanceState: MutableTransitionState<Boolean>,
 ) {
+
     Column(modifier = modifier.padding(16.dp)) {
         Text("workers: ${workers.value}")
+        AnimatedVisibility(visibleState = workerworkerExistanceState) {
+            Text("workerworkers: ${workerworkers.intValue}")
+        }
     }
     LaunchedEffect(true) {
         while (true) {
-//            time = Time.getLatest()
             delay(1000)
-            println("aaaaaa")
             clicks.value += workers.value
+            workers.value += workerworkers.intValue
         }
 
     }
