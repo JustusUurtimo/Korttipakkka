@@ -19,32 +19,34 @@ data class CardClass(
 )
 
 object CardData {
-    val cards = listOf(
-        CardClass(
-            id = 1,
-            cardImage = R.drawable.kunkku
-        ),
-        CardClass(
-            id = 2,
-            cardImage = R.drawable.jatka
-        ),
-        CardClass(
-            id = 3,
-            cardImage = R.drawable.card_2
-        ),
-        CardClass(
-            id = 4,
-            cardImage = R.drawable.card_3
-        ),
-        CardClass(
-            id = 5,
-            cardImage = R.drawable.card_4
+    val cards = ArrayDeque(
+        listOf(
+            CardClass(
+                id = 1,
+                cardImage = R.drawable.kunkku
+            ),
+            CardClass(
+                id = 2,
+                cardImage = R.drawable.jatka
+            ),
+            CardClass(
+                id = 3,
+                cardImage = R.drawable.card_2
+            ),
+            CardClass(
+                id = 4,
+                cardImage = R.drawable.card_3
+            ),
+            CardClass(
+                id = 5,
+                cardImage = R.drawable.card_4
+            )
         )
     )
 }
 
 @Composable
-fun Card(
+fun LatestCard(
     card: CardClass,
     index: Int,
     modifier: Modifier = Modifier
