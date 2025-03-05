@@ -18,11 +18,14 @@ import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,9 +40,9 @@ import com.sq.thed_ck_licker.player.HealthBar
 @Composable
 fun Game(innerPadding: PaddingValues) {
     val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues()
-    val cardsOnDeck = rememberSaveable() { CardData.cards }
+    val cardsOnDeck = remember { CardData.cards }
     val cardsOnHand = rememberSaveable() { mutableIntStateOf(0) }
-    val latestCard = rememberSaveable() { mutableIntStateOf(0) }
+    var latestCard by remember { mutableStateOf(CardClass(-1, R.drawable.card_back)) }
 
     val modifier = Modifier
 
@@ -50,10 +53,15 @@ fun Game(innerPadding: PaddingValues) {
             CardDeck(navigationBarPadding, cardsOnDeck.size)
             Box(modifier.align(Alignment.BottomCenter)) {
                 Column(modifier.padding(5.dp)) {
-                    CardsOnHand(cardsOnHand, modifier)
-                    VerticalDivider()
-                    DrawCardButton { DrawCard(cardsOnDeck, cardsOnHand, modifier, latestCard) }
-
+                    CardsOnHand(cardsOnHand, modifier, latestCard)
+                    DrawCard(
+                        navigationBarPadding,
+                        cardsOnDeck,
+                        cardsOnHand,
+                        modifier,
+                        onUpdateState = {newCard -> latestCard = newCard
+                        }
+                    )
                 }
 
             }
@@ -63,45 +71,58 @@ fun Game(innerPadding: PaddingValues) {
 }
 
 @Composable
-fun DrawCardButton(click: @Composable () -> Unit) {
-    Button(onClick = { click }) { Text("Draw") }
-}
-
-@Composable
-fun DrawCard(cardsOnDeck: ArrayDeque<CardClass>, cardsOnHand: MutableIntState, modifier: Modifier, latestCard: MutableIntState) {
-
-    Column (modifier = modifier.padding(16.dp)) {
-        Text("draw a card")
+fun DrawCard(
+    navigationBarPadding: PaddingValues,
+    cardsOnDeck: ArrayDeque<CardClass>,
+    cardsOnHand: MutableIntState,
+    modifier: Modifier,
+    onUpdateState: (CardClass) -> Unit
+) {
+    Column(modifier = modifier.padding(
+        start = 16.dp,
+        bottom = navigationBarPadding.calculateBottomPadding() // Add bottom padding for the navigation bar
+    ), ) {
         Button(onClick = {
-            if(cardsOnDeck.isNotEmpty()) {
+            if (cardsOnDeck.isNotEmpty()) {
                 cardsOnHand.intValue++
-                latestCard.intValue = cardsOnDeck.removeLast().id
+                val newCard = cardsOnDeck.shuffled().take(1)[0]
+                onUpdateState(CardClass(newCard.id, newCard.cardImage))
+                println(newCard.cardImage)
             }
-        }) { }
+        }) { Text("draw a card") }
     }
 }
 
 @Composable
-fun CardsOnHand(cardsOnHand: MutableIntState, modifier: Modifier) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        BadgedBox(
-            badge = {
-                Badge(containerColor = Color.LightGray) {
-                    Text("$cardsOnHand")
-                }
-            }
+fun CardsOnHand(cardsOnHand: MutableIntState, modifier: Modifier, latestCard: CardClass) {
+    println("asd")
+    println(latestCard.cardImage)
+    Box() {
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomStart)
         ) {
-            Card {
-                Column {
-                    Image(
-                        painter = painterResource(id = R.drawable.kunkku),
-                        contentDescription = "Card drawn",
-                        modifier = modifier
-                            .width(120.dp)
-                            .wrapContentHeight()
-                    )
+            Column(
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                BadgedBox(
+                    badge = {
+                        Badge(containerColor = Color.Red) {
+                            Text("${cardsOnHand.intValue}")
+                        }
+                    }
+                ) {
+                    Card {
+                        Column {
+                            Image(
+                                painter = painterResource(id = latestCard.cardImage),
+                                contentDescription = "Card drawn",
+                                modifier = modifier
+                                    .width(120.dp)
+                                    .wrapContentHeight()
+                            )
+                        }
+                    }
                 }
             }
         }
