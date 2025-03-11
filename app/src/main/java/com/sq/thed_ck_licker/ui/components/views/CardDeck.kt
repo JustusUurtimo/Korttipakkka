@@ -1,4 +1,4 @@
-package com.sq.thed_ck_licker.card
+package com.sq.thed_ck_licker.ui.components.views
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
