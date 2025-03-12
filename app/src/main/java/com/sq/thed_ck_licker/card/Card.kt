@@ -21,7 +21,7 @@ enum class CardEffectValue(val value: Float) {
     SHOP_COUPON(100f)
 }
 
-enum class CardEffect(val type: CardEffectType, val value: CardEffectValue) {
+enum class CardEffect(val cardEffectType: CardEffectType, val cardEffectValue: CardEffectValue) {
     HP_REGEN_5(CardEffectType.HP_REGEN, CardEffectValue.HEAL_5),
     HEAL_5(CardEffectType.HEAL, CardEffectValue.HEAL_5),
     HEAL_2(CardEffectType.HEAL, CardEffectValue.HEAL_2),

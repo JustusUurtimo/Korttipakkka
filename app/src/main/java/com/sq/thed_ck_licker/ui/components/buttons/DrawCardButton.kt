@@ -34,8 +34,8 @@ fun DrawCard(
                 cardsOnHand.intValue++
                 playerHealth.floatValue += 2f
                 val newCard = cardsOnDeck.shuffled().take(1)[0]
-                playerHealth.floatValue += newCard.damageValue
-                onUpdateState(CardClass(newCard.id, newCard.cardImage, newCard.damageValue))
+                playerHealth.floatValue += newCard.cardEffect.cardEffectValue.value
+                onUpdateState(CardClass(newCard.id, newCard.cardImage, newCard.cardEffect))
             }
         }) { Text("draw a card") }
     }

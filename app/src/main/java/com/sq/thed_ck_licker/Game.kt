@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.sq.thed_ck_licker.card.CardClass
 import com.sq.thed_ck_licker.card.CardData
+import com.sq.thed_ck_licker.card.CardEffect
 import com.sq.thed_ck_licker.ui.components.views.CardDeck
 import com.sq.thed_ck_licker.player.HealthBar
 import com.sq.thed_ck_licker.ui.components.buttons.DrawCard
@@ -32,7 +33,7 @@ import com.sq.thed_ck_licker.ui.components.views.CardsOnHand
 fun Game(innerPadding: PaddingValues) {
     val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues()
     val cardsOnDeck = remember { CardData.cards }
-    var latestCard by rememberSaveable { mutableStateOf(CardClass(-1, R.drawable.card_back, 0f)) }
+    var latestCard by rememberSaveable { mutableStateOf(CardClass(-1, R.drawable.card_back, CardEffect.HEAL_2)) }
     val cardsOnHand = rememberSaveable() { mutableIntStateOf(0) }
     val playerHealth = rememberSaveable() { mutableFloatStateOf(0f) }
 
