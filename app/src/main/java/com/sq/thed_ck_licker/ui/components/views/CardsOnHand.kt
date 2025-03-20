@@ -17,10 +17,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.sq.thed_ck_licker.card.CardClass
+import com.sq.thed_ck_licker.card.CardEffect
+import com.sq.thed_ck_licker.card.CardIdentity
 
 @Composable
-fun CardsOnHand(cardsOnHand: MutableIntState, modifier: Modifier, latestCard: CardClass) {
+fun CardsOnHand(cardsOnHand: MutableIntState, modifier: Modifier, latestCard: Pair<CardIdentity, CardEffect>) {
     Box() {
         Box(
             modifier = Modifier
@@ -39,7 +40,7 @@ fun CardsOnHand(cardsOnHand: MutableIntState, modifier: Modifier, latestCard: Ca
                     Card {
                         Column {
                             Image(
-                                painter = painterResource(id = latestCard.cardImage),
+                                painter = painterResource(id = latestCard.first.cardImage),
                                 contentDescription = "Card drawn",
                                 modifier = modifier
                                     .width(120.dp)

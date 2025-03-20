@@ -10,19 +10,21 @@ import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.sq.thed_ck_licker.card.CardClass
 import com.sq.thed_ck_licker.card.CardClassification
+import com.sq.thed_ck_licker.card.CardEffect
 import com.sq.thed_ck_licker.card.CardEffectType
+import com.sq.thed_ck_licker.card.CardIdentity
+import com.sq.thed_ck_licker.card.Cards
 
 @Composable
 fun DrawCard(
+    cards: Cards,
     cardsOnHand: MutableIntState,
     playerHealth: MutableFloatState,
     navigationBarPadding: PaddingValues,
-    cardsOnDeck: ArrayDeque<CardClass>,
     modifier: Modifier,
-    latestCard: CardClass,
-    onUpdateState: (CardClass) -> Unit
+    latestCard: Pair<CardIdentity, CardEffect>,
+    onUpdateState: (Pair<CardIdentity, CardEffect>) -> Unit
 ) {
     Column(
         modifier = modifier.padding(
@@ -33,58 +35,54 @@ fun DrawCard(
         // atm ottaa aina dmg 2% ja sit kortin arvon verran.
         //static 2% dmg idea, että tulevat kortit ei välttämättä ole dmg kortteja
         Button(onClick = {
-            if (cardsOnDeck.isNotEmpty()) {
-                handleCardEffect(latestCard, cardsOnHand, cardsOnDeck, playerHealth, onUpdateState)
-            }
+            handleCardEffect(cards, latestCard, cardsOnHand, playerHealth, onUpdateState)
         }) { Text("draw a card") }
     }
 }
 
 fun handleCardEffect(
-    latestCard: CardClass,
+    cards: Cards,
+    latestCard: Pair<CardIdentity, CardEffect>,
     cardsOnHand: MutableIntState,
-    cardsOnDeck: ArrayDeque<CardClass>,
     playerHealth: MutableFloatState,
-    onUpdateState: (CardClass) -> Unit
+    onUpdateState: (Pair<CardIdentity, CardEffect>) -> Unit
 ) {
-    val latestCardEffectCardClassification: CardClassification = latestCard.effect.CardClassification
-    val latestCardEffectCardEffectType: CardEffectType = latestCard.effect.CardEffectType
-    val newCard = cardsOnDeck.shuffled().take(1)[0]
-    val newCardEffectValue = newCard.effect.CardEffectValue.value
+    val newCard = cards.pullRandomCard()
 
-    cardsOnHand.intValue++
-    playerHealth.floatValue += 2f
+    if (latestCard.first.id != -1) {
+        val latestCardEffectCardClassification: CardClassification =
+            latestCard.second.classification
+        val latestCardEffectCardEffectType: CardEffectType =
+            latestCard.second.effectType
 
-    when(latestCardEffectCardClassification) {
-        CardClassification.MISC -> {
-            when(latestCardEffectCardEffectType) {
+        if (latestCardEffectCardClassification == CardClassification.MISC) {
+            when (latestCardEffectCardEffectType) {
                 CardEffectType.DOUBLE_TROUBLE -> {
-                    playerHealth.floatValue += (newCardEffectValue * 2)
+                    cards.applyCardEffect(
+                        newCard, playerHealth, reverseDamage = false,
+                        doubleTrouble = true
+                    )
                 }
+
                 CardEffectType.REVERSE_DAMAGE -> {
-                    if(newCardEffectValue > 0) {
-                        playerHealth.floatValue -= (newCardEffectValue)
-                    }
+                    cards.applyCardEffect(
+                        newCard, playerHealth, reverseDamage = true,
+                        doubleTrouble = false
+                    )
                 }
-                CardEffectType.SHOP_COUPON -> {
-                    print("shop not implemented :D")
-                }
+
                 else -> {
-                    throw IllegalArgumentException("The card effectType was not on MISC: " + latestCardEffectCardEffectType.name)
+                    println("its shop cupong i quess")
                 }
             }
+        } else {
+            cards.applyCardEffect(
+                newCard, playerHealth, reverseDamage = false,
+                doubleTrouble = false
+            )
         }
-        else -> {}
     }
-    when(newCard.effect.CardEffectType) {
-        CardEffectType.HP_REGEN -> print("todo")
-        CardEffectType.HEAL -> playerHealth.floatValue += newCardEffectValue
-        CardEffectType.DAMAGE -> playerHealth.floatValue += newCardEffectValue
-        CardEffectType.MAX_HP -> print("todo")
-        CardEffectType.DOUBLE_TROUBLE -> {}
-        CardEffectType.REVERSE_DAMAGE -> {}
-        CardEffectType.SHOP_COUPON -> print("todo")
-    }
-    playerHealth.floatValue += (newCardEffectValue)
-    onUpdateState(CardClass(newCard.id, newCard.cardImage, newCard.effect))
+    cardsOnHand.intValue++
+    playerHealth.floatValue += 2f
+    onUpdateState(newCard)
 }
