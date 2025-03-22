@@ -5,8 +5,9 @@ import com.sq.thed_ck_licker.helpers.MyRandom.random
 import kotlin.random.Random
 
 object MyRandom {
-
-    val random = if (R.bool.IS_DEBUG == 0) Random(0) else Random(System.currentTimeMillis())
+//     val isDebug = R.bool.IS_DEBUG
+    // TODO make sure that IS_DEBUG is actually the thing it claims to be :raise_eyebrow:
+    val random = if (R.bool.IS_DEBUG == 2130837504) Random(69) else Random(System.currentTimeMillis())
 
 }
 
