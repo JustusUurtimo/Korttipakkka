@@ -10,16 +10,21 @@ import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.sq.thed_ck_licker.card.CardClass
+import com.sq.thed_ck_licker.card.CardClassification
+import com.sq.thed_ck_licker.card.CardEffect
+import com.sq.thed_ck_licker.card.CardEffectType
+import com.sq.thed_ck_licker.card.CardIdentity
+import com.sq.thed_ck_licker.card.Cards
 
 @Composable
 fun DrawCard(
+    cards: Cards,
     cardsOnHand: MutableIntState,
     playerHealth: MutableFloatState,
     navigationBarPadding: PaddingValues,
-    cardsOnDeck: ArrayDeque<CardClass>,
     modifier: Modifier,
-    onUpdateState: (CardClass) -> Unit
+    latestCard: Pair<CardIdentity, CardEffect>,
+    onUpdateState: (Pair<CardIdentity, CardEffect>) -> Unit
 ) {
     Column(
         modifier = modifier.padding(
@@ -30,13 +35,54 @@ fun DrawCard(
         // atm ottaa aina dmg 2% ja sit kortin arvon verran.
         //static 2% dmg idea, että tulevat kortit ei välttämättä ole dmg kortteja
         Button(onClick = {
-            if (cardsOnDeck.isNotEmpty()) {
-                cardsOnHand.intValue++
-                playerHealth.floatValue += 2f
-                val newCard = cardsOnDeck.shuffled().take(1)[0]
-                playerHealth.floatValue += newCard.damageValue
-                onUpdateState(CardClass(newCard.id, newCard.cardImage, newCard.damageValue))
-            }
+            handleCardEffect(cards, latestCard, cardsOnHand, playerHealth, onUpdateState)
         }) { Text("draw a card") }
     }
+}
+
+fun handleCardEffect(
+    cards: Cards,
+    latestCard: Pair<CardIdentity, CardEffect>,
+    cardsOnHand: MutableIntState,
+    playerHealth: MutableFloatState,
+    onUpdateState: (Pair<CardIdentity, CardEffect>) -> Unit
+) {
+    val newCard = cards.pullRandomCard()
+
+    if (latestCard.first.id != -1) {
+        val latestCardEffectCardClassification: CardClassification =
+            latestCard.second.classification
+        val latestCardEffectCardEffectType: CardEffectType =
+            latestCard.second.effectType
+
+        if (latestCardEffectCardClassification == CardClassification.MISC) {
+            when (latestCardEffectCardEffectType) {
+                CardEffectType.DOUBLE_TROUBLE -> {
+                    cards.applyCardEffect(
+                        newCard, playerHealth, reverseDamage = false,
+                        doubleTrouble = true
+                    )
+                }
+
+                CardEffectType.REVERSE_DAMAGE -> {
+                    cards.applyCardEffect(
+                        newCard, playerHealth, reverseDamage = true,
+                        doubleTrouble = false
+                    )
+                }
+
+                else -> {
+                    println("its shop cupong i quess")
+                }
+            }
+        } else {
+            cards.applyCardEffect(
+                newCard, playerHealth, reverseDamage = false,
+                doubleTrouble = false
+            )
+        }
+    }
+    cardsOnHand.intValue++
+    playerHealth.floatValue += 2f
+    onUpdateState(newCard)
 }

@@ -22,7 +22,7 @@ import com.sq.thed_ck_licker.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CardDeck(navigationBarPadding: PaddingValues, cardCount: Int) {
+fun CardDeck(navigationBarPadding: PaddingValues) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -43,7 +43,7 @@ fun CardDeck(navigationBarPadding: PaddingValues, cardCount: Int) {
                         contentColor = MaterialTheme.colorScheme.onSurfaceVariant
                     ) {
                         Text(
-                            text = "Cards: $cardCount",
+                            text = "Cards in the table",
                         )
                     }
                 },
