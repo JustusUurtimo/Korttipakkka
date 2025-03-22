@@ -1,8 +1,7 @@
 package com.sq.thed_ck_licker.ecs
 
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import com.sq.thed_ck_licker.R
 import com.sq.thed_ck_licker.card.CardClassification
 import com.sq.thed_ck_licker.card.CardEffect
@@ -11,12 +10,35 @@ import com.sq.thed_ck_licker.card.CardEffectValue
 import com.sq.thed_ck_licker.card.CardIdentity
 import com.sq.thed_ck_licker.card.Cards
 
-
+//TODO apparently this kind a not good...
+// If you want I can do new refactor to make it better.
+// But I think this is good enough for now.
 object TheGameHandler {
     val cards = Cards()
 
 
-    val playerHealth = mutableFloatStateOf(0f)
+
+
+    //There is compelling argument to make special object for the player that collects all the special player methods.
+    private val playerHealth = mutableFloatStateOf(0f)
+
+    fun getPlayerHealth(): Float {
+        return playerHealth.floatValue
+    }
+
+
+
+    fun getEntityHealth(entityId: Int): Float {
+        //TODO: Implement the id based entity search
+        // it will need to check all the entities with health components?
+        return playerHealth.floatValue
+
+    }
+
+    fun getEntityHealthM(entityId: Int): MutableFloatState {
+        return playerHealth
+
+    }
 
     /**
      * käytetään placeholderina kun ei ole vielä vedetty kortteja
@@ -29,5 +51,7 @@ object TheGameHandler {
         )
         return defaultCardPair
     }
+
+
 
 }

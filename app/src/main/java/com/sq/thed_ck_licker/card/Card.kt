@@ -4,6 +4,7 @@ import android.os.Parcelable
 import androidx.annotation.DrawableRes
 import androidx.compose.runtime.MutableFloatState
 import com.sq.thed_ck_licker.R
+import com.sq.thed_ck_licker.ecs.generateEntity
 import com.sq.thed_ck_licker.helpers.getRandomElement
 import kotlinx.parcelize.Parcelize
 import kotlin.reflect.KClass
@@ -164,49 +165,49 @@ class Cards {
 //private function that initializes cards
 private fun initializeCards(componentManager: ComponentManager, allCards: MutableList<Int>) {
 
-    val card1 = 1
+    val card1 = generateEntity()
     componentManager.addComponent(card1, CardIdentity(1, R.drawable.damage_5))
     componentManager.addComponent(
         card1,
         CardEffect(CardClassification.EVIL, CardEffectType.DAMAGE, CardEffectValue.DAMAGE_5)
     )
 
-    val card4 = 2
-    componentManager.addComponent(card4, CardIdentity(2, R.drawable.damage_6))
-    componentManager.addComponent(
-        card4,
-        CardEffect(CardClassification.EVIL, CardEffectType.DAMAGE, CardEffectValue.DAMAGE_6)
-    )
-
-    val card2 = 3
+    val card2 = generateEntity()
     componentManager.addComponent(card2, CardIdentity(3, R.drawable.heal_5))
     componentManager.addComponent(
         card2,
         CardEffect(CardClassification.GOOD, CardEffectType.HEAL, CardEffectValue.HEAL_5)
     )
 
-    val card3 = 4
+    val card3 = generateEntity()
     componentManager.addComponent(card3, CardIdentity(4, R.drawable.heal_10))
     componentManager.addComponent(
         card3,
         CardEffect(CardClassification.GOOD, CardEffectType.HEAL, CardEffectValue.HEAL_10)
     )
 
-    val card5 = 5
+    val card4 = generateEntity()
+    componentManager.addComponent(card4, CardIdentity(2, R.drawable.damage_6))
+    componentManager.addComponent(
+        card4,
+        CardEffect(CardClassification.EVIL, CardEffectType.DAMAGE, CardEffectValue.DAMAGE_6)
+    )
+
+    val card5 = generateEntity()
     componentManager.addComponent(card5, CardIdentity(5, R.drawable.heal_2))
     componentManager.addComponent(
         card5,
         CardEffect(CardClassification.GOOD, CardEffectType.HEAL, CardEffectValue.HEAL_2)
     )
 
-    val card6 = 6
+    val card6 = generateEntity()
     componentManager.addComponent(card6, CardIdentity(6, R.drawable.max_hp_2))
     componentManager.addComponent(
         card6,
         CardEffect(CardClassification.GOOD, CardEffectType.MAX_HP, CardEffectValue.MAX_HP_2)
     )
 
-    val card7 = 7
+    val card7 = generateEntity()
     componentManager.addComponent(card7, CardIdentity(7, R.drawable.double_trouble))
     componentManager.addComponent(
         card7,
@@ -217,7 +218,7 @@ private fun initializeCards(componentManager: ComponentManager, allCards: Mutabl
         )
     )
 
-    val card8 = 8
+    val card8 = generateEntity()
     componentManager.addComponent(card8, CardIdentity(8, R.drawable.reverse_damage))
     componentManager.addComponent(
         card8,
@@ -228,7 +229,7 @@ private fun initializeCards(componentManager: ComponentManager, allCards: Mutabl
         )
     )
 
-    val card9 = 9
+    val card9 = generateEntity()
     componentManager.addComponent(card9, CardIdentity(9, R.drawable.shop_coupon))
     componentManager.addComponent(
         card9,
