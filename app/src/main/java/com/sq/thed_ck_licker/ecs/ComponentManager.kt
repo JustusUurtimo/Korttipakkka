@@ -1,5 +1,7 @@
 package com.sq.thed_ck_licker.ecs
 
+import com.sq.thed_ck_licker.ecs.components.CardTag
+import com.sq.thed_ck_licker.ecs.components.TagsComponent
 import kotlin.reflect.KClass
 
 // Component Manager
@@ -24,5 +26,48 @@ class ComponentManager {
         } else {
             throw IllegalStateException("Component for entity $entity is not of type ${componentClass.simpleName}")
         }
+    }
+
+//    fun <T : Any> getEntitiesWithComponent(component: T): Map<Int, Any>? {
+//        val eka = components[component::class]
+//        println("eka $eka")
+//        return eka
+//    }
+
+    fun <T : Any> getEntitiesWithComponent(componentClass: KClass<T>): Map<Int, Any>? {
+        return components[componentClass]
+    }
+
+    fun getEntitiesWithTags(tags: List<CardTag>, strictAll: Boolean = false): Map<Int, Any>? {
+//        println("all all $components")
+//        println("thing thing ${components[TagsComponent::class]}")
+        val entities = getEntitiesWithComponent(TagsComponent::class)
+        println("All the entities: $entities")
+        val matchingEntities = entities?.filter { (entity, value) ->
+//            if (strictAll) {
+            (value as TagsComponent).tags.containsAll(tags)
+//            } else {
+//                (value as TagsComponent).tags.any(tags)
+//                (value as TagsComponent).tags
+//            }
+        }
+        println("All the matchingEntities: $matchingEntities")
+
+        return matchingEntities
+    }
+
+    fun getAllComponentsOfEntity(entityId: Int): List<Any> {
+        val result = ArrayList<Any>()
+        for (componentMap in components.values) {
+            val component = componentMap[entityId]
+//            println("component $component")
+            if (component != null) {
+//                result.plus(component)
+//                println("HAi hai hai")
+                result.add(component)
+            }
+        }
+//        println("result $result")
+        return result
     }
 }
