@@ -21,8 +21,12 @@ import com.sq.thed_ck_licker.ecs.components.CardEffect
 import com.sq.thed_ck_licker.ecs.components.CardIdentity
 
 @Composable
-fun CardsOnHand(cardsOnHand: MutableIntState, modifier: Modifier, latestCard: Pair<CardIdentity, CardEffect>) {
-    Box() {
+fun CardsOnHand(
+    cardsOnHand: MutableIntState,
+    modifier: Modifier,
+    latestCard: Pair<CardIdentity, CardEffect>
+) {
+    Box {
         Box(
             modifier = Modifier
                 .align(Alignment.BottomStart)

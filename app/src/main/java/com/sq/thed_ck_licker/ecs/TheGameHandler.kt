@@ -17,15 +17,12 @@ object TheGameHandler {
     val cards = Cards()
 
 
-
-
     //There is compelling argument to make special object for the player that collects all the special player methods.
     private val playerHealth = mutableFloatStateOf(0f)
 
     fun getPlayerHealth(): Float {
         return playerHealth.floatValue
     }
-
 
 
     fun getEntityHealth(entityId: Int): Float {
@@ -52,7 +49,6 @@ object TheGameHandler {
         )
         return defaultCardPair
     }
-
 
 
 }

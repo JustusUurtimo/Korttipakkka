@@ -10,7 +10,6 @@ import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.sq.thed_ck_licker.card.Cards
 import com.sq.thed_ck_licker.ecs.TheGameHandler.cards
 import com.sq.thed_ck_licker.ecs.components.CardClassification
 import com.sq.thed_ck_licker.ecs.components.CardEffect
@@ -35,7 +34,7 @@ fun DrawCard(
         // atm ottaa aina dmg 2% ja sit kortin arvon verran.
         //static 2% dmg idea, että tulevat kortit ei välttämättä ole dmg kortteja
         Button(onClick = {
-            handleCardEffect( latestCard, cardsOnHand, playerHealth, onUpdateState)
+            handleCardEffect(latestCard, cardsOnHand, playerHealth, onUpdateState)
         }) { Text("draw a card") }
     }
 }

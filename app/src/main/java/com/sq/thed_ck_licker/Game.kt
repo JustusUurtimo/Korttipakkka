@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -34,9 +33,9 @@ fun Game(innerPadding: PaddingValues) {
 
     val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues()
     var latestCard by rememberSaveable { mutableStateOf(getDefaultCardPair()) }
-    val cardsOnHand = rememberSaveable() { mutableIntStateOf(0) }
+    val cardsOnHand = rememberSaveable { mutableIntStateOf(0) }
     val playerHealth =
-        rememberSaveable() { TheGameHandler.getEntityHealthM(EntityManager.getPlayerID()) }
+        rememberSaveable { TheGameHandler.getEntityHealthM(EntityManager.getPlayerID()) }
     // TODO here probably should be viewModel from about the game state data or something like that
     //  Something about state holder and all that
 

@@ -1,7 +1,5 @@
 package com.sq.thed_ck_licker.card
 
-import android.os.Parcelable
-import androidx.annotation.DrawableRes
 import androidx.compose.runtime.MutableFloatState
 import com.sq.thed_ck_licker.R
 import com.sq.thed_ck_licker.ecs.ComponentManager
@@ -13,9 +11,6 @@ import com.sq.thed_ck_licker.ecs.components.CardIdentity
 import com.sq.thed_ck_licker.ecs.generateEntity
 import com.sq.thed_ck_licker.ecs.systems.CardEffectSystem
 import com.sq.thed_ck_licker.helpers.getRandomElement
-import kotlinx.parcelize.Parcelize
-import kotlin.reflect.KClass
-
 
 
 //TODO this should be moved some where else
