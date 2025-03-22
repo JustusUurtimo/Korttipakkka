@@ -27,7 +27,16 @@ android {
                 "proguard-rules.pro"
             )
         }
+        debug {
+            isMinifyEnabled = false
+            isTestCoverageEnabled = true
+            buildConfigField("boolean", "DEBUG", "true")
+            buildConfigField("boolean", "IS_DEBUG", "true")
+            resValue("bool", "IS_DEBUG", true.toString())
+        }
+
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11

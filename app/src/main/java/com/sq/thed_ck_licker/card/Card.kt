@@ -4,7 +4,7 @@ import android.os.Parcelable
 import androidx.annotation.DrawableRes
 import androidx.compose.runtime.MutableFloatState
 import com.sq.thed_ck_licker.R
-import kotlin.random.Random
+import com.sq.thed_ck_licker.helpers.getRandomElement
 import kotlinx.parcelize.Parcelize
 import kotlin.reflect.KClass
 
@@ -121,7 +121,7 @@ class Cards {
         if (allCards.isEmpty()) {
             throw IllegalStateException("No cards available")
         }
-        val randomCard = allCards[Random.nextInt(allCards.size)]
+        val randomCard = allCards.getRandomElement()
         val cardIdentity = componentManager.getComponent(randomCard, CardIdentity::class)
         val cardEffect = componentManager.getComponent(randomCard, CardEffect::class)
         return Pair(cardIdentity, cardEffect)
