@@ -4,105 +4,21 @@ import android.os.Parcelable
 import androidx.annotation.DrawableRes
 import androidx.compose.runtime.MutableFloatState
 import com.sq.thed_ck_licker.R
+import com.sq.thed_ck_licker.ecs.ComponentManager
+import com.sq.thed_ck_licker.ecs.components.CardClassification
+import com.sq.thed_ck_licker.ecs.components.CardEffect
+import com.sq.thed_ck_licker.ecs.components.CardEffectType
+import com.sq.thed_ck_licker.ecs.components.CardEffectValue
+import com.sq.thed_ck_licker.ecs.components.CardIdentity
 import com.sq.thed_ck_licker.ecs.generateEntity
+import com.sq.thed_ck_licker.ecs.systems.CardEffectSystem
 import com.sq.thed_ck_licker.helpers.getRandomElement
 import kotlinx.parcelize.Parcelize
 import kotlin.reflect.KClass
 
 
-// Enums
-enum class CardClassification { EVIL, GOOD, MISC }
-enum class CardEffectType { HP_REGEN, HEAL, DAMAGE, MAX_HP, DOUBLE_TROUBLE, REVERSE_DAMAGE, SHOP_COUPON }
-enum class CardEffectValue(val value: Float) {
-    DAMAGE_5(5f), DAMAGE_6(6f), HEAL_5(5f), HEAL_2(2f), HEAL_10(10f),
-    MAX_HP_2(2f), DOUBLE_TROUBLE(0f), REVERSE_DAMAGE(0f), SHOP_COUPON(100f)
-}
 
-@Parcelize
-data class CardIdentity(
-    val id: Int,
-    @DrawableRes val cardImage: Int
-) : Parcelable
-
-@Parcelize
-data class CardEffect(
-    val classification: CardClassification,
-    val effectType: CardEffectType,
-    val effectValue: CardEffectValue
-) : Parcelable
-
-// Component Manager
-class ComponentManager {
-    private val components = mutableMapOf<KClass<*>, MutableMap<Int, Any>>()
-
-    fun <T : Any> addComponent(entity: Int, component: T) {
-        components.getOrPut(component::class) { mutableMapOf() }[entity] = component
-    }
-
-    fun <T : Any> getComponent(entity: Int, componentClass: KClass<T>): T {
-        val componentMap = components[componentClass]
-            ?: throw IllegalStateException("No components of type ${componentClass.simpleName} found")
-
-        val component = componentMap[entity]
-            ?: throw IllegalStateException("Component of type ${componentClass.simpleName} not found for entity $entity")
-
-        // Check the type of the component before casting
-        if (componentClass.isInstance(component)) {
-            @Suppress("UNCHECKED_CAST") // Safe cast after type check
-            return component as T
-        } else {
-            throw IllegalStateException("Component for entity $entity is not of type ${componentClass.simpleName}")
-        }
-    }
-}
-
-// Systems
-class CardEffectSystem {
-    fun applyEffect(
-        newCard: Pair<CardIdentity, CardEffect>,
-        playerHealth: MutableFloatState,
-        components: ComponentManager,
-        reverseDamage: Boolean,
-        doubleTrouble: Boolean
-    ) {
-        val effect = newCard.second
-        when (effect.effectType) {
-            CardEffectType.DAMAGE -> applyDamage(
-                playerHealth,
-                effect.effectValue.value,
-                reverseDamage,
-                doubleTrouble
-            )
-
-            CardEffectType.HEAL -> applyHeal(playerHealth, effect.effectValue.value, doubleTrouble)
-            // Handle other effect types...
-            else -> println("Unknown effect type")
-        }
-    }
-
-    private fun applyDamage(
-        playerHealth: MutableFloatState,
-        amount: Float,
-        reverseDamage: Boolean,
-        doubleTrouble: Boolean
-    ) {
-        if (reverseDamage) {
-            playerHealth.floatValue -= (amount)
-        } else if (doubleTrouble) {
-            playerHealth.floatValue += (amount * 2)
-        } else {
-            playerHealth.floatValue += (amount)
-        }
-    }
-
-    private fun applyHeal(playerHealth: MutableFloatState, amount: Float, doubleTrouble: Boolean) {
-        if (doubleTrouble) {
-            playerHealth.floatValue -= (amount * 2)
-        } else {
-            playerHealth.floatValue -= (amount)
-        }
-    }
-}
+//TODO this should be moved some where else
 
 // CardGame Class
 class Cards {

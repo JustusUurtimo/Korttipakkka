@@ -10,12 +10,12 @@ import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.sq.thed_ck_licker.card.CardClassification
-import com.sq.thed_ck_licker.card.CardEffect
-import com.sq.thed_ck_licker.card.CardEffectType
-import com.sq.thed_ck_licker.card.CardIdentity
 import com.sq.thed_ck_licker.card.Cards
 import com.sq.thed_ck_licker.ecs.TheGameHandler.cards
+import com.sq.thed_ck_licker.ecs.components.CardClassification
+import com.sq.thed_ck_licker.ecs.components.CardEffect
+import com.sq.thed_ck_licker.ecs.components.CardEffectType
+import com.sq.thed_ck_licker.ecs.components.CardIdentity
 
 @Composable
 fun DrawCard(

@@ -3,12 +3,12 @@ package com.sq.thed_ck_licker.ecs
 import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.mutableFloatStateOf
 import com.sq.thed_ck_licker.R
-import com.sq.thed_ck_licker.card.CardClassification
-import com.sq.thed_ck_licker.card.CardEffect
-import com.sq.thed_ck_licker.card.CardEffectType
-import com.sq.thed_ck_licker.card.CardEffectValue
-import com.sq.thed_ck_licker.card.CardIdentity
 import com.sq.thed_ck_licker.card.Cards
+import com.sq.thed_ck_licker.ecs.components.CardClassification
+import com.sq.thed_ck_licker.ecs.components.CardEffect
+import com.sq.thed_ck_licker.ecs.components.CardEffectType
+import com.sq.thed_ck_licker.ecs.components.CardEffectValue
+import com.sq.thed_ck_licker.ecs.components.CardIdentity
 
 //TODO apparently this kind a not good...
 // If you want I can do new refactor to make it better.
@@ -40,6 +40,7 @@ object TheGameHandler {
 
     }
 
+    // TODO this wont stay here
     /**
      * käytetään placeholderina kun ei ole vielä vedetty kortteja
      * Returns a default card pair with a placeholder card.
