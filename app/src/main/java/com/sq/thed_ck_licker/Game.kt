@@ -19,12 +19,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.sq.thed_ck_licker.card.CardClassification
-import com.sq.thed_ck_licker.card.CardEffect
-import com.sq.thed_ck_licker.card.CardEffectType
-import com.sq.thed_ck_licker.card.CardEffectValue
-import com.sq.thed_ck_licker.card.CardIdentity
-import com.sq.thed_ck_licker.card.Cards
+import com.sq.thed_ck_licker.ecs.TheGameHandler
+import com.sq.thed_ck_licker.ecs.TheGameHandler.getDefaultCardPair
 import com.sq.thed_ck_licker.player.HealthBar
 import com.sq.thed_ck_licker.ui.components.buttons.DrawCard
 import com.sq.thed_ck_licker.ui.components.views.CardDeck
@@ -33,17 +29,17 @@ import com.sq.thed_ck_licker.ui.components.views.CardsOnHand
 
 @Composable
 fun Game(innerPadding: PaddingValues) {
-    val cards = Cards()
-    // käytetään placeholderina kun ei ole vielä vedetty kortteja
-    val defaultCardPair = Pair(
-        CardIdentity(-1, R.drawable.card_back),
-        CardEffect(CardClassification.GOOD, CardEffectType.HEAL, CardEffectValue.HEAL_2)
-    )
+
+
+
+
 
     val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues()
-    var latestCard by rememberSaveable { mutableStateOf(defaultCardPair) }
+    var latestCard by rememberSaveable { mutableStateOf(getDefaultCardPair()) }
     val cardsOnHand = rememberSaveable() { mutableIntStateOf(0) }
-    val playerHealth = rememberSaveable() { mutableFloatStateOf(0f) }
+//    val playerHealth = rememberSaveable() { mutableFloatStateOf(0f) }
+    val playerHealth = rememberSaveable() { TheGameHandler.playerHealth}
+
 
     val modifier = Modifier
 
@@ -58,7 +54,6 @@ fun Game(innerPadding: PaddingValues) {
                 Column(modifier.padding(5.dp)) {
                     CardsOnHand(cardsOnHand, modifier, latestCard)
                     DrawCard(
-                        cards,
                         cardsOnHand,
                         playerHealth,
                         navigationBarPadding,
@@ -75,6 +70,7 @@ fun Game(innerPadding: PaddingValues) {
 
     }
 }
+
 
 
 

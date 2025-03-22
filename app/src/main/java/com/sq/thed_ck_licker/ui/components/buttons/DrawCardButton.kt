@@ -15,10 +15,10 @@ import com.sq.thed_ck_licker.card.CardEffect
 import com.sq.thed_ck_licker.card.CardEffectType
 import com.sq.thed_ck_licker.card.CardIdentity
 import com.sq.thed_ck_licker.card.Cards
+import com.sq.thed_ck_licker.ecs.TheGameHandler.cards
 
 @Composable
 fun DrawCard(
-    cards: Cards,
     cardsOnHand: MutableIntState,
     playerHealth: MutableFloatState,
     navigationBarPadding: PaddingValues,
@@ -35,13 +35,12 @@ fun DrawCard(
         // atm ottaa aina dmg 2% ja sit kortin arvon verran.
         //static 2% dmg idea, että tulevat kortit ei välttämättä ole dmg kortteja
         Button(onClick = {
-            handleCardEffect(cards, latestCard, cardsOnHand, playerHealth, onUpdateState)
+            handleCardEffect( latestCard, cardsOnHand, playerHealth, onUpdateState)
         }) { Text("draw a card") }
     }
 }
 
 fun handleCardEffect(
-    cards: Cards,
     latestCard: Pair<CardIdentity, CardEffect>,
     cardsOnHand: MutableIntState,
     playerHealth: MutableFloatState,
