@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     id("org.jetbrains.kotlin.plugin.parcelize")
 }
+var isDebug by extra(true)
 
 android {
     namespace = "com.sq.thed_ck_licker"
@@ -17,6 +18,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        defaultPublishConfig("debug")
     }
 
     buildTypes {
@@ -26,6 +29,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            isDebug = false
         }
         debug {
             isMinifyEnabled = false
@@ -34,7 +38,14 @@ android {
             buildConfigField("boolean", "IS_DEBUG", "true")
             resValue("bool", "IS_DEBUG", true.toString())
         }
-
+        create("super_debug") {
+            isDebuggable = true
+            isJniDebuggable = true
+            isRenderscriptDebuggable = true
+            signingConfig = signingConfigs.getByName("debug")
+            multiDexEnabled = false
+            matchingFallbacks += listOf("debug")
+        }
     }
 
     compileOptions {
