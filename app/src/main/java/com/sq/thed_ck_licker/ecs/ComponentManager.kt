@@ -1,5 +1,7 @@
 package com.sq.thed_ck_licker.ecs
 
+import com.sq.thed_ck_licker.ecs.components.CardTag
+import com.sq.thed_ck_licker.ecs.components.TagsComponent
 import kotlin.reflect.KClass
 
 // Component Manager
@@ -24,5 +26,29 @@ class ComponentManager {
         } else {
             throw IllegalStateException("Component for entity $entity is not of type ${componentClass.simpleName}")
         }
+    }
+
+
+    fun <T : Any> getEntitiesWithComponent(componentClass: KClass<T>): Map<Int, Any>? {
+        return components[componentClass]
+    }
+
+    fun getEntitiesWithTags(tags: List<CardTag>): Map<Int, Any>? {
+        val entities = getEntitiesWithComponent(TagsComponent::class)
+        val matchingEntities = entities?.filter { (_, value) ->
+            (value as TagsComponent).tags.containsAll(tags)
+        }
+        return matchingEntities
+    }
+
+    fun getAllComponentsOfEntity(entityId: Int): List<Any> {
+        val result = ArrayList<Any>()
+        for (componentMap in components.values) {
+            val component = componentMap[entityId]
+            if (component != null) {
+                result.add(component)
+            }
+        }
+        return result
     }
 }

@@ -2,6 +2,7 @@ package com.sq.thed_ck_licker.ecs.components
 
 import android.os.Parcelable
 import androidx.annotation.DrawableRes
+import com.sq.thed_ck_licker.R
 import kotlinx.parcelize.Parcelize
 
 // Enums
@@ -12,6 +13,9 @@ enum class CardEffectValue(val value: Float) {
     MAX_HP_2(2f), DOUBLE_TROUBLE(0f), REVERSE_DAMAGE(0f), SHOP_COUPON(100f)
 }
 
+enum class CardTag {Card}
+
+@Deprecated("This should not be used, instead use ImageComponent")
 @Parcelize
 data class CardIdentity(
     val id: Int,
@@ -25,3 +29,10 @@ data class CardEffect(
     val effectValue: CardEffectValue
 ) : Parcelable
 
+data class ImageComponent(@DrawableRes val cardImage: Int = R.drawable.placeholder)
+
+data class DescriptionComponent(var description: String = "This is simple placeholder description")
+
+data class NameComponent(val name: String = "Placeholder")
+
+data class TagsComponent(val tags: List<CardTag> = emptyList())
