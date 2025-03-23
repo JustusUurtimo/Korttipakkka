@@ -51,14 +51,4 @@ class ComponentManager {
         }
         return result
     }
-
-    fun <T : Any> hasComponent(entity: Int, kClass: KClass<T>): Boolean {
-        val hae = components[kClass]
-        if (hae != null) {
-            val hae2 = hae[entity]
-            println("hae2 $hae2")
-            return hae2 != null
-        }
-        return false
-    }
 }
