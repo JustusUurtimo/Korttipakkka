@@ -16,6 +16,7 @@ import com.sq.thed_ck_licker.ecs.components.ImageComponent
 import com.sq.thed_ck_licker.ecs.components.NameComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent
+import com.sq.thed_ck_licker.ecs.systems.DescriptionSystem
 import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID as playerId
 
 //TODO apparently this kind a not good...
@@ -25,6 +26,7 @@ import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID as playerId
 object TheGameHandler {
     val cards = Cards()
     private val componentManager = ComponentManager()
+    private val descriptionSystem = DescriptionSystem()
 
 
     fun getPlayerHealthM(): MutableFloatState {
@@ -78,7 +80,6 @@ object TheGameHandler {
             componentManager.addComponent(cardEntity, NameComponent("Default Card #$i"))
             componentManager.addComponent(cardEntity, TagsComponent(listOf(CardTag.Card)))
         }
-//        println("Added default cards")
     }
 
     // TODO this is just temporary
@@ -92,6 +93,9 @@ object TheGameHandler {
 
     fun initTheGame() {
         initPlayerAndSomeDefaultCards()
+        descriptionSystem.updateAllDescriptions(componentManager)
+
+
     }
 
     fun getComponents(entityId: Int): List<Any> {

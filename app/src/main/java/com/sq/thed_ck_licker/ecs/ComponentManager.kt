@@ -28,31 +28,16 @@ class ComponentManager {
         }
     }
 
-//    fun <T : Any> getEntitiesWithComponent(component: T): Map<Int, Any>? {
-//        val eka = components[component::class]
-//        println("eka $eka")
-//        return eka
-//    }
 
     fun <T : Any> getEntitiesWithComponent(componentClass: KClass<T>): Map<Int, Any>? {
         return components[componentClass]
     }
 
-    fun getEntitiesWithTags(tags: List<CardTag>, strictAll: Boolean = false): Map<Int, Any>? {
-//        println("all all $components")
-//        println("thing thing ${components[TagsComponent::class]}")
+    fun getEntitiesWithTags(tags: List<CardTag>): Map<Int, Any>? {
         val entities = getEntitiesWithComponent(TagsComponent::class)
-        println("All the entities: $entities")
-        val matchingEntities = entities?.filter { (entity, value) ->
-//            if (strictAll) {
+        val matchingEntities = entities?.filter { (_, value) ->
             (value as TagsComponent).tags.containsAll(tags)
-//            } else {
-//                (value as TagsComponent).tags.any(tags)
-//                (value as TagsComponent).tags
-//            }
         }
-        println("All the matchingEntities: $matchingEntities")
-
         return matchingEntities
     }
 
@@ -60,14 +45,20 @@ class ComponentManager {
         val result = ArrayList<Any>()
         for (componentMap in components.values) {
             val component = componentMap[entityId]
-//            println("component $component")
             if (component != null) {
-//                result.plus(component)
-//                println("HAi hai hai")
                 result.add(component)
             }
         }
-//        println("result $result")
         return result
+    }
+
+    fun <T : Any> hasComponent(entity: Int, kClass: KClass<T>): Boolean {
+        val hae = components[kClass]
+        if (hae != null) {
+            val hae2 = hae[entity]
+            println("hae2 $hae2")
+            return hae2 != null
+        }
+        return false
     }
 }
