@@ -17,12 +17,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.sq.thed_ck_licker.card.CardEffect
-import com.sq.thed_ck_licker.card.CardIdentity
+import com.sq.thed_ck_licker.ecs.components.CardEffect
+import com.sq.thed_ck_licker.ecs.components.CardIdentity
 
 @Composable
-fun CardsOnHand(cardsOnHand: MutableIntState, modifier: Modifier, latestCard: Pair<CardIdentity, CardEffect>) {
-    Box() {
+fun CardsOnHand(
+    cardsOnHand: MutableIntState,
+    modifier: Modifier,
+    latestCard: Pair<CardIdentity, CardEffect>
+) {
+    Box {
         Box(
             modifier = Modifier
                 .align(Alignment.BottomStart)

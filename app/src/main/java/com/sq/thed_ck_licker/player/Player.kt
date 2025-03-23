@@ -11,14 +11,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun HealthBar(playerHealth: Float, modifier: Modifier = Modifier) {
+fun HealthBar(health: Float, modifier: Modifier = Modifier) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
+            //TODO This kind a should be generic some how
             text = "Player Health",
             modifier = modifier
         )
         LinearProgressIndicator(
-            progress = { (playerHealth % 100) / 100f },
+            progress = { (health % 100) / 100f },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(15.dp),
