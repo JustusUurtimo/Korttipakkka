@@ -1,5 +1,6 @@
 package com.sq.thed_ck_licker.ui.components.views
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -21,7 +22,9 @@ import androidx.compose.ui.unit.dp
 import com.sq.thed_ck_licker.ecs.TheGameHandler
 import com.sq.thed_ck_licker.ecs.components.CardEffect
 import com.sq.thed_ck_licker.ecs.components.CardIdentity
+import com.sq.thed_ck_licker.ecs.components.DescriptionComponent
 import com.sq.thed_ck_licker.ecs.components.ImageComponent
+import com.sq.thed_ck_licker.ecs.components.NameComponent
 
 @Composable
 fun CardsOnHand(
@@ -71,10 +74,11 @@ fun CardsOnHand2(
     val randomCard = TheGameHandler.getRandomCard()!!.entries.first()
     println("randCard $randomCard")
     val thingsOnIt = TheGameHandler.getComponents(randomCard.key)
-    println("othingsOnIt $thingsOnIt")
+    println("thingsOnIt $thingsOnIt") //Maybe we should use logs
+    Log.d("CardsOnHand2", "thingsOnIt $thingsOnIt")
     Box {
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .align(Alignment.BottomStart)
                 .background(color = Color.Blue)
         ) {
@@ -89,21 +93,42 @@ fun CardsOnHand2(
                     }
                 ) {
                     Card(
-                        modifier = Modifier.background(color = Color.Green)
+                        modifier = modifier.background(color = Color.Green)
                     ) {
                         Column {
-                            Image(
-                                painter = painterResource(
-                                    TheGameHandler.getTheComponents().getComponent(
-                                        randomCard.key,
-                                        ImageComponent::class
-                                    ).cardImage
-                                ),
-                                contentDescription = "Card drawn",
-                                modifier = modifier
-                                    .width(120.dp)
-                                    .wrapContentHeight()
-                            )
+                            Box() {
+                                Image(
+                                    painter = painterResource(
+                                        TheGameHandler.getTheComponents().getComponent(
+                                            randomCard.key,
+                                            ImageComponent::class
+                                        ).cardImage
+                                    ),
+                                    contentDescription = "Card drawn",
+                                    modifier = modifier
+                                        .width(120.dp)
+                                        .wrapContentHeight()
+                                )
+                                Column {
+                                    Text(
+                                        text = TheGameHandler.getTheComponents().getComponent(
+                                            randomCard.key,
+                                            NameComponent::class
+                                        ).name
+                                    )
+                                    Text(
+                                        text = TheGameHandler.getTheComponents().getComponent(
+                                            randomCard.key,
+                                            DescriptionComponent::class
+                                        ).description,
+                                        softWrap = true,
+                                        modifier = modifier.background(color = Color.Yellow),
+
+                                    )
+
+
+                                }
+                            }
                         }
                     }
                 }

@@ -21,6 +21,7 @@ import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID as playerId
 //TODO apparently this kind a not good...
 // If you want I can do new refactor to make it better.
 // But I think this is good enough for now.
+// More about this https://developer.android.com/topic/architecture/ui-layer/stateholders
 object TheGameHandler {
     val cards = Cards()
     private val componentManager = ComponentManager()
@@ -77,7 +78,7 @@ object TheGameHandler {
             componentManager.addComponent(cardEntity, NameComponent("Default Card #$i"))
             componentManager.addComponent(cardEntity, TagsComponent(listOf(CardTag.Card)))
         }
-        println("Added default cards")
+//        println("Added default cards")
     }
 
     // TODO this is just temporary
