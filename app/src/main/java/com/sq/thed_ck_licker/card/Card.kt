@@ -50,6 +50,9 @@ class Cards {
         return Pair(cardIdentity, cardEffect)
     }
 
+    // TODO We should really thrive to only make methods we need
+    //  YAGNI = You ain't gonna need it
+    //  To truly get into proper headspace we should use TDD
     // Function to get the number of cards
     fun getNumberOfCards(): Int {
         return allCards.size

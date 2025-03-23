@@ -23,7 +23,6 @@ import com.sq.thed_ck_licker.ecs.TheGameHandler.getDefaultCardPair
 import com.sq.thed_ck_licker.player.HealthBar
 import com.sq.thed_ck_licker.ui.components.buttons.DrawCard
 import com.sq.thed_ck_licker.ui.components.views.CardDeck
-import com.sq.thed_ck_licker.ui.components.views.CardsOnHand
 import com.sq.thed_ck_licker.ui.components.views.CardsOnHand2
 
 
