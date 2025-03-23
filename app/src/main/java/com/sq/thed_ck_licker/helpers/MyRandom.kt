@@ -21,6 +21,10 @@ fun <T> List<T>.getRandomElement(): T {
     return this[random.nextInt(this.size)]
 }
 
+ fun <E> Collection<E>.getRandomElement(): E {
+    return this.random()
+}
+
 //fun <T> List<T>.getRandomElement(): T? {
 //    return if (this.isNotEmpty()) this[random.nextInt(this.size)] else null
 //}

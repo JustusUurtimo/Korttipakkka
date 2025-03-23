@@ -6,6 +6,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Badge
@@ -25,6 +27,7 @@ import com.sq.thed_ck_licker.ecs.components.CardIdentity
 import com.sq.thed_ck_licker.ecs.components.DescriptionComponent
 import com.sq.thed_ck_licker.ecs.components.ImageComponent
 import com.sq.thed_ck_licker.ecs.components.NameComponent
+import com.sq.thed_ck_licker.helpers.getRandomElement
 
 @Composable
 fun CardsOnHand(
@@ -71,7 +74,13 @@ fun CardsOnHand2(
     modifier: Modifier,
     latestCard: Pair<CardIdentity, CardEffect>
 ) {
-    val randomCard = TheGameHandler.getRandomCard()!!.entries.first()
+    //TODO we should really do "entity carry" it should be just holder class that holds entity id
+    // and all its components, it should not be used for data manipulation only to present it in places
+    // That way we can carry already fetched entities nicely
+
+    // TODO this really should come here differently..
+//    val randomCard = TheGameHandler.getRandomCard()!!.entries.first()
+    val randomCard = TheGameHandler.getRandomCard()!!.entries.getRandomElement()
     println("randCard $randomCard")
     val thingsOnIt = TheGameHandler.getComponents(randomCard.key)
     println("thingsOnIt $thingsOnIt") //Maybe we should use logs
@@ -110,6 +119,7 @@ fun CardsOnHand2(
                                         .wrapContentHeight()
                                 )
                                 Column {
+                                    Spacer(modifier.height(100.dp))
                                     Text(
                                         text = TheGameHandler.getTheComponents().getComponent(
                                             randomCard.key,
@@ -124,7 +134,7 @@ fun CardsOnHand2(
                                         softWrap = true,
                                         modifier = modifier.background(color = Color.Yellow),
 
-                                    )
+                                        )
 
 
                                 }
@@ -136,3 +146,5 @@ fun CardsOnHand2(
         }
     }
 }
+
+

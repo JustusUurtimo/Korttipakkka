@@ -1,6 +1,7 @@
 package com.sq.thed_ck_licker.ecs
 
 import androidx.compose.runtime.MutableFloatState
+import androidx.compose.runtime.MutableIntState
 import com.sq.thed_ck_licker.R
 import com.sq.thed_ck_licker.card.Cards
 import com.sq.thed_ck_licker.ecs.components.CardClassification
@@ -108,6 +109,12 @@ object TheGameHandler {
     //  it is really baad
     fun getTheComponents(): ComponentManager {
         return componentManager
+    }
+
+    fun getPlayerScoreM(): MutableIntState {
+        val player = playerId()
+        val comp = componentManager.getComponent(player, ScoreComponent::class)
+        return comp.score
     }
 
 }

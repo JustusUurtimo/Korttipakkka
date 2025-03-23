@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.sq.thed_ck_licker.ecs.TheGameHandler
 import com.sq.thed_ck_licker.ecs.TheGameHandler.getDefaultCardPair
 import com.sq.thed_ck_licker.player.HealthBar
+import com.sq.thed_ck_licker.player.ScoreDisplayer
 import com.sq.thed_ck_licker.ui.components.buttons.DrawCard
 import com.sq.thed_ck_licker.ui.components.views.CardDeck
 import com.sq.thed_ck_licker.ui.components.views.CardsOnHand2
@@ -35,6 +36,7 @@ fun Game(innerPadding: PaddingValues) {
     val cardsOnHand = rememberSaveable { mutableIntStateOf(0) }
     val playerHealth =
         rememberSaveable { TheGameHandler.getPlayerHealthM() }
+    val playerScore = rememberSaveable { TheGameHandler.getPlayerScoreM() }
     // TODO here probably should be viewModel from about the game state data or something like that
     //  Something about state holder and all that
 
@@ -44,6 +46,8 @@ fun Game(innerPadding: PaddingValues) {
         // tällä toteutuksella hp menee takas täyteen ku se menee alle 0 :D
         // Se voinee miettiä kuntoon, sit ku saadaan game state käyntiin paremmin
         HealthBar(playerHealth.floatValue, modifier.padding(innerPadding))
+
+        ScoreDisplayer(playerScore.intValue)
 
         Box(modifier.fillMaxSize()) {
             CardDeck(navigationBarPadding)

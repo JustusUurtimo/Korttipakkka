@@ -20,11 +20,16 @@ fun HealthBar(health: Float, modifier: Modifier = Modifier) {
         )
         LinearProgressIndicator(
             progress = { (health % 100) / 100f },
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .height(15.dp),
             color = Color.LightGray,
             trackColor = Color.Red, //remaining health
         )
     }
+}
+
+@Composable
+fun ScoreDisplayer(score: Int, modifier: Modifier = Modifier) {
+    Text("Score: $score")
 }
