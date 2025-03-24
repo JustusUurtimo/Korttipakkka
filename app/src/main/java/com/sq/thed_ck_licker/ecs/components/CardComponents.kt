@@ -15,13 +15,6 @@ enum class CardEffectValue(val value: Float) {
 
 enum class CardTag {Card}
 
-@Deprecated("This should not be used, instead use ImageComponent")
-@Parcelize
-data class CardIdentity(
-    val id: Int,
-    @DrawableRes val cardImage: Int
-) : Parcelable
-
 @Parcelize
 data class CardEffect(
     val classification: CardClassification,

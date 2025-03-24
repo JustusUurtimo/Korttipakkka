@@ -23,56 +23,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.sq.thed_ck_licker.ecs.TheGameHandler
 import com.sq.thed_ck_licker.ecs.components.CardEffect
-import com.sq.thed_ck_licker.ecs.components.CardIdentity
 import com.sq.thed_ck_licker.ecs.components.DescriptionComponent
 import com.sq.thed_ck_licker.ecs.components.ImageComponent
 import com.sq.thed_ck_licker.ecs.components.NameComponent
 import com.sq.thed_ck_licker.helpers.getRandomElement
 
+
 @Composable
 fun CardsOnHand(
     cardsOnHand: MutableIntState,
     modifier: Modifier,
-    latestCard: Pair<CardIdentity, CardEffect>
-) {
-    Box {
-        Box(
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-        ) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                BadgedBox(
-                    badge = {
-                        Badge(containerColor = Color.Red) {
-                            Text("${cardsOnHand.intValue}")
-                        }
-                    }
-                ) {
-                    Card {
-                        Column {
-                            Image(
-                                painter = painterResource(id = latestCard.first.cardImage),
-                                contentDescription = "Card drawn",
-                                modifier = modifier
-                                    .width(120.dp)
-                                    .wrapContentHeight()
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-
-@Composable
-fun CardsOnHand2(
-    cardsOnHand: MutableIntState,
-    modifier: Modifier,
-    latestCard: Pair<CardIdentity, CardEffect>
+    latestCard: Pair<ImageComponent, CardEffect>
 ) {
     //TODO we should really do "entity carry" it should be just holder class that holds entity id
     // and all its components, it should not be used for data manipulation only to present it in places

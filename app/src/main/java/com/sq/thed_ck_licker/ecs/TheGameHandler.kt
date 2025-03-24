@@ -8,15 +8,11 @@ import com.sq.thed_ck_licker.ecs.components.CardClassification
 import com.sq.thed_ck_licker.ecs.components.CardEffect
 import com.sq.thed_ck_licker.ecs.components.CardEffectType
 import com.sq.thed_ck_licker.ecs.components.CardEffectValue
-import com.sq.thed_ck_licker.ecs.components.CardIdentity
 import com.sq.thed_ck_licker.ecs.components.CardTag
-import com.sq.thed_ck_licker.ecs.components.DescriptionComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.ImageComponent
-import com.sq.thed_ck_licker.ecs.components.NameComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
-import com.sq.thed_ck_licker.ecs.components.TagsComponent
 import com.sq.thed_ck_licker.ecs.systems.DescriptionSystem
 import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID as playerId
 
@@ -52,9 +48,9 @@ object TheGameHandler {
      * käytetään placeholderina kun ei ole vielä vedetty kortteja
      * Returns a default card pair with a placeholder card.
      */
-    fun getDefaultCardPair(): Pair<CardIdentity, CardEffect> {
+    fun getDefaultCardPair(): Pair<ImageComponent, CardEffect> {
         val defaultCardPair = Pair(
-            CardIdentity(-1, R.drawable.card_back),
+            ImageComponent(R.drawable.placeholder),
             CardEffect(CardClassification.GOOD, CardEffectType.HEAL, CardEffectValue.HEAL_2)
         )
         return defaultCardPair
@@ -65,22 +61,6 @@ object TheGameHandler {
         componentManager.addComponent(playerId(), HealthComponent(0f, 100f))
         componentManager.addComponent(playerId(), ScoreComponent())
         componentManager.addComponent(playerId(), DrawDeckComponent())
-
-        addDefaultCards()
-    }
-
-    private fun addDefaultCards(amount: Int = 7) {
-        for (i in 1..amount) {
-            val cardEntity = generateEntity()
-            componentManager.addComponent(cardEntity, ImageComponent())
-            componentManager.addComponent(cardEntity, ScoreComponent(10))
-            componentManager.addComponent(
-                cardEntity,
-                DescriptionComponent("This is simple placeholder description #$i")
-            )
-            componentManager.addComponent(cardEntity, NameComponent("Default Card #$i"))
-            componentManager.addComponent(cardEntity, TagsComponent(listOf(CardTag.Card)))
-        }
     }
 
     // TODO this is just temporary

@@ -10,11 +10,12 @@ import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.sq.thed_ck_licker.R
 import com.sq.thed_ck_licker.ecs.TheGameHandler.cards
 import com.sq.thed_ck_licker.ecs.components.CardClassification
 import com.sq.thed_ck_licker.ecs.components.CardEffect
 import com.sq.thed_ck_licker.ecs.components.CardEffectType
-import com.sq.thed_ck_licker.ecs.components.CardIdentity
+import com.sq.thed_ck_licker.ecs.components.ImageComponent
 
 @Composable
 fun DrawCard(
@@ -22,8 +23,8 @@ fun DrawCard(
     playerHealth: MutableFloatState,
     navigationBarPadding: PaddingValues,
     modifier: Modifier,
-    latestCard: Pair<CardIdentity, CardEffect>,
-    onUpdateState: (Pair<CardIdentity, CardEffect>) -> Unit
+    latestCard: Pair<ImageComponent, CardEffect>,
+    onUpdateState: (Pair<ImageComponent, CardEffect>) -> Unit
 ) {
     Column(
         modifier = modifier.padding(
@@ -39,15 +40,15 @@ fun DrawCard(
     }
 }
 
-fun handleCardEffect(
-    latestCard: Pair<CardIdentity, CardEffect>,
+private fun handleCardEffect(
+    latestCard: Pair<ImageComponent, CardEffect>,
     cardsOnHand: MutableIntState,
     playerHealth: MutableFloatState,
-    onUpdateState: (Pair<CardIdentity, CardEffect>) -> Unit
+    onUpdateState: (Pair<ImageComponent, CardEffect>) -> Unit
 ) {
     val newCard = cards.pullRandomCard()
 
-    if (latestCard.first.id != -1) {
+    if (latestCard.first.cardImage != R.drawable.placeholder) {
         val latestCardEffectCardClassification: CardClassification =
             latestCard.second.classification
         val latestCardEffectCardEffectType: CardEffectType =
