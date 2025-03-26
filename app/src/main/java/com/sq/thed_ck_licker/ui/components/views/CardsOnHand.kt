@@ -1,6 +1,5 @@
 package com.sq.thed_ck_licker.ui.components.views
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -21,19 +20,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.sq.thed_ck_licker.ecs.ComponentManager
 import com.sq.thed_ck_licker.ecs.TheGameHandler
-import com.sq.thed_ck_licker.ecs.components.CardEffect
 import com.sq.thed_ck_licker.ecs.components.DescriptionComponent
 import com.sq.thed_ck_licker.ecs.components.ImageComponent
 import com.sq.thed_ck_licker.ecs.components.NameComponent
-import com.sq.thed_ck_licker.helpers.getRandomElement
+import com.sq.thed_ck_licker.ecs.systems.CardsSystem
 
 
 @Composable
 fun CardsOnHand(
     cardsOnHand: MutableIntState,
     modifier: Modifier,
-    latestCard: Pair<ImageComponent, CardEffect>
+    latestCardID: Int
 ) {
     //TODO we should really do "entity carry" it should be just holder class that holds entity id
     // and all its components, it should not be used for data manipulation only to present it in places
@@ -41,11 +40,12 @@ fun CardsOnHand(
 
     // TODO this really should come here differently..
 //    val randomCard = TheGameHandler.getRandomCard()!!.entries.first()
-    val randomCard = TheGameHandler.getRandomCard()!!.entries.getRandomElement()
-    println("randCard $randomCard")
-    val thingsOnIt = TheGameHandler.getComponents(randomCard.key)
-    println("thingsOnIt $thingsOnIt") //Maybe we should use logs
-    Log.d("CardsOnHand2", "thingsOnIt $thingsOnIt")
+    /*   val randomCard = TheGameHandler.getRandomCard()!!.entries.getRandomElement()
+       println("randCard $randomCard")
+       val thingsOnIt = TheGameHandler.getComponents(randomCard.key)
+       println("thingsOnIt $thingsOnIt") //Maybe we should use logs
+       Log.d("CardsOnHand2", "thingsOnIt $thingsOnIt") */
+
     Box {
         Box(
             modifier = modifier
@@ -69,10 +69,8 @@ fun CardsOnHand(
                             Box() {
                                 Image(
                                     painter = painterResource(
-                                        TheGameHandler.getTheComponents().getComponent(
-                                            randomCard.key,
-                                            ImageComponent::class
-                                        ).cardImage
+                                        cards
+
                                     ),
                                     contentDescription = "Card drawn",
                                     modifier = modifier
@@ -83,7 +81,7 @@ fun CardsOnHand(
                                     Spacer(modifier.height(100.dp))
                                     Text(
                                         text = TheGameHandler.getTheComponents().getComponent(
-                                            randomCard.key,
+                                            latestCardID.key,
                                             NameComponent::class
                                         ).name
                                     )

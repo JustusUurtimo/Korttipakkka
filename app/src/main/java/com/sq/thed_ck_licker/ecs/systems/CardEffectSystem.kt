@@ -4,13 +4,13 @@ import androidx.compose.runtime.MutableFloatState
 import com.sq.thed_ck_licker.ecs.ComponentManager
 import com.sq.thed_ck_licker.ecs.components.CardEffect
 import com.sq.thed_ck_licker.ecs.components.CardEffectType
-import com.sq.thed_ck_licker.ecs.components.CardIdentity
+import com.sq.thed_ck_licker.ecs.components.ImageComponent
 
 
 // Systems
 class CardEffectSystem {
     fun applyEffect(
-        newCard: Pair<CardIdentity, CardEffect>,
+        newCard: Pair<ImageComponent, CardEffect>,
         playerHealth: MutableFloatState,
         components: ComponentManager,
         reverseDamage: Boolean,

@@ -2,18 +2,12 @@ package com.sq.thed_ck_licker.ecs
 
 import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.MutableIntState
-import com.sq.thed_ck_licker.R
-import com.sq.thed_ck_licker.card.Cards
-import com.sq.thed_ck_licker.ecs.components.CardClassification
-import com.sq.thed_ck_licker.ecs.components.CardEffect
-import com.sq.thed_ck_licker.ecs.components.CardEffectType
-import com.sq.thed_ck_licker.ecs.components.CardEffectValue
 import com.sq.thed_ck_licker.ecs.components.CardTag
-import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
-import com.sq.thed_ck_licker.ecs.components.ImageComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
+import com.sq.thed_ck_licker.ecs.systems.CardsSystem
 import com.sq.thed_ck_licker.ecs.systems.DescriptionSystem
+import com.sq.thed_ck_licker.ecs.systems.PlayerSystem
 import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID as playerId
 
 //TODO apparently this kind a not good...
@@ -21,8 +15,9 @@ import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID as playerId
 // But I think this is good enough for now.
 // More about this https://developer.android.com/topic/architecture/ui-layer/stateholders
 object TheGameHandler {
-    val cards = Cards()
+    val cardsSystem = CardsSystem()
     private val componentManager = ComponentManager()
+    private val playerSystem = PlayerSystem()
     private val descriptionSystem = DescriptionSystem()
 
 
@@ -43,25 +38,6 @@ object TheGameHandler {
 //        return comp.health
 //    }
 
-    // TODO this wont stay here
-    /**
-     * käytetään placeholderina kun ei ole vielä vedetty kortteja
-     * Returns a default card pair with a placeholder card.
-     */
-    fun getDefaultCardPair(): Pair<ImageComponent, CardEffect> {
-        val defaultCardPair = Pair(
-            ImageComponent(R.drawable.placeholder),
-            CardEffect(CardClassification.GOOD, CardEffectType.HEAL, CardEffectValue.HEAL_2)
-        )
-        return defaultCardPair
-    }
-
-    // TODO this should not stay here
-    private fun initPlayerAndSomeDefaultCards() {
-        componentManager.addComponent(playerId(), HealthComponent(0f, 100f))
-        componentManager.addComponent(playerId(), ScoreComponent())
-        componentManager.addComponent(playerId(), DrawDeckComponent())
-    }
 
     // TODO this is just temporary
     //  it is meant only for brief debugging thing
@@ -73,10 +49,8 @@ object TheGameHandler {
 
 
     fun initTheGame() {
-        initPlayerAndSomeDefaultCards()
+        playerSystem.initPlayer(componentManager)
         descriptionSystem.updateAllDescriptions(componentManager)
-
-
     }
 
     fun getComponents(entityId: Int): List<Any> {

@@ -12,14 +12,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.sq.thed_ck_licker.ecs.TheGameHandler
-import com.sq.thed_ck_licker.ecs.TheGameHandler.getDefaultCardPair
 import com.sq.thed_ck_licker.player.HealthBar
 import com.sq.thed_ck_licker.player.ScoreDisplayer
 import com.sq.thed_ck_licker.ui.components.buttons.DrawCard
@@ -32,7 +30,7 @@ fun Game(innerPadding: PaddingValues) {
 
     TheGameHandler.initTheGame()
     val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues()
-    var latestCard by rememberSaveable { mutableStateOf(getDefaultCardPair()) }
+    var latestCard by rememberSaveable { mutableIntStateOf(-1) }
     val cardsOnHand = rememberSaveable { mutableIntStateOf(0) }
     val playerHealth =
         rememberSaveable { TheGameHandler.getPlayerHealthM() }
@@ -53,7 +51,9 @@ fun Game(innerPadding: PaddingValues) {
             CardDeck(navigationBarPadding)
             Box(modifier.align(Alignment.BottomCenter)) {
                 Column(modifier.padding(5.dp)) {
-                    CardsOnHand(cardsOnHand, modifier, latestCard)
+                    if(latestCard != -1) {
+                        CardsOnHand(cardsOnHand, modifier, latestCard)
+                    }
                     DrawCard(
                         cardsOnHand,
                         playerHealth,
