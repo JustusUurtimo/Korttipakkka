@@ -1,0 +1,7 @@
+#Licence file for arcmutate mutation testing https://www.arcmutate.com
+#Mon Mar 24 18:56:58 GMT 2025
+expires=24/03/2026
+keyVersion=1
+packages=com.sq.thed_ck_licker.*
+signature=OuCibot50MZhxDInSsJLNV8HIOUJ+LK2iC35f1L1WWkNLnHSnmCQh8wIG6Gsg49X4+kSl16uIQWHs2q+gskjxqUz0PjaecBQViG549r6jFATm4mRMgkX2jw1s3KkHAVLqsczwh/w6iuNLIBhmUldCaT1kNOKkqQvyrYEBQRDA5E\=
+type=OSSS

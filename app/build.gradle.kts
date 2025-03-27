@@ -3,10 +3,23 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("org.jetbrains.kotlin.plugin.parcelize")
+    id("pl.droidsonroids.pitest") version "0.2.20"
+//    id("info.solidsoft.pitest.aggregator")
+//    id("info.solidsoft.pitest.aggregator")
+//    id("org.jetbrains.kotlin.jvm")
+////    id("com.arcmutate")
+//    id("info.solidsoft.pitest") version "1.15.0"
+
+//    id("info.solidsoft.pitest")
+
+
 }
+//apply(plugin = "info.solidsoft.pitest.aggregator")
 var isDebug by extra(true)
 
 android {
+
+    android.testOptions.unitTests.isReturnDefaultValues = true
     namespace = "com.sq.thed_ck_licker"
     compileSdk = 35
 
@@ -19,9 +32,7 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        defaultPublishConfig("debug")
     }
-
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -32,20 +43,22 @@ android {
             isDebug = false
         }
         debug {
+
             isMinifyEnabled = false
-            isTestCoverageEnabled = true
+//            isTestCoverageEnabled = true
             buildConfigField("boolean", "DEBUG", "true")
             buildConfigField("boolean", "IS_DEBUG", "true")
             resValue("bool", "IS_DEBUG", true.toString())
         }
-        create("super_debug") {
-            isDebuggable = true
-            isJniDebuggable = true
-            isRenderscriptDebuggable = true
-            signingConfig = signingConfigs.getByName("debug")
-            multiDexEnabled = false
-            matchingFallbacks += listOf("debug")
-        }
+//        create("super_debug") {
+//            isDebuggable = true
+//            isJniDebuggable = true
+////            isRenderscriptDebuggable = true
+//            signingConfig = signingConfigs.getByName("debug")
+//            multiDexEnabled = false
+//            matchingFallbacks += listOf("debug")
+//        }
+
     }
 
     compileOptions {
@@ -59,6 +72,46 @@ android {
         compose = true
         buildConfig = true
     }
+}
+task("release"){dependsOn("pitest")}
+task("debug"){dependsOn("pitest")}
+task("super_debug"){dependsOn("pitest")}
+tasks.build {
+    dependsOn("pitest")
+}
+//tasks.named("compileKotlin").configure {
+//    dependsOn("pitest")
+////    mustRunAfter 'test'
+//}
+
+android.testOptions.unitTests.isReturnDefaultValues = true
+
+
+pitest {
+//    targetClasses = ['com.sq.thed_ck_licker.*']
+    targetClasses.set(setOf("com.sq.thed_ck_licker.*"))
+    excludeMockableAndroidJar = true
+//    junit5PluginVersion = '1.2.0'
+//    pitestVersion = '1.19.0'
+    pitestVersion.set("1.19.0")
+    threads = 4
+//    outputFormats = ['XML', 'HTML']
+    outputFormats.set(setOf("XML", "HTML"))
+    mutationThreshold = 60
+    coverageThreshold = 80
+    timestampedReports.set(true)
+//    reportAggregator {
+//        testStrengthThreshold.set(50)
+//        mutationThreshold.set(40)
+//        maxSurviving.set(3)
+//    }
+//    failWhenNoMutations.set(false)
+//    if (project.name in setOf("module-without-any-test")) {
+//    }
+    android.testOptions.unitTests.isReturnDefaultValues = true
+//    android.testOptions.unitTests.returnDefaultValues = true
+
+
 }
 
 dependencies {
