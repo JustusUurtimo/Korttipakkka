@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.sq.thed_ck_licker.ecs.TheGameHandler.cardsSystem
 import com.sq.thed_ck_licker.ecs.components.CardClassification
 import com.sq.thed_ck_licker.ecs.components.CardEffectType
+import com.sq.thed_ck_licker.ecs.components.CardTag
 import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID as playerId
 
 @Composable
@@ -20,9 +21,7 @@ fun DrawCard(
     cardsOnHand: MutableIntState,
     playerHealth: MutableFloatState,
     navigationBarPadding: PaddingValues,
-    modifier: Modifier,
-    latestCard: MutableIntState,
-    onUpdateState: (MutableIntState) -> Unit
+    modifier: Modifier
 ) {
     Column(
         modifier = modifier.padding(
@@ -33,20 +32,17 @@ fun DrawCard(
         // atm ottaa aina dmg 2% ja sit kortin arvon verran.
         //static 2% dmg idea, että tulevat kortit ei välttämättä ole dmg kortteja
         Button(onClick = {
-            handleCardEffect(latestCard, cardsOnHand, playerHealth, onUpdateState)
+            handleCardEffect(cardsOnHand, playerHealth)
         }) { Text("draw a card") }
     }
 }
 
 private fun handleCardEffect(
-    latestCardID: MutableIntState,
     cardsOnHand: MutableIntState,
-    playerHealth: MutableFloatState,
-    onUpdateState: (MutableIntState) -> Unit
+    playerHealth: MutableFloatState
 ) {
-    val newCardID = cardsSystem.pullRandomCardFromEntityDeck(playerId())
-    val newCard = cardsSystem.getCardComponentByEntity(newCardID)
-    val latestCard = cardsSystem.getCardComponentByEntity(latestCardID.intValue)
+    val newCard = cardsSystem.pullRandomCardFromEntityDeck(playerId())
+    val latestCard = cardsSystem.getCardComponentByTag(CardTag.LATEST_CARD)
 
     val latestCardEffectCardClassification: CardClassification =
         latestCard.second.classification
@@ -82,5 +78,5 @@ private fun handleCardEffect(
 
     cardsOnHand.intValue++
     playerHealth.floatValue += 2f
-    onUpdateState(newCardID)
+
 }

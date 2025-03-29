@@ -43,8 +43,8 @@ object TheGameHandler {
     //  it is meant only for brief debugging thing
     //  it is really baad
     @Deprecated("It is so baad that it should be already deprecated")
-    fun getRandomCard(): Map<Int, Any>? {
-        return componentManager.getEntitiesWithTags(listOf(CardTag.Card))
+    fun getRandomCard(): Map<Int, Any> {
+        return componentManager.getEntitiesWithTags(listOf(CardTag.CARD))
     }
 
 

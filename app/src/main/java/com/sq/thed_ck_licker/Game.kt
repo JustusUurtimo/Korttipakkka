@@ -30,7 +30,6 @@ fun Game(innerPadding: PaddingValues) {
 
     TheGameHandler.initTheGame()
     val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues()
-    var latestCard by rememberSaveable { mutableIntStateOf(-1) }
     val cardsOnHand = rememberSaveable { mutableIntStateOf(0) }
     val playerHealth =
         rememberSaveable { TheGameHandler.getPlayerHealthM() }
@@ -51,18 +50,14 @@ fun Game(innerPadding: PaddingValues) {
             CardDeck(navigationBarPadding)
             Box(modifier.align(Alignment.BottomCenter)) {
                 Column(modifier.padding(5.dp)) {
-                    if(latestCard != -1) {
-                        CardsOnHand(cardsOnHand, modifier, latestCard)
-                    }
+
+                    CardsOnHand(cardsOnHand, modifier)
+
                     DrawCard(
                         cardsOnHand,
                         playerHealth,
                         navigationBarPadding,
-                        modifier,
-                        latestCard,
-                        onUpdateState = { newCard ->
-                            latestCard = newCard
-                        }
+                        modifier
                     )
                 }
 

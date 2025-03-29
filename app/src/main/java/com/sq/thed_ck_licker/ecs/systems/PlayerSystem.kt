@@ -24,7 +24,7 @@ class PlayerSystem {
             10,
             "This card heals you",
             "Heal",
-            listOf(CardTag.Card)
+            listOf(CardTag.CARD)
         )
         val playerDamageCards = cardsSystem.initCards(
             5,
@@ -32,7 +32,7 @@ class PlayerSystem {
             10,
             "This card deals damage to you",
             "Damage",
-            listOf(CardTag.Card)
+            listOf(CardTag.CARD)
         )
         val playerMiscCards = cardsSystem.initCards(
             5,
@@ -40,7 +40,7 @@ class PlayerSystem {
             10,
             "This card does something",
             "Misc",
-            listOf(CardTag.Card)
+            listOf(CardTag.CARD)
         )
 
         return playerHealingCards + playerDamageCards + playerMiscCards

@@ -33,12 +33,16 @@ class ComponentManager {
         return components[componentClass]
     }
 
-    fun getEntitiesWithTags(tags: List<CardTag>): Map<Int, Any>? {
+    fun getEntitiesWithTags(tags: List<CardTag>): Map<Int, Any> {
         val entities = getEntitiesWithComponent(TagsComponent::class)
-        val matchingEntities = entities?.filter { (_, value) ->
-            (value as TagsComponent).tags.containsAll(tags)
+        if (entities == null) {
+            throw IllegalStateException("No entities with TagsComponent found")
+        } else {
+            val matchingEntities = entities.filter { (_, value) ->
+                (value as TagsComponent).tags.containsAll(tags)
+            }
+            return matchingEntities
         }
-        return matchingEntities
     }
 
     fun getAllComponentsOfEntity(entityId: Int): List<Any> {

@@ -17,9 +17,6 @@ class CardsSystem {
     // Component Manager
     private val componentManager = ComponentManager()
 
-    // List of all card entities
-    private val allCards = mutableListOf<Int>()
-
     fun initCards(
         amount: Int,
         cardImage: Int,
@@ -42,19 +39,24 @@ class CardsSystem {
     }
 
     fun getCardComponentByEntity(entity: Int): Pair<ImageComponent, CardEffect> {
-        val card = componentManager.getComponent(entity, ImageComponent::class)
+        val cardImage = componentManager.getComponent(entity, ImageComponent::class)
         val cardEffect = componentManager.getComponent(entity, CardEffect::class)
-        return Pair(card, cardEffect)
+        return Pair(cardImage, cardEffect)
+    }
+
+    fun getCardComponentByTag(tag: CardTag): Pair<ImageComponent, CardEffect> {
+        val entityMap = componentManager.getEntitiesWithTags(listOf(tag))
+        return getCardComponentByEntity(entityMap.keys.first())
     }
 
 
     // Function to pull a random card from deck
-    fun pullRandomCardFromEntityDeck(entity: Int): Int {
+    fun pullRandomCardFromEntityDeck(entity: Int): Pair<ImageComponent, CardEffect> {
         val drawDeck = componentManager.getComponent(entity, DrawDeckComponent::class)
         if (drawDeck.cardIds.isEmpty()) {
             throw IllegalStateException("No cards available")
         }
-        return drawDeck.cardIds.getRandomElement()
+        return getCardComponentByEntity(drawDeck.cardIds.getRandomElement())
     }
 
     fun applyCardEffect(
