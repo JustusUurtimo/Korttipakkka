@@ -2,13 +2,16 @@ package com.sq.thed_ck_licker.ecs.systems
 
 import androidx.compose.runtime.MutableFloatState
 import com.sq.thed_ck_licker.ecs.ComponentManager
+import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.components.CardEffect
 import com.sq.thed_ck_licker.ecs.components.CardEffectType
 import com.sq.thed_ck_licker.ecs.components.CardIdentity
+import com.sq.thed_ck_licker.ecs.components.HealthComponent
+import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 
 
 // Systems
-class CardEffectSystem {
+class CardEffectSystem(val componentManager: ComponentManager) {
     fun applyEffect(
         newCard: Pair<CardIdentity, CardEffect>,
         playerHealth: MutableFloatState,
@@ -53,4 +56,42 @@ class CardEffectSystem {
             playerHealth.floatValue -= (amount)
         }
     }
+
+
+    fun activateThing(theActivator: Int, theUsedThing: Int, theTarget: Int) {
+        val kohdeComponents = componentManager.getAllComponentsOfEntity(theUsedThing)
+
+        for (component in kohdeComponents) {
+            when (component) {
+                is ScoreComponent -> activateScore(theActivator, theUsedThing, theTarget)
+                is HealthComponent -> activateHealth(theActivator, theUsedThing, theTarget)
+                // Handle other components...
+                else -> println("Unknown component type, $component")
+            }
+        }
+    }
+
+    private fun activateScore(theActivator: Int, theUsedThing: Int, theTarget: Int) {
+//        val tekija = componentManager.getComponent(theActivator, ScoreComponent::class)
+
+        val kohde = componentManager.getComponent(theTarget, ScoreComponent::class)
+
+        val tehtava = componentManager.getComponent(theUsedThing, ScoreComponent::class)
+
+        kohde.score.intValue += tehtava.score.intValue
+    }
+
+    private fun activateHealth(theActivator: Int, theUsedThing: Int, theTarget: Int) {
+
+        val kohde = componentManager.getComponent(theTarget, HealthComponent::class)
+
+        val tehtava = componentManager.getComponent(theUsedThing, HealthComponent::class)
+
+        kohde.health.floatValue += tehtava.health.floatValue
+    }
+
+    fun playerTargetsPlayer(theUsedThingId: Int) {
+        return activateThing(getPlayerID(), theUsedThingId, getPlayerID())
+    }
+
 }

@@ -17,7 +17,7 @@ import com.sq.thed_ck_licker.ecs.components.CardEffectType
 import com.sq.thed_ck_licker.ecs.components.CardIdentity
 
 @Composable
-fun DrawCard(
+fun PullCardButton(
     cardsOnHand: MutableIntState,
     playerHealth: MutableFloatState,
     navigationBarPadding: PaddingValues,

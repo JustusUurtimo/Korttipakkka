@@ -20,13 +20,18 @@ import com.sq.thed_ck_licker.ecs.components.TagsComponent
 import com.sq.thed_ck_licker.ecs.systems.DescriptionSystem
 import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID as playerId
 
-//TODO apparently this kind a not good...
-// If you want I can do new refactor to make it better.
-// But I think this is good enough for now.
-// More about this https://developer.android.com/topic/architecture/ui-layer/stateholders
+/*TODO apparently this kind a not good...
+*  If you want I can do new refactor to make it better.
+*  But I think this is good enough for now.
+*  More about this https://developer.android.com/topic/architecture/ui-layer/stateholders
+*  aa
+*  Maybe this should be relicated for testing and prototyping
+*  since the systems should handle all the things
+ */
+@Deprecated("Everything should go through their own systems any way")
 object TheGameHandler {
     val cards = Cards()
-    private val componentManager = ComponentManager()
+    private val componentManager = ComponentManager.componentManager
     private val descriptionSystem = DescriptionSystem()
 
 
@@ -52,6 +57,7 @@ object TheGameHandler {
      * käytetään placeholderina kun ei ole vielä vedetty kortteja
      * Returns a default card pair with a placeholder card.
      */
+    @Deprecated("Use addDefaultCards instead")
     fun getDefaultCardPair(): Pair<CardIdentity, CardEffect> {
         val defaultCardPair = Pair(
             CardIdentity(-1, R.drawable.card_back),
@@ -69,6 +75,8 @@ object TheGameHandler {
         addDefaultCards()
     }
 
+    // TODO: All these card things should come from
+    //  some kind combination of card manager and card system
     private fun addDefaultCards(amount: Int = 7) {
         for (i in 1..amount) {
             val cardEntity = generateEntity()
@@ -91,6 +99,11 @@ object TheGameHandler {
         return componentManager.getEntitiesWithTags(listOf(CardTag.Card))
     }
 
+    fun getTestingCardSequence(): Sequence<Int> {
+        val eka = componentManager.getEntitiesWithTags(listOf(CardTag.Card))?.keys
+        return eka?.asSequence() ?: sequenceOf(2, 3, 4)
+    }
+
 
     fun initTheGame() {
         initPlayerAndSomeDefaultCards()
@@ -99,15 +112,10 @@ object TheGameHandler {
 
     }
 
-    fun getComponents(entityId: Int): List<Any> {
-        val aaa = componentManager.getAllComponentsOfEntity(entityId)
-        return aaa
-    }
-
     // TODO this is just temporary
     //  it is meant only for brief debugging thing
     //  it is really baad
-    fun getTheComponents(): ComponentManager {
+    fun componentManager(): ComponentManager {
         return componentManager
     }
 
