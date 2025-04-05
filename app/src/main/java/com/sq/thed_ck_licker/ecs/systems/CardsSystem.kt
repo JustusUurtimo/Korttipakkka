@@ -16,7 +16,7 @@ import kotlin.reflect.KClass
 
 class CardsSystem {
     // Component Manager
-    private val componentManager = ComponentManager()
+    private val componentManager = ComponentManager.componentManager
 
     fun <T : Any> initCards(
         amount: Int,
@@ -67,7 +67,7 @@ class CardsSystem {
         reverseDamage: Boolean,
         doubleTrouble: Boolean
     ) {
-        val cardEffectSystem = CardEffectSystem()
+        val cardEffectSystem = CardEffectSystem(componentManager)
         cardEffectSystem.applyEffect(
             newCard,
             playerHealth,

@@ -17,11 +17,13 @@ import com.sq.thed_ck_licker.ecs.components.CardTag
 import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID as playerId
 
 @Composable
-fun DrawCard(
+fun PullCardButton(
     cardsOnHand: MutableIntState,
     playerHealth: MutableFloatState,
     navigationBarPadding: PaddingValues,
-    modifier: Modifier
+    modifier: Modifier,
+    latestCard: Int,
+    onUpdateState: (Int) -> Unit
 ) {
     Column(
         modifier = modifier.padding(
@@ -32,11 +34,11 @@ fun DrawCard(
         // atm ottaa aina dmg 2% ja sit kortin arvon verran.
         //static 2% dmg idea, että tulevat kortit ei välttämättä ole dmg kortteja
         Button(onClick = {
-            handleCardEffect(cardsOnHand, playerHealth)
+            //handleCardEffect(cardsOnHand, playerHealth)
         }) { Text("draw a card") }
     }
 }
-
+/*
 private fun handleCardEffect(
     cardsOnHand: MutableIntState,
     playerHealth: MutableFloatState
@@ -79,3 +81,4 @@ private fun handleCardEffect(
     playerHealth.floatValue += 2f
 
 }
+*/
