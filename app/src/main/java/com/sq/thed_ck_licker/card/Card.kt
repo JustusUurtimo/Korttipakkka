@@ -65,7 +65,7 @@ class Cards {
         reverseDamage: Boolean,
         doubleTrouble: Boolean
     ) {
-        val cardEffectSystem = CardEffectSystem()
+        val cardEffectSystem = CardEffectSystem(componentManager)
         cardEffectSystem.applyEffect(
             newCard,
             playerHealth,

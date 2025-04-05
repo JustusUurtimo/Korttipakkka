@@ -59,7 +59,7 @@ class CardDisplaySystem(val componentManager: ComponentManager) {
         ) {
             Column(
                 modifier = Modifier
-                    .align(BiasAlignment(-0.0f, 0.7f))
+                    .align(BiasAlignment(0f, 0.7f))
                     .fillMaxWidth()
             ) {
                 Text(
@@ -67,7 +67,6 @@ class CardDisplaySystem(val componentManager: ComponentManager) {
                     modifier = Modifier
                         .background(color = Color.Cyan)
                         .fillMaxWidth()
-//                        .scale(0.7f)
                 )
                 Text(
                     text = description,
@@ -75,7 +74,6 @@ class CardDisplaySystem(val componentManager: ComponentManager) {
                     modifier = Modifier
                         .background(color = Color.Yellow)
                         .fillMaxWidth()
-//                        .scale(0.7f),
                 )
             }
         }
@@ -86,8 +84,7 @@ class CardDisplaySystem(val componentManager: ComponentManager) {
     fun CardsOnHandView(
         cardsDrawCount: MutableIntState,
         modifier: Modifier,
-        cardId: Int,
-        cardDisplaySystem: CardDisplaySystem
+        cardId: Int
     ) {
 
         BadgedBox(
@@ -102,9 +99,8 @@ class CardDisplaySystem(val componentManager: ComponentManager) {
             modifier = modifier
                 .width(120.dp)
                 .height(170.dp)
-                .background(color = Color.Magenta)
-//            .offset(20.dp, 0.dp)
-//            .scale(0.9f)
+                .background(color = Color.Magenta),
+
 
         ) {
             // TODO: There might be some modifier that "just rounds the corners"
@@ -112,9 +108,12 @@ class CardDisplaySystem(val componentManager: ComponentManager) {
             Card(
                 modifier = modifier
                     .background(color = Color.Green)
-                    .scale(0.99f)
+                    .scale(0.99f),
+                onClick = {
+
+                }
             ) {
-                cardDisplaySystem.EntityDisplay(cardId)
+                EntityDisplay(cardId)
             }
         }
     }
@@ -153,8 +152,7 @@ fun CardsOnHandViewPreview(
     displaySystem.CardsOnHandView(
         cardCounter,
         Modifier,
-        cardEntity,
-        CardDisplaySystem(TheGameHandler.componentManager())
+        cardEntity
     )
 }
 

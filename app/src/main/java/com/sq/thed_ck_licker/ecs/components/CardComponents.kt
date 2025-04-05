@@ -38,4 +38,3 @@ data class NameComponent(val name: String = "Placeholder")
 @Deprecated("I think will decide against this. \n And each tag should have its own component")
 data class TagsComponent(val tags: List<CardTag> = emptyList())
 
-

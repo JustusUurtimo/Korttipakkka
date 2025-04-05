@@ -31,7 +31,7 @@ import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID as playerId
 @Deprecated("Everything should go through their own systems any way")
 object TheGameHandler {
     val cards = Cards()
-    private val componentManager = ComponentManager()
+    private val componentManager = ComponentManager.componentManager
     private val descriptionSystem = DescriptionSystem()
 
 
@@ -75,6 +75,8 @@ object TheGameHandler {
         addDefaultCards()
     }
 
+    // TODO: All these card things should come from
+    //  some kind combination of card manager and card system
     private fun addDefaultCards(amount: Int = 7) {
         for (i in 1..amount) {
             val cardEntity = generateEntity()
@@ -108,11 +110,6 @@ object TheGameHandler {
         descriptionSystem.updateAllDescriptions(componentManager)
 
 
-    }
-
-    fun getComponents(entityId: Int): List<Any> {
-        val aaa = componentManager.getAllComponentsOfEntity(entityId)
-        return aaa
     }
 
     // TODO this is just temporary

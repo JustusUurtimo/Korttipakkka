@@ -6,6 +6,11 @@ import kotlin.reflect.KClass
 
 // Component Manager
 class ComponentManager {
+
+    companion object {
+         val componentManager: ComponentManager = ComponentManager()
+    }
+
     private val components = mutableMapOf<KClass<*>, MutableMap<Int, Any>>()
 
     fun <T : Any> addComponent(entity: Int, component: T) {

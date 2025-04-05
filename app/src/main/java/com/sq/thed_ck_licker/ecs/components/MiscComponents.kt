@@ -14,6 +14,6 @@ data class HealthComponent(var health: MutableFloatState, val maxHealth: Mutable
     )
 }
 
-data class ScoreComponent(var score: MutableIntState) {
+data class ScoreComponent(var score: MutableIntState, val funkkari: () -> Unit ={}) {
     constructor(score: Int = 0) : this(mutableIntStateOf(score))
 }
