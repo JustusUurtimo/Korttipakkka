@@ -118,7 +118,7 @@ object TheGameHandler {
     // TODO this is just temporary
     //  it is meant only for brief debugging thing
     //  it is really baad
-    fun getTheComponents(): ComponentManager {
+    fun componentManager(): ComponentManager {
         return componentManager
     }
 

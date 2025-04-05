@@ -21,11 +21,11 @@ import androidx.compose.ui.unit.dp
 import com.sq.thed_ck_licker.ecs.TheGameHandler
 import com.sq.thed_ck_licker.ecs.TheGameHandler.getDefaultCardPair
 import com.sq.thed_ck_licker.ecs.systems.CardDisplaySystem
+import com.sq.thed_ck_licker.helpers.getRandomElement
 import com.sq.thed_ck_licker.player.HealthBar
 import com.sq.thed_ck_licker.player.ScoreDisplayer
-import com.sq.thed_ck_licker.ui.components.buttons.DrawCard
+import com.sq.thed_ck_licker.ui.components.buttons.PullCardButton
 import com.sq.thed_ck_licker.ui.components.views.CardDeck
-import com.sq.thed_ck_licker.ui.components.views.CardsOnHandView
 
 
 @Composable
@@ -41,14 +41,12 @@ fun Game(innerPadding: PaddingValues) {
     // TODO here probably should be viewModel from about the game state data or something like that
     //  Something about state holder and all that
 
-    val cardDisplaySystem = CardDisplaySystem(TheGameHandler.getTheComponents())
+    val cardDisplaySystem = CardDisplaySystem(TheGameHandler.componentManager())
 
     val modifier = Modifier
 
     Column(modifier.fillMaxWidth()) {
 
-//        val displaySystem = CardDisplaySystem(TheGameHandler.getTheComponents())
-//        displaySystem.EntityDisplay(TheGameHandler.getRandomCard()!!.keys.first())
         // tällä toteutuksella hp menee takas täyteen ku se menee alle 0 :D
         // Se voinee miettiä kuntoon, sit ku saadaan game state käyntiin paremmin
         HealthBar(playerHealth.floatValue, modifier.padding(innerPadding))
@@ -59,12 +57,12 @@ fun Game(innerPadding: PaddingValues) {
             CardDeck(navigationBarPadding)
             Box(modifier.align(Alignment.BottomCenter)) {
                 Column(modifier.padding(5.dp)) {
-                    CardsOnHandView(
+                    cardDisplaySystem.CardsOnHandView(
                         cardsOnHand,
                         modifier,
-                        TheGameHandler.getRandomCard()!!.keys.first(), cardDisplaySystem
+                        TheGameHandler.getRandomCard()!!.keys.getRandomElement(), cardDisplaySystem
                     )
-                    DrawCard(
+                    PullCardButton(
                         cardsOnHand,
                         playerHealth,
                         navigationBarPadding,
