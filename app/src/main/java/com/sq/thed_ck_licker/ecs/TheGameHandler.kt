@@ -28,6 +28,7 @@ import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID as playerId
 *  Maybe this should be relicated for testing and prototyping
 *  since the systems should handle all the things
  */
+@Deprecated("Everything should go through their own systems any way")
 object TheGameHandler {
     val cards = Cards()
     private val componentManager = ComponentManager()
