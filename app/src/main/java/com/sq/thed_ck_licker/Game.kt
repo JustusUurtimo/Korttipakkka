@@ -23,6 +23,7 @@ import com.sq.thed_ck_licker.ecs.ComponentManager
 import com.sq.thed_ck_licker.ecs.TheGameHandler
 import com.sq.thed_ck_licker.ecs.TheGameHandler.getDefaultCardPair
 import com.sq.thed_ck_licker.ecs.systems.CardDisplaySystem
+import com.sq.thed_ck_licker.ecs.systems.CardEffectSystem
 import com.sq.thed_ck_licker.helpers.getRandomElement
 import com.sq.thed_ck_licker.player.HealthBar
 import com.sq.thed_ck_licker.player.ScoreDisplayer
@@ -35,7 +36,6 @@ fun Game(innerPadding: PaddingValues) {
 
     TheGameHandler.initTheGame()
     val componentManager = ComponentManager.componentManager
-//    val compMan = ComponentManager.componentManager
     val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues()
     var latestCard by rememberSaveable { mutableStateOf(getDefaultCardPair()) }
     val cardsOnHand = rememberSaveable { mutableIntStateOf(0) }
@@ -45,6 +45,8 @@ fun Game(innerPadding: PaddingValues) {
     // TODO here probably should be viewModel from about the game state data or something like that
     //  Something about state holder and all that
     val cardDisplaySystem = CardDisplaySystem(componentManager)
+
+    val cardEffectSystem = CardEffectSystem(componentManager)
 
     val modifier = Modifier
 
@@ -63,7 +65,8 @@ fun Game(innerPadding: PaddingValues) {
                     cardDisplaySystem.CardsOnHandView(
                         cardsOnHand,
                         modifier,
-                        TheGameHandler.getRandomCard()!!.keys.getRandomElement()
+                        TheGameHandler.getRandomCard()!!.keys.getRandomElement(),
+                        cardEffectSystem
                     )
                     PullCardButton(
                         cardsOnHand,

@@ -12,6 +12,8 @@ import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 
 // Systems
 class CardEffectSystem(val componentManager: ComponentManager) {
+
+    @Deprecated("Should be done via ActivateThing")
     fun applyEffect(
         newCard: Pair<CardIdentity, CardEffect>,
         playerHealth: MutableFloatState,
@@ -34,6 +36,8 @@ class CardEffectSystem(val componentManager: ComponentManager) {
         }
     }
 
+
+    @Deprecated("Should be done via ActivateThing")
     private fun applyDamage(
         playerHealth: MutableFloatState,
         amount: Float,
@@ -49,6 +53,7 @@ class CardEffectSystem(val componentManager: ComponentManager) {
         }
     }
 
+    @Deprecated("Should be done via ActivateThing")
     private fun applyHeal(playerHealth: MutableFloatState, amount: Float, doubleTrouble: Boolean) {
         if (doubleTrouble) {
             playerHealth.floatValue -= (amount * 2)
@@ -64,21 +69,23 @@ class CardEffectSystem(val componentManager: ComponentManager) {
         for (component in kohdeComponents) {
             when (component) {
                 is ScoreComponent -> activateScore(theActivator, theUsedThing, theTarget)
+//                is ScoreComponent ->  component.plus(theTarget, componentManager) // väärin päin
                 is HealthComponent -> activateHealth(theActivator, theUsedThing, theTarget)
                 // Handle other components...
-                else -> println("Unknown component type, $component")
+                else -> println("Unknown component type: $component")
             }
         }
     }
 
     private fun activateScore(theActivator: Int, theUsedThing: Int, theTarget: Int) {
-//        val tekija = componentManager.getComponent(theActivator, ScoreComponent::class)
+        val tekija = componentManager.getComponent(theActivator, ScoreComponent::class)
 
         val kohde = componentManager.getComponent(theTarget, ScoreComponent::class)
 
         val tehtava = componentManager.getComponent(theUsedThing, ScoreComponent::class)
-
+        println("kohde.score.intValue ${kohde.score.intValue}")
         kohde.score.intValue += tehtava.score.intValue
+        println("kohde.score.intValue ${kohde.score.intValue}")
     }
 
     private fun activateHealth(theActivator: Int, theUsedThing: Int, theTarget: Int) {

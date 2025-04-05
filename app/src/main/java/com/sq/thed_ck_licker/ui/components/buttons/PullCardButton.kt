@@ -34,7 +34,7 @@ fun PullCardButton(
         // atm ottaa aina dmg 2% ja sit kortin arvon verran.
         //static 2% dmg idea, että tulevat kortit ei välttämättä ole dmg kortteja
         Button(onClick = {
-            handleCardEffect(latestCard, cardsOnHand, playerHealth, onUpdateState)
+//            handleCardEffect(latestCard, cardsOnHand, playerHealth, onUpdateState)
         }) { Text("draw a card") }
     }
 }

@@ -15,6 +15,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.BiasAlignment
@@ -84,8 +85,15 @@ class CardDisplaySystem(val componentManager: ComponentManager) {
     fun CardsOnHandView(
         cardsDrawCount: MutableIntState,
         modifier: Modifier,
-        cardId: Int
+        cardId: Int,
+        cardEffectSystem: CardEffectSystem
     ) {
+        val thing =
+            SideEffect {
+
+                cardEffectSystem.playerTargetsPlayer(cardId)
+            }
+        val asd = {cardEffectSystem.playerTargetsPlayer(cardId)}
 
         BadgedBox(
             badge = {
@@ -102,16 +110,15 @@ class CardDisplaySystem(val componentManager: ComponentManager) {
                 .background(color = Color.Magenta),
 
 
-        ) {
+            ) {
             // TODO: There might be some modifier that "just rounds the corners"
             //  And then it could be just passed via modifier passing or something
             Card(
                 modifier = modifier
                     .background(color = Color.Green)
                     .scale(0.99f),
-                onClick = {
+                onClick = asd
 
-                }
             ) {
                 EntityDisplay(cardId)
             }
@@ -126,7 +133,7 @@ class CardDisplaySystem(val componentManager: ComponentManager) {
 @Composable
 fun DisplayRandomCardPreview() {
     TheGameHandler.initTheGame()
-    val displaySystem = CardDisplaySystem(TheGameHandler.componentManager())
+    val displaySystem = CardDisplaySystem(ComponentManager.componentManager)
     Box(
         modifier = Modifier
             .size(500.dp)
@@ -137,7 +144,6 @@ fun DisplayRandomCardPreview() {
 }
 
 
-
 @Preview(showBackground = true)
 @Composable
 fun CardsOnHandViewPreview(
@@ -146,13 +152,15 @@ fun CardsOnHandViewPreview(
         limit = 1
     ) cardEntity: Int
 ) {
-    val displaySystem = CardDisplaySystem(TheGameHandler.componentManager())
+    val displaySystem = CardDisplaySystem(ComponentManager.componentManager)
+    val cardEffectSystem = CardEffectSystem(ComponentManager.componentManager)
 
     val cardCounter = remember { mutableIntStateOf(69) }
     displaySystem.CardsOnHandView(
         cardCounter,
         Modifier,
-        cardEntity
+        cardEntity,
+        cardEffectSystem
     )
 }
 
