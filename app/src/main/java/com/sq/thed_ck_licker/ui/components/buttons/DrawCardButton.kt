@@ -42,7 +42,6 @@ private fun handleCardEffect(
     playerHealth: MutableFloatState
 ) {
     val newCard = cardsSystem.pullRandomCardFromEntityDeck(playerId())
-    val latestCard = cardsSystem.getCardComponentByTag(CardTag.LATEST_CARD)
 
     val latestCardEffectCardClassification: CardClassification =
         latestCard.second.classification

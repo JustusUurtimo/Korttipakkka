@@ -19,12 +19,13 @@ class PlayerSystem {
 
     private fun initPlayerDeck(): List<Int> {
         val playerHealingCards = cardsSystem.initCards(
-            5,
             R.drawable.heal_10,
             10,
             "This card heals you",
             "Heal",
-            listOf(CardTag.CARD)
+            listOf(CardTag.CARD),
+            cardComponentValue = 10,
+            cardComponent = HealthComponent(10f, 0f)
         )
         val playerDamageCards = cardsSystem.initCards(
             5,

@@ -14,7 +14,7 @@ enum class CardEffectValue(val value: Float) {
     MAX_HP_2(2f), DOUBLE_TROUBLE(0f), REVERSE_DAMAGE(0f), SHOP_COUPON(100f)
 }
 
-enum class CardTag {CARD, LATEST_CARD, NEW_CARD}
+enum class CardTag {CARD}
 
 @Parcelize
 data class CardEffect(
@@ -29,4 +29,4 @@ data class DescriptionComponent(var description: String = "This is simple placeh
 
 data class NameComponent(val name: String = "Placeholder")
 
-data class TagsComponent(val tagsState: List<CardTag> = mutableStatgeOf(emptyList()))
+data class TagsComponent(val tags: List<CardTag> = emptyList())

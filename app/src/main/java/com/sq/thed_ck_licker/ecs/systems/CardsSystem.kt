@@ -12,24 +12,26 @@ import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent
 import com.sq.thed_ck_licker.ecs.generateEntity
 import com.sq.thed_ck_licker.helpers.getRandomElement
+import kotlin.reflect.KClass
 
 class CardsSystem {
     // Component Manager
     private val componentManager = ComponentManager()
 
-    fun initCards(
+    fun <T : Any> initCards(
         amount: Int,
         cardImage: Int,
-        score: Int,
         description: String,
         name: String,
-        tags: List<CardTag>
+        tags: List<CardTag>,
+        cardComponentValue: Int,
+        cardComponent: (Int) -> T
     ): List<Int> {
         val cardIds: MutableList<Int> = mutableListOf()
         for (i in 1..amount) {
             val cardEntity = generateEntity()
             componentManager.addComponent(cardEntity, ImageComponent(cardImage))
-            componentManager.addComponent(cardEntity, ScoreComponent(score))
+            componentManager.addComponent(cardEntity, cardComponent(cardComponentValue))
             componentManager.addComponent(cardEntity, DescriptionComponent(description))
             componentManager.addComponent(cardEntity, NameComponent(name))
             componentManager.addComponent(cardEntity, TagsComponent(tags))
