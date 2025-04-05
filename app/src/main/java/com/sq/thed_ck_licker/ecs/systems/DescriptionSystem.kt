@@ -9,8 +9,11 @@ class DescriptionSystem {
     // But that is future problem
     // We will probably want method for updating range of entities too.
     fun updateAllDescriptions(componentManager: ComponentManager) {
+        print("#######################################################")
         val entitiesWithDescription =
             componentManager.getEntitiesWithComponent(DescriptionComponent::class)
+        print(entitiesWithDescription)
+        print("#######################################################")
         /* TODO this needs to go over them and check what other components they have
         *   For example if they have ScoreComponent, description should say "Score: ${scoreComponent.score}"
         *   and so on.
@@ -30,6 +33,9 @@ class DescriptionSystem {
          */
         if (entitiesWithDescription != null) {
             for (entity in entitiesWithDescription) {
+                print("####################################################")
+                print(entity)
+                print("####################################################")
                 val comp = componentManager.getComponent(entity.key, ScoreComponent::class)
                 val descComp =
                     componentManager.getComponent(entity.key, DescriptionComponent::class)

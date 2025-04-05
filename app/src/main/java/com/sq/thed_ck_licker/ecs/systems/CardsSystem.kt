@@ -24,14 +24,13 @@ class CardsSystem {
         description: String,
         name: String,
         tags: List<CardTag>,
-        cardComponentValue: Int,
-        cardComponent: (Int) -> T
+        cardComponent: T
     ): List<Int> {
         val cardIds: MutableList<Int> = mutableListOf()
-        for (i in 1..amount) {
+        repeat (amount) {
             val cardEntity = generateEntity()
             componentManager.addComponent(cardEntity, ImageComponent(cardImage))
-            componentManager.addComponent(cardEntity, cardComponent(cardComponentValue))
+            componentManager.addComponent(cardEntity, cardComponent)
             componentManager.addComponent(cardEntity, DescriptionComponent(description))
             componentManager.addComponent(cardEntity, NameComponent(name))
             componentManager.addComponent(cardEntity, TagsComponent(tags))
