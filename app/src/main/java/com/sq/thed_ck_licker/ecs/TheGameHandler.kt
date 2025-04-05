@@ -20,10 +20,14 @@ import com.sq.thed_ck_licker.ecs.components.TagsComponent
 import com.sq.thed_ck_licker.ecs.systems.DescriptionSystem
 import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID as playerId
 
-//TODO apparently this kind a not good...
-// If you want I can do new refactor to make it better.
-// But I think this is good enough for now.
-// More about this https://developer.android.com/topic/architecture/ui-layer/stateholders
+/*TODO apparently this kind a not good...
+*  If you want I can do new refactor to make it better.
+*  But I think this is good enough for now.
+*  More about this https://developer.android.com/topic/architecture/ui-layer/stateholders
+*  aa
+*  Maybe this should be relicated for testing and prototyping
+*  since the systems should handle all the things
+ */
 object TheGameHandler {
     val cards = Cards()
     private val componentManager = ComponentManager()
@@ -90,6 +94,11 @@ object TheGameHandler {
     @Deprecated("It is so baad that it should be already deprecated")
     fun getRandomCard(): Map<Int, Any>? {
         return componentManager.getEntitiesWithTags(listOf(CardTag.Card))
+    }
+
+    fun getTestingCardSequence(): Sequence<Int> {
+        val eka = componentManager.getEntitiesWithTags(listOf(CardTag.Card))?.keys
+        return eka?.asSequence() ?: sequenceOf(2, 3, 4)
     }
 
 

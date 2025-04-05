@@ -25,7 +25,7 @@ import com.sq.thed_ck_licker.player.HealthBar
 import com.sq.thed_ck_licker.player.ScoreDisplayer
 import com.sq.thed_ck_licker.ui.components.buttons.DrawCard
 import com.sq.thed_ck_licker.ui.components.views.CardDeck
-import com.sq.thed_ck_licker.ui.components.views.CardsOnHand3
+import com.sq.thed_ck_licker.ui.components.views.CardsOnHandView
 
 
 @Composable
@@ -59,7 +59,7 @@ fun Game(innerPadding: PaddingValues) {
             CardDeck(navigationBarPadding)
             Box(modifier.align(Alignment.BottomCenter)) {
                 Column(modifier.padding(5.dp)) {
-                    CardsOnHand3(
+                    CardsOnHandView(
                         cardsOnHand,
                         modifier,
                         TheGameHandler.getRandomCard()!!.keys.first(), cardDisplaySystem

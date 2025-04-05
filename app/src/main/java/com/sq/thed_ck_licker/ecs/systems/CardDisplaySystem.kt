@@ -21,6 +21,7 @@ import com.sq.thed_ck_licker.ecs.TheGameHandler
 import com.sq.thed_ck_licker.ecs.components.DescriptionComponent
 import com.sq.thed_ck_licker.ecs.components.ImageComponent
 import com.sq.thed_ck_licker.ecs.components.NameComponent
+import com.sq.thed_ck_licker.helpers.getRandomElement
 
 class CardDisplaySystem(val componentManager: ComponentManager) {
 
@@ -82,7 +83,7 @@ fun DisplayACardPreview2() {
             .size(500.dp)
             .background(Color.Magenta)
     ) {
-        displaySystem.EntityDisplay(TheGameHandler.getRandomCard()!!.keys.first())
+        displaySystem.EntityDisplay(TheGameHandler.getRandomCard()!!.keys.getRandomElement())
     }
 }
 
