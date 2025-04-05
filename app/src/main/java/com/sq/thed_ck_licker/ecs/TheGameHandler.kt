@@ -52,6 +52,7 @@ object TheGameHandler {
      * käytetään placeholderina kun ei ole vielä vedetty kortteja
      * Returns a default card pair with a placeholder card.
      */
+    @Deprecated("Use addDefaultCards instead")
     fun getDefaultCardPair(): Pair<CardIdentity, CardEffect> {
         val defaultCardPair = Pair(
             CardIdentity(-1, R.drawable.card_back),

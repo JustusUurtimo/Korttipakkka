@@ -7,6 +7,7 @@ import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 class DescriptionSystem {
     // In future we may want to have version to update just single entity too
     // But that is future problem
+    // We will probably want method for updating range of entities too.
     fun updateAllDescriptions(componentManager: ComponentManager) {
         val entitiesWithDescription =
             componentManager.getEntitiesWithComponent(DescriptionComponent::class)

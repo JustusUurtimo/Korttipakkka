@@ -20,11 +20,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.sq.thed_ck_licker.ecs.TheGameHandler
 import com.sq.thed_ck_licker.ecs.TheGameHandler.getDefaultCardPair
+import com.sq.thed_ck_licker.ecs.systems.CardDisplaySystem
 import com.sq.thed_ck_licker.player.HealthBar
 import com.sq.thed_ck_licker.player.ScoreDisplayer
 import com.sq.thed_ck_licker.ui.components.buttons.DrawCard
 import com.sq.thed_ck_licker.ui.components.views.CardDeck
-import com.sq.thed_ck_licker.ui.components.views.CardsOnHand2
+import com.sq.thed_ck_licker.ui.components.views.CardsOnHand3
 
 
 @Composable
@@ -40,9 +41,14 @@ fun Game(innerPadding: PaddingValues) {
     // TODO here probably should be viewModel from about the game state data or something like that
     //  Something about state holder and all that
 
+    val cardDisplaySystem = CardDisplaySystem(TheGameHandler.getTheComponents())
+
     val modifier = Modifier
 
     Column(modifier.fillMaxWidth()) {
+
+//        val displaySystem = CardDisplaySystem(TheGameHandler.getTheComponents())
+//        displaySystem.EntityDisplay(TheGameHandler.getRandomCard()!!.keys.first())
         // tällä toteutuksella hp menee takas täyteen ku se menee alle 0 :D
         // Se voinee miettiä kuntoon, sit ku saadaan game state käyntiin paremmin
         HealthBar(playerHealth.floatValue, modifier.padding(innerPadding))
@@ -53,7 +59,11 @@ fun Game(innerPadding: PaddingValues) {
             CardDeck(navigationBarPadding)
             Box(modifier.align(Alignment.BottomCenter)) {
                 Column(modifier.padding(5.dp)) {
-                    CardsOnHand2(cardsOnHand, modifier, latestCard)
+                    CardsOnHand3(
+                        cardsOnHand,
+                        modifier,
+                        TheGameHandler.getRandomCard()!!.keys.first(), cardDisplaySystem
+                    )
                     DrawCard(
                         cardsOnHand,
                         playerHealth,

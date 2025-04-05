@@ -13,13 +13,13 @@ enum class CardEffectValue(val value: Float) {
     MAX_HP_2(2f), DOUBLE_TROUBLE(0f), REVERSE_DAMAGE(0f), SHOP_COUPON(100f)
 }
 
-enum class CardTag {Card}
+@Deprecated("I think will decide against this. \n And each tag should have its own component")
+enum class CardTag { Card }
 
 @Deprecated("This should not be used, instead use ImageComponent")
 @Parcelize
 data class CardIdentity(
-    val id: Int,
-    @DrawableRes val cardImage: Int
+    val id: Int, @DrawableRes val cardImage: Int
 ) : Parcelable
 
 @Parcelize
@@ -35,4 +35,7 @@ data class DescriptionComponent(var description: String = "This is simple placeh
 
 data class NameComponent(val name: String = "Placeholder")
 
+@Deprecated("I think will decide against this. \n And each tag should have its own component")
 data class TagsComponent(val tags: List<CardTag> = emptyList())
+
+
