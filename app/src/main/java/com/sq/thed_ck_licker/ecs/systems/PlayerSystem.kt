@@ -9,9 +9,9 @@ import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 
-class PlayerSystem {
+class PlayerSystem(private val componentManager: ComponentManager) {
 
-    fun initPlayer(componentManager: ComponentManager) {
+    fun initPlayer() {
         componentManager.addComponent(getPlayerID(), HealthComponent(0f, 100f))
         componentManager.addComponent(getPlayerID(), ScoreComponent())
         componentManager.addComponent(getPlayerID(), DrawDeckComponent(initPlayerDeck()))

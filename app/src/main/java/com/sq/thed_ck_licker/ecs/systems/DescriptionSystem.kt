@@ -4,10 +4,10 @@ import com.sq.thed_ck_licker.ecs.ComponentManager
 import com.sq.thed_ck_licker.ecs.components.DescriptionComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 
-class DescriptionSystem {
+class DescriptionSystem(private val componentManager: ComponentManager) {
     // In future we may want to have version to update just single entity too
     // But that is future problem
-    fun updateAllDescriptions(componentManager: ComponentManager) {
+    fun updateAllDescriptions() {
         val entitiesWithDescription =
             componentManager.getEntitiesWithComponent(DescriptionComponent::class)
         /* TODO this needs to go over them and check what other components they have

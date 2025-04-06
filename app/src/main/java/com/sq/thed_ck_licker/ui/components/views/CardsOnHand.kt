@@ -20,19 +20,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.sq.thed_ck_licker.ecs.ComponentManager
 import com.sq.thed_ck_licker.ecs.TheGameHandler
 import com.sq.thed_ck_licker.ecs.components.DescriptionComponent
 import com.sq.thed_ck_licker.ecs.components.ImageComponent
 import com.sq.thed_ck_licker.ecs.components.NameComponent
-import com.sq.thed_ck_licker.ecs.systems.CardsSystem
 
 
 @Composable
 fun CardsOnHand(
     cardsOnHand: MutableIntState,
     modifier: Modifier,
-    latestCardID: Int
+    latestCard: Int
 ) {
     //TODO we should really do "entity carry" it should be just holder class that holds entity id
     // and all its components, it should not be used for data manipulation only to present it in places
@@ -69,8 +67,10 @@ fun CardsOnHand(
                             Box() {
                                 Image(
                                     painter = painterResource(
-                                        cards
-
+                                        (TheGameHandler.getTheComponents().getComponent(
+                                            latestCard,
+                                            ImageComponent::class
+                                        ).cardImage)
                                     ),
                                     contentDescription = "Card drawn",
                                     modifier = modifier
@@ -81,13 +81,13 @@ fun CardsOnHand(
                                     Spacer(modifier.height(100.dp))
                                     Text(
                                         text = TheGameHandler.getTheComponents().getComponent(
-                                            latestCardID.key,
+                                            latestCard,
                                             NameComponent::class
                                         ).name
                                     )
                                     Text(
                                         text = TheGameHandler.getTheComponents().getComponent(
-                                            randomCard.key,
+                                            latestCard,
                                             DescriptionComponent::class
                                         ).description,
                                         softWrap = true,

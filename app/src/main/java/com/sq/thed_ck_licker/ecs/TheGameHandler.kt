@@ -15,10 +15,10 @@ import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID as playerId
 // But I think this is good enough for now.
 // More about this https://developer.android.com/topic/architecture/ui-layer/stateholders
 object TheGameHandler {
-    val cardsSystem = CardsSystem()
     private val componentManager = ComponentManager()
-    private val playerSystem = PlayerSystem()
-    private val descriptionSystem = DescriptionSystem()
+    val cardsSystem = CardsSystem(componentManager)
+    private val playerSystem = PlayerSystem(componentManager)
+    private val descriptionSystem = DescriptionSystem(componentManager)
 
 
     fun getPlayerHealthM(): MutableFloatState {
@@ -49,8 +49,8 @@ object TheGameHandler {
 
 
     fun initTheGame() {
-        playerSystem.initPlayer(componentManager)
-        descriptionSystem.updateAllDescriptions(componentManager)
+        playerSystem.initPlayer()
+        descriptionSystem.updateAllDescriptions()
     }
 
     fun getComponents(entityId: Int): List<Any> {

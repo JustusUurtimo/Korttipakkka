@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -24,12 +25,14 @@ import com.sq.thed_ck_licker.ui.components.buttons.DrawCard
 import com.sq.thed_ck_licker.ui.components.views.CardDeck
 import com.sq.thed_ck_licker.ui.components.views.CardsOnHand
 
+const val NO_CARD = -1
 
 @Composable
 fun Game(innerPadding: PaddingValues) {
 
     TheGameHandler.initTheGame()
     val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues()
+    var latestCard by rememberSaveable { mutableIntStateOf(NO_CARD) }
     val cardsOnHand = rememberSaveable { mutableIntStateOf(0) }
     val playerHealth =
         rememberSaveable { TheGameHandler.getPlayerHealthM() }
@@ -51,13 +54,19 @@ fun Game(innerPadding: PaddingValues) {
             Box(modifier.align(Alignment.BottomCenter)) {
                 Column(modifier.padding(5.dp)) {
 
-                    CardsOnHand(cardsOnHand, modifier)
+                    if (latestCard != NO_CARD) {
+                        (CardsOnHand(cardsOnHand, modifier, latestCard))
+                    }
 
                     DrawCard(
                         cardsOnHand,
                         playerHealth,
                         navigationBarPadding,
-                        modifier
+                        modifier,
+                        latestCard,
+                        onUpdateState = { newCard ->
+                            latestCard = newCard
+                        }
                     )
                 }
 

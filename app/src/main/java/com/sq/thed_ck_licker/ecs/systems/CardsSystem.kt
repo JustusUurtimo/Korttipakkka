@@ -13,10 +13,8 @@ import com.sq.thed_ck_licker.ecs.components.TagsComponent
 import com.sq.thed_ck_licker.ecs.generateEntity
 import com.sq.thed_ck_licker.helpers.getRandomElement
 
-class CardsSystem {
-    // Component Manager
-    private val componentManager = ComponentManager()
-
+class CardsSystem (private val componentManager: ComponentManager) {
+    //TODO add card effect?
     fun initCards(
         amount: Int,
         cardImage: Int,
@@ -38,20 +36,13 @@ class CardsSystem {
         return cardIds
     }
 
-    fun getCardComponentByEntity(entity: Int): Pair<ImageComponent, CardEffect> {
+    fun getCardComponentByEntity(entity: Int): Triple<ImageComponent, CardEffect, Int> {
         val cardImage = componentManager.getComponent(entity, ImageComponent::class)
         val cardEffect = componentManager.getComponent(entity, CardEffect::class)
-        return Pair(cardImage, cardEffect)
+        return Triple(cardImage, cardEffect, entity)
     }
 
-    fun getCardComponentByTag(tag: CardTag): Pair<ImageComponent, CardEffect> {
-        val entityMap = componentManager.getEntitiesWithTags(listOf(tag))
-        return getCardComponentByEntity(entityMap.keys.first())
-    }
-
-
-    // Function to pull a random card from deck
-    fun pullRandomCardFromEntityDeck(entity: Int): Pair<ImageComponent, CardEffect> {
+    fun pullRandomCardFromEntityDeck(entity: Int): Triple<ImageComponent, CardEffect, Int> {
         val drawDeck = componentManager.getComponent(entity, DrawDeckComponent::class)
         if (drawDeck.cardIds.isEmpty()) {
             throw IllegalStateException("No cards available")
@@ -60,7 +51,7 @@ class CardsSystem {
     }
 
     fun applyCardEffect(
-        newCard: Pair<ImageComponent, CardEffect>,
+        newCard: Triple<ImageComponent, CardEffect, Int>,
         playerHealth: MutableFloatState,
         reverseDamage: Boolean,
         doubleTrouble: Boolean
@@ -69,7 +60,6 @@ class CardsSystem {
         cardEffectSystem.applyEffect(
             newCard,
             playerHealth,
-            componentManager,
             reverseDamage,
             doubleTrouble
         )
