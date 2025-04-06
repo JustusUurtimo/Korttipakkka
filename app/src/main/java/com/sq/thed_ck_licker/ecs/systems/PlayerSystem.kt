@@ -21,26 +21,26 @@ class PlayerSystem(private val componentManager: ComponentManager) {
         val playerHealingCards = cardsSystem.initCards(
             5,
             R.drawable.heal_10,
-            10,
             "This card heals you",
             "Heal",
-            listOf(CardTag.CARD)
+            listOf(CardTag.CARD),
+            cardComponent = HealthComponent(5f, 0f)
         )
         val playerDamageCards = cardsSystem.initCards(
             5,
             R.drawable.damage_6,
-            10,
             "This card deals damage to you",
             "Damage",
-            listOf(CardTag.CARD)
+            listOf(CardTag.CARD),
+            cardComponent = HealthComponent(-5f, 0f)
         )
         val playerMiscCards = cardsSystem.initCards(
             5,
             R.drawable.shop_coupon,
-            10,
             "This card does something",
             "Misc",
-            listOf(CardTag.CARD)
+            listOf(CardTag.CARD),
+            cardComponent = ScoreComponent(10)
         )
 
         return playerHealingCards + playerDamageCards + playerMiscCards

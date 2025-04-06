@@ -16,7 +16,7 @@ import com.sq.thed_ck_licker.ecs.components.CardEffectType
 import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID as playerId
 
 @Composable
-fun DrawCard(
+fun PullCardButton(
     cardsOnHand: MutableIntState,
     playerHealth: MutableFloatState,
     navigationBarPadding: PaddingValues,
@@ -81,5 +81,6 @@ private fun handleCardEffect(
 
     cardsOnHand.intValue++
     playerHealth.floatValue += 2f
-    onUpdateState(newCard.third)
+
 }
+
