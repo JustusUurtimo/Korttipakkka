@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -34,8 +35,16 @@ import com.sq.thed_ck_licker.ui.components.views.CardDeck
 @Composable
 fun Game(innerPadding: PaddingValues) {
 
-    TheGameHandler.initTheGame()
+//    var asd by rememberSaveable { mutableStateOf(true) }
+//    LaunchedEffect(asd) {
+//        while (asd) {
+//            asd = false
+//            TheGameHandler.initTheGame()
+//        }
+//    }
     val componentManager = ComponentManager.componentManager
+
+//    val componentManager = rememberSaveable { mutableStateOf(ComponentManager.componentManager) }
     val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues()
     var latestCard by rememberSaveable { mutableStateOf(getDefaultCardPair()) }
     val cardsOnHand = rememberSaveable { mutableIntStateOf(0) }
@@ -44,11 +53,27 @@ fun Game(innerPadding: PaddingValues) {
     val playerScore = rememberSaveable { TheGameHandler.getPlayerScoreM() }
     // TODO here probably should be viewModel from about the game state data or something like that
     //  Something about state holder and all that
-    val cardDisplaySystem = CardDisplaySystem(componentManager)
+//    val descriptionSystem = DescriptionSystem(componentManager.value)
+//    val cardDisplaySystem = CardDisplaySystem(componentManager.value)
+//    val cardEffectSystem = CardEffectSystem(componentManager.value)
 
+//    val descriptionSystem = DescriptionSystem(componentManager)
+    val cardDisplaySystem = CardDisplaySystem(componentManager)
     val cardEffectSystem = CardEffectSystem(componentManager)
 
+//    descriptionSystem.updateAllDescriptions()
+
     val modifier = Modifier
+
+    var cardde by remember { mutableIntStateOf(TheGameHandler.getRandomCard()!!.keys.getRandomElement()) }
+
+    val activateCard = {
+        cardEffectSystem.playerTargetsPlayer(cardde)
+//        cardde = TheGameHandler.getRandomCard()!!.keys.getRandomElement()
+    }
+    val pullNewCard = {
+        cardde = TheGameHandler.getRandomCard()!!.keys.getRandomElement()
+    }
 
     Column(modifier.fillMaxWidth()) {
 
@@ -62,11 +87,17 @@ fun Game(innerPadding: PaddingValues) {
             CardDeck(navigationBarPadding)
             Box(modifier.align(Alignment.BottomCenter)) {
                 Column(modifier.padding(35.dp, 0.dp, 0.dp, 0.dp)) {
+//                    cardDisplaySystem.CardsOnHandView(
+//                        cardsOnHand,
+//                        modifier,
+//                        cardde,
+//                        cardEffectSystem
+//                    )
                     cardDisplaySystem.CardsOnHandView(
                         cardsOnHand,
                         modifier,
-                        TheGameHandler.getRandomCard()!!.keys.getRandomElement(),
-                        cardEffectSystem
+                        cardde,
+                        activateCard
                     )
                     PullCardButton(
                         cardsOnHand,
@@ -76,7 +107,7 @@ fun Game(innerPadding: PaddingValues) {
                         latestCard,
                         onUpdateState = { newCard ->
                             latestCard = newCard
-                        }
+                        }, pullNewCard
                     )
                 }
 

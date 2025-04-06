@@ -23,7 +23,8 @@ fun PullCardButton(
     navigationBarPadding: PaddingValues,
     modifier: Modifier,
     latestCard: Pair<CardIdentity, CardEffect>,
-    onUpdateState: (Pair<CardIdentity, CardEffect>) -> Unit
+    onUpdateState: (Pair<CardIdentity, CardEffect>) -> Unit,
+    pullNewCard: () -> Unit
 ) {
     Column(
         modifier = modifier.padding(
@@ -33,54 +34,11 @@ fun PullCardButton(
     ) {
         // atm ottaa aina dmg 2% ja sit kortin arvon verran.
         //static 2% dmg idea, että tulevat kortit ei välttämättä ole dmg kortteja
-        Button(onClick = {
-//            handleCardEffect(latestCard, cardsOnHand, playerHealth, onUpdateState)
-        }) { Text("draw a card") }
+        Button(onClick = pullNewCard
+//            {
+////            handleCardEffect(latestCard, cardsOnHand, playerHealth, onUpdateState)
+//        }
+        ) { Text("draw a card") }
     }
 }
 
-fun handleCardEffect(
-    latestCard: Pair<CardIdentity, CardEffect>,
-    cardsOnHand: MutableIntState,
-    playerHealth: MutableFloatState,
-    onUpdateState: (Pair<CardIdentity, CardEffect>) -> Unit
-) {
-    val newCard = cards.pullRandomCard()
-
-    if (latestCard.first.id != -1) {
-        val latestCardEffectCardClassification: CardClassification =
-            latestCard.second.classification
-        val latestCardEffectCardEffectType: CardEffectType =
-            latestCard.second.effectType
-
-        if (latestCardEffectCardClassification == CardClassification.MISC) {
-            when (latestCardEffectCardEffectType) {
-                CardEffectType.DOUBLE_TROUBLE -> {
-                    cards.applyCardEffect(
-                        newCard, playerHealth, reverseDamage = false,
-                        doubleTrouble = true
-                    )
-                }
-
-                CardEffectType.REVERSE_DAMAGE -> {
-                    cards.applyCardEffect(
-                        newCard, playerHealth, reverseDamage = true,
-                        doubleTrouble = false
-                    )
-                }
-
-                else -> {
-                    println("its shop cupong i quess")
-                }
-            }
-        } else {
-            cards.applyCardEffect(
-                newCard, playerHealth, reverseDamage = false,
-                doubleTrouble = false
-            )
-        }
-    }
-    cardsOnHand.intValue++
-    playerHealth.floatValue += 2f
-    onUpdateState(newCard)
-}

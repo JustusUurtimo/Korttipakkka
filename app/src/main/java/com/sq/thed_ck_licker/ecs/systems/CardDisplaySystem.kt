@@ -48,7 +48,7 @@ class CardDisplaySystem(val componentManager: ComponentManager) {
             componentManager.getComponent(entityId, ImageComponent::class).cardImage
         val name = componentManager.getComponent(entityId, NameComponent::class).name
         val description =
-            componentManager.getComponent(entityId, DescriptionComponent::class).description
+            componentManager.getComponent(entityId, DescriptionComponent::class).description.value
 
 
         Box(
@@ -86,14 +86,14 @@ class CardDisplaySystem(val componentManager: ComponentManager) {
         cardsDrawCount: MutableIntState,
         modifier: Modifier,
         cardId: Int,
-        cardEffectSystem: CardEffectSystem
+        funn: () -> Unit,
     ) {
-        val thing =
-            SideEffect {
-
-                cardEffectSystem.playerTargetsPlayer(cardId)
-            }
-        val asd = {cardEffectSystem.playerTargetsPlayer(cardId)}
+//        val thing =
+//            SideEffect {
+//
+//                cardEffectSystem.playerTargetsPlayer(cardId)
+//            }
+//        val asd = {cardEffectSystem.playerTargetsPlayer(cardId)}
 
         BadgedBox(
             badge = {
@@ -117,7 +117,7 @@ class CardDisplaySystem(val componentManager: ComponentManager) {
                 modifier = modifier
                     .background(color = Color.Green)
                     .scale(0.99f),
-                onClick = asd
+                onClick = funn
 
             ) {
                 EntityDisplay(cardId)
@@ -154,13 +154,19 @@ fun CardsOnHandViewPreview(
 ) {
     val displaySystem = CardDisplaySystem(ComponentManager.componentManager)
     val cardEffectSystem = CardEffectSystem(ComponentManager.componentManager)
+    var cardde = TheGameHandler.getRandomCard()!!.keys.getRandomElement()
+    val randomCard = {
+        cardEffectSystem.playerTargetsPlayer(cardde)
+        cardde = TheGameHandler.getRandomCard()!!.keys.getRandomElement()
+        println(cardde)
+    }
 
     val cardCounter = remember { mutableIntStateOf(69) }
     displaySystem.CardsOnHandView(
         cardCounter,
         Modifier,
         cardEntity,
-        cardEffectSystem
+        randomCard
     )
 }
 

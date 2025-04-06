@@ -3,12 +3,13 @@ package com.sq.thed_ck_licker.ecs.systems
 import com.sq.thed_ck_licker.ecs.ComponentManager
 import com.sq.thed_ck_licker.ecs.components.DescriptionComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
+import com.sq.thed_ck_licker.ecs.components.addScore
 
-class DescriptionSystem {
+class DescriptionSystem(val componentManager: ComponentManager) {
     // In future we may want to have version to update just single entity too
     // But that is future problem
     // We will probably want method for updating range of entities too.
-    fun updateAllDescriptions(componentManager: ComponentManager) {
+    fun updateAllDescriptions(componentManager: ComponentManager = this.componentManager) {
         val entitiesWithDescription =
             componentManager.getEntitiesWithComponent(DescriptionComponent::class)
         /* TODO this needs to go over them and check what other components they have
@@ -33,7 +34,10 @@ class DescriptionSystem {
                 val comp = componentManager.getComponent(entity.key, ScoreComponent::class)
                 val descComp =
                     componentManager.getComponent(entity.key, DescriptionComponent::class)
-                descComp.description = "Get ${comp.score.intValue} points"
+                println("Updating description for entity ${entity.value}")
+                println("The score is going to be ${comp.score.intValue}")
+//                descComp.description = "Get ${comp.score.intValue} points"
+                descComp.addScore(comp)
             }
         }
 

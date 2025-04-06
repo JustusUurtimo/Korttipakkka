@@ -98,6 +98,7 @@ class CardEffectSystem(val componentManager: ComponentManager) {
     }
 
     fun playerTargetsPlayer(theUsedThingId: Int) {
+        println("playerTargetsPlayer, using $theUsedThingId")
         return activateThing(getPlayerID(), theUsedThingId, getPlayerID())
     }
 
