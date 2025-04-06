@@ -1,22 +1,22 @@
 package com.sq.thed_ck_licker.ecs.systems
 
-import androidx.compose.runtime.MutableFloatState
+import androidx.compose.runtime.MutableIntState
 import com.sq.thed_ck_licker.ecs.ComponentManager
-import com.sq.thed_ck_licker.ecs.components.CardEffect
 import com.sq.thed_ck_licker.ecs.components.CardTag
 import com.sq.thed_ck_licker.ecs.components.DescriptionComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.ImageComponent
 import com.sq.thed_ck_licker.ecs.components.NameComponent
-import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent
 import com.sq.thed_ck_licker.ecs.generateEntity
+import com.sq.thed_ck_licker.ecs.systems.CardEffectSystem.Companion.cardEffectSystem
 import com.sq.thed_ck_licker.helpers.getRandomElement
-import kotlin.reflect.KClass
 
-class CardsSystem {
-    // Component Manager
-    private val componentManager = ComponentManager.componentManager
+class CardsSystem(private val componentManager: ComponentManager) {
+
+    companion object {
+        val cardsSystem: CardsSystem = CardsSystem(ComponentManager.componentManager)
+    }
 
     fun <T : Any> initCards(
         amount: Int,
@@ -39,40 +39,23 @@ class CardsSystem {
         return cardIds
     }
 
-    fun getCardComponentByEntity(entity: Int): Pair<ImageComponent, CardEffect> {
-        val cardImage = componentManager.getComponent(entity, ImageComponent::class)
-        val cardEffect = componentManager.getComponent(entity, CardEffect::class)
-        return Pair(cardImage, cardEffect)
-    }
-
-    fun getCardComponentByTag(tag: CardTag): Pair<ImageComponent, CardEffect> {
-        val entityMap = componentManager.getEntitiesWithTags(listOf(tag))
-        return getCardComponentByEntity(entityMap.keys.first())
-    }
-
-
     // Function to pull a random card from deck
-    fun pullRandomCardFromEntityDeck(entity: Int): Pair<ImageComponent, CardEffect> {
-        val drawDeck = componentManager.getComponent(entity, DrawDeckComponent::class)
+    fun pullRandomCardFromEntityDeck(entityId: Int,latestCard: MutableIntState): Int {
+        val drawDeck = componentManager.getComponent(entityId, DrawDeckComponent::class)
         if (drawDeck.cardIds.isEmpty()) {
             throw IllegalStateException("No cards available")
         }
-        return getCardComponentByEntity(drawDeck.cardIds.getRandomElement())
+        latestCard.intValue = drawDeck.cardIds.getRandomElement()
+        return latestCard.intValue
     }
 
-    fun applyCardEffect(
-        newCard: Pair<ImageComponent, CardEffect>,
-        playerHealth: MutableFloatState,
-        reverseDamage: Boolean,
-        doubleTrouble: Boolean
-    ) {
-        val cardEffectSystem = CardEffectSystem(componentManager)
-        cardEffectSystem.applyEffect(
-            newCard,
-            playerHealth,
-            componentManager,
-            reverseDamage,
-            doubleTrouble
-        )
+    fun activateCard(latestCard: Int, playerCardCount: MutableIntState) {
+        cardEffectSystem.playerTargetsPlayer(latestCard)
+        playerCardCount.intValue += 1
+        // TODO: Add here things needed to discard the card
+    }
+
+    fun replaceLatestCard(latestCard: Int) {
+
     }
 }

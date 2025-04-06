@@ -1,7 +1,6 @@
 package com.sq.thed_ck_licker.ui.components.views
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -16,17 +15,20 @@ import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableIntState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.sq.thed_ck_licker.R
+import com.sq.thed_ck_licker.ecs.systems.CardsSystem.Companion.cardsSystem
+import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID as playerId
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CardDeck(navigationBarPadding: PaddingValues, pullNewCard: () -> Unit) {
+fun CardDeck(navigationBarPadding: PaddingValues, latestCard: MutableIntState) {
     // TODO: This probably should only be the deck, and as always the positioning should be relative, not absolute
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -39,7 +41,7 @@ fun CardDeck(navigationBarPadding: PaddingValues, pullNewCard: () -> Unit) {
 //                    top = 400.dp,
                     bottom = navigationBarPadding.calculateBottomPadding() // Add bottom padding for the navigation bar
                 )
-                .clickable { pullNewCard() }
+                .clickable { cardsSystem.pullRandomCardFromEntityDeck(playerId(), latestCard) }
         ) {
             TooltipBox(
                 tooltip = {

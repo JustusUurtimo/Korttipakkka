@@ -33,9 +33,14 @@ import com.sq.thed_ck_licker.ecs.TheGameHandler
 import com.sq.thed_ck_licker.ecs.components.DescriptionComponent
 import com.sq.thed_ck_licker.ecs.components.ImageComponent
 import com.sq.thed_ck_licker.ecs.components.NameComponent
-import com.sq.thed_ck_licker.helpers.getRandomElement
+import com.sq.thed_ck_licker.ecs.systems.CardsSystem.Companion.cardsSystem
+import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID as playerId
 
-class CardDisplaySystem(val componentManager: ComponentManager) {
+class CardDisplaySystem(private val componentManager: ComponentManager) {
+
+    companion object {
+        val cardDisplaySystem: CardDisplaySystem = CardDisplaySystem(ComponentManager.componentManager)
+    }
 
     /* TODO: This is kind a ok for now
      *  But the sizes and that kind a things need to be re worked,
@@ -82,10 +87,9 @@ class CardDisplaySystem(val componentManager: ComponentManager) {
 
     @Composable
     fun CardsOnHandView(
-        cardsDrawCount: MutableIntState,
+        playerCardCount: MutableIntState,
         modifier: Modifier,
-        cardId: Int,
-        onCardClick: () -> Unit,
+        latestCard: MutableIntState,
     ) {
         BadgedBox(
             badge = {
@@ -93,7 +97,7 @@ class CardDisplaySystem(val componentManager: ComponentManager) {
                     modifier = Modifier.offset((-20).dp, (5).dp),
                     containerColor = Color.Red
                 ) {
-                    Text("${cardsDrawCount.intValue}")
+                    Text("${playerCardCount.intValue}")
                 }
             },
             modifier = modifier
@@ -109,10 +113,12 @@ class CardDisplaySystem(val componentManager: ComponentManager) {
                 modifier = modifier
                     .background(color = Color.Green)
                     .scale(0.99f),
-                onClick = onCardClick
+                onClick = {cardsSystem::activateCard}
 
             ) {
-                EntityDisplay(cardId)
+                if(latestCard.intValue != -1) {
+                    EntityDisplay(latestCard.intValue)
+                }
             }
         }
     }
@@ -126,12 +132,13 @@ class CardDisplaySystem(val componentManager: ComponentManager) {
 fun DisplayRandomCardPreview() {
     TheGameHandler.initTheGame()
     val displaySystem = CardDisplaySystem(ComponentManager.componentManager)
+    val latestCard = remember { mutableIntStateOf(-1) }
     Box(
         modifier = Modifier
             .size(500.dp)
             .background(Color.Magenta)
     ) {
-        displaySystem.EntityDisplay(TheGameHandler.getRandomCard()!!.keys.getRandomElement())
+        displaySystem.EntityDisplay(cardsSystem.pullRandomCardFromEntityDeck(playerId(), latestCard))
     }
 }
 
@@ -142,23 +149,15 @@ fun CardsOnHandViewPreview(
     @PreviewParameter(
         CardEntityPreviewParameterProvider::class,
         limit = 1
-    ) cardEntity: Int
+    ) cardEntity: MutableIntState
 ) {
     val displaySystem = CardDisplaySystem(ComponentManager.componentManager)
-    val cardEffectSystem = CardEffectSystem(ComponentManager.componentManager)
-    var cardde = TheGameHandler.getRandomCard()!!.keys.getRandomElement()
-    val randomCard = {
-        cardEffectSystem.playerTargetsPlayer(cardde)
-        cardde = TheGameHandler.getRandomCard()!!.keys.getRandomElement()
-        println(cardde)
-    }
 
     val cardCounter = remember { mutableIntStateOf(69) }
     displaySystem.CardsOnHandView(
         cardCounter,
         Modifier,
-        cardEntity,
-        randomCard
+        cardEntity
     )
 }
 

@@ -22,6 +22,7 @@ class MainActivity : ComponentActivity() {
         for (i in 1..5) {
             MyRandom.getRandomInt()
         }
+
         TheGameHandler.initTheGame()
 
         val descriptionSystem = DescriptionSystem(ComponentManager.componentManager)

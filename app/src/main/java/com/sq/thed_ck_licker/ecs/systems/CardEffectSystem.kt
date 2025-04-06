@@ -13,7 +13,11 @@ import com.sq.thed_ck_licker.ecs.components.addScore
 
 
 // Systems
-class CardEffectSystem(val componentManager: ComponentManager) {
+class CardEffectSystem(private val componentManager: ComponentManager) {
+
+    companion object {
+        val cardEffectSystem: CardEffectSystem = CardEffectSystem(ComponentManager.componentManager)
+    }
 
     @Deprecated("Should be done via ActivateThing")
     fun applyEffect(
