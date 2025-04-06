@@ -38,8 +38,7 @@ fun Game(innerPadding: PaddingValues) {
     val componentManager = ComponentManager.componentManager
 
     val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues()
-    var latestCard by rememberSaveable { mutableStateOf(getDefaultCardPair()) }
-    val cardsOnHand = rememberSaveable { mutableIntStateOf(0) }
+    val playerCardCount = rememberSaveable { mutableIntStateOf(0) }
     val playerHealth =
         rememberSaveable { TheGameHandler.getPlayerHealthM() }
     val playerScore = rememberSaveable { TheGameHandler.getPlayerScoreM() }
@@ -56,6 +55,7 @@ fun Game(innerPadding: PaddingValues) {
 
     val activateCard = {
         cardEffectSystem.playerTargetsPlayer(cardde)
+        playerCardCount.intValue += 1
         // TODO: Add here things needed to discard the card
     }
     val pullNewCard = {
@@ -76,7 +76,7 @@ fun Game(innerPadding: PaddingValues) {
             Box(modifier.align(Alignment.BottomCenter)) {
                 Column(modifier.padding(35.dp, 0.dp, 0.dp, 0.dp)) {
                     cardDisplaySystem.CardsOnHandView(
-                        cardsOnHand,
+                        playerCardCount,
                         modifier,
                         cardde,
                         activateCard
