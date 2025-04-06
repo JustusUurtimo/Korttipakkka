@@ -27,8 +27,8 @@ import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID as playerId
 object TheGameHandler {
     private val componentManager = ComponentManager.componentManager
     val cardsSystem = CardsSystem()
-    private val playerSystem = PlayerSystem()
-    private val descriptionSystem = DescriptionSystem()
+    private val playerSystem = PlayerSystem(componentManager)
+    private val descriptionSystem = DescriptionSystem(componentManager)
 
 
     fun getPlayerHealthM(): MutableFloatState {
@@ -63,10 +63,10 @@ object TheGameHandler {
         for (i in 1..amount) {
             val cardEntity = generateEntity()
             componentManager.addComponent(cardEntity, ImageComponent())
-            componentManager.addComponent(cardEntity, ScoreComponent(10))
+            componentManager.addComponent(cardEntity, ScoreComponent(10 * i))
             componentManager.addComponent(
                 cardEntity,
-                DescriptionComponent("This is simple placeholder description #$i")
+                DescriptionComponent()
             )
             componentManager.addComponent(cardEntity, NameComponent("Default Card #$i"))
             componentManager.addComponent(cardEntity, TagsComponent(listOf(CardTag.CARD)))

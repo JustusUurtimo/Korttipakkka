@@ -18,6 +18,7 @@ object EntityManager {
 
     fun createNewEntity(): Int {
         nextID++
+        println("New entity created with ID: $nextID")
         return nextID - 1
     }
 }

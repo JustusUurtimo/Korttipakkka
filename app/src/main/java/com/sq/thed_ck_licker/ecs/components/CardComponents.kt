@@ -26,7 +26,27 @@ data class CardEffect(
 
 data class ImageComponent(@DrawableRes val cardImage: Int = R.drawable.placeholder)
 
-data class DescriptionComponent(var description: String = "This is simple placeholder description")
+data class DescriptionComponent(var description: MutableState<String>) {
+    constructor(desc: String = "") : this(mutableStateOf(desc))
+}
+
+fun DescriptionComponent.addScore(scoreC: ScoreComponent) {
+    description.value += "Get ${scoreC.score.intValue} points"
+}
+
+fun DescriptionComponent.addHealth(healthC: HealthComponent) {
+    if (healthC.health.floatValue > 0) {
+        description.value += "Heal for ${healthC.health.floatValue} points"
+    } else if (healthC.health.floatValue < 0) {
+        description.value += "Lose ${healthC.health.floatValue} health"
+    }
+
+    if (healthC.maxHealth.floatValue > 0) {
+        description.value += "Gain ${healthC.maxHealth.floatValue} max health"
+    } else if (healthC.maxHealth.floatValue < 0) {
+        description.value += "Lose ${healthC.health.floatValue} max health"
+    }
+}
 
 data class NameComponent(val name: String = "Placeholder")
 
