@@ -26,7 +26,11 @@ import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID as playerId
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CardDeck(navigationBarPadding: PaddingValues, latestCard: MutableIntState) {
+fun CardDeck(
+    navigationBarPadding: PaddingValues,
+    latestCard: MutableIntState,
+    playerCardCount: MutableIntState
+) {
     // TODO: This probably should only be the deck, and as always the positioning should be relative, not absolute
 
     Box(
@@ -41,7 +45,13 @@ fun CardDeck(navigationBarPadding: PaddingValues, latestCard: MutableIntState) {
 //                    top = 400.dp,
                     bottom = navigationBarPadding.calculateBottomPadding() // Add bottom padding for the navigation bar
                 )
-                .clickable { cardsSystem.pullRandomCardFromEntityDeck(playerId(), latestCard) }
+                .clickable {
+                    cardsSystem.pullRandomCardFromEntityDeck(
+                        playerId(),
+                        latestCard,
+                        playerCardCount
+                    )
+                }
         ) {
             TooltipBox(
                 tooltip = {

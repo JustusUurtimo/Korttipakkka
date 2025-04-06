@@ -40,22 +40,18 @@ class CardsSystem(private val componentManager: ComponentManager) {
     }
 
     // Function to pull a random card from deck
-    fun pullRandomCardFromEntityDeck(entityId: Int,latestCard: MutableIntState): Int {
+    fun pullRandomCardFromEntityDeck(entityId: Int,latestCard: MutableIntState, playerCardCount: MutableIntState): Int {
         val drawDeck = componentManager.getComponent(entityId, DrawDeckComponent::class)
         if (drawDeck.cardIds.isEmpty()) {
             throw IllegalStateException("No cards available")
         }
         latestCard.intValue = drawDeck.cardIds.getRandomElement()
+        playerCardCount.intValue += 1
         return latestCard.intValue
     }
 
-    fun activateCard(latestCard: Int, playerCardCount: MutableIntState) {
-        cardEffectSystem.playerTargetsPlayer(latestCard)
-        playerCardCount.intValue += 1
+    fun activateCard(latestCard: MutableIntState) {
+        cardEffectSystem.playerTargetsPlayer(latestCard.intValue)
         // TODO: Add here things needed to discard the card
-    }
-
-    fun replaceLatestCard(latestCard: Int) {
-
     }
 }

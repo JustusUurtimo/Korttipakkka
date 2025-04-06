@@ -49,7 +49,7 @@ fun Game(innerPadding: PaddingValues) {
         ScoreDisplayer(playerScore.intValue)
 
         Box(modifier.fillMaxSize()) {
-            CardDeck(navigationBarPadding, latestCard)
+            CardDeck(navigationBarPadding, latestCard, playerCardCount)
             Box(modifier.align(Alignment.BottomCenter)) {
                 Column(modifier.padding(35.dp, 0.dp, 0.dp, 0.dp)) {
                     cardDisplaySystem.CardsOnHandView(
@@ -60,7 +60,8 @@ fun Game(innerPadding: PaddingValues) {
                     PullCardButton(
                         navigationBarPadding,
                         modifier.offset((-15).dp),
-                        latestCard
+                        latestCard,
+                        playerCardCount
                     )
                 }
 

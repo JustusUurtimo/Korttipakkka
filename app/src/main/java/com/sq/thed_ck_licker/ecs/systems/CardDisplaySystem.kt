@@ -113,7 +113,7 @@ class CardDisplaySystem(private val componentManager: ComponentManager) {
                 modifier = modifier
                     .background(color = Color.Green)
                     .scale(0.99f),
-                onClick = {cardsSystem::activateCard}
+                onClick = {cardsSystem.activateCard(latestCard)}
 
             ) {
                 if(latestCard.intValue != -1) {
@@ -133,12 +133,13 @@ fun DisplayRandomCardPreview() {
     TheGameHandler.initTheGame()
     val displaySystem = CardDisplaySystem(ComponentManager.componentManager)
     val latestCard = remember { mutableIntStateOf(-1) }
+    val playerCardCount = remember { mutableIntStateOf(0) }
     Box(
         modifier = Modifier
             .size(500.dp)
             .background(Color.Magenta)
     ) {
-        displaySystem.EntityDisplay(cardsSystem.pullRandomCardFromEntityDeck(playerId(), latestCard))
+        displaySystem.EntityDisplay(cardsSystem.pullRandomCardFromEntityDeck(playerId(), latestCard, playerCardCount))
     }
 }
 

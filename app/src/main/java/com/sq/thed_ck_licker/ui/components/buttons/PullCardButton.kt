@@ -16,7 +16,8 @@ import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID as playerId
 fun PullCardButton(
     navigationBarPadding: PaddingValues,
     modifier: Modifier,
-    latestCard: MutableIntState
+    latestCard: MutableIntState,
+    playerCardCount: MutableIntState
 ) {
     Column(
         modifier = modifier.padding(
@@ -27,7 +28,7 @@ fun PullCardButton(
         // atm ottaa aina dmg 2% ja sit kortin arvon verran.
         //static 2% dmg idea, että tulevat kortit ei välttämättä ole dmg kortteja
         Button(
-            onClick = {cardsSystem.pullRandomCardFromEntityDeck(playerId(), latestCard)}
+            onClick = {cardsSystem.pullRandomCardFromEntityDeck(playerId(), latestCard, playerCardCount)}
         ) { Text("draw a card") }
     }
 }
