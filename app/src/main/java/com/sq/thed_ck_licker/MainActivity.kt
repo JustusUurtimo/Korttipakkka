@@ -9,6 +9,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.sq.thed_ck_licker.ecs.ComponentManager
+import com.sq.thed_ck_licker.ecs.TheGameHandler
+import com.sq.thed_ck_licker.ecs.systems.DescriptionSystem
 import com.sq.thed_ck_licker.helpers.MyRandom
 import com.sq.thed_ck_licker.ui.theme.TheD_ck_LickerTheme
 
@@ -19,6 +22,10 @@ class MainActivity : ComponentActivity() {
         for (i in 1..5) {
             MyRandom.getRandomInt()
         }
+        TheGameHandler.initTheGame()
+
+        val descriptionSystem = DescriptionSystem(ComponentManager.componentManager)
+        descriptionSystem.updateAllDescriptions()
 
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

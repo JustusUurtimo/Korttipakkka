@@ -8,10 +8,14 @@ import com.sq.thed_ck_licker.ecs.components.CardEffectType
 import com.sq.thed_ck_licker.ecs.components.CardIdentity
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
+import com.sq.thed_ck_licker.ecs.components.addHealth
+import com.sq.thed_ck_licker.ecs.components.addScore
 
 
 // Systems
 class CardEffectSystem(val componentManager: ComponentManager) {
+
+    @Deprecated("Should be done via ActivateThing")
     fun applyEffect(
         newCard: Pair<CardIdentity, CardEffect>,
         playerHealth: MutableFloatState,
@@ -34,6 +38,8 @@ class CardEffectSystem(val componentManager: ComponentManager) {
         }
     }
 
+
+    @Deprecated("Should be done via ActivateThing")
     private fun applyDamage(
         playerHealth: MutableFloatState,
         amount: Float,
@@ -49,6 +55,7 @@ class CardEffectSystem(val componentManager: ComponentManager) {
         }
     }
 
+    @Deprecated("Should be done via ActivateThing")
     private fun applyHeal(playerHealth: MutableFloatState, amount: Float, doubleTrouble: Boolean) {
         if (doubleTrouble) {
             playerHealth.floatValue -= (amount * 2)
@@ -65,20 +72,20 @@ class CardEffectSystem(val componentManager: ComponentManager) {
             when (component) {
                 is ScoreComponent -> activateScore(theActivator, theUsedThing, theTarget)
                 is HealthComponent -> activateHealth(theActivator, theUsedThing, theTarget)
-                // Handle other components...
-                else -> println("Unknown component type, $component")
+                else -> println("Unknown component type: $component")
             }
         }
     }
 
     private fun activateScore(theActivator: Int, theUsedThing: Int, theTarget: Int) {
-//        val tekija = componentManager.getComponent(theActivator, ScoreComponent::class)
+        val tekija = componentManager.getComponent(theActivator, ScoreComponent::class)
 
         val kohde = componentManager.getComponent(theTarget, ScoreComponent::class)
 
         val tehtava = componentManager.getComponent(theUsedThing, ScoreComponent::class)
-
-        kohde.score.intValue += tehtava.score.intValue
+        println("kohde.score.intValue ${kohde.score.intValue}")
+        kohde.addScore(tehtava)
+        println("kohde.score.intValue ${kohde.score.intValue}")
     }
 
     private fun activateHealth(theActivator: Int, theUsedThing: Int, theTarget: Int) {
@@ -87,10 +94,11 @@ class CardEffectSystem(val componentManager: ComponentManager) {
 
         val tehtava = componentManager.getComponent(theUsedThing, HealthComponent::class)
 
-        kohde.health.floatValue += tehtava.health.floatValue
+        kohde.addHealth(tehtava)
     }
 
     fun playerTargetsPlayer(theUsedThingId: Int) {
+        println("playerTargetsPlayer, using $theUsedThingId")
         return activateThing(getPlayerID(), theUsedThingId, getPlayerID())
     }
 

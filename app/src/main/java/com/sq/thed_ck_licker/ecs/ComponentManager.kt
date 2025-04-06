@@ -1,20 +1,27 @@
 package com.sq.thed_ck_licker.ecs
 
+import android.os.Parcelable
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import com.sq.thed_ck_licker.ecs.components.CardTag
 import com.sq.thed_ck_licker.ecs.components.TagsComponent
+import kotlinx.parcelize.IgnoredOnParcel
+import kotlinx.parcelize.Parcelize
 import kotlin.reflect.KClass
 
 // Component Manager
-class ComponentManager {
+@Parcelize
+class ComponentManager : Parcelable {
 
     companion object {
          val componentManager: ComponentManager = ComponentManager()
     }
 
-    private val components = mutableMapOf<KClass<*>, MutableMap<Int, Any>>()
+    @IgnoredOnParcel
+    private val components = mutableStateMapOf<KClass<*>, SnapshotStateMap<Int, Any>>()
 
     fun <T : Any> addComponent(entity: Int, component: T) {
-        components.getOrPut(component::class) { mutableMapOf() }[entity] = component
+        components.getOrPut(component::class) { mutableStateMapOf() }[entity] = component
     }
 
     fun <T : Any> getComponent(entity: Int, componentClass: KClass<T>): T {

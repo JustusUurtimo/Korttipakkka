@@ -47,7 +47,7 @@ class CardDisplaySystem(val componentManager: ComponentManager) {
             componentManager.getComponent(entityId, ImageComponent::class).cardImage
         val name = componentManager.getComponent(entityId, NameComponent::class).name
         val description =
-            componentManager.getComponent(entityId, DescriptionComponent::class).description
+            componentManager.getComponent(entityId, DescriptionComponent::class).description.value
 
 
         Box(
@@ -84,9 +84,9 @@ class CardDisplaySystem(val componentManager: ComponentManager) {
     fun CardsOnHandView(
         cardsDrawCount: MutableIntState,
         modifier: Modifier,
-        cardId: Int
+        cardId: Int,
+        onCardClick: () -> Unit,
     ) {
-
         BadgedBox(
             badge = {
                 Badge(
@@ -102,16 +102,15 @@ class CardDisplaySystem(val componentManager: ComponentManager) {
                 .background(color = Color.Magenta),
 
 
-        ) {
+            ) {
             // TODO: There might be some modifier that "just rounds the corners"
             //  And then it could be just passed via modifier passing or something
             Card(
                 modifier = modifier
                     .background(color = Color.Green)
                     .scale(0.99f),
-                onClick = {
+                onClick = onCardClick
 
-                }
             ) {
                 EntityDisplay(cardId)
             }
@@ -126,7 +125,7 @@ class CardDisplaySystem(val componentManager: ComponentManager) {
 @Composable
 fun DisplayRandomCardPreview() {
     TheGameHandler.initTheGame()
-    val displaySystem = CardDisplaySystem(TheGameHandler.componentManager())
+    val displaySystem = CardDisplaySystem(ComponentManager.componentManager)
     Box(
         modifier = Modifier
             .size(500.dp)
@@ -137,7 +136,6 @@ fun DisplayRandomCardPreview() {
 }
 
 
-
 @Preview(showBackground = true)
 @Composable
 fun CardsOnHandViewPreview(
@@ -146,13 +144,21 @@ fun CardsOnHandViewPreview(
         limit = 1
     ) cardEntity: Int
 ) {
-    val displaySystem = CardDisplaySystem(TheGameHandler.componentManager())
+    val displaySystem = CardDisplaySystem(ComponentManager.componentManager)
+    val cardEffectSystem = CardEffectSystem(ComponentManager.componentManager)
+    var cardde = TheGameHandler.getRandomCard()!!.keys.getRandomElement()
+    val randomCard = {
+        cardEffectSystem.playerTargetsPlayer(cardde)
+        cardde = TheGameHandler.getRandomCard()!!.keys.getRandomElement()
+        println(cardde)
+    }
 
     val cardCounter = remember { mutableIntStateOf(69) }
     displaySystem.CardsOnHandView(
         cardCounter,
         Modifier,
-        cardEntity
+        cardEntity,
+        randomCard
     )
 }
 

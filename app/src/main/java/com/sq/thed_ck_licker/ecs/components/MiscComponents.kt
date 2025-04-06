@@ -14,6 +14,30 @@ data class HealthComponent(var health: MutableFloatState, val maxHealth: Mutable
     )
 }
 
-data class ScoreComponent(var score: MutableIntState, val funkkari: () -> Unit ={}) {
+fun HealthComponent.addHealth(healthComponent: HealthComponent) {
+    println("this is going to be modified ${this}")
+    if (healthComponent.health.floatValue != 0f) {
+        this.health.floatValue += healthComponent.health.floatValue
+    } else if (healthComponent.maxHealth.floatValue != 0f) {
+        this.maxHealth.floatValue += healthComponent.maxHealth.floatValue
+    }
+    println("and the end result is ${this}")
+}
+
+data class ScoreComponent(var score: MutableIntState) {
     constructor(score: Int = 0) : this(mutableIntStateOf(score))
 }
+
+fun ScoreComponent.addScore(scoreComponent: ScoreComponent) {
+    this.score.intValue += scoreComponent.score.intValue
+}
+
+
+//fun ScoreComponent.plus(scoreC: ScoreComponent) {
+//    this.score.intValue += scoreC.score.intValue
+//}
+
+//fun ScoreComponent.plus(entityId: Int, components: ComponentManager) {
+//    val incoming = components.getComponent(entityId, ScoreComponent::class).score.intValue
+//    this.score.intValue += incoming
+//}
