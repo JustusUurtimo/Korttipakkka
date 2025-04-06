@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import com.sq.thed_ck_licker.ecs.components.CardTag
 import com.sq.thed_ck_licker.ecs.components.TagsComponent
+import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import kotlin.reflect.KClass
 
@@ -16,6 +17,7 @@ class ComponentManager : Parcelable {
          val componentManager: ComponentManager = ComponentManager()
     }
 
+    @IgnoredOnParcel
     private val components = mutableStateMapOf<KClass<*>, SnapshotStateMap<Int, Any>>()
 
     fun <T : Any> addComponent(entity: Int, component: T) {

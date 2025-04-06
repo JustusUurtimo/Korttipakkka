@@ -2,7 +2,9 @@ package com.sq.thed_ck_licker.ecs.systems
 
 import com.sq.thed_ck_licker.ecs.ComponentManager
 import com.sq.thed_ck_licker.ecs.components.DescriptionComponent
+import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
+import com.sq.thed_ck_licker.ecs.components.addHealth
 import com.sq.thed_ck_licker.ecs.components.addScore
 
 class DescriptionSystem(val componentManager: ComponentManager) {
@@ -12,6 +14,29 @@ class DescriptionSystem(val componentManager: ComponentManager) {
     fun updateAllDescriptions(componentManager: ComponentManager = this.componentManager) {
         val entitiesWithDescription =
             componentManager.getEntitiesWithComponent(DescriptionComponent::class)
+
+        if (entitiesWithDescription == null) {
+            println("No entities with description found")
+            return
+        }
+
+        println("Entities with description: $entitiesWithDescription")
+
+        for (entity in entitiesWithDescription) {
+            val comps = componentManager.getAllComponentsOfEntity(entity.key)
+            val descComp = entity.value as DescriptionComponent
+            for (comp in comps) {
+                when (comp) {
+                    is ScoreComponent -> descComp.addScore(comp)
+                    is HealthComponent -> descComp.addHealth(comp)
+                    else -> {
+                        println("Unknown component type: $comp")
+                    }
+                }
+            }
+        }
+
+
         /* TODO this needs to go over them and check what other components they have
         *   For example if they have ScoreComponent, description should say "Score: ${scoreComponent.score}"
         *   and so on.
@@ -29,17 +54,9 @@ class DescriptionSystem(val componentManager: ComponentManager) {
         *   This will be performance intense at some point
         *   Or maybe not cuz maps are crazyy
          */
-        if (entitiesWithDescription != null) {
-            for (entity in entitiesWithDescription) {
-                val comp = componentManager.getComponent(entity.key, ScoreComponent::class)
-                val descComp =
-                    componentManager.getComponent(entity.key, DescriptionComponent::class)
-                println("Updating description for entity ${entity.value}")
-                println("The score is going to be ${comp.score.intValue}")
-//                descComp.description = "Get ${comp.score.intValue} points"
-                descComp.addScore(comp)
-            }
-        }
+
+
+
 
     }
 }

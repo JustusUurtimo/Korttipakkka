@@ -8,6 +8,8 @@ import com.sq.thed_ck_licker.ecs.components.CardEffectType
 import com.sq.thed_ck_licker.ecs.components.CardIdentity
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
+import com.sq.thed_ck_licker.ecs.components.addHealth
+import com.sq.thed_ck_licker.ecs.components.addScore
 
 
 // Systems
@@ -84,7 +86,7 @@ class CardEffectSystem(val componentManager: ComponentManager) {
 
         val tehtava = componentManager.getComponent(theUsedThing, ScoreComponent::class)
         println("kohde.score.intValue ${kohde.score.intValue}")
-        kohde.score.intValue += tehtava.score.intValue
+        kohde.addScore(tehtava)
         println("kohde.score.intValue ${kohde.score.intValue}")
     }
 
@@ -94,7 +96,7 @@ class CardEffectSystem(val componentManager: ComponentManager) {
 
         val tehtava = componentManager.getComponent(theUsedThing, HealthComponent::class)
 
-        kohde.health.floatValue += tehtava.health.floatValue
+        kohde.addHealth(tehtava)
     }
 
     fun playerTargetsPlayer(theUsedThingId: Int) {

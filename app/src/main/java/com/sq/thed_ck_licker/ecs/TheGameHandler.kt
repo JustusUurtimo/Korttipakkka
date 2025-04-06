@@ -31,7 +31,6 @@ import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID as playerId
 object TheGameHandler {
     val cards = Cards()
     private val componentManager = ComponentManager.componentManager
-//    private val descriptionSystem = DescriptionSystem(componentManager)
 
 
     fun getPlayerHealthM(): MutableFloatState {
@@ -106,7 +105,6 @@ object TheGameHandler {
 
     fun initTheGame() {
         initPlayerAndSomeDefaultCards()
-//        descriptionSystem.updateAllDescriptions(componentManager)
 
 
     }

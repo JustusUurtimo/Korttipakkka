@@ -4,7 +4,6 @@ import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
-import com.sq.thed_ck_licker.ecs.ComponentManager
 
 // TODO it is bit nonsensical that health starts from 0,
 //  so it should be refactored to start from max health
@@ -15,18 +14,28 @@ data class HealthComponent(var health: MutableFloatState, val maxHealth: Mutable
     )
 }
 
-data class ScoreComponent(var score: MutableIntState, val funkkari: () -> Unit = {}) {
+fun HealthComponent.addHealth(healthComponent: HealthComponent) {
+    if (healthComponent.health.floatValue != 0f) {
+        this.health.floatValue += healthComponent.health.floatValue
+    } else if (healthComponent.maxHealth.floatValue != 0f) {
+        this.maxHealth.floatValue += healthComponent.maxHealth.floatValue
+    }
+}
+
+data class ScoreComponent(var score: MutableIntState) {
     constructor(score: Int = 0) : this(mutableIntStateOf(score))
 }
 
-fun ScoreComponent.addScore(amount: Int) {
-
+fun ScoreComponent.addScore(scoreComponent: ScoreComponent) {
+    this.score.intValue += scoreComponent.score.intValue
 }
+
+
 //fun ScoreComponent.plus(scoreC: ScoreComponent) {
 //    this.score.intValue += scoreC.score.intValue
 //}
 
-fun ScoreComponent.plus(entityId: Int, components: ComponentManager) {
-    val incoming = components.getComponent(entityId, ScoreComponent::class).score.intValue
-    this.score.intValue += incoming
-}
+//fun ScoreComponent.plus(entityId: Int, components: ComponentManager) {
+//    val incoming = components.getComponent(entityId, ScoreComponent::class).score.intValue
+//    this.score.intValue += incoming
+//}
