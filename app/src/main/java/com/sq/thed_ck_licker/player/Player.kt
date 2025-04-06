@@ -12,6 +12,9 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun HealthBar(health: Float, modifier: Modifier = Modifier) {
+    print("#################################")
+    print(health)
+    print("#################################")
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
             //TODO This kind a should be generic some how

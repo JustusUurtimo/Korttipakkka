@@ -68,7 +68,7 @@ class CardEffectSystem(private val componentManager: ComponentManager) {
     }
 
 
-    fun activateThing(theActivator: Int, theUsedThing: Int, theTarget: Int) {
+    private fun activateThing(theActivator: Int, theUsedThing: Int, theTarget: Int) {
         val kohdeComponents = componentManager.getAllComponentsOfEntity(theUsedThing)
 
         for (component in kohdeComponents) {
