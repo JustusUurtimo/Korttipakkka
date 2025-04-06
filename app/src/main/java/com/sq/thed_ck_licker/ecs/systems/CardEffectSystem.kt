@@ -71,9 +71,7 @@ class CardEffectSystem(val componentManager: ComponentManager) {
         for (component in kohdeComponents) {
             when (component) {
                 is ScoreComponent -> activateScore(theActivator, theUsedThing, theTarget)
-//                is ScoreComponent ->  component.plus(theTarget, componentManager) // väärin päin
                 is HealthComponent -> activateHealth(theActivator, theUsedThing, theTarget)
-                // Handle other components...
                 else -> println("Unknown component type: $component")
             }
         }
