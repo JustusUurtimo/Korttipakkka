@@ -1,6 +1,8 @@
 package com.sq.thed_ck_licker.ui.components.views
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,13 +18,15 @@ import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.sq.thed_ck_licker.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CardDeck(navigationBarPadding: PaddingValues) {
+fun CardDeck(navigationBarPadding: PaddingValues, pullNewCard: () -> Unit) {
+    // TODO: This probably should only be the deck, and as always the positioning should be relative, not absolute
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -32,8 +36,10 @@ fun CardDeck(navigationBarPadding: PaddingValues) {
                 .align(Alignment.BottomStart)
                 .padding(
                     start = 16.dp,
+//                    top = 400.dp,
                     bottom = navigationBarPadding.calculateBottomPadding() // Add bottom padding for the navigation bar
                 )
+                .clickable { pullNewCard() }
         ) {
             TooltipBox(
                 tooltip = {
@@ -43,7 +49,7 @@ fun CardDeck(navigationBarPadding: PaddingValues) {
                         contentColor = MaterialTheme.colorScheme.onSurfaceVariant
                     ) {
                         Text(
-                            text = "Cards in the table",
+                            text = " Cards in the deck ",
                         )
                     }
                 },

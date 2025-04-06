@@ -35,16 +35,8 @@ import com.sq.thed_ck_licker.ui.components.views.CardDeck
 @Composable
 fun Game(innerPadding: PaddingValues) {
 
-//    var asd by rememberSaveable { mutableStateOf(true) }
-//    LaunchedEffect(asd) {
-//        while (asd) {
-//            asd = false
-//            TheGameHandler.initTheGame()
-//        }
-//    }
     val componentManager = ComponentManager.componentManager
 
-//    val componentManager = rememberSaveable { mutableStateOf(ComponentManager.componentManager) }
     val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues()
     var latestCard by rememberSaveable { mutableStateOf(getDefaultCardPair()) }
     val cardsOnHand = rememberSaveable { mutableIntStateOf(0) }
@@ -53,15 +45,9 @@ fun Game(innerPadding: PaddingValues) {
     val playerScore = rememberSaveable { TheGameHandler.getPlayerScoreM() }
     // TODO here probably should be viewModel from about the game state data or something like that
     //  Something about state holder and all that
-//    val descriptionSystem = DescriptionSystem(componentManager.value)
-//    val cardDisplaySystem = CardDisplaySystem(componentManager.value)
-//    val cardEffectSystem = CardEffectSystem(componentManager.value)
-
-//    val descriptionSystem = DescriptionSystem(componentManager)
     val cardDisplaySystem = CardDisplaySystem(componentManager)
     val cardEffectSystem = CardEffectSystem(componentManager)
 
-//    descriptionSystem.updateAllDescriptions()
 
     val modifier = Modifier
 
@@ -69,7 +55,6 @@ fun Game(innerPadding: PaddingValues) {
 
     val activateCard = {
         cardEffectSystem.playerTargetsPlayer(cardde)
-//        cardde = TheGameHandler.getRandomCard()!!.keys.getRandomElement()
     }
     val pullNewCard = {
         cardde = TheGameHandler.getRandomCard()!!.keys.getRandomElement()
@@ -84,15 +69,9 @@ fun Game(innerPadding: PaddingValues) {
         ScoreDisplayer(playerScore.intValue)
 
         Box(modifier.fillMaxSize()) {
-            CardDeck(navigationBarPadding)
+            CardDeck(navigationBarPadding, pullNewCard)
             Box(modifier.align(Alignment.BottomCenter)) {
                 Column(modifier.padding(35.dp, 0.dp, 0.dp, 0.dp)) {
-//                    cardDisplaySystem.CardsOnHandView(
-//                        cardsOnHand,
-//                        modifier,
-//                        cardde,
-//                        cardEffectSystem
-//                    )
                     cardDisplaySystem.CardsOnHandView(
                         cardsOnHand,
                         modifier,
@@ -100,14 +79,9 @@ fun Game(innerPadding: PaddingValues) {
                         activateCard
                     )
                     PullCardButton(
-                        cardsOnHand,
-                        playerHealth,
                         navigationBarPadding,
                         modifier.offset((-15).dp),
-                        latestCard,
-                        onUpdateState = { newCard ->
-                            latestCard = newCard
-                        }, pullNewCard
+                        pullNewCard
                     )
                 }
 

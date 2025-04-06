@@ -15,7 +15,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.BiasAlignment
@@ -86,15 +85,8 @@ class CardDisplaySystem(val componentManager: ComponentManager) {
         cardsDrawCount: MutableIntState,
         modifier: Modifier,
         cardId: Int,
-        funn: () -> Unit,
+        onCardClick: () -> Unit,
     ) {
-//        val thing =
-//            SideEffect {
-//
-//                cardEffectSystem.playerTargetsPlayer(cardId)
-//            }
-//        val asd = {cardEffectSystem.playerTargetsPlayer(cardId)}
-
         BadgedBox(
             badge = {
                 Badge(
@@ -117,7 +109,7 @@ class CardDisplaySystem(val componentManager: ComponentManager) {
                 modifier = modifier
                     .background(color = Color.Green)
                     .scale(0.99f),
-                onClick = funn
+                onClick = onCardClick
 
             ) {
                 EntityDisplay(cardId)
