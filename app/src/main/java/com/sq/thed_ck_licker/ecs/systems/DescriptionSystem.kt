@@ -22,6 +22,7 @@ class DescriptionSystem(private val componentManager: ComponentManager) {
 
         println("Entities with description: $entitiesWithDescription")
 
+        // TODO this causes the effect discription to be updated twice
         for (entity in entitiesWithDescription) {
             val comps = componentManager.getAllComponentsOfEntity(entity.key)
             val descComp = entity.value as DescriptionComponent
@@ -54,8 +55,6 @@ class DescriptionSystem(private val componentManager: ComponentManager) {
         *   This will be performance intense at some point
         *   Or maybe not cuz maps are crazyy
          */
-
-
 
 
     }
