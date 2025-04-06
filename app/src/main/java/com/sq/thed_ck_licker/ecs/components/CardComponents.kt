@@ -2,7 +2,9 @@ package com.sq.thed_ck_licker.ecs.components
 
 import android.os.Parcelable
 import androidx.annotation.DrawableRes
+import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import com.sq.thed_ck_licker.R
 import kotlinx.parcelize.Parcelize
@@ -60,3 +62,32 @@ data class NameComponent(val name: String = "Placeholder")
 @Deprecated("I think will decide against this. \n And each tag should have its own component")
 data class TagsComponent(val tags: List<CardTag> = emptyList())
 
+/**
+ * Used to make more complex activations
+ */
+data class EffectTriggerComponent(
+    val onDeath: (Int) -> Unit = {},
+    val onSpawn: (Int) -> Unit = {},
+    val onTurnStart: (Int) -> Unit = {}
+)
+
+/**
+ * Used to keep track of how many times a card has been activated
+ */
+data class ActCounterComponent(
+    var activations: MutableIntState,
+    var deactivations: MutableIntState
+) {
+    constructor(
+        activations: Int = 0,
+        deactivations: Int = 0
+    ) : this(mutableIntStateOf(activations), mutableIntStateOf(deactivations))
+}
+
+fun ActCounterComponent.activate() {
+    this.activations.intValue += 1
+}
+
+fun ActCounterComponent.deactivate(){
+    this.deactivations.intValue += 1
+}

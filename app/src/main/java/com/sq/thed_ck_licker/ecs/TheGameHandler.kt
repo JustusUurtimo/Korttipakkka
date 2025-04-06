@@ -12,6 +12,7 @@ import com.sq.thed_ck_licker.ecs.components.CardIdentity
 import com.sq.thed_ck_licker.ecs.components.CardTag
 import com.sq.thed_ck_licker.ecs.components.DescriptionComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
+import com.sq.thed_ck_licker.ecs.components.EffectTriggerComponent
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.ImageComponent
 import com.sq.thed_ck_licker.ecs.components.NameComponent
@@ -70,7 +71,8 @@ object TheGameHandler {
         componentManager.addComponent(playerId(), ScoreComponent())
         componentManager.addComponent(playerId(), DrawDeckComponent())
 
-        addDefaultCards()
+//        addDefaultCards()
+        decayCardTest()
     }
 
     // TODO: All these card things should come from
@@ -85,6 +87,21 @@ object TheGameHandler {
                 DescriptionComponent()
             )
             componentManager.addComponent(cardEntity, NameComponent("Default Card #$i"))
+            componentManager.addComponent(cardEntity, TagsComponent(listOf(CardTag.Card)))
+        }
+    }
+
+    private fun decayCardTest(amount: Int = 1) {
+
+        for (i in 1..amount) {
+            val cardEntity = generateEntity()
+            componentManager.addComponent(cardEntity, ImageComponent())
+            componentManager.addComponent(
+                cardEntity,
+                DescriptionComponent()
+            )
+            componentManager.addComponent(cardEntity, EffectTriggerComponent())
+            componentManager.addComponent(cardEntity, NameComponent("Decay Card #$i"))
             componentManager.addComponent(cardEntity, TagsComponent(listOf(CardTag.Card)))
         }
     }
