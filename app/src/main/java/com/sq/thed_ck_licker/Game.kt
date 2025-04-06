@@ -51,13 +51,16 @@ fun Game(innerPadding: PaddingValues) {
 
     val modifier = Modifier
 
+    // TODO: this should contain no card or something like that in the beginning
     var cardde by remember { mutableIntStateOf(TheGameHandler.getRandomCard()!!.keys.getRandomElement()) }
 
     val activateCard = {
         cardEffectSystem.playerTargetsPlayer(cardde)
+        // TODO: Add here things needed to discard the card
     }
     val pullNewCard = {
         cardde = TheGameHandler.getRandomCard()!!.keys.getRandomElement()
+        // TODO: Add here things needed to pull new card from the deck and not just card
     }
 
     Column(modifier.fillMaxWidth()) {
