@@ -24,7 +24,7 @@ class PlayerSystem(private val componentManager: ComponentManager) {
             "This card heals you",
             "Heal",
             listOf(CardTag.CARD),
-            cardComponent = HealthComponent(-5f, 0f)
+            cardComponent = HealthComponent(5f, 0f)
         )
         val playerDamageCards = cardsSystem.initCards(
             5,
@@ -32,7 +32,7 @@ class PlayerSystem(private val componentManager: ComponentManager) {
             "This card deals damage to you",
             "Damage",
             listOf(CardTag.CARD),
-            cardComponent = HealthComponent(5f, 0f)
+            cardComponent = HealthComponent(-5f, 0f)
         )
         val playerMiscCards = cardsSystem.initCards(
             5,

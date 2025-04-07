@@ -12,9 +12,6 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun HealthBar(health: Float, modifier: Modifier = Modifier) {
-    print("#################################")
-    print(health)
-    print("#################################")
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
             //TODO This kind a should be generic some how
@@ -22,7 +19,7 @@ fun HealthBar(health: Float, modifier: Modifier = Modifier) {
             modifier = modifier
         )
         LinearProgressIndicator(
-            progress = { (health % 100) / 100f },
+            progress = { 1-((health % 100) / 100f) },
             modifier = modifier
                 .fillMaxWidth()
                 .height(15.dp),

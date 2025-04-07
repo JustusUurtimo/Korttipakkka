@@ -23,14 +23,12 @@ import com.sq.thed_ck_licker.player.ScoreDisplayer
 import com.sq.thed_ck_licker.ui.components.buttons.PullCardButton
 import com.sq.thed_ck_licker.ui.components.views.CardDeck
 
-const val NO_CARD = -1
-
 @Composable
 fun Game(innerPadding: PaddingValues) {
 
     val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues()
     val playerCardCount = rememberSaveable { mutableIntStateOf(0) }
-    val latestCard = rememberSaveable { mutableIntStateOf(NO_CARD) }
+    val latestCard = rememberSaveable { mutableIntStateOf(-1) }
     val playerHealth =
         rememberSaveable { TheGameHandler.getPlayerHealthM() }
     val playerScore = rememberSaveable { TheGameHandler.getPlayerScoreM() }

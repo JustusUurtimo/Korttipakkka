@@ -25,8 +25,6 @@ fun PullCardButton(
             bottom = navigationBarPadding.calculateBottomPadding() // Add bottom padding for the navigation bar
         ),
     ) {
-        // atm ottaa aina dmg 2% ja sit kortin arvon verran.
-        //static 2% dmg idea, että tulevat kortit ei välttämättä ole dmg kortteja
         Button(
             onClick = {cardsSystem.pullRandomCardFromEntityDeck(playerId(), latestCard, playerCardCount)}
         ) { Text("draw a card") }

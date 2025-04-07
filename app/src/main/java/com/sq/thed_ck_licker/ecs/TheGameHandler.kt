@@ -54,15 +54,5 @@ object TheGameHandler {
         val comp = componentManager.getComponent(player, ScoreComponent::class)
         return comp.score
     }
-//TODO these were here commented out at 6.4.2025: Remove?
-    //    fun getEntityHealth(entityId: Int): Float {
-//        val comp = componentManager.getComponent(entityId, HealthComponent::class)
-//        return comp.health.floatValue
-//    }
-//
-//    fun getEntityHealthM(entityId: Int): MutableFloatState {
-//        val comp = componentManager.getComponent(entityId, HealthComponent::class)
-//        return comp.health
-//    }
 
 }
