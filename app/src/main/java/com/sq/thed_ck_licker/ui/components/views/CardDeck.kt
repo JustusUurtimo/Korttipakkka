@@ -28,8 +28,7 @@ import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID as playerId
 @Composable
 fun CardDeck(
     navigationBarPadding: PaddingValues,
-    latestCard: MutableIntState,
-    playerCardCount: MutableIntState
+    latestCard: MutableIntState
 ) {
     // TODO: This probably should only be the deck, and as always the positioning should be relative, not absolute
 
@@ -49,7 +48,6 @@ fun CardDeck(
                     cardsSystem.pullRandomCardFromEntityDeck(
                         playerId(),
                         latestCard,
-                        playerCardCount
                     )
                 }
         ) {

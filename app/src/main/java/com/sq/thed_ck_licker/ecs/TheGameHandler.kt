@@ -43,12 +43,6 @@ object TheGameHandler {
         return eka.asSequence()
     }
 
-
-    fun initTheGame() {
-        playerSystem.initPlayer()
-        descriptionSystem.updateAllDescriptions()
-    }
-
     fun getPlayerScoreM(): MutableIntState {
         val player = playerId()
         val comp = componentManager.getComponent(player, ScoreComponent::class)

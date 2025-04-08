@@ -57,7 +57,7 @@ fun Game(innerPadding: PaddingValues) {
         ScoreDisplayer(playerScore.intValue)
 
         Box(modifier.fillMaxSize()) {
-            CardDeck(navigationBarPadding, latestCard, playerCardCount)
+            CardDeck(navigationBarPadding, latestCard)
             Box(modifier.align(Alignment.BottomCenter)) {
 
                 Column(modifier.padding(35.dp, 0.dp, 0.dp, 0.dp)) {

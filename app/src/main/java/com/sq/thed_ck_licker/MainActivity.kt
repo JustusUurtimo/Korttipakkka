@@ -10,8 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.sq.thed_ck_licker.ecs.ComponentManager
-import com.sq.thed_ck_licker.ecs.TheGameHandler
 import com.sq.thed_ck_licker.ecs.systems.DescriptionSystem
+import com.sq.thed_ck_licker.ecs.systems.PlayerSystem
 import com.sq.thed_ck_licker.helpers.MyRandom
 import com.sq.thed_ck_licker.ui.theme.TheD_ck_LickerTheme
 
@@ -23,7 +23,8 @@ class MainActivity : ComponentActivity() {
             MyRandom.getRandomInt()
         }
 
-        TheGameHandler.initTheGame()
+        val playerSystem = PlayerSystem(ComponentManager.componentManager)
+        playerSystem.initPlayer()
 
         val descriptionSystem = DescriptionSystem(ComponentManager.componentManager)
         descriptionSystem.updateAllDescriptions()

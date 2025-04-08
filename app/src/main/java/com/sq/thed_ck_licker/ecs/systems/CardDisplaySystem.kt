@@ -170,13 +170,3 @@ fun CardsOnHandViewPreview(
     )
 }
 */
-
-// TODO: maybe this should be part of test things?
-class CardEntityPreviewParameterProvider : PreviewParameterProvider<Int> {
-    // TODO here should be some way of actually getting card entities
-    init {
-        TheGameHandler.initTheGame()
-    }
-
-    override val values = TheGameHandler.getTestingCardSequence()
-}
