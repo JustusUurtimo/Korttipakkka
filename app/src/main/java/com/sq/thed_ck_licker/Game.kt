@@ -22,6 +22,9 @@ import com.sq.thed_ck_licker.player.HealthBar
 import com.sq.thed_ck_licker.player.ScoreDisplayer
 import com.sq.thed_ck_licker.ui.components.buttons.PullCardButton
 import com.sq.thed_ck_licker.ui.components.views.CardDeck
+import com.sq.thed_ck_licker.ecs.systems.CardsSystem.Companion.cardsSystem
+import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID as playerId
+
 
 @Composable
 fun Game(innerPadding: PaddingValues) {
@@ -35,8 +38,15 @@ fun Game(innerPadding: PaddingValues) {
     // TODO here probably should be viewModel from about the game state data or something like that
     //  Something about state holder and all that
 
-
     val modifier = Modifier
+
+    val activateCard = {
+        cardsSystem.activateCard(latestCard, playerCardCount)
+    }
+    val pullNewCard = {
+        cardsSystem.pullRandomCardFromEntityDeck(playerId(), latestCard)
+    }
+
 
     Column(modifier.fillMaxWidth()) {
 
@@ -49,17 +59,20 @@ fun Game(innerPadding: PaddingValues) {
         Box(modifier.fillMaxSize()) {
             CardDeck(navigationBarPadding, latestCard, playerCardCount)
             Box(modifier.align(Alignment.BottomCenter)) {
+
                 Column(modifier.padding(35.dp, 0.dp, 0.dp, 0.dp)) {
-                    cardDisplaySystem.CardsOnHandView(
-                        playerCardCount,
-                        modifier,
-                        latestCard
-                    )
+                    if (latestCard.intValue != -1) {
+                        cardDisplaySystem.CardsOnHandView(
+                            playerCardCount,
+                            modifier,
+                            latestCard,
+                            activateCard
+                        )
+                    }
                     PullCardButton(
                         navigationBarPadding,
                         modifier.offset((-15).dp),
-                        latestCard,
-                        playerCardCount
+                        pullNewCard
                     )
                 }
 

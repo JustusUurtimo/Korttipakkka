@@ -39,7 +39,8 @@ import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID as playerId
 class CardDisplaySystem(private val componentManager: ComponentManager) {
 
     companion object {
-        val cardDisplaySystem: CardDisplaySystem = CardDisplaySystem(ComponentManager.componentManager)
+        val cardDisplaySystem: CardDisplaySystem =
+            CardDisplaySystem(ComponentManager.componentManager)
     }
 
     /* TODO: This is kind a ok for now
@@ -90,6 +91,7 @@ class CardDisplaySystem(private val componentManager: ComponentManager) {
         playerCardCount: MutableIntState,
         modifier: Modifier,
         latestCard: MutableIntState,
+        activateCard: () -> Unit,
     ) {
         BadgedBox(
             badge = {
@@ -113,12 +115,10 @@ class CardDisplaySystem(private val componentManager: ComponentManager) {
                 modifier = modifier
                     .background(color = Color.Green)
                     .scale(0.99f),
-                onClick = {cardsSystem.activateCard(latestCard)}
+                onClick = activateCard
 
             ) {
-                if(latestCard.intValue != -1) {
-                    EntityDisplay(latestCard.intValue)
-                }
+                EntityDisplay(latestCard.intValue)
             }
         }
     }
@@ -126,24 +126,32 @@ class CardDisplaySystem(private val componentManager: ComponentManager) {
 
 }
 
-
+//todo is this not used, so I commented it out for now 8.4.2025
+/*
 @Preview(showBackground = true)
 @Composable
 fun DisplayRandomCardPreview() {
     TheGameHandler.initTheGame()
     val displaySystem = CardDisplaySystem(ComponentManager.componentManager)
     val latestCard = remember { mutableIntStateOf(-1) }
-    val playerCardCount = remember { mutableIntStateOf(0) }
     Box(
         modifier = Modifier
             .size(500.dp)
             .background(Color.Magenta)
     ) {
-        displaySystem.EntityDisplay(cardsSystem.pullRandomCardFromEntityDeck(playerId(), latestCard, playerCardCount))
+        displaySystem.EntityDisplay(
+            cardsSystem.pullRandomCardFromEntityDeck(
+                playerId(),
+                latestCard
+            )
+        )
     }
 }
+*/
 
 
+//todo is this not used, so I commented it out for now 8.4.2025
+/*
 @Preview(showBackground = true)
 @Composable
 fun CardsOnHandViewPreview(
@@ -161,7 +169,7 @@ fun CardsOnHandViewPreview(
         cardEntity
     )
 }
-
+*/
 
 // TODO: maybe this should be part of test things?
 class CardEntityPreviewParameterProvider : PreviewParameterProvider<Int> {

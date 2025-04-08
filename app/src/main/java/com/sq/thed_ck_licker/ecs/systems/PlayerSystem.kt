@@ -12,7 +12,7 @@ import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 class PlayerSystem(private val componentManager: ComponentManager) {
 
     fun initPlayer() {
-        componentManager.addComponent(getPlayerID(), HealthComponent(0f, 100f))
+        componentManager.addComponent(getPlayerID(), HealthComponent(100f, 100f))
         componentManager.addComponent(getPlayerID(), ScoreComponent())
         componentManager.addComponent(getPlayerID(), DrawDeckComponent(initPlayerDeck()))
     }

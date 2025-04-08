@@ -6,18 +6,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableIntState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.sq.thed_ck_licker.ecs.systems.CardsSystem.Companion.cardsSystem
-import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID as playerId
 
 @Composable
 fun PullCardButton(
     navigationBarPadding: PaddingValues,
     modifier: Modifier,
-    latestCard: MutableIntState,
-    playerCardCount: MutableIntState
+    pullNewCard: () -> Unit
 ) {
     Column(
         modifier = modifier.padding(
@@ -26,7 +22,7 @@ fun PullCardButton(
         ),
     ) {
         Button(
-            onClick = {cardsSystem.pullRandomCardFromEntityDeck(playerId(), latestCard, playerCardCount)}
+            onClick = pullNewCard
         ) { Text("draw a card") }
     }
 }
