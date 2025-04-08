@@ -26,10 +26,20 @@ fun HealthBar(health: Float, modifier: Modifier = Modifier) {
             color = Color.LightGray,
             trackColor = Color.Red, //remaining health
         )
+
+        // TODO: Remove the 1- when merged to the main branch
+        LinearProgressIndicator(
+            progress = { 1 - (health / 100f) },
+            modifier = modifier
+                .fillMaxWidth()
+                .height(15.dp),
+            color = Color.Red,
+            trackColor = Color.LightGray, //remaining health
+        )
     }
 }
 
 @Composable
 fun ScoreDisplayer(score: Int, modifier: Modifier = Modifier) {
-    Text("Score: $score")
+    Text("Score: $score steps taken")
 }
