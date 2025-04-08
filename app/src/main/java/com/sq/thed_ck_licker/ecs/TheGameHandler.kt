@@ -85,7 +85,16 @@ object TheGameHandler {
         addDeactivationTestCards()
 
 
-        addPassiveScoreGainerToThePlayer()
+//        addPassiveScoreGainerToThePlayer()
+
+        /* TODO: multipliers and such can be nicely implemented with:
+        *   Make each effect function that takes in the thing  to be multiplied.
+        *   Then just pump all things through pipeline full of the multiplier functions.
+        *   To get the pipeline just loop all things and collect the multiplier functions.
+        *   Something like multiplier system.
+        *   If one wants to be wild they can even put three lists as pipeline, one for additions, one for increases and one for multiplications
+        *   Thou that would mean order of operation does not matter, which might be wanted.
+        */
     }
 
     // TODO: All these card things should come from
@@ -117,13 +126,13 @@ object TheGameHandler {
         }
     }
 
-    private fun addDeactivationTestCards(amount: Int = 1) {
+    private fun addDeactivationTestCards(amount: Int = 2) {
         val omaScore = ScoreComponent()
         val deactivateAction = { id: Int ->
             val target = id get HealthComponent::class
             omaScore.score.intValue += 1
             target.health.floatValue += omaScore.score.intValue.toFloat()
-            println("Now its deactivaited")
+            println("Now its deactivated")
             println("Risk is rising!")
             println("Holds ${omaScore.score.intValue} points")
 
@@ -147,26 +156,24 @@ object TheGameHandler {
         }
     }
 
-    private fun addTrapTestCard(amount: Int = 4) {
-//        val danger = -5
-//        val omaScore = ScoreComponent(danger * 3)
-//        val omaHealth = HealthComponent(health = danger.toFloat(), maxHealth = 0f)
+    private fun addTrapTestCard(amount: Int = 2) {
         var scoreLoss = 0
         var healthLoss = 0
         val activationComponent = ActivationCounterComponent()
         val deactivateAction = { id: Int ->
             val target = id get ScoreComponent::class
-            scoreLoss = (activationComponent.deactivations.intValue * 3)
+            scoreLoss = ((1 + activationComponent.deactivations.intValue) * 3)
             target.score.intValue -= (activationComponent.deactivations.intValue * 3)
             activationComponent.deactivate()
+            println("Lost ${scoreLoss} points")
         }
         val onActivation = { id: Int ->
             val target = id get HealthComponent::class
-            healthLoss = activationComponent.activations.intValue
-            target.health.floatValue -= activationComponent.activations.intValue
+            healthLoss = activationComponent.activations.intValue + 1
+            target.health.floatValue += activationComponent.activations.intValue
             activationComponent.activate()
 
-
+            println("Lost ${healthLoss} health")
         }
         for (i in 1..amount) {
             val cardEntity = generateEntity()
@@ -175,8 +182,6 @@ object TheGameHandler {
             cardEntity add EffectComponent(onDeactivate = deactivateAction, onPlay = onActivation)
             cardEntity add NameComponent("Trap Card #$i")
             cardEntity add TagsComponent(listOf(CardTag.Card))
-//            cardEntity add omaScore
-//            cardEntity add omaHealth
         }
     }
 
