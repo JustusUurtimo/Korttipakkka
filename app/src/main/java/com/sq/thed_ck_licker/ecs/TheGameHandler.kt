@@ -4,6 +4,8 @@ import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.MutableIntState
 import com.sq.thed_ck_licker.R
 import com.sq.thed_ck_licker.card.Cards
+import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID
+import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.CardClassification
 import com.sq.thed_ck_licker.ecs.components.CardEffect
 import com.sq.thed_ck_licker.ecs.components.CardEffectType
@@ -12,12 +14,16 @@ import com.sq.thed_ck_licker.ecs.components.CardIdentity
 import com.sq.thed_ck_licker.ecs.components.CardTag
 import com.sq.thed_ck_licker.ecs.components.DescriptionComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
-import com.sq.thed_ck_licker.ecs.components.EffectTriggerComponent
+import com.sq.thed_ck_licker.ecs.components.DurationComponent
+import com.sq.thed_ck_licker.ecs.components.EffectComponent
+import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.ImageComponent
 import com.sq.thed_ck_licker.ecs.components.NameComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent
+import com.sq.thed_ck_licker.ecs.components.activate
+import com.sq.thed_ck_licker.ecs.components.addEntity
 import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID as playerId
 
 /*TODO apparently this kind a not good...
@@ -25,10 +31,10 @@ import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID as playerId
 *  But I think this is good enough for now.
 *  More about this https://developer.android.com/topic/architecture/ui-layer/stateholders
 *  aa
-*  Maybe this should be relicated for testing and prototyping
+*  Maybe this should be relegated for testing and prototyping
 *  since the systems should handle all the things
  */
-@Deprecated("Everything should go through their own systems any way")
+@Deprecated("Everything should go through their own systems any way\nThou there may be argument to put things here until they find their actual home")
 object TheGameHandler {
     val cards = Cards()
     private val componentManager = ComponentManager.componentManager
@@ -66,13 +72,16 @@ object TheGameHandler {
     }
 
     // TODO this should not stay here
-    private fun initPlayerAndSomeDefaultCards() {
+    private fun initPlayerAndSomeDefaultThings() {
         componentManager.addComponent(playerId(), HealthComponent(0f, 100f))
         componentManager.addComponent(playerId(), ScoreComponent())
         componentManager.addComponent(playerId(), DrawDeckComponent())
+        playerId() add EffectStackComponent()
 
-//        addDefaultCards()
-        decayCardTest()
+
+        addDefaultCards()
+        addDecayCardTest()
+        addPassiveScoreGainerToThePlayer()
     }
 
     // TODO: All these card things should come from
@@ -83,27 +92,50 @@ object TheGameHandler {
             componentManager.addComponent(cardEntity, ImageComponent())
             componentManager.addComponent(cardEntity, ScoreComponent(10 * i))
             componentManager.addComponent(
-                cardEntity,
-                DescriptionComponent()
+                cardEntity, DescriptionComponent()
             )
             componentManager.addComponent(cardEntity, NameComponent("Default Card #$i"))
             componentManager.addComponent(cardEntity, TagsComponent(listOf(CardTag.Card)))
+
+            cardEntity add ActivationCounterComponent()
         }
     }
 
-    private fun decayCardTest(amount: Int = 1) {
+    private fun addDecayCardTest(amount: Int = 4) {
 
         for (i in 1..amount) {
             val cardEntity = generateEntity()
-            componentManager.addComponent(cardEntity, ImageComponent())
-            componentManager.addComponent(
-                cardEntity,
-                DescriptionComponent()
-            )
-            componentManager.addComponent(cardEntity, EffectTriggerComponent())
-            componentManager.addComponent(cardEntity, NameComponent("Decay Card #$i"))
-            componentManager.addComponent(cardEntity, TagsComponent(listOf(CardTag.Card)))
+            cardEntity add ImageComponent()
+            cardEntity add DescriptionComponent()
+            cardEntity add EffectComponent()
+            cardEntity add NameComponent("Decay Card #$i")
+            cardEntity add TagsComponent(listOf(CardTag.Card))
         }
+    }
+
+    private fun addPassiveScoreGainerToThePlayer(amount: Int = 4) {
+
+        val entity = generateEntity()
+//        entity add TagsComponent(listOf(CardTag.Effect))
+        entity add DurationComponent()
+
+
+        val activationComponent = ActivationCounterComponent()
+        val funkkari = { id: Int ->
+            val playerScoreComponent = id get ScoreComponent::class
+            playerScoreComponent.score.intValue += amount
+            activationComponent.activate()
+            println("Now it should be done adding")
+        }
+        entity add activationComponent
+
+
+        entity add EffectComponent(onTurnStart = funkkari)
+
+        val effStackComp = (getPlayerID() get EffectStackComponent::class)
+        effStackComp addEntity (entity)  // I think i have gone mad from the power
+        println("effStackComp #2: $effStackComp")
+
     }
 
     // TODO this is just temporary
@@ -121,16 +153,7 @@ object TheGameHandler {
 
 
     fun initTheGame() {
-        initPlayerAndSomeDefaultCards()
-
-
-    }
-
-    // TODO this is just temporary
-    //  it is meant only for brief debugging thing
-    //  it is really baad
-    fun componentManager(): ComponentManager {
-        return componentManager
+        initPlayerAndSomeDefaultThings()
     }
 
     fun getPlayerScoreM(): MutableIntState {
@@ -140,3 +163,23 @@ object TheGameHandler {
     }
 
 }
+
+
+fun onTurnStartEffectStackSystem(componentManager: ComponentManager = ComponentManager.componentManager) {
+    val targetsWithEffectStack = componentManager.getEntitiesWithComponent(EffectStackComponent::class)
+    if (targetsWithEffectStack == null) return
+
+    for (effectTarget in targetsWithEffectStack) {
+        val effectStack = effectTarget.value as EffectStackComponent
+        for (effectEntity in effectStack.effectEntities) {
+                val effect = effectEntity get EffectComponent::class
+                effect.onTurnStart(effectTarget.key)
+            println("Activating ${effect} on ${effectTarget.key}")
+        }
+        println("effectTarget.key: ${effectTarget.key}")
+        println("effectTarget.value: ${effectTarget.value}")
+//        val theStacker = effectTarget get EffectStackComponent::class
+    }
+}
+
+

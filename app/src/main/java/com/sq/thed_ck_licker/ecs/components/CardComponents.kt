@@ -17,8 +17,7 @@ enum class CardEffectValue(val value: Float) {
     MAX_HP_2(2f), DOUBLE_TROUBLE(0f), REVERSE_DAMAGE(0f), SHOP_COUPON(100f)
 }
 
-@Deprecated("I think will decide against this. \n And each tag should have its own component")
-enum class CardTag { Card }
+enum class CardTag { Card, Effect }
 
 @Deprecated("This should not be used, instead use ImageComponent")
 @Parcelize
@@ -59,13 +58,12 @@ fun DescriptionComponent.addHealth(healthC: HealthComponent) {
 
 data class NameComponent(val name: String = "Placeholder")
 
-@Deprecated("I think will decide against this. \n And each tag should have its own component")
 data class TagsComponent(val tags: List<CardTag> = emptyList())
 
 /**
  * Used to make more complex activations
  */
-data class EffectTriggerComponent(
+data class EffectComponent(
     val onDeath: (Int) -> Unit = {},
     val onSpawn: (Int) -> Unit = {},
     val onTurnStart: (Int) -> Unit = {}
@@ -73,8 +71,13 @@ data class EffectTriggerComponent(
 
 /**
  * Used to keep track of how many times a card has been activated
+ *
+ *
+ * TODO: Think long and hard if there is way or need for this to be event, observer or subscribe style thing.
+ *  I mean it would be nice and make sense that this gets hooked up into things.
+ *  That could allow us to not farm this to every thing and risk duplicate counting.
  */
-data class ActCounterComponent(
+data class ActivationCounterComponent(
     var activations: MutableIntState,
     var deactivations: MutableIntState
 ) {
@@ -84,10 +87,13 @@ data class ActCounterComponent(
     ) : this(mutableIntStateOf(activations), mutableIntStateOf(deactivations))
 }
 
-fun ActCounterComponent.activate() {
+fun ActivationCounterComponent.activate() {
     this.activations.intValue += 1
+    println("This has been activated ${this.activations.intValue} times")
 }
 
-fun ActCounterComponent.deactivate(){
+fun ActivationCounterComponent.deactivate() {
     this.deactivations.intValue += 1
 }
+
+data class DurationComponent(val duration: Int = -1)

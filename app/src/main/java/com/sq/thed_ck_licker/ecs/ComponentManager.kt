@@ -14,7 +14,7 @@ import kotlin.reflect.KClass
 class ComponentManager : Parcelable {
 
     companion object {
-         val componentManager: ComponentManager = ComponentManager()
+        val componentManager: ComponentManager = ComponentManager()
     }
 
     @IgnoredOnParcel
@@ -69,4 +69,16 @@ class ComponentManager : Parcelable {
         }
         return result
     }
+}
+
+/**
+ * Extension function to add a component to an entity.
+ * Please do not try to use for any other add operation...
+ */
+infix fun <T : Any> EntityId.add(component: T) {
+    ComponentManager.componentManager.addComponent(this, component)
+}
+
+infix fun <T : Any> EntityId.get(componentClass: KClass<T>): T {
+    return ComponentManager.componentManager.getComponent(this, componentClass)
 }

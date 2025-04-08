@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -22,7 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.sq.thed_ck_licker.ecs.ComponentManager
 import com.sq.thed_ck_licker.ecs.TheGameHandler
-import com.sq.thed_ck_licker.ecs.TheGameHandler.getDefaultCardPair
+import com.sq.thed_ck_licker.ecs.onTurnStartEffectStackSystem
 import com.sq.thed_ck_licker.ecs.systems.CardDisplaySystem
 import com.sq.thed_ck_licker.ecs.systems.CardEffectSystem
 import com.sq.thed_ck_licker.helpers.getRandomElement
@@ -53,10 +52,12 @@ fun Game(innerPadding: PaddingValues) {
     // TODO: this should contain no card or something like that in the beginning
     var cardde by remember { mutableIntStateOf(TheGameHandler.getRandomCard()!!.keys.getRandomElement()) }
 
+
     val activateCard = {
         cardEffectSystem.playerTargetsPlayer(cardde)
         playerCardCount.intValue += 1
         // TODO: Add here things needed to discard the card
+        onTurnStartEffectStackSystem()
     }
     val pullNewCard = {
         cardde = TheGameHandler.getRandomCard()!!.keys.getRandomElement()
