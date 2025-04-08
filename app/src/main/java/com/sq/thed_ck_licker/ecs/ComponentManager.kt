@@ -82,3 +82,11 @@ infix fun <T : Any> EntityId.add(component: T) {
 infix fun <T : Any> EntityId.get(componentClass: KClass<T>): T {
     return ComponentManager.componentManager.getComponent(this, componentClass)
 }
+
+/**
+ * For example:
+ * Can be used to get if component is in the return value of getAllComponentsOfEntity()
+ */
+inline fun <reified T> List<Any>.hasComponent(): Boolean {
+    return any { it is T }
+}

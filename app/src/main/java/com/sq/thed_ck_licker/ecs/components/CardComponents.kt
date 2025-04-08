@@ -62,11 +62,16 @@ data class TagsComponent(val tags: List<CardTag> = emptyList())
 
 /**
  * Used to make more complex activations
+ * The functions take the target entity id as a parameter.
+ * Then you just make what you want in the function body.
+ * And maaaagic
  */
 data class EffectComponent(
     val onDeath: (Int) -> Unit = {},
     val onSpawn: (Int) -> Unit = {},
-    val onTurnStart: (Int) -> Unit = {}
+    val onTurnStart: (Int) -> Unit = {},
+    val onPlay:(Int) -> Unit = {},
+    val onDeactivate: (Int) -> Unit = {},
 )
 
 /**
@@ -94,6 +99,7 @@ fun ActivationCounterComponent.activate() {
 
 fun ActivationCounterComponent.deactivate() {
     this.deactivations.intValue += 1
+    println("This has been deactivated ${this.deactivations.intValue} times")
 }
 
 data class DurationComponent(val duration: Int = -1)

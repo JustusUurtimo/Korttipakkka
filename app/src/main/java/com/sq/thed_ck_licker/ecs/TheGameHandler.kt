@@ -14,7 +14,6 @@ import com.sq.thed_ck_licker.ecs.components.CardIdentity
 import com.sq.thed_ck_licker.ecs.components.CardTag
 import com.sq.thed_ck_licker.ecs.components.DescriptionComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
-import com.sq.thed_ck_licker.ecs.components.DurationComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
@@ -80,8 +79,10 @@ object TheGameHandler {
 
 
         addDefaultCards()
-        addDecayCardTest()
-        addPassiveScoreGainerToThePlayer()
+//        addDecayCardTest()
+//        addPassiveScoreGainerToThePlayer()
+//        addScoreGainerTestCard()
+        addDeactivationTestCards()
     }
 
     // TODO: All these card things should come from
@@ -101,8 +102,38 @@ object TheGameHandler {
         }
     }
 
-    private fun addDecayCardTest(amount: Int = 4) {
+    private fun addDeactivationTestCards(amount: Int = 1) {
+        val omaScore = ScoreComponent()
+        val deactivateAction = { id: Int ->
+            println("aa?")
+            val target = id get HealthComponent::class
+            omaScore.score.intValue += 1
+            target.health.floatValue -= omaScore.score.intValue
+            println("Now its deactivaited")
+            println("Risk is rising!")
+            println("Holds ${omaScore.score.intValue} points")
+        }
+        val onActivation = { id: Int ->
+            println("aa?")
+            val target = id get ScoreComponent::class
+            val asd = omaScore.score.intValue * 3
+            target.score.intValue += (asd)
+            omaScore.score.intValue = 0
+            println("Now its activated")
+            println("Gave ${asd} points")
+        }
+        for (i in 1..amount) {
+            val cardEntity = generateEntity()
+            cardEntity add ImageComponent()
+            cardEntity add DescriptionComponent("On deactivate you lose health, on activation you gain score * 3")
+            cardEntity add EffectComponent(onDeactivate = deactivateAction, onPlay = onActivation)
+            cardEntity add NameComponent("Deactivation Card #$i")
+            cardEntity add TagsComponent(listOf(CardTag.Card))
+            cardEntity add omaScore
+        }
+    }
 
+    private fun addDecayTestCards(amount: Int = 4) {
         for (i in 1..amount) {
             val cardEntity = generateEntity()
             cardEntity add ImageComponent()
@@ -113,29 +144,37 @@ object TheGameHandler {
         }
     }
 
-    private fun addPassiveScoreGainerToThePlayer(amount: Int = 4) {
+    private fun addScoreGainerTestCard(amount: Int = 1) {
+        val pointsPerCard = 4
+        for (i in 1..amount) {
+            val cardEntity = generateEntity()
+            cardEntity add ImageComponent()
+            cardEntity add DescriptionComponent("Gain Score gainer on play. \nEvery time you play card you gain $pointsPerCard points")
+            cardEntity add EffectComponent(onPlay = { addPassiveScoreGainerToThePlayer(pointsPerCard) })
+            cardEntity add NameComponent("Score Gainer Card #$i")
+            cardEntity add TagsComponent(listOf(CardTag.Card))
+        }
+    }
+
+
+    private fun addPassiveScoreGainerToThePlayer(amount: Int = 3) {
 
         val entity = generateEntity()
-//        entity add TagsComponent(listOf(CardTag.Effect))
-        entity add DurationComponent()
-
 
         val activationComponent = ActivationCounterComponent()
-        val funkkari = { id: Int ->
+        val activateAction = { id: Int ->
             val playerScoreComponent = id get ScoreComponent::class
             playerScoreComponent.score.intValue += amount
             activationComponent.activate()
-            println("Now it should be done adding")
         }
         entity add activationComponent
 
 
-        entity add EffectComponent(onTurnStart = funkkari)
+        entity add EffectComponent(onTurnStart = activateAction)
 
         val effStackComp = (getPlayerID() get EffectStackComponent::class)
         effStackComp addEntity (entity)  // I think i have gone mad from the power
         println("effStackComp #2: $effStackComp")
-
     }
 
     // TODO this is just temporary
@@ -165,21 +204,5 @@ object TheGameHandler {
 }
 
 
-fun onTurnStartEffectStackSystem(componentManager: ComponentManager = ComponentManager.componentManager) {
-    val targetsWithEffectStack = componentManager.getEntitiesWithComponent(EffectStackComponent::class)
-    if (targetsWithEffectStack == null) return
-
-    for (effectTarget in targetsWithEffectStack) {
-        val effectStack = effectTarget.value as EffectStackComponent
-        for (effectEntity in effectStack.effectEntities) {
-                val effect = effectEntity get EffectComponent::class
-                effect.onTurnStart(effectTarget.key)
-            println("Activating ${effect} on ${effectTarget.key}")
-        }
-        println("effectTarget.key: ${effectTarget.key}")
-        println("effectTarget.value: ${effectTarget.value}")
-//        val theStacker = effectTarget get EffectStackComponent::class
-    }
-}
 
 

@@ -7,6 +7,7 @@ import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.CardEffect
 import com.sq.thed_ck_licker.ecs.components.CardEffectType
 import com.sq.thed_ck_licker.ecs.components.CardIdentity
+import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 import com.sq.thed_ck_licker.ecs.components.activate
@@ -75,6 +76,7 @@ class CardEffectSystem(val componentManager: ComponentManager) {
                 is ScoreComponent -> activateScore(theActivator, theUsedThing, theTarget)
                 is HealthComponent -> activateHealth(theActivator, theUsedThing, theTarget)
                 is ActivationCounterComponent -> component.activate()
+                is EffectComponent -> component.onPlay.invoke(theTarget)
                 else -> println("Unknown component type: $component")
             }
         }

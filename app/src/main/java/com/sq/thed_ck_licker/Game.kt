@@ -20,10 +20,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.sq.thed_ck_licker.ecs.ComponentManager
+import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.TheGameHandler
-import com.sq.thed_ck_licker.ecs.onTurnStartEffectStackSystem
+import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
+import com.sq.thed_ck_licker.ecs.components.EffectComponent
+import com.sq.thed_ck_licker.ecs.components.deactivate
+import com.sq.thed_ck_licker.ecs.get
 import com.sq.thed_ck_licker.ecs.systems.CardDisplaySystem
 import com.sq.thed_ck_licker.ecs.systems.CardEffectSystem
+import com.sq.thed_ck_licker.ecs.systems.DescriptionSystem
+import com.sq.thed_ck_licker.ecs.systems.onTurnStartEffectStackSystem
 import com.sq.thed_ck_licker.helpers.getRandomElement
 import com.sq.thed_ck_licker.player.HealthBar
 import com.sq.thed_ck_licker.player.ScoreDisplayer
@@ -54,12 +60,28 @@ fun Game(innerPadding: PaddingValues) {
 
 
     val activateCard = {
+        onTurnStartEffectStackSystem()
         cardEffectSystem.playerTargetsPlayer(cardde)
         playerCardCount.intValue += 1
         // TODO: Add here things needed to discard the card
-        onTurnStartEffectStackSystem()
     }
     val pullNewCard = {
+        // TODO: This is only a temporary place for this
+        DescriptionSystem.system.updateAllDescriptions()
+
+        // TODO: Well now this is basically fully fleshed out draw card system all but in name
+        try {
+            (cardde get EffectComponent::class).onDeactivate.invoke(getPlayerID())
+        } catch (_: Exception) {
+            println("Yeah yeah, we get it, you are so cool there was no effect component ")
+        }
+
+        try {
+            (cardde get ActivationCounterComponent::class).deactivate()
+        } catch (_: Exception) {
+            println("Yeah yeah, we get it, you are so cool there was no actCounter component ")
+        }
+
         cardde = TheGameHandler.getRandomCard()!!.keys.getRandomElement()
         // TODO: Add here things needed to pull new card from the deck and not just card
     }
