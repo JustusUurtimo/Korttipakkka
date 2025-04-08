@@ -23,6 +23,7 @@ import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent
 import com.sq.thed_ck_licker.ecs.components.activate
 import com.sq.thed_ck_licker.ecs.components.addEntity
+import com.sq.thed_ck_licker.ecs.components.deactivate
 import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID as playerId
 
 /*TODO apparently this kind a not good...
@@ -79,9 +80,9 @@ object TheGameHandler {
 
 
         addDefaultCards()
-//        addDecayCardTest()
-//        addPassiveScoreGainerToThePlayer()
-//        addScoreGainerTestCard()
+        addTrapTestCard()
+        addPassiveScoreGainerToThePlayer()
+        addScoreGainerTestCard()
         addDeactivationTestCards()
     }
 
@@ -105,16 +106,14 @@ object TheGameHandler {
     private fun addDeactivationTestCards(amount: Int = 1) {
         val omaScore = ScoreComponent()
         val deactivateAction = { id: Int ->
-            println("aa?")
             val target = id get HealthComponent::class
             omaScore.score.intValue += 1
-            target.health.floatValue -= omaScore.score.intValue
+            target.health.floatValue -= omaScore.score.intValue.toFloat()
             println("Now its deactivaited")
             println("Risk is rising!")
             println("Holds ${omaScore.score.intValue} points")
         }
         val onActivation = { id: Int ->
-            println("aa?")
             val target = id get ScoreComponent::class
             val asd = omaScore.score.intValue * 3
             target.score.intValue += (asd)
@@ -133,14 +132,36 @@ object TheGameHandler {
         }
     }
 
-    private fun addDecayTestCards(amount: Int = 4) {
+    private fun addTrapTestCard(amount: Int = 4) {
+//        val danger = -5
+//        val omaScore = ScoreComponent(danger * 3)
+//        val omaHealth = HealthComponent(health = danger.toFloat(), maxHealth = 0f)
+        var scoreLoss = 0
+        var healthLoss = 0
+        val activationComponent = ActivationCounterComponent()
+        val deactivateAction = { id: Int ->
+            val target = id get ScoreComponent::class
+            scoreLoss = (activationComponent.deactivations.intValue * 3)
+            target.score.intValue -= (activationComponent.deactivations.intValue * 3)
+            activationComponent.deactivate()
+        }
+        val onActivation = { id: Int ->
+            val target = id get HealthComponent::class
+            healthLoss = activationComponent.activations.intValue
+            target.health.floatValue -= activationComponent.activations.intValue
+            activationComponent.activate()
+
+
+        }
         for (i in 1..amount) {
             val cardEntity = generateEntity()
             cardEntity add ImageComponent()
-            cardEntity add DescriptionComponent()
-            cardEntity add EffectComponent()
-            cardEntity add NameComponent("Decay Card #$i")
+            cardEntity add DescriptionComponent("On deactivate you lose ${scoreLoss} score, on activation you lose ${healthLoss} health")
+            cardEntity add EffectComponent(onDeactivate = deactivateAction, onPlay = onActivation)
+            cardEntity add NameComponent("Trap Card #$i")
             cardEntity add TagsComponent(listOf(CardTag.Card))
+//            cardEntity add omaScore
+//            cardEntity add omaHealth
         }
     }
 
@@ -148,9 +169,14 @@ object TheGameHandler {
         val pointsPerCard = 4
         for (i in 1..amount) {
             val cardEntity = generateEntity()
+            val activationComponent = ActivationCounterComponent()
             cardEntity add ImageComponent()
             cardEntity add DescriptionComponent("Gain Score gainer on play. \nEvery time you play card you gain $pointsPerCard points")
-            cardEntity add EffectComponent(onPlay = { addPassiveScoreGainerToThePlayer(pointsPerCard) })
+            cardEntity add EffectComponent(onPlay = {
+                addPassiveScoreGainerToThePlayer(pointsPerCard)
+                activationComponent.activate()
+            })
+            cardEntity add activationComponent
             cardEntity add NameComponent("Score Gainer Card #$i")
             cardEntity add TagsComponent(listOf(CardTag.Card))
         }

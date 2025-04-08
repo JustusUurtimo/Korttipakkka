@@ -24,6 +24,7 @@ import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.TheGameHandler
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
+import com.sq.thed_ck_licker.ecs.components.activate
 import com.sq.thed_ck_licker.ecs.components.deactivate
 import com.sq.thed_ck_licker.ecs.get
 import com.sq.thed_ck_licker.ecs.systems.CardDisplaySystem
@@ -63,6 +64,17 @@ fun Game(innerPadding: PaddingValues) {
         onTurnStartEffectStackSystem()
         cardEffectSystem.playerTargetsPlayer(cardde)
         playerCardCount.intValue += 1
+        try {
+            (cardde get EffectComponent::class).onPlay.invoke(getPlayerID())
+        } catch (_: Exception) {
+            println("Yeah yeah, we get it, you are so cool there was no effect component ")
+        }
+
+        try {
+            (cardde get ActivationCounterComponent::class).activate()
+        } catch (_: Exception) {
+            println("Yeah yeah, we get it, you are so cool there was no actCounter component ")
+        }
         // TODO: Add here things needed to discard the card
     }
     val pullNewCard = {
