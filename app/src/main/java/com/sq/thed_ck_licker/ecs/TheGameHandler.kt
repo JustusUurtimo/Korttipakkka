@@ -81,9 +81,11 @@ object TheGameHandler {
 
         addDefaultCards()
         addTrapTestCard()
-        addPassiveScoreGainerToThePlayer()
         addScoreGainerTestCard()
         addDeactivationTestCards()
+
+
+        addPassiveScoreGainerToThePlayer()
     }
 
     // TODO: All these card things should come from
@@ -91,15 +93,27 @@ object TheGameHandler {
     private fun addDefaultCards(amount: Int = 7) {
         for (i in 1..amount) {
             val cardEntity = generateEntity()
+            val omaScore = ScoreComponent(10 * i)
             componentManager.addComponent(cardEntity, ImageComponent())
-            componentManager.addComponent(cardEntity, ScoreComponent(10 * i))
+            componentManager.addComponent(cardEntity, omaScore)
             componentManager.addComponent(
                 cardEntity, DescriptionComponent()
             )
             componentManager.addComponent(cardEntity, NameComponent("Default Card #$i"))
             componentManager.addComponent(cardEntity, TagsComponent(listOf(CardTag.Card)))
 
-            cardEntity add ActivationCounterComponent()
+            val selfAct = ActivationCounterComponent()
+            cardEntity add selfAct
+            val scoreIt = { id: Int ->
+                val target = id get ScoreComponent::class
+                target.score.intValue += omaScore.score.intValue
+                selfAct.activate()
+                //TODO: This certainly is not right way of doing this,
+                // it should be handled in some general way, maybe some event based thing or system for them
+            }
+
+            cardEntity add EffectComponent(onPlay = scoreIt)
+
         }
     }
 
@@ -108,10 +122,11 @@ object TheGameHandler {
         val deactivateAction = { id: Int ->
             val target = id get HealthComponent::class
             omaScore.score.intValue += 1
-            target.health.floatValue -= omaScore.score.intValue.toFloat()
+            target.health.floatValue += omaScore.score.intValue.toFloat()
             println("Now its deactivaited")
             println("Risk is rising!")
             println("Holds ${omaScore.score.intValue} points")
+
         }
         val onActivation = { id: Int ->
             val target = id get ScoreComponent::class

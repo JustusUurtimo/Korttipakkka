@@ -27,7 +27,7 @@ class DescriptionSystem(val componentManager: ComponentManager = ComponentManage
         for (entity in entitiesWithDescription) {
             val comps = componentManager.getAllComponentsOfEntity(entity.key)
             val descComp = entity.value as DescriptionComponent
-            descComp.description.value = ""
+//            descComp.description.value = ""
             for (comp in comps) {
                 when (comp) {
                     is ScoreComponent -> descComp.addScore(comp)
@@ -35,6 +35,24 @@ class DescriptionSystem(val componentManager: ComponentManager = ComponentManage
                     else -> {
                         println("Unknown component type: $comp")
                     }
+                }
+            }
+        }
+    }
+
+    fun updateSingleDescription(
+        entity: Int,
+        componentManager: ComponentManager = this.componentManager
+    ) {
+        val comps = componentManager.getAllComponentsOfEntity(entity)
+        val descComp = componentManager.getComponent(entity, DescriptionComponent::class)
+        descComp.description.value = ""
+        for (comp in comps) {
+            when (comp) {
+                is ScoreComponent -> descComp.addScore(comp)
+                is HealthComponent -> descComp.addHealth(comp)
+                else -> {
+                    println("Unknown component type: $comp")
                 }
             }
         }

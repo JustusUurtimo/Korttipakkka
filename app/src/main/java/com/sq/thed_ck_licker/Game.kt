@@ -62,7 +62,7 @@ fun Game(innerPadding: PaddingValues) {
 
     val activateCard = {
         onTurnStartEffectStackSystem()
-        cardEffectSystem.playerTargetsPlayer(cardde)
+//        cardEffectSystem.playerTargetsPlayer(cardde)
         playerCardCount.intValue += 1
         try {
             (cardde get EffectComponent::class).onPlay.invoke(getPlayerID())
@@ -79,7 +79,7 @@ fun Game(innerPadding: PaddingValues) {
     }
     val pullNewCard = {
         // TODO: This is only a temporary place for this
-        DescriptionSystem.system.updateAllDescriptions()
+//        DescriptionSystem.system.updateAllDescriptions()
 
         // TODO: Well now this is basically fully fleshed out draw card system all but in name
         try {
