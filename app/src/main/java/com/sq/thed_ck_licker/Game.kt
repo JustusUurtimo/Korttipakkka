@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.TheGameHandler
+import com.sq.thed_ck_licker.ecs.TheGameHandler.playerSystem
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.deactivate
@@ -41,8 +42,8 @@ fun Game(innerPadding: PaddingValues) {
     val playerCardCount = rememberSaveable { mutableIntStateOf(0) }
     val latestCard = rememberSaveable { mutableIntStateOf(-1) }
     val playerHealth =
-        rememberSaveable { TheGameHandler.playerSystem.getPlayerHealthM() }
-    val playerScore = rememberSaveable { TheGameHandler.playerSystem.getPlayerScoreM() }
+        rememberSaveable { playerSystem.getPlayerHealthM() }
+    val playerScore = rememberSaveable { playerSystem.getPlayerScoreM() }
     // TODO we should read more about viewModels and state holding
 
     val modifier = Modifier
