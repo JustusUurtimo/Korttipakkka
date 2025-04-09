@@ -33,7 +33,7 @@ fun Game(innerPadding: PaddingValues) {
     val playerCardCount = rememberSaveable { mutableIntStateOf(0) }
     val latestCard = rememberSaveable { mutableIntStateOf(-1) }
     val playerHealth =
-        rememberSaveable { TheGameHandler.getPlayerMaxHealthM() }
+        rememberSaveable { TheGameHandler.getPlayerHealthM() }
     val playerMaxHealth =
         rememberSaveable { TheGameHandler.getPlayerMaxHealthM() }
     val playerScore = rememberSaveable { TheGameHandler.getPlayerScoreM() }
