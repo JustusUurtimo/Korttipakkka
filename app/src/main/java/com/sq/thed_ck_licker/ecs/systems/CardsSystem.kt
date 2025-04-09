@@ -18,7 +18,6 @@ import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent
 import com.sq.thed_ck_licker.ecs.components.activate
 import com.sq.thed_ck_licker.ecs.components.addEntity
-import com.sq.thed_ck_licker.ecs.components.deactivate
 import com.sq.thed_ck_licker.ecs.generateEntity
 import com.sq.thed_ck_licker.ecs.get
 import com.sq.thed_ck_licker.ecs.systems.CardEffectSystem.Companion.cardEffectSystem
@@ -122,23 +121,23 @@ class CardsSystem(private val componentManager: ComponentManager) {
     fun addDeactivationTestCards(amount: Int = 2): MutableList<EntityId> {
         val cardIds: MutableList<EntityId> = mutableListOf()
 
-        val omaScore = ScoreComponent()
+        val riskPoints = ScoreComponent()
         val deactivateAction = { id: Int ->
             val target = id get HealthComponent::class
-            omaScore.score.intValue += 1
-            target.health.floatValue += omaScore.score.intValue.toFloat()
+            riskPoints.score.intValue += 1
+            target.health.floatValue -= riskPoints.score.intValue.toFloat()
             println("Now its deactivated")
             println("Risk is rising!")
-            println("Holds ${omaScore.score.intValue} points")
+            println("Holds ${riskPoints.score.intValue} points")
 
         }
         val onActivation = { id: Int ->
             val target = id get ScoreComponent::class
-            val asd = omaScore.score.intValue * 3
-            target.score.intValue += (asd)
-            omaScore.score.intValue = 0
+            val scoreIncrease = riskPoints.score.intValue * 3
+            target.score.intValue += (scoreIncrease)
+            riskPoints.score.intValue = 0
             println("Now its activated")
-            println("Gave ${asd} points")
+            println("Gave ${scoreIncrease} points")
         }
         for (i in 1..amount) {
             val cardEntity = generateEntity()
@@ -148,7 +147,7 @@ class CardsSystem(private val componentManager: ComponentManager) {
             cardEntity add EffectComponent(onDeactivate = deactivateAction, onPlay = onActivation)
             cardEntity add NameComponent("Deactivation Card #$i")
             cardEntity add TagsComponent(listOf(CardTag.CARD))
-            cardEntity add omaScore
+            cardEntity add riskPoints
             cardEntity add ActivationCounterComponent()
         }
         return cardIds
