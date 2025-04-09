@@ -37,6 +37,12 @@ object TheGameHandler {
         return comp.health
     }
 
+    fun getPlayerMaxHealthM(): MutableFloatState {
+        val player = playerId()
+        val comp = componentManager.getComponent(player, HealthComponent::class)
+        return comp.maxHealth
+    }
+
 
     fun getTestingCardSequence(): Sequence<Int> {
         val eka = componentManager.getEntitiesWithTags(listOf(CardTag.CARD)).keys
