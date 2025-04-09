@@ -43,8 +43,10 @@ fun Game(innerPadding: PaddingValues) {
     val latestCard = rememberSaveable { mutableIntStateOf(-1) }
     val playerHealth =
         rememberSaveable { playerSystem.getPlayerHealthM() }
+    val playerMaxHealth =
+        rememberSaveable { playerSystem.getPlayerMaxHealthM() }
     val playerScore = rememberSaveable { playerSystem.getPlayerScoreM() }
-    // TODO we should read more about viewModels and state holding
+// TODO we should read more about viewModels and state holding
 
     val modifier = Modifier
 
@@ -76,7 +78,7 @@ fun Game(innerPadding: PaddingValues) {
 
         // tällä toteutuksella hp menee takas täyteen ku se menee alle 0 :D
         // Se voinee miettiä kuntoon, sit ku saadaan game state käyntiin paremmin
-        HealthBar(playerHealth.floatValue, modifier.padding(innerPadding))
+        HealthBar(playerHealth, playerMaxHealth, modifier.padding(innerPadding))
 
         ScoreDisplayer(playerScore.intValue)
 
