@@ -15,14 +15,7 @@ enum class CardEffectValue(val value: Float) {
     MAX_HP_2(2f), DOUBLE_TROUBLE(0f), REVERSE_DAMAGE(0f), SHOP_COUPON(100f)
 }
 
-@Deprecated("I think will decide against this. \n And each tag should have its own component")
-enum class CardTag { Card }
-
-@Deprecated("This should not be used, instead use ImageComponent")
-@Parcelize
-data class CardIdentity(
-    val id: Int, @DrawableRes val cardImage: Int
-) : Parcelable
+enum class CardTag {CARD}
 
 @Parcelize
 data class CardEffect(
@@ -51,7 +44,7 @@ fun DescriptionComponent.addHealth(healthC: HealthComponent) {
     if (healthC.maxHealth.floatValue > 0) {
         description.value += "Gain ${healthC.maxHealth.floatValue} max health"
     } else if (healthC.maxHealth.floatValue < 0) {
-        description.value += "Lose ${healthC.health.floatValue} max health"
+        description.value += "Lose ${healthC.maxHealth.floatValue} max health"
     }
 }
 

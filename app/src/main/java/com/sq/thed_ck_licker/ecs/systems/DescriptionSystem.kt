@@ -7,7 +7,7 @@ import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 import com.sq.thed_ck_licker.ecs.components.addHealth
 import com.sq.thed_ck_licker.ecs.components.addScore
 
-class DescriptionSystem(val componentManager: ComponentManager) {
+class DescriptionSystem(private val componentManager: ComponentManager) {
     // In future we may want to have version to update just single entity too
     // But that is future problem
     // We will probably want method for updating range of entities too.
@@ -22,6 +22,7 @@ class DescriptionSystem(val componentManager: ComponentManager) {
 
         println("Entities with description: $entitiesWithDescription")
 
+        // TODO this causes the effect discription to be updated twice
         for (entity in entitiesWithDescription) {
             val comps = componentManager.getAllComponentsOfEntity(entity.key)
             val descComp = entity.value as DescriptionComponent
@@ -54,8 +55,6 @@ class DescriptionSystem(val componentManager: ComponentManager) {
         *   This will be performance intense at some point
         *   Or maybe not cuz maps are crazyy
          */
-
-
 
 
     }

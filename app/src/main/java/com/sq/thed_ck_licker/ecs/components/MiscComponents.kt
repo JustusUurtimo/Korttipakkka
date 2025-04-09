@@ -5,10 +5,8 @@ import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 
-// TODO it is bit nonsensical that health starts from 0,
-//  so it should be refactored to start from max health
 data class HealthComponent(var health: MutableFloatState, val maxHealth: MutableFloatState) {
-    constructor(health: Float = 0f, maxHealth: Float = 100f) : this(
+    constructor(health: Float = 100f, maxHealth: Float = 100f) : this(
         mutableFloatStateOf(health),
         mutableFloatStateOf(maxHealth)
     )

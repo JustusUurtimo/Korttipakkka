@@ -11,57 +11,42 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.sq.thed_ck_licker.ecs.ComponentManager
 import com.sq.thed_ck_licker.ecs.TheGameHandler
-import com.sq.thed_ck_licker.ecs.TheGameHandler.getDefaultCardPair
-import com.sq.thed_ck_licker.ecs.systems.CardDisplaySystem
-import com.sq.thed_ck_licker.ecs.systems.CardEffectSystem
-import com.sq.thed_ck_licker.helpers.getRandomElement
+import com.sq.thed_ck_licker.ecs.systems.CardDisplaySystem.Companion.cardDisplaySystem
 import com.sq.thed_ck_licker.player.HealthBar
 import com.sq.thed_ck_licker.player.ScoreDisplayer
 import com.sq.thed_ck_licker.ui.components.buttons.PullCardButton
 import com.sq.thed_ck_licker.ui.components.views.CardDeck
+import com.sq.thed_ck_licker.ecs.systems.CardsSystem.Companion.cardsSystem
+import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID as playerId
 
 
 @Composable
 fun Game(innerPadding: PaddingValues) {
 
-    val componentManager = ComponentManager.componentManager
-
     val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues()
     val playerCardCount = rememberSaveable { mutableIntStateOf(0) }
+    val latestCard = rememberSaveable { mutableIntStateOf(-1) }
     val playerHealth =
         rememberSaveable { TheGameHandler.getPlayerHealthM() }
     val playerScore = rememberSaveable { TheGameHandler.getPlayerScoreM() }
     // TODO here probably should be viewModel from about the game state data or something like that
     //  Something about state holder and all that
-    val cardDisplaySystem = CardDisplaySystem(componentManager)
-    val cardEffectSystem = CardEffectSystem(componentManager)
-
 
     val modifier = Modifier
 
-    // TODO: this should contain no card or something like that in the beginning
-    var cardde by remember { mutableIntStateOf(TheGameHandler.getRandomCard()!!.keys.getRandomElement()) }
-
     val activateCard = {
-        cardEffectSystem.playerTargetsPlayer(cardde)
-        playerCardCount.intValue += 1
-        // TODO: Add here things needed to discard the card
+        cardsSystem.activateCard(latestCard, playerCardCount)
     }
     val pullNewCard = {
-        cardde = TheGameHandler.getRandomCard()!!.keys.getRandomElement()
-        // TODO: Add here things needed to pull new card from the deck and not just card
+        cardsSystem.pullRandomCardFromEntityDeck(playerId(), latestCard)
     }
+
 
     Column(modifier.fillMaxWidth()) {
 
@@ -72,15 +57,18 @@ fun Game(innerPadding: PaddingValues) {
         ScoreDisplayer(playerScore.intValue)
 
         Box(modifier.fillMaxSize()) {
-            CardDeck(navigationBarPadding, pullNewCard)
+            CardDeck(navigationBarPadding, latestCard)
             Box(modifier.align(Alignment.BottomCenter)) {
+
                 Column(modifier.padding(35.dp, 0.dp, 0.dp, 0.dp)) {
-                    cardDisplaySystem.CardsOnHandView(
-                        playerCardCount,
-                        modifier,
-                        cardde,
-                        activateCard
-                    )
+                    if (latestCard.intValue != -1) {
+                        cardDisplaySystem.CardsOnHandView(
+                            playerCardCount,
+                            modifier,
+                            latestCard,
+                            activateCard
+                        )
+                    }
                     PullCardButton(
                         navigationBarPadding,
                         modifier.offset((-15).dp),
