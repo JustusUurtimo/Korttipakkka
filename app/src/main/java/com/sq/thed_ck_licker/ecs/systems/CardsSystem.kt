@@ -175,7 +175,7 @@ class CardsSystem(private val componentManager: ComponentManager) {
             val cardEntity = generateEntity()
             cardIds.add(cardEntity)
             cardEntity add ImageComponent()
-            cardEntity add DescriptionComponent("On deactivate you lose ${scoreLoss} score, on activation you lose ${healthLoss} health")
+            cardEntity add DescriptionComponent("On deactivate you lose $scoreLoss score, on activation you lose $healthLoss health")
             cardEntity add EffectComponent(onDeactivate = deactivateAction, onPlay = onActivation)
             cardEntity add NameComponent("Trap Card #$i")
             cardEntity add TagsComponent(listOf(CardTag.CARD))
