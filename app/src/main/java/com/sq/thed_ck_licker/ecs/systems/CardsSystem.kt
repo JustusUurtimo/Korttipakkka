@@ -60,7 +60,6 @@ class CardsSystem(private val componentManager: ComponentManager) {
     }
 
 
-
     fun activateCard(latestCard: MutableIntState, playerCardCount: MutableIntState) {
 
         playerCardCount.intValue += 1
@@ -186,7 +185,7 @@ class CardsSystem(private val componentManager: ComponentManager) {
 
     fun addScoreGainerTestCard(amount: Int = 1): MutableList<EntityId> {
         val cardIds: MutableList<EntityId> = mutableListOf()
-        val pointsPerCard = 4
+        val pointsPerCard = 3
         for (i in 1..amount) {
             val cardEntity = generateEntity()
             cardIds.add(cardEntity)
@@ -194,7 +193,7 @@ class CardsSystem(private val componentManager: ComponentManager) {
             cardEntity add ImageComponent()
             cardEntity add DescriptionComponent("Gain Score gainer on play. \nEvery time you play card you gain $pointsPerCard points")
             cardEntity add EffectComponent(onPlay = {
-                addPassiveScoreGainerToThePlayer(pointsPerCard)
+                addPassiveScoreGainerToThePlayer(pointsPerCard + i)
             })
             cardEntity add activationComponent
             cardEntity add NameComponent("Score Gainer Card #$i")
