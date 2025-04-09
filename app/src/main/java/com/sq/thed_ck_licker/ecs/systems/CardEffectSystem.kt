@@ -6,9 +6,9 @@ import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.CardEffect
 import com.sq.thed_ck_licker.ecs.components.CardEffectType
-import com.sq.thed_ck_licker.ecs.components.CardIdentity
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
+import com.sq.thed_ck_licker.ecs.components.ImageComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 import com.sq.thed_ck_licker.ecs.components.activate
 import com.sq.thed_ck_licker.ecs.components.addHealth
@@ -16,13 +16,16 @@ import com.sq.thed_ck_licker.ecs.components.addScore
 
 
 // Systems
-class CardEffectSystem(val componentManager: ComponentManager) {
+class CardEffectSystem(private val componentManager: ComponentManager) {
+
+    companion object {
+        val cardEffectSystem: CardEffectSystem = CardEffectSystem(ComponentManager.componentManager)
+    }
 
     @Deprecated("Should be done via ActivateThing")
     fun applyEffect(
-        newCard: Pair<CardIdentity, CardEffect>,
+        newCard: Pair<ImageComponent, CardEffect>,
         playerHealth: MutableFloatState,
-        components: ComponentManager,
         reverseDamage: Boolean,
         doubleTrouble: Boolean
     ) {
@@ -68,7 +71,7 @@ class CardEffectSystem(val componentManager: ComponentManager) {
     }
 
 
-    fun activateThing(theActivator: Int, theUsedThing: Int, theTarget: Int) {
+    private fun activateThing(theActivator: Int, theUsedThing: Int, theTarget: Int) {
         val kohdeComponents = componentManager.getAllComponentsOfEntity(theUsedThing)
 
         for (component in kohdeComponents) {
@@ -100,7 +103,6 @@ class CardEffectSystem(val componentManager: ComponentManager) {
         val tehtava = componentManager.getComponent(theUsedThing, HealthComponent::class)
 
         kohde.addHealth(tehtava)
-
     }
 
     fun playerTargetsPlayer(theUsedThingId: Int) {

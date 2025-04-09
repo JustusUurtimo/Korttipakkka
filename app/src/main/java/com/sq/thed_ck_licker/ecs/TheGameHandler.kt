@@ -17,13 +17,16 @@ import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
-import com.sq.thed_ck_licker.ecs.components.ImageComponent
-import com.sq.thed_ck_licker.ecs.components.NameComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent
 import com.sq.thed_ck_licker.ecs.components.activate
 import com.sq.thed_ck_licker.ecs.components.addEntity
 import com.sq.thed_ck_licker.ecs.components.deactivate
+import com.sq.thed_ck_licker.ecs.systems.CardDisplaySystem
+import com.sq.thed_ck_licker.ecs.systems.CardEffectSystem
+import com.sq.thed_ck_licker.ecs.systems.CardsSystem
+import com.sq.thed_ck_licker.ecs.systems.DescriptionSystem
+import com.sq.thed_ck_licker.ecs.systems.PlayerSystem
 import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID as playerId
 
 /*TODO apparently this kind a not good...
@@ -36,8 +39,13 @@ import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID as playerId
  */
 @Deprecated("Everything should go through their own systems any way\nThou there may be argument to put things here until they find their actual home")
 object TheGameHandler {
-    val cards = Cards()
     private val componentManager = ComponentManager.componentManager
+    val cardsSystem = CardsSystem(componentManager)
+    private val playerSystem = PlayerSystem(componentManager)
+    private val descriptionSystem = DescriptionSystem(componentManager)
+    val cardDisplaySystem = CardDisplaySystem(componentManager)
+    val cardEffectSystem = CardEffectSystem(componentManager)
+
 
 
     fun getPlayerHealthM(): MutableFloatState {
@@ -232,13 +240,8 @@ object TheGameHandler {
     }
 
     fun getTestingCardSequence(): Sequence<Int> {
-        val eka = componentManager.getEntitiesWithTags(listOf(CardTag.Card))?.keys
-        return eka?.asSequence() ?: sequenceOf(2, 3, 4)
-    }
-
-
-    fun initTheGame() {
-        initPlayerAndSomeDefaultThings()
+        val eka = componentManager.getEntitiesWithTags(listOf(CardTag.CARD)).keys
+        return eka.asSequence()
     }
 
     fun getPlayerScoreM(): MutableIntState {
@@ -248,7 +251,3 @@ object TheGameHandler {
     }
 
 }
-
-
-
-

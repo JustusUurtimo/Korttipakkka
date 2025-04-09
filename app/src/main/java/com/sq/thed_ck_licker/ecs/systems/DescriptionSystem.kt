@@ -7,12 +7,11 @@ import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 import com.sq.thed_ck_licker.ecs.components.addHealth
 import com.sq.thed_ck_licker.ecs.components.addScore
 
-class DescriptionSystem(val componentManager: ComponentManager = ComponentManager.componentManager) {
+class DescriptionSystem(private val componentManager: ComponentManager = ComponentManager.componentManager) {
 
     companion object {
         val system = DescriptionSystem()
     }
-
     fun updateAllDescriptions(componentManager: ComponentManager = this.componentManager) {
         val entitiesWithDescription =
             componentManager.getEntitiesWithComponent(DescriptionComponent::class)
@@ -27,7 +26,6 @@ class DescriptionSystem(val componentManager: ComponentManager = ComponentManage
         for (entity in entitiesWithDescription) {
             val comps = componentManager.getAllComponentsOfEntity(entity.key)
             val descComp = entity.value as DescriptionComponent
-//            descComp.description.value = ""
             for (comp in comps) {
                 when (comp) {
                     is ScoreComponent -> descComp.addScore(comp)
