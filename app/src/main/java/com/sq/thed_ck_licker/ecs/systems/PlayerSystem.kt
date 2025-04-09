@@ -77,4 +77,8 @@ class PlayerSystem(private val componentManager: ComponentManager) {
     fun getPlayerScoreM(): MutableIntState {
         return (getPlayerID() get ScoreComponent::class).score
     }
+
+    fun getPlayerMaxHealthM(): MutableFloatState {
+        return (getPlayerID() get HealthComponent::class).maxHealth
+    }
 }
