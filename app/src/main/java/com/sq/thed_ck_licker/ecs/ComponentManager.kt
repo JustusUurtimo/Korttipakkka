@@ -45,6 +45,19 @@ class ComponentManager : Parcelable {
         return components[componentClass]
     }
 
+    fun <T : Any> getEntitiesWithTheseComponents(componentClasses: List<KClass<T>>): List<EntityId> {
+        val result = mutableListOf<List<EntityId>>()
+        for (componentClass in componentClasses) {
+            val componentMap = components[componentClass]
+            if (componentMap != null) {
+                result.add(componentMap.keys.toList())
+            }
+        }
+        val result2 = result.flatten().groupingBy { it }.eachCount().filter { it.value >= result.size }.keys.toList()
+        return result2
+    }
+
+
     fun getEntitiesWithTags(tags: List<CardTag>): Map<Int, Any> {
         val entities = getEntitiesWithComponent(TagsComponent::class)
         if (entities == null) {
@@ -72,6 +85,17 @@ class ComponentManager : Parcelable {
             }
         }
         return result
+    }
+
+    fun removeComponent(entity: Int, componentClass: KClass<*>) {
+        val componentMap = components[componentClass]
+        componentMap?.remove(entity)
+    }
+
+    fun removeEntity(entity: Int) {
+        for (componentMap in components.values) {
+            componentMap.remove(entity)
+        }
     }
 }
 

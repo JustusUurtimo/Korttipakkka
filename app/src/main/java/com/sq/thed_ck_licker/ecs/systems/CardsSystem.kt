@@ -60,10 +60,24 @@ class CardsSystem(private val componentManager: ComponentManager) {
         latestCard.intValue = drawDeck.cardIds.getRandomElement()
     }
 
+
+
     fun activateCard(latestCard: MutableIntState, playerCardCount: MutableIntState) {
-        cardEffectSystem.playerTargetsPlayer(latestCard.intValue)
+
         playerCardCount.intValue += 1
-        // TODO: Add here things needed to discard the card
+
+        try {
+            (latestCard.intValue get EffectComponent::class).onPlay.invoke(getPlayerID())
+        } catch (_: Exception) {
+            println("Yeah yeah, we get it, you are so cool there was no effect component ")
+            cardEffectSystem.playerTargetsPlayer(latestCard.intValue)
+        }
+
+        try {
+            (latestCard.intValue get ActivationCounterComponent::class).activate()
+        } catch (_: Exception) {
+            println("Yeah yeah, we get it, you are so cool there was no actCounter component ")
+        }
     }
 
 
@@ -96,7 +110,6 @@ class CardsSystem(private val componentManager: ComponentManager) {
             val scoreIt = { id: Int ->
                 val target = id get ScoreComponent::class
                 target.score.intValue += omaScore.score.intValue
-                selfAct.activate()
                 //TODO: This certainly is not right way of doing this,
                 // it should be handled in some general way, maybe some event based thing or system for them
             }
@@ -150,14 +163,12 @@ class CardsSystem(private val componentManager: ComponentManager) {
             val target = id get ScoreComponent::class
             scoreLoss = ((1 + activationComponent.deactivations.intValue) * 3)
             target.score.intValue -= (activationComponent.deactivations.intValue * 3)
-            activationComponent.deactivate()
             println("Lost ${scoreLoss} points")
         }
         val onActivation = { id: Int ->
             val target = id get HealthComponent::class
             healthLoss = activationComponent.activations.intValue + 1
             target.health.floatValue += activationComponent.activations.intValue
-            activationComponent.activate()
 
             println("Lost ${healthLoss} health")
         }
@@ -184,7 +195,6 @@ class CardsSystem(private val componentManager: ComponentManager) {
             cardEntity add DescriptionComponent("Gain Score gainer on play. \nEvery time you play card you gain $pointsPerCard points")
             cardEntity add EffectComponent(onPlay = {
                 addPassiveScoreGainerToThePlayer(pointsPerCard)
-                activationComponent.activate()
             })
             cardEntity add activationComponent
             cardEntity add NameComponent("Score Gainer Card #$i")
@@ -211,7 +221,6 @@ class CardsSystem(private val componentManager: ComponentManager) {
 
         val effStackComp = (getPlayerID() get EffectStackComponent::class)
         effStackComp addEntity (entity)  // I think i have gone mad from the power
-        println("effStackComp #2: $effStackComp")
     }
 
 }

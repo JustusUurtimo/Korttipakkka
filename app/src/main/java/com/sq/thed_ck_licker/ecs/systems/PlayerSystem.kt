@@ -53,11 +53,21 @@ class PlayerSystem(private val componentManager: ComponentManager) {
 
         val deactivationCards = cardsSystem.addDeactivationTestCards(2)
 
-        val asd = cardsSystem.addTrapTestCard()
+        val trapCards = cardsSystem.addTrapTestCard()
 
-        val asd2 = cardsSystem.addScoreGainerTestCard()
+        val scoreGainerCards = cardsSystem.addScoreGainerTestCard()
 
-        return playerHealingCards + playerDamageCards + playerMiscCards + defaultCards + deactivationCards + asd + asd2
+        // TODO: they are spaced so i can easilly comment then in and out, same for the empty lists
+        //  So the real to do is to make more testable code...
+        return emptyList<Int>() +
+                playerHealingCards +
+                playerDamageCards +
+                playerMiscCards +
+                defaultCards +
+                deactivationCards +
+                trapCards +
+                scoreGainerCards +
+                emptyList<Int>()
     }
 
     fun getPlayerHealthM(): MutableFloatState {
