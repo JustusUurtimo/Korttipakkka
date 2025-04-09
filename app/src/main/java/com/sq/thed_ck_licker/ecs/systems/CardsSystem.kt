@@ -149,6 +149,7 @@ class CardsSystem(private val componentManager: ComponentManager) {
             cardEntity add NameComponent("Deactivation Card #$i")
             cardEntity add TagsComponent(listOf(CardTag.CARD))
             cardEntity add omaScore
+            cardEntity add ActivationCounterComponent()
         }
         return cardIds
     }
