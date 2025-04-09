@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -46,19 +47,23 @@ fun Game(innerPadding: PaddingValues) {
     val playerCardCount = rememberSaveable { mutableIntStateOf(0) }
     val latestCard = rememberSaveable { mutableIntStateOf(-1) }
     val playerHealth =
-        rememberSaveable { TheGameHandler.getPlayerHealthM() }
-    val playerScore = rememberSaveable { TheGameHandler.getPlayerScoreM() }
+        rememberSaveable { TheGameHandler.playerSystem.getPlayerHealthM() }
+    val playerScore = rememberSaveable { TheGameHandler.playerSystem.getPlayerScoreM() }
     // TODO here probably should be viewModel from about the game state data or something like that
     //  Something about state holder and all that
 
     val modifier = Modifier
+
+    // TODO: this should contain no card or something like that in the beginning
+//    var cardde by remember { mutableIntStateOf(TheGameHandler.getRandomCard()!!.keys.getRandomElement()) }
+    val cardde = latestCard.intValue
 
     val activateCard = {
         onTurnStartEffectStackSystem()
 //        cardEffectSystem.playerTargetsPlayer(cardde)
         playerCardCount.intValue += 1
         try {
-            (latestCard get EffectComponent::class).onPlay.invoke(getPlayerID())
+            (cardde get EffectComponent::class).onPlay.invoke(getPlayerID())
         } catch (_: Exception) {
             println("Yeah yeah, we get it, you are so cool there was no effect component ")
         }

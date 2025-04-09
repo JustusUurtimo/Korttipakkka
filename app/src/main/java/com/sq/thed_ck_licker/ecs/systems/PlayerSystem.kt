@@ -1,13 +1,18 @@
 package com.sq.thed_ck_licker.ecs.systems
 
+import androidx.compose.runtime.MutableFloatState
+import androidx.compose.runtime.MutableIntState
 import com.sq.thed_ck_licker.R
 import com.sq.thed_ck_licker.ecs.ComponentManager
 import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.TheGameHandler.cardsSystem
+import com.sq.thed_ck_licker.ecs.add
 import com.sq.thed_ck_licker.ecs.components.CardTag
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
+import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
+import com.sq.thed_ck_licker.ecs.get
 
 class PlayerSystem(private val componentManager: ComponentManager) {
 
@@ -15,6 +20,7 @@ class PlayerSystem(private val componentManager: ComponentManager) {
         componentManager.addComponent(getPlayerID(), HealthComponent(100f, 100f))
         componentManager.addComponent(getPlayerID(), ScoreComponent())
         componentManager.addComponent(getPlayerID(), DrawDeckComponent(initPlayerDeck()))
+        getPlayerID() add EffectStackComponent()
     }
 
     private fun initPlayerDeck(): List<Int> {
@@ -43,7 +49,22 @@ class PlayerSystem(private val componentManager: ComponentManager) {
             cardComponent = ScoreComponent(10)
         )
 
-        return playerHealingCards + playerDamageCards + playerMiscCards
+        val defaultCards = cardsSystem.addDefaultCards(10)
+
+        val deactivationCards = cardsSystem.addDeactivationTestCards(2)
+
+        val asd = cardsSystem.addTrapTestCard()
+
+        val asd2 = cardsSystem.addScoreGainerTestCard()
+
+        return playerHealingCards + playerDamageCards + playerMiscCards + defaultCards + deactivationCards + asd + asd2
     }
 
+    fun getPlayerHealthM(): MutableFloatState {
+        return (getPlayerID() get HealthComponent::class).health
+    }
+
+    fun getPlayerScoreM(): MutableIntState {
+        return (getPlayerID() get ScoreComponent::class).score
+    }
 }

@@ -17,7 +17,7 @@ enum class CardEffectValue(val value: Float) {
     MAX_HP_2(2f), DOUBLE_TROUBLE(0f), REVERSE_DAMAGE(0f), SHOP_COUPON(100f)
 }
 
-enum class CardTag {CARD, Effect}
+enum class CardTag { CARD }
 
 @Parcelize
 data class CardEffect(
@@ -64,7 +64,7 @@ data class EffectComponent(
     val onDeath: (Int) -> Unit = {},
     val onSpawn: (Int) -> Unit = {},
     val onTurnStart: (Int) -> Unit = {},
-    val onPlay:(Int) -> Unit = {},
+    val onPlay: (Int) -> Unit = {},
     val onDeactivate: (Int) -> Unit = {},
 )
 
