@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("org.jetbrains.kotlin.plugin.parcelize")
+    id("jacoco")
 }
 var isDebug by extra(true)
 
@@ -63,7 +64,70 @@ android {
         compose = true
         buildConfig = true
     }
+
+    tasks.withType<JacocoReport> {
+        dependsOn("testDebugUnitTest", "createDebugCoverageReport")
+        reports {
+            xml.required.set(true)
+            html.required.set(true)
+        }
+        val fileFilter =
+//            emptyList<String>()
+        listOf(
+            "**/R.class",
+            "**/R$*.class",
+            "**/BuildConfig.*",
+            "**/Manifest*.*",
+            "**/*Test*.*",
+            "android/**/*.*"
+        )
+        val debugTree = fileTree(File("$buildDir/intermediates/classes/debug")) {
+            exclude(fileFilter)
+        }
+        val mainSrc = File("${project.projectDir}/src/main/java")
+        sourceDirectories.setFrom(mainSrc)
+        classDirectories.setFrom(debugTree)
+//        executionData.setFrom(
+//            fileTree(File(buildDir)) {
+//                include(
+//        "jacoco/testDebugUnitTest.exec",
+//        "outputs/code-coverage/connected/*coverage.ec"
+//                )
+//            }
+//        )
+    }
+
+//testOptions {
+//    unitTests.all {
+//            it.jacoco {
+//                isIncludeNoLocationClasses = true
+//        }
+//    }
+//        unitTests.isReturnDefaultValues = true
+//}
+
+//    buildTypes.configureEach {
+//
+//    }
+//    debug {
+//        testCoverageEnabled true
+//    }
+//    release {
+//        minifyEnabled false
+//        proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+//    }
+
 }
+
+
+//    debug {
+//        testCoverageEnabled true
+//    }
+//    release {
+//        minifyEnabled false
+//        proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+//    }
+//}
 
 dependencies {
 
@@ -75,6 +139,8 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.jacoco)
+    implementation(libs.org.jacoco.core)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
