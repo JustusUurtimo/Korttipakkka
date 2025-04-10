@@ -29,10 +29,13 @@ android {
                 "proguard-rules.pro"
             )
             isDebug = false
+            enableUnitTestCoverage = false
+            enableAndroidTestCoverage = false
         }
         debug {
             isMinifyEnabled = false
-            isTestCoverageEnabled = true
+            enableUnitTestCoverage = true
+            enableAndroidTestCoverage = true
             buildConfigField("boolean", "DEBUG", "true")
             buildConfigField("boolean", "IS_DEBUG", "true")
             resValue("bool", "IS_DEBUG", true.toString())
@@ -40,7 +43,8 @@ android {
         create("super_debug") {
             isDebuggable = true
             isJniDebuggable = true
-            isRenderscriptDebuggable = true
+            enableUnitTestCoverage = true
+            enableAndroidTestCoverage = true
             signingConfig = signingConfigs.getByName("debug")
             multiDexEnabled = false
             matchingFallbacks += listOf("debug")
