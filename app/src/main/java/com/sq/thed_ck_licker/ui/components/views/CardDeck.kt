@@ -21,8 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.sq.thed_ck_licker.R
-import com.sq.thed_ck_licker.ecs.systems.CardsSystem.Companion.cardsSystem
 import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID as playerId
+import com.sq.thed_ck_licker.ecs.systems.CardsSystem.Companion.instance as cardsSystem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

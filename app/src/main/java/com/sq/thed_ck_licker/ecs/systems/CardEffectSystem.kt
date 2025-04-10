@@ -19,8 +19,11 @@ import com.sq.thed_ck_licker.ecs.components.addScore
 class CardEffectSystem(private val componentManager: ComponentManager) {
 
     companion object {
-        val cardEffectSystem: CardEffectSystem = CardEffectSystem(ComponentManager.componentManager)
+        val instance: CardEffectSystem by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+            CardEffectSystem(ComponentManager.componentManager)
+        }
     }
+
 
     @Deprecated("Should be done via ActivateThing")
     fun applyEffect(
@@ -91,9 +94,7 @@ class CardEffectSystem(private val componentManager: ComponentManager) {
         val kohde = componentManager.getComponent(theTarget, ScoreComponent::class)
 
         val tehtava = componentManager.getComponent(theUsedThing, ScoreComponent::class)
-        println("kohde.score.intValue ${kohde.score.intValue}")
         kohde.addScore(tehtava)
-        println("kohde.score.intValue ${kohde.score.intValue}")
     }
 
     private fun activateHealth(theActivator: Int, theUsedThing: Int, theTarget: Int) {
