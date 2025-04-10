@@ -10,8 +10,8 @@ import kotlinx.parcelize.Parcelize
 import kotlin.reflect.KClass
 
 // Component Manager
-@Parcelize
-class ComponentManager : Parcelable {
+//@Parcelize
+class ComponentManager private constructor() {
 
     companion object {
         val componentManager: ComponentManager = ComponentManager()
