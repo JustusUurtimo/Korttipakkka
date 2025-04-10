@@ -1,16 +1,13 @@
 package com.sq.thed_ck_licker.ecs
 
-import android.os.Parcelable
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import com.sq.thed_ck_licker.ecs.components.CardTag
 import com.sq.thed_ck_licker.ecs.components.TagsComponent
 import kotlinx.parcelize.IgnoredOnParcel
-import kotlinx.parcelize.Parcelize
 import kotlin.reflect.KClass
 
 // Component Manager
-//@Parcelize
 class ComponentManager private constructor() {
 
     companion object {
