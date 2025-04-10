@@ -14,7 +14,7 @@ import kotlin.reflect.KClass
 class ComponentManager : Parcelable {
 
     companion object {
-         val componentManager: ComponentManager = ComponentManager()
+        val componentManager: ComponentManager = ComponentManager()
     }
 
     @IgnoredOnParcel
@@ -45,6 +45,19 @@ class ComponentManager : Parcelable {
         return components[componentClass]
     }
 
+    fun <T : Any> getEntitiesWithTheseComponents(componentClasses: List<KClass<T>>): List<EntityId> {
+        val result = mutableListOf<List<EntityId>>()
+        for (componentClass in componentClasses) {
+            val componentMap = components[componentClass]
+            if (componentMap != null) {
+                result.add(componentMap.keys.toList())
+            }
+        }
+        val result2 = result.flatten().groupingBy { it }.eachCount().filter { it.value >= result.size }.keys.toList()
+        return result2
+    }
+
+
     fun getEntitiesWithTags(tags: List<CardTag>): Map<Int, Any> {
         val entities = getEntitiesWithComponent(TagsComponent::class)
         if (entities == null) {
@@ -73,4 +86,35 @@ class ComponentManager : Parcelable {
         }
         return result
     }
+
+    fun removeComponent(entity: Int, componentClass: KClass<*>) {
+        val componentMap = components[componentClass]
+        componentMap?.remove(entity)
+    }
+
+    fun removeEntity(entity: Int) {
+        for (componentMap in components.values) {
+            componentMap.remove(entity)
+        }
+    }
+}
+
+/**
+ * Extension function to add a component to an entity.
+ * Please do not try to use for any other add operation...
+ */
+infix fun <T : Any> EntityId.add(component: T) {
+    ComponentManager.componentManager.addComponent(this, component)
+}
+
+infix fun <T : Any> EntityId.get(componentClass: KClass<T>): T {
+    return ComponentManager.componentManager.getComponent(this, componentClass)
+}
+
+/**
+ * For example:
+ * Can be used to get if component is in the return value of getAllComponentsOfEntity()
+ */
+inline fun <reified T> List<Any>.hasComponent(): Boolean {
+    return any { it is T }
 }

@@ -5,6 +5,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -52,9 +53,19 @@ fun HealthBar(
                 size = Size(size.width * animatedProgress, size.height)
             )
         }
+
     }
+    LinearProgressIndicator(
+        progress = { (currentHealth.value.toFloat() / 100f) },
+        modifier = modifier
+            .fillMaxWidth()
+            .height(15.dp),
+        color = Color.Red, //remaining health
+        trackColor = Color.LightGray,
+    )
 }
+
 @Composable
 fun ScoreDisplayer(score: Int, modifier: Modifier = Modifier) {
-    Text("Score: $score")
+    Text("Score: $score steps taken")
 }

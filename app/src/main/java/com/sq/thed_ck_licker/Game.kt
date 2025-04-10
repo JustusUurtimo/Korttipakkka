@@ -16,13 +16,21 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.sq.thed_ck_licker.ecs.TheGameHandler
+import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID
+import com.sq.thed_ck_licker.ecs.TheGameHandler.playerSystem
+import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
+import com.sq.thed_ck_licker.ecs.components.EffectComponent
+import com.sq.thed_ck_licker.ecs.components.deactivate
+import com.sq.thed_ck_licker.ecs.get
 import com.sq.thed_ck_licker.ecs.systems.CardDisplaySystem.Companion.cardDisplaySystem
+import com.sq.thed_ck_licker.ecs.systems.CardsSystem.Companion.cardsSystem
+import com.sq.thed_ck_licker.ecs.systems.onDeathSystem
+import com.sq.thed_ck_licker.ecs.systems.onDiscardSystem
+import com.sq.thed_ck_licker.ecs.systems.onTurnStartEffectStackSystem
 import com.sq.thed_ck_licker.player.HealthBar
 import com.sq.thed_ck_licker.player.ScoreDisplayer
 import com.sq.thed_ck_licker.ui.components.buttons.PullCardButton
 import com.sq.thed_ck_licker.ui.components.views.CardDeck
-import com.sq.thed_ck_licker.ecs.systems.CardsSystem.Companion.cardsSystem
 import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID as playerId
 
 
@@ -33,19 +41,34 @@ fun Game(innerPadding: PaddingValues) {
     val playerCardCount = rememberSaveable { mutableIntStateOf(0) }
     val latestCard = rememberSaveable { mutableIntStateOf(-1) }
     val playerHealth =
-        rememberSaveable { TheGameHandler.getPlayerHealthM() }
+        rememberSaveable { playerSystem.getPlayerHealthM() }
     val playerMaxHealth =
-        rememberSaveable { TheGameHandler.getPlayerMaxHealthM() }
-    val playerScore = rememberSaveable { TheGameHandler.getPlayerScoreM() }
-    // TODO here probably should be viewModel from about the game state data or something like that
-    //  Something about state holder and all that
+        rememberSaveable { playerSystem.getPlayerMaxHealthM() }
+    val playerScore = rememberSaveable { playerSystem.getPlayerScoreM() }
+// TODO we should read more about viewModels and state holding
 
     val modifier = Modifier
 
     val activateCard = {
+        // TODO: I now think all these should be such as the one bellow, just nice clean function calls
+        onTurnStartEffectStackSystem()
         cardsSystem.activateCard(latestCard, playerCardCount)
+        onDeathSystem()
     }
+
     val pullNewCard = {
+        try {
+            (latestCard.intValue get EffectComponent::class).onDeactivate.invoke(getPlayerID())
+        } catch (_: Exception) {
+            println("Yeah yeah, we get it, you are so cool there was no effect component ")
+        }
+
+        try {
+            (latestCard.intValue get ActivationCounterComponent::class).deactivate()
+        } catch (_: Exception) {
+            println("Yeah yeah, we get it, you are so cool there was no actCounter component ")
+        }
+        onDiscardSystem()
         cardsSystem.pullRandomCardFromEntityDeck(playerId(), latestCard)
     }
 
@@ -80,10 +103,5 @@ fun Game(innerPadding: PaddingValues) {
 
             }
         }
-
     }
 }
-
-
-
-

@@ -29,13 +29,3 @@ data class ScoreComponent(var score: MutableIntState) {
 fun ScoreComponent.addScore(scoreComponent: ScoreComponent) {
     this.score.intValue += scoreComponent.score.intValue
 }
-
-
-//fun ScoreComponent.plus(scoreC: ScoreComponent) {
-//    this.score.intValue += scoreC.score.intValue
-//}
-
-//fun ScoreComponent.plus(entityId: Int, components: ComponentManager) {
-//    val incoming = components.getComponent(entityId, ScoreComponent::class).score.intValue
-//    this.score.intValue += incoming
-//}
