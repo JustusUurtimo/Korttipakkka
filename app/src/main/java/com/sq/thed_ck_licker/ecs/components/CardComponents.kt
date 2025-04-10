@@ -96,4 +96,4 @@ fun ActivationCounterComponent.deactivate() {
     println("This has been deactivated ${this.deactivations.intValue} times")
 }
 
-data class DurationComponent(val duration: Int = -1)
+data class DurationComponent(val duration: Int = -1, val infinite: Boolean = false)

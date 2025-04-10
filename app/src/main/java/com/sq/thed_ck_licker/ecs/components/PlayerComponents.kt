@@ -18,9 +18,7 @@ infix fun EffectStackComponent.addEntity(effectEntity: EntityId) = {
     val componentsOfEntity =
         ComponentManager.componentManager.getAllComponentsOfEntity(effectEntity)
     println("componentsOfEntity: $componentsOfEntity")
-    if (!(componentsOfEntity.hasComponent<EffectComponent>())) {
-        throw IllegalStateException("Entity has no effect component, thus it can't be effect.\n It only has: $componentsOfEntity")
-    }
+    check((componentsOfEntity.hasComponent<EffectComponent>())) { "Entity has no effect component, thus it can't be effect.\n It only has: $componentsOfEntity" }
     this.effectEntities.add(effectEntity)
 }.invoke()
 

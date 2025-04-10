@@ -13,6 +13,7 @@ import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 import com.sq.thed_ck_licker.ecs.get
+import kotlin.collections.flatten
 
 class PlayerSystem(private val componentManager: ComponentManager) {
 

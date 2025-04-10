@@ -114,10 +114,10 @@ class CardsSystem(private val componentManager: ComponentManager) {
 
             cardEntity add EffectComponent(onPlay = scoreIt)
         }
-        return cardIds
+        return cardIds.toList()
     }
 
-    fun addDeactivationTestCards(amount: Int = 2): MutableList<EntityId> {
+    fun addDeactivationTestCards(amount: Int = 2): List<EntityId> {
         val cardIds: MutableList<EntityId> = mutableListOf()
 
         val riskPoints = ScoreComponent()
@@ -136,7 +136,7 @@ class CardsSystem(private val componentManager: ComponentManager) {
             target.score.intValue += (scoreIncrease)
             riskPoints.score.intValue = 0
             println("Now its activated")
-            println("Gave ${scoreIncrease} points")
+            println("Gave $scoreIncrease points")
         }
         for (i in 1..amount) {
             val cardEntity = generateEntity()
@@ -149,10 +149,10 @@ class CardsSystem(private val componentManager: ComponentManager) {
             cardEntity add riskPoints
             cardEntity add ActivationCounterComponent()
         }
-        return cardIds
+        return cardIds.toList()
     }
 
-    fun addTrapTestCard(amount: Int = 2): MutableList<EntityId> {
+    fun addTrapTestCard(amount: Int = 2): List<EntityId> {
         val cardIds: MutableList<EntityId> = mutableListOf()
 
         var scoreLoss = 0
@@ -180,10 +180,10 @@ class CardsSystem(private val componentManager: ComponentManager) {
             cardEntity add NameComponent("Trap Card #$i")
             cardEntity add TagsComponent(listOf(CardTag.CARD))
         }
-        return cardIds
+        return cardIds.toList()
     }
 
-    fun addScoreGainerTestCard(amount: Int = 1): MutableList<EntityId> {
+    fun addScoreGainerTestCard(amount: Int = 1): List<EntityId> {
         val cardIds: MutableList<EntityId> = mutableListOf()
         val pointsPerCard = 3
         for (i in 1..amount) {
@@ -199,7 +199,7 @@ class CardsSystem(private val componentManager: ComponentManager) {
             cardEntity add NameComponent("Score Gainer Card #$i")
             cardEntity add TagsComponent(listOf(CardTag.CARD))
         }
-        return cardIds
+        return cardIds.toList()
     }
 
 
