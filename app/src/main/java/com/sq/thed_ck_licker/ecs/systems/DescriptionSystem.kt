@@ -7,10 +7,12 @@ import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 import com.sq.thed_ck_licker.ecs.components.addHealth
 import com.sq.thed_ck_licker.ecs.components.addScore
 
-class DescriptionSystem(private val componentManager: ComponentManager = ComponentManager.componentManager) {
+class DescriptionSystem private constructor(private val componentManager: ComponentManager = ComponentManager.componentManager) {
 
     companion object {
-        val system = DescriptionSystem()
+        val instance: DescriptionSystem by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+            DescriptionSystem(ComponentManager.componentManager)
+        }
     }
     fun updateAllDescriptions(componentManager: ComponentManager = this.componentManager) {
         val entitiesWithDescription =

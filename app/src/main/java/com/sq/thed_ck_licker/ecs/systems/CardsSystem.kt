@@ -20,13 +20,16 @@ import com.sq.thed_ck_licker.ecs.components.activate
 import com.sq.thed_ck_licker.ecs.components.addEntity
 import com.sq.thed_ck_licker.ecs.generateEntity
 import com.sq.thed_ck_licker.ecs.get
-import com.sq.thed_ck_licker.ecs.systems.CardEffectSystem.Companion.cardEffectSystem
 import com.sq.thed_ck_licker.helpers.getRandomElement
+import com.sq.thed_ck_licker.ecs.systems.CardEffectSystem.Companion.instance as cardEffectSystem
 
-class CardsSystem(private val componentManager: ComponentManager) {
+class CardsSystem private constructor(private val componentManager: ComponentManager) {
+
 
     companion object {
-        val cardsSystem: CardsSystem = CardsSystem(ComponentManager.componentManager)
+        val instance: CardsSystem by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+            CardsSystem(ComponentManager.componentManager)
+        }
     }
 
     fun <T : Any> initCards(

@@ -5,7 +5,6 @@ import androidx.compose.runtime.MutableIntState
 import com.sq.thed_ck_licker.R
 import com.sq.thed_ck_licker.ecs.ComponentManager
 import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID
-import com.sq.thed_ck_licker.ecs.TheGameHandler.cardsSystem
 import com.sq.thed_ck_licker.ecs.add
 import com.sq.thed_ck_licker.ecs.components.CardTag
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
@@ -13,9 +12,14 @@ import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 import com.sq.thed_ck_licker.ecs.get
-import kotlin.collections.flatten
+import com.sq.thed_ck_licker.ecs.systems.CardsSystem.Companion.instance as cardsSystem
 
-class PlayerSystem(private val componentManager: ComponentManager) {
+class PlayerSystem private constructor(private val componentManager: ComponentManager) {
+    companion object {
+        val instance: PlayerSystem by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+            PlayerSystem(ComponentManager.componentManager)
+        }
+    }
 
     fun initPlayer() {
         componentManager.addComponent(getPlayerID(), HealthComponent(100f, 100f))

@@ -17,13 +17,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID
-import com.sq.thed_ck_licker.ecs.TheGameHandler.playerSystem
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.deactivate
 import com.sq.thed_ck_licker.ecs.get
-import com.sq.thed_ck_licker.ecs.systems.CardDisplaySystem.Companion.cardDisplaySystem
-import com.sq.thed_ck_licker.ecs.systems.CardsSystem.Companion.cardsSystem
 import com.sq.thed_ck_licker.ecs.systems.onDeathSystem
 import com.sq.thed_ck_licker.ecs.systems.onDiscardSystem
 import com.sq.thed_ck_licker.ecs.systems.onTurnStartEffectStackSystem
@@ -32,6 +29,9 @@ import com.sq.thed_ck_licker.player.ScoreDisplayer
 import com.sq.thed_ck_licker.ui.components.buttons.PullCardButton
 import com.sq.thed_ck_licker.ui.components.views.CardDeck
 import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID as playerId
+import com.sq.thed_ck_licker.ecs.systems.CardDisplaySystem.Companion.instance as cardDisplaySystem
+import com.sq.thed_ck_licker.ecs.systems.CardsSystem.Companion.instance as cardsSystem
+import com.sq.thed_ck_licker.ecs.systems.PlayerSystem.Companion.instance as playerSystem
 
 
 @Composable
