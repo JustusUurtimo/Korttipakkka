@@ -8,6 +8,7 @@ import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.add
 import com.sq.thed_ck_licker.ecs.components.CardTag
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
+import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
@@ -29,13 +30,24 @@ class PlayerSystem private constructor(private val componentManager: ComponentMa
     }
 
     private fun initPlayerDeck(): List<Int> {
+        val onActivationScore = { id: Int ->
+            (id get ScoreComponent::class).score.intValue += 10
+        }
+        val onActivationHeal = { id: Int ->
+            (id get HealthComponent::class).health.floatValue += 5f
+        }
+        val onActivationTakeDamage = { id: Int ->
+            (id get HealthComponent::class).health.floatValue -= 5f
+        }
+
+
         val playerHealingCards = cardsSystem.initCards(
             5,
             R.drawable.heal_10,
             "This card heals you",
             "Heal",
             listOf(CardTag.CARD),
-            cardComponent = HealthComponent(5f, 0f)
+            cardComponent = EffectComponent(onPlay = onActivationHeal)
         )
         val playerDamageCards = cardsSystem.initCards(
             5,
@@ -43,7 +55,7 @@ class PlayerSystem private constructor(private val componentManager: ComponentMa
             "This card deals damage to you",
             "Damage",
             listOf(CardTag.CARD),
-            cardComponent = HealthComponent(-5f, 0f)
+            cardComponent = EffectComponent(onPlay = onActivationTakeDamage)
         )
         val playerMiscCards = cardsSystem.initCards(
             5,
@@ -51,7 +63,7 @@ class PlayerSystem private constructor(private val componentManager: ComponentMa
             "This card does something",
             "Misc",
             listOf(CardTag.CARD),
-            cardComponent = ScoreComponent(10)
+            cardComponent = EffectComponent(onPlay = onActivationScore)
         )
 
         val defaultCards = cardsSystem.addDefaultCards(10)
@@ -63,13 +75,13 @@ class PlayerSystem private constructor(private val componentManager: ComponentMa
         val scoreGainerCards = cardsSystem.addScoreGainerTestCard()
 
         return emptyList<Int>() +
-                playerHealingCards +
-                playerDamageCards +
-                playerMiscCards +
+//                playerHealingCards +
+//                playerDamageCards +
+//                playerMiscCards +
                 defaultCards +
-                deactivationCards +
-                trapCards +
-                scoreGainerCards +
+//                deactivationCards +
+//                trapCards +
+//                scoreGainerCards +
                 emptyList<Int>()
     }
 

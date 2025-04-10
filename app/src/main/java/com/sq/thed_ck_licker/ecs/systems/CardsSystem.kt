@@ -48,6 +48,7 @@ class CardsSystem private constructor(private val componentManager: ComponentMan
             componentManager.addComponent(cardEntity, DescriptionComponent(description))
             componentManager.addComponent(cardEntity, NameComponent(name))
             componentManager.addComponent(cardEntity, TagsComponent(tags))
+            cardEntity add ActivationCounterComponent()
             cardIds.add(cardEntity)
         }
         return cardIds
@@ -70,8 +71,18 @@ class CardsSystem private constructor(private val componentManager: ComponentMan
         try {
             (latestCard.intValue get EffectComponent::class).onPlay.invoke(getPlayerID())
         } catch (_: Exception) {
-            println("Yeah yeah, we get it, you are so cool there was no effect component ")
+            println("Yeah yeah, we get it, you are so cool there was no effect component\n Using the old style instead ")
             cardEffectSystem.playerTargetsPlayer(latestCard.intValue)
+        }
+
+        try {
+            (latestCard.intValue get HealthComponent::class).health.floatValue -= 1f
+            println("Health is now ${(latestCard.intValue get HealthComponent::class).health.floatValue}")
+            if ((latestCard.intValue get HealthComponent::class).health.floatValue <= 0) {
+                latestCard.intValue = -1
+            }
+        } catch (_: Exception) {
+            println("Yeah yeah, we get it, you are so cool there was no health component")
         }
 
         try {
@@ -111,11 +122,10 @@ class CardsSystem private constructor(private val componentManager: ComponentMan
             val scoreIt = { id: Int ->
                 val target = id get ScoreComponent::class
                 target.score.intValue += omaScore.score.intValue
-                //TODO: This certainly is not right way of doing this,
-                // it should be handled in some general way, maybe some event based thing or system for them
             }
 
             cardEntity add EffectComponent(onPlay = scoreIt)
+            cardEntity add HealthComponent(10f)
         }
         return cardIds.toList()
     }

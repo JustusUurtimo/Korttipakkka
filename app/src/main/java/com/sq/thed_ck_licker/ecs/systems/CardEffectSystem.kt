@@ -81,8 +81,6 @@ class CardEffectSystem(private val componentManager: ComponentManager) {
             when (component) {
                 is ScoreComponent -> activateScore(theActivator, theUsedThing, theTarget)
                 is HealthComponent -> activateHealth(theActivator, theUsedThing, theTarget)
-                is ActivationCounterComponent -> component.activate()
-                is EffectComponent -> component.onPlay.invoke(theTarget)
                 else -> println("Unknown component type: $component")
             }
         }
