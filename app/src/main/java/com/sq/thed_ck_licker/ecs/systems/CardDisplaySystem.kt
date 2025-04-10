@@ -27,11 +27,12 @@ import com.sq.thed_ck_licker.ecs.components.DescriptionComponent
 import com.sq.thed_ck_licker.ecs.components.ImageComponent
 import com.sq.thed_ck_licker.ecs.components.NameComponent
 
-class CardDisplaySystem(private val componentManager: ComponentManager) {
+class CardDisplaySystem private constructor(private val componentManager: ComponentManager) {
 
     companion object {
-        val cardDisplaySystem: CardDisplaySystem =
+        val instance: CardDisplaySystem by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
             CardDisplaySystem(ComponentManager.componentManager)
+        }
     }
 
     /* TODO: This is kind a ok for now
