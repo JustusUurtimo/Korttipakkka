@@ -62,12 +62,12 @@ class PlayerSystem(private val componentManager: ComponentManager) {
         //  So the real to do is to make more testable code...
         return emptyList<Int>() +
                 playerHealingCards +
-                playerDamageCards +
-                playerMiscCards +
-                defaultCards +
-                deactivationCards +
-                trapCards +
-                scoreGainerCards +
+//                playerDamageCards +
+//                playerMiscCards +
+//                defaultCards +
+//                deactivationCards +
+//                trapCards +
+//                scoreGainerCards +
                 emptyList<Int>()
     }
 
