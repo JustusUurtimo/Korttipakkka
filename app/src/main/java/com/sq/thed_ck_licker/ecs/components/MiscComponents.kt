@@ -10,6 +10,11 @@ data class HealthComponent(var health: MutableFloatState, val maxHealth: Mutable
         mutableFloatStateOf(health),
         mutableFloatStateOf(maxHealth)
     )
+
+    constructor(maxHealth: Float = 100f) : this(
+        mutableFloatStateOf(maxHealth),
+        mutableFloatStateOf(maxHealth)
+    )
 }
 
 fun HealthComponent.addHealth(healthComponent: HealthComponent) {

@@ -22,9 +22,9 @@ class PlayerSystem private constructor(private val componentManager: ComponentMa
     }
 
     fun initPlayer() {
-        componentManager.addComponent(getPlayerID(), HealthComponent(100f, 100f))
-        componentManager.addComponent(getPlayerID(), ScoreComponent())
-        componentManager.addComponent(getPlayerID(), DrawDeckComponent(initPlayerDeck()))
+        getPlayerID() add HealthComponent(100f)
+        getPlayerID() add ScoreComponent()
+        getPlayerID() add DrawDeckComponent(initPlayerDeck())
         getPlayerID() add EffectStackComponent()
     }
 
@@ -62,16 +62,14 @@ class PlayerSystem private constructor(private val componentManager: ComponentMa
 
         val scoreGainerCards = cardsSystem.addScoreGainerTestCard()
 
-        // TODO: they are spaced so i can easilly comment then in and out, same for the empty lists
-        //  So the real to do is to make more testable code...
         return emptyList<Int>() +
                 playerHealingCards +
-//                playerDamageCards +
-//                playerMiscCards +
-//                defaultCards +
-//                deactivationCards +
-//                trapCards +
-//                scoreGainerCards +
+                playerDamageCards +
+                playerMiscCards +
+                defaultCards +
+                deactivationCards +
+                trapCards +
+                scoreGainerCards +
                 emptyList<Int>()
     }
 
