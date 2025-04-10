@@ -2,7 +2,9 @@ package com.sq.thed_ck_licker.ecs.components
 
 import android.os.Parcelable
 import androidx.annotation.DrawableRes
+import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import com.sq.thed_ck_licker.R
 import kotlinx.parcelize.Parcelize
@@ -15,7 +17,7 @@ enum class CardEffectValue(val value: Float) {
     MAX_HP_2(2f), DOUBLE_TROUBLE(0f), REVERSE_DAMAGE(0f), SHOP_COUPON(100f)
 }
 
-enum class CardTag {CARD}
+enum class CardTag { CARD }
 
 @Parcelize
 data class CardEffect(
@@ -50,6 +52,48 @@ fun DescriptionComponent.addHealth(healthC: HealthComponent) {
 
 data class NameComponent(val name: String = "Placeholder")
 
-@Deprecated("I think will decide against this. \n And each tag should have its own component")
 data class TagsComponent(val tags: List<CardTag> = emptyList())
 
+/**
+ * Used to make more complex activations
+ * The functions take the target entity id as a parameter.
+ * Then you just make what you want in the function body.
+ * And maaaagic
+ */
+data class EffectComponent(
+    val onDeath: (Int) -> Unit = {},
+    val onSpawn: (Int) -> Unit = {},
+    val onTurnStart: (Int) -> Unit = {},
+    val onPlay: (Int) -> Unit = {},
+    val onDeactivate: (Int) -> Unit = {},
+)
+
+/**
+ * Used to keep track of how many times a card has been activated
+ *
+ *
+ * TODO: Think long and hard if there is way or need for this to be event, observer or subscribe style thing.
+ *  I mean it would be nice and make sense that this gets hooked up into things.
+ *  That could allow us to not farm this to every thing and risk duplicate counting.
+ */
+data class ActivationCounterComponent(
+    var activations: MutableIntState,
+    var deactivations: MutableIntState
+) {
+    constructor(
+        activations: Int = 0,
+        deactivations: Int = 0
+    ) : this(mutableIntStateOf(activations), mutableIntStateOf(deactivations))
+}
+
+fun ActivationCounterComponent.activate() {
+    this.activations.intValue += 1
+    println("This has been activated ${this.activations.intValue} times")
+}
+
+fun ActivationCounterComponent.deactivate() {
+    this.deactivations.intValue += 1
+    println("This has been deactivated ${this.deactivations.intValue} times")
+}
+
+data class DurationComponent(val duration: Int = -1, val infinite: Boolean = false)

@@ -3,11 +3,14 @@ package com.sq.thed_ck_licker.ecs.systems
 import androidx.compose.runtime.MutableFloatState
 import com.sq.thed_ck_licker.ecs.ComponentManager
 import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID
+import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.CardEffect
 import com.sq.thed_ck_licker.ecs.components.CardEffectType
+import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.ImageComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
+import com.sq.thed_ck_licker.ecs.components.activate
 import com.sq.thed_ck_licker.ecs.components.addHealth
 import com.sq.thed_ck_licker.ecs.components.addScore
 
@@ -75,6 +78,8 @@ class CardEffectSystem(private val componentManager: ComponentManager) {
             when (component) {
                 is ScoreComponent -> activateScore(theActivator, theUsedThing, theTarget)
                 is HealthComponent -> activateHealth(theActivator, theUsedThing, theTarget)
+                is ActivationCounterComponent -> component.activate()
+                is EffectComponent -> component.onPlay.invoke(theTarget)
                 else -> println("Unknown component type: $component")
             }
         }
