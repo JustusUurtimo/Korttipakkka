@@ -17,10 +17,10 @@ import com.sq.thed_ck_licker.ecs.systems.PlayerSystem.Companion.instance as play
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
-        //The random seed is dumb, here is couple calls to offset it bit
-        repeat(5){
-            MyRandom.getRandomInt()
-        }
+//        //The random seed is dumb, here is couple calls to offset it bit
+//        repeat(5){
+//            MyRandom.getRandomInt()
+//        }
 
         playerSystem.initPlayer()
 

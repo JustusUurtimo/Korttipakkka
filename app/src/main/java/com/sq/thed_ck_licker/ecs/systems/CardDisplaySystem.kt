@@ -38,14 +38,8 @@ class CardDisplaySystem private constructor(private val componentManager: Compon
 
     @Composable
     fun EntityDisplay(entityId: Int = 1) {
-        var image = try {
+        val image =
             componentManager.getComponent(entityId, ImageComponent::class).cardImage
-        }catch (e: Exception){
-            println(e)
-            R.drawable.card_back
-        }
-//        val image =
-//            componentManager.getComponent(entityId, ImageComponent::class).cardImage
         val name = componentManager.getComponent(entityId, NameComponent::class).name
         val description =
             componentManager.getComponent(entityId, DescriptionComponent::class).description.value
