@@ -21,7 +21,7 @@ fun <T> List<T>.getRandomElement(): T {
     return this[random.nextInt(this.size)]
 }
 
- fun <E> Collection<E>.getRandomElement(): E {
+fun <E> Collection<E>.getRandomElement(): E {
     return this.random()
 }
 

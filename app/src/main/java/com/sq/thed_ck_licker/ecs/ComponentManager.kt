@@ -50,7 +50,8 @@ class ComponentManager private constructor() {
                 result.add(componentMap.keys.toList())
             }
         }
-        val result2 = result.flatten().groupingBy { it }.eachCount().filter { it.value >= result.size }.keys.toList()
+        val result2 = result.flatten().groupingBy { it }.eachCount()
+            .filter { it.value >= result.size }.keys.toList()
         return result2
     }
 

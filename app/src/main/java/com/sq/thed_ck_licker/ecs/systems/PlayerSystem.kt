@@ -83,7 +83,7 @@ class PlayerSystem private constructor(private val componentManager: ComponentMa
                 deactivationCards +
                 trapCards +
                 scoreGainerCards +
-                beerGogglesCards
+                beerGogglesCards +
                 emptyList<Int>()
     }
 

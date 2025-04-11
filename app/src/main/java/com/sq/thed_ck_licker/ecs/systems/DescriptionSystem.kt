@@ -14,6 +14,7 @@ class DescriptionSystem private constructor(private val componentManager: Compon
             DescriptionSystem(ComponentManager.componentManager)
         }
     }
+
     fun updateAllDescriptions(componentManager: ComponentManager = this.componentManager) {
         val entitiesWithDescription =
             componentManager.getEntitiesWithComponent(DescriptionComponent::class)

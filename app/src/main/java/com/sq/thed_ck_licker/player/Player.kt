@@ -49,7 +49,10 @@ fun HealthBar(
             drawRoundRect(
                 color = Color.Red,
                 cornerRadius = CornerRadius(8f),
-                topLeft = Offset(x = size.width * (1f - animatedProgress), y = 0f),  // ← Right edge anchor
+                topLeft = Offset(
+                    x = size.width * (1f - animatedProgress),
+                    y = 0f
+                ),  // ← Right edge anchor
                 size = Size(size.width * animatedProgress, size.height)
             )
         }

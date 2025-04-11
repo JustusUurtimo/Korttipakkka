@@ -82,15 +82,17 @@ class CardEffectSystem(private val componentManager: ComponentManager) {
             }
         }
     }
+
     @Deprecated("Should be done via onPlay invoke")
     private fun activateScore(theActivator: Int, theUsedThing: Int, theTarget: Int) {
-        val tekija = componentManager.getComponent(theActivator, ScoreComponent::class)
+        componentManager.getComponent(theActivator, ScoreComponent::class)
 
         val kohde = componentManager.getComponent(theTarget, ScoreComponent::class)
 
         val tehtava = componentManager.getComponent(theUsedThing, ScoreComponent::class)
         kohde.addScore(tehtava)
     }
+
     @Deprecated("Should be done via onPlay invoke")
     private fun activateHealth(theActivator: Int, theUsedThing: Int, theTarget: Int) {
 
@@ -100,6 +102,7 @@ class CardEffectSystem(private val componentManager: ComponentManager) {
 
         kohde.addHealth(tehtava)
     }
+
     @Deprecated("Should be done via onPlay invoke")
     fun playerTargetsPlayer(theUsedThingId: Int) {
         println("Is anyone here?")
