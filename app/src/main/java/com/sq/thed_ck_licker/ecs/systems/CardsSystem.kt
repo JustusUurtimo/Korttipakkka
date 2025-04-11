@@ -22,7 +22,6 @@ import com.sq.thed_ck_licker.ecs.generateEntity
 import com.sq.thed_ck_licker.ecs.get
 import com.sq.thed_ck_licker.helpers.getRandomElement
 import kotlin.math.min
-import com.sq.thed_ck_licker.ecs.systems.CardEffectSystem.Companion.instance as cardEffectSystem
 
 class CardsSystem private constructor(private val componentManager: ComponentManager) {
 
@@ -70,8 +69,7 @@ class CardsSystem private constructor(private val componentManager: ComponentMan
         try {
             (latestCard.intValue get EffectComponent::class).onPlay.invoke(getPlayerID())
         } catch (_: Exception) {
-            println("Yeah yeah, we get it, you are so cool there was no effect component\n Using the old style instead ")
-            cardEffectSystem.playerTargetsPlayer(latestCard.intValue)
+            println("Yeah yeah, we get it, you are so cool there was no effect component")
         }
 
         try {

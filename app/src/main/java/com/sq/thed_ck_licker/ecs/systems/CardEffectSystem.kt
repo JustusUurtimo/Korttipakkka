@@ -105,8 +105,6 @@ class CardEffectSystem(private val componentManager: ComponentManager) {
 
     @Deprecated("Should be done via onPlay invoke")
     fun playerTargetsPlayer(theUsedThingId: Int) {
-        println("Is anyone here?")
-        println("playerTargetsPlayer, using $theUsedThingId")
         return activateThing(getPlayerID(), theUsedThingId, getPlayerID())
     }
 
