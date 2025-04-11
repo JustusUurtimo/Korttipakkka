@@ -21,6 +21,7 @@ import com.sq.thed_ck_licker.ecs.components.addEntity
 import com.sq.thed_ck_licker.ecs.generateEntity
 import com.sq.thed_ck_licker.ecs.get
 import com.sq.thed_ck_licker.helpers.getRandomElement
+import kotlin.math.min
 import com.sq.thed_ck_licker.ecs.systems.CardEffectSystem.Companion.instance as cardEffectSystem
 
 class CardsSystem private constructor(private val componentManager: ComponentManager) {
@@ -57,10 +58,10 @@ class CardsSystem private constructor(private val componentManager: ComponentMan
     // Function to pull a random card from deck
     fun pullRandomCardFromEntityDeck(entityId: Int, latestCard: MutableIntState) {
         val drawDeck = componentManager.getComponent(entityId, DrawDeckComponent::class)
-        if (drawDeck.cardIds.isEmpty()) {
+        if (drawDeck.drawCardDeck.isEmpty()) {
             throw IllegalStateException("No cards available")
         }
-        latestCard.intValue = drawDeck.cardIds.getRandomElement()
+        latestCard.intValue = drawDeck.drawCardDeck.getRandomElement()
     }
 
 
@@ -103,7 +104,7 @@ class CardsSystem private constructor(private val componentManager: ComponentMan
     */
 
 
-    fun addDefaultCards(amount: Int = 7): List<EntityId> {
+    fun addBreakingDefaultCards(amount: Int = 7): List<EntityId> {
         val cardIds: MutableList<EntityId> = mutableListOf()
         for (i in 1..amount) {
             val cardEntity = generateEntity()
@@ -211,6 +212,7 @@ class CardsSystem private constructor(private val componentManager: ComponentMan
             cardEntity add activationComponent
             cardEntity add NameComponent("Score Gainer Card #$i")
             cardEntity add TagsComponent(listOf(CardTag.CARD))
+            cardEntity add HealthComponent(1f)
         }
         return cardIds.toList()
     }
@@ -233,6 +235,52 @@ class CardsSystem private constructor(private val componentManager: ComponentMan
 
         val effStackComp = (getPlayerID() get EffectStackComponent::class)
         effStackComp addEntity (entity)  // I think i have gone mad from the power
+    }
+
+
+    fun addBeerGogglesTestCard(amount: Int = 1): List<EntityId> {
+        val cardIds: MutableList<EntityId> = mutableListOf()
+        for (i in 1..amount) {
+            val cardEntity = generateEntity()
+            cardIds.add(cardEntity)
+            cardEntity add ImageComponent()
+            cardEntity add DescriptionComponent("Equip Beer Goggles that will heal you bit.")
+            cardEntity add EffectComponent(onPlay = {
+                addLimitedSupplyAutoHealToThePlayer()
+            })
+            cardEntity add ActivationCounterComponent()
+            cardEntity add NameComponent("Beer Goggles Card #$i")
+            cardEntity add TagsComponent(listOf(CardTag.CARD))
+            cardEntity add HealthComponent(1f)
+        }
+        return cardIds.toList()
+    }
+
+    private fun addLimitedSupplyAutoHealToThePlayer(amount: Float = 150f) {
+        val entity = generateEntity()
+        val selfHp = HealthComponent(amount)
+        entity add selfHp
+        val selfActCounter = ActivationCounterComponent()
+        entity add selfActCounter
+
+        entity add EffectComponent(onTurnStart = { id: Int ->
+            val targetHealthComponent = id get HealthComponent::class
+            val targetMaxHp = targetHealthComponent.maxHealth.floatValue
+            val targetHp = targetHealthComponent.health.floatValue
+            if (targetHp < targetMaxHp / 2) {
+                val healAmount = (targetMaxHp * 0.8f) - targetHp
+                val ammm = min(selfHp.health.floatValue, healAmount)
+                selfHp.health.floatValue -= ammm
+                targetHealthComponent.health.floatValue += ammm
+            }
+            println("My name is Beer Goggles")
+            println("I am now at ${selfHp.health.floatValue} health \nand have been activated ${selfActCounter.activations.intValue} times")
+        })
+
+        val effStackComp = (getPlayerID() get EffectStackComponent::class)
+        effStackComp addEntity (entity)
+
+
     }
 
 }

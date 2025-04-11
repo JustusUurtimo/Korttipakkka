@@ -32,7 +32,7 @@ fun HealthBar(
         animationSpec = tween(durationMillis = 500)
     )
     //this is mainly for testing purposes as it helps keep track on the health changes without having to do extra prints.
-    Text("player Health: ${currentHealth.value.toInt()}", modifier)
+
     Canvas(
         modifier = modifier
             .height(24.dp)
@@ -63,6 +63,8 @@ fun HealthBar(
         color = Color.Red, //remaining health
         trackColor = Color.LightGray,
     )
+
+    Text("player Health: ${currentHealth.value.toInt()}", modifier)
 }
 
 @Composable

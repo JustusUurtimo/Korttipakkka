@@ -25,7 +25,7 @@ class PlayerSystem private constructor(private val componentManager: ComponentMa
     fun initPlayer() {
         getPlayerID() add HealthComponent(100f)
         getPlayerID() add ScoreComponent()
-        getPlayerID() add DrawDeckComponent(initPlayerDeck())
+        getPlayerID() add DrawDeckComponent(initPlayerDeck() as MutableList<Int>)
         getPlayerID() add EffectStackComponent()
     }
 
@@ -66,22 +66,24 @@ class PlayerSystem private constructor(private val componentManager: ComponentMa
             cardComponent = EffectComponent(onPlay = onActivationScore)
         )
 
-        val defaultCards = cardsSystem.addDefaultCards(10)
+        val defaultCards = cardsSystem.addBreakingDefaultCards(10)
 
         val deactivationCards = cardsSystem.addDeactivationTestCards(2)
 
         val trapCards = cardsSystem.addTrapTestCard()
 
         val scoreGainerCards = cardsSystem.addScoreGainerTestCard()
+        val beerGogglesCards = cardsSystem.addBeerGogglesTestCard()
 
         return emptyList<Int>() +
 //                playerHealingCards +
-//                playerDamageCards +
+                playerDamageCards +
 //                playerMiscCards +
-                defaultCards +
+//                defaultCards +
 //                deactivationCards +
 //                trapCards +
 //                scoreGainerCards +
+                beerGogglesCards
                 emptyList<Int>()
     }
 

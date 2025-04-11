@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.sq.thed_ck_licker.R
 import com.sq.thed_ck_licker.ecs.ComponentManager
 import com.sq.thed_ck_licker.ecs.components.DescriptionComponent
 import com.sq.thed_ck_licker.ecs.components.ImageComponent
@@ -35,14 +36,16 @@ class CardDisplaySystem private constructor(private val componentManager: Compon
         }
     }
 
-    /* TODO: This is kind a ok for now
-     *  But the sizes and that kind a things need to be re worked,
-     *  For now it is fine and the base logic works
-     */
     @Composable
     fun EntityDisplay(entityId: Int = 1) {
-        val image =
+        var image = try {
             componentManager.getComponent(entityId, ImageComponent::class).cardImage
+        }catch (e: Exception){
+            println(e)
+            R.drawable.card_back
+        }
+//        val image =
+//            componentManager.getComponent(entityId, ImageComponent::class).cardImage
         val name = componentManager.getComponent(entityId, NameComponent::class).name
         val description =
             componentManager.getComponent(entityId, DescriptionComponent::class).description.value
