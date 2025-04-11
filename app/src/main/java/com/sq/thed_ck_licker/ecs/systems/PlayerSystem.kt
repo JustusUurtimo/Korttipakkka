@@ -76,13 +76,13 @@ class PlayerSystem private constructor(private val componentManager: ComponentMa
         val beerGogglesCards = cardsSystem.addBeerGogglesTestCard()
 
         return emptyList<Int>() +
-//                playerHealingCards +
+                playerHealingCards +
                 playerDamageCards +
-//                playerMiscCards +
-//                defaultCards +
-//                deactivationCards +
-//                trapCards +
-//                scoreGainerCards +
+                playerMiscCards +
+                defaultCards +
+                deactivationCards +
+                trapCards +
+                scoreGainerCards +
                 beerGogglesCards
                 emptyList<Int>()
     }
