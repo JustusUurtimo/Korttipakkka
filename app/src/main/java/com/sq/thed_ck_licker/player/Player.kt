@@ -5,7 +5,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -31,7 +30,6 @@ fun HealthBar(
         targetValue = progress,
         animationSpec = tween(durationMillis = 500)
     )
-    //this is mainly for testing purposes as it helps keep track on the health changes without having to do extra prints.
 
     Canvas(
         modifier = modifier
@@ -58,14 +56,6 @@ fun HealthBar(
         }
 
     }
-    LinearProgressIndicator(
-        progress = { (currentHealth.value.toFloat() / 100f) },
-        modifier = modifier
-            .fillMaxWidth()
-            .height(15.dp),
-        color = Color.Red, //remaining health
-        trackColor = Color.LightGray,
-    )
 
     Text("player Health: ${currentHealth.value.toInt()}", modifier)
 }
