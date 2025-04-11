@@ -58,9 +58,7 @@ class CardsSystem private constructor(private val componentManager: ComponentMan
     // Function to pull a random card from deck
     fun pullRandomCardFromEntityDeck(entityId: Int, latestCard: MutableIntState) {
         val drawDeck = componentManager.getComponent(entityId, DrawDeckComponent::class)
-        if (drawDeck.drawCardDeck.isEmpty()) {
-            throw IllegalStateException("No cards available")
-        }
+        check(!(drawDeck.drawCardDeck.isEmpty())) { "No cards available" }
         latestCard.intValue = drawDeck.drawCardDeck.getRandomElement()
     }
 
