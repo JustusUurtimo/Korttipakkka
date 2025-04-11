@@ -57,7 +57,7 @@ class CardsSystem private constructor(private val componentManager: ComponentMan
     // Function to pull a random card from deck
     fun pullRandomCardFromEntityDeck(entityId: Int, latestCard: MutableIntState) {
         val drawDeck = componentManager.getComponent(entityId, DrawDeckComponent::class)
-        check(!(drawDeck.drawCardDeck.isEmpty())) { "No cards available" }
+        check(drawDeck.drawCardDeck.isNotEmpty()) { "No cards available" }
         latestCard.intValue = drawDeck.drawCardDeck.getRandomElement()
     }
 
@@ -172,14 +172,14 @@ class CardsSystem private constructor(private val componentManager: ComponentMan
             val target = id get ScoreComponent::class
             scoreLoss = ((1 + activationComponent.deactivations.intValue) * 3)
             target.score.intValue -= (activationComponent.deactivations.intValue * 3)
-            println("Lost ${scoreLoss} points")
+            println("Lost $scoreLoss points")
         }
         val onActivation = { id: Int ->
             val target = id get HealthComponent::class
             healthLoss = activationComponent.activations.intValue + 1
             target.health.floatValue += activationComponent.activations.intValue
 
-            println("Lost ${healthLoss} health")
+            println("Lost $healthLoss health")
         }
         for (i in 1..amount) {
             val cardEntity = generateEntity()
