@@ -6,8 +6,19 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 
 data class HealthComponent(var health: MutableFloatState, val maxHealth: MutableFloatState) {
+    /**
+     * This can be used in cases where you want thing to be not on full hp at the start
+     */
     constructor(health: Float = 100f, maxHealth: Float = 100f) : this(
         mutableFloatStateOf(health),
+        mutableFloatStateOf(maxHealth)
+    )
+
+    /**
+     * This can be used to construct Health component with health same as max health
+     */
+    constructor(maxHealth: Float = 100f) : this(
+        mutableFloatStateOf(maxHealth),
         mutableFloatStateOf(maxHealth)
     )
 }

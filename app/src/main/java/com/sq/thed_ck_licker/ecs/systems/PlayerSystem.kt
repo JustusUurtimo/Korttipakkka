@@ -8,6 +8,7 @@ import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.add
 import com.sq.thed_ck_licker.ecs.components.CardTag
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
+import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
@@ -22,20 +23,31 @@ class PlayerSystem private constructor(private val componentManager: ComponentMa
     }
 
     fun initPlayer() {
-        componentManager.addComponent(getPlayerID(), HealthComponent(100f, 100f))
-        componentManager.addComponent(getPlayerID(), ScoreComponent())
-        componentManager.addComponent(getPlayerID(), DrawDeckComponent(initPlayerDeck()))
+        getPlayerID() add HealthComponent(100f)
+        getPlayerID() add ScoreComponent()
+        getPlayerID() add DrawDeckComponent(initPlayerDeck() as MutableList<Int>)
         getPlayerID() add EffectStackComponent()
     }
 
     private fun initPlayerDeck(): List<Int> {
+        val onActivationScore = { id: Int ->
+            (id get ScoreComponent::class).score.intValue += 10
+        }
+        val onActivationHeal = { id: Int ->
+            (id get HealthComponent::class).health.floatValue += 5f
+        }
+        val onActivationTakeDamage = { id: Int ->
+            (id get HealthComponent::class).health.floatValue -= 5f
+        }
+
+
         val playerHealingCards = cardsSystem.initCards(
             5,
             R.drawable.heal_10,
             "This card heals you",
             "Heal",
             listOf(CardTag.CARD),
-            cardComponent = HealthComponent(5f, 0f)
+            cardComponent = EffectComponent(onPlay = onActivationHeal)
         )
         val playerDamageCards = cardsSystem.initCards(
             5,
@@ -43,7 +55,7 @@ class PlayerSystem private constructor(private val componentManager: ComponentMa
             "This card deals damage to you",
             "Damage",
             listOf(CardTag.CARD),
-            cardComponent = HealthComponent(-5f, 0f)
+            cardComponent = EffectComponent(onPlay = onActivationTakeDamage)
         )
         val playerMiscCards = cardsSystem.initCards(
             5,
@@ -51,19 +63,18 @@ class PlayerSystem private constructor(private val componentManager: ComponentMa
             "This card does something",
             "Misc",
             listOf(CardTag.CARD),
-            cardComponent = ScoreComponent(10)
+            cardComponent = EffectComponent(onPlay = onActivationScore)
         )
 
-        val defaultCards = cardsSystem.addDefaultCards(10)
+        val defaultCards = cardsSystem.addBreakingDefaultCards(10)
 
         val deactivationCards = cardsSystem.addDeactivationTestCards(2)
 
         val trapCards = cardsSystem.addTrapTestCard()
 
         val scoreGainerCards = cardsSystem.addScoreGainerTestCard()
+        val beerGogglesCards = cardsSystem.addBeerGogglesTestCard()
 
-        // TODO: they are spaced so i can easilly comment then in and out, same for the empty lists
-        //  So the real to do is to make more testable code...
         return emptyList<Int>() +
                 playerHealingCards +
                 playerDamageCards +
@@ -72,6 +83,7 @@ class PlayerSystem private constructor(private val componentManager: ComponentMa
                 deactivationCards +
                 trapCards +
                 scoreGainerCards +
+                beerGogglesCards +
                 emptyList<Int>()
     }
 

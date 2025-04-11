@@ -35,10 +35,6 @@ class CardDisplaySystem private constructor(private val componentManager: Compon
         }
     }
 
-    /* TODO: This is kind a ok for now
-     *  But the sizes and that kind a things need to be re worked,
-     *  For now it is fine and the base logic works
-     */
     @Composable
     fun EntityDisplay(entityId: Int = 1) {
         val image =

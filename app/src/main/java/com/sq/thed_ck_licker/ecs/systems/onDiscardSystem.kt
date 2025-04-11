@@ -6,7 +6,8 @@ import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
 import com.sq.thed_ck_licker.ecs.get
 
 fun onDiscardSystem(componentManager: ComponentManager = ComponentManager.componentManager) {
-    val targetsWithEffectStack = componentManager.getEntitiesWithComponent(EffectStackComponent::class)
+    val targetsWithEffectStack =
+        componentManager.getEntitiesWithComponent(EffectStackComponent::class)
     if (targetsWithEffectStack == null) return
 
     for (effectTarget in targetsWithEffectStack) {
