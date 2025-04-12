@@ -40,7 +40,6 @@ class PlayerSystem private constructor(private val componentManager: ComponentMa
             (id get HealthComponent::class).health.floatValue -= 5f
         }
 
-
         val playerHealingCards = cardsSystem.initCards(
             5,
             R.drawable.heal_10,
@@ -65,15 +64,12 @@ class PlayerSystem private constructor(private val componentManager: ComponentMa
             listOf(CardTag.CARD),
             cardComponent = EffectComponent(onPlay = onActivationScore)
         )
-
         val defaultCards = cardsSystem.addBreakingDefaultCards(10)
-
         val deactivationCards = cardsSystem.addDeactivationTestCards(2)
-
         val trapCards = cardsSystem.addTrapTestCard()
-
         val scoreGainerCards = cardsSystem.addScoreGainerTestCard()
         val beerGogglesCards = cardsSystem.addBeerGogglesTestCard()
+        val maxHpCards = cardsSystem.addMaxHpTrapCard()
 
         return emptyList<Int>() +
                 playerHealingCards +
@@ -84,6 +80,7 @@ class PlayerSystem private constructor(private val componentManager: ComponentMa
                 trapCards +
                 scoreGainerCards +
                 beerGogglesCards +
+                maxHpCards +
                 emptyList<Int>()
     }
 
