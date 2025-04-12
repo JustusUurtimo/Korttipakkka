@@ -19,7 +19,10 @@ import com.sq.thed_ck_licker.ecs.components.NameComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent
 import com.sq.thed_ck_licker.ecs.components.activate
+import com.sq.thed_ck_licker.ecs.components.addCardToMerchantHand
 import com.sq.thed_ck_licker.ecs.components.addEntity
+import com.sq.thed_ck_licker.ecs.components.getCardsInMerchantHand
+import com.sq.thed_ck_licker.ecs.components.removeAllCardsFromMerchantHand
 import com.sq.thed_ck_licker.ecs.generateEntity
 import com.sq.thed_ck_licker.ecs.get
 import com.sq.thed_ck_licker.helpers.getRandomElement
@@ -133,7 +136,21 @@ class CardsSystem private constructor(private val componentManager: ComponentMan
             cardEntity add ActivationCounterComponent()
             val openMerchant = { id: Int ->
                 val target = id get MerchantComponent::class
-                target.merchantId.intValue = cardEntity
+                if(target.merchantId.intValue == -1) {
+                    target.merchantId.intValue = cardEntity
+                    repeat(3) {
+                        target.addCardToMerchantHand(pullRandomCardFromEntityDeck(cardEntity))
+                    }
+                } else {
+                    val score = id get ScoreComponent::class
+                    score.score.intValue -= 500
+                    target.merchantId.intValue = cardEntity
+                    target.removeAllCardsFromMerchantHand()
+                    repeat(3) {
+                        target.addCardToMerchantHand(pullRandomCardFromEntityDeck(cardEntity))
+                    }
+                }
+
             }
             cardEntity add EffectComponent(onPlay = openMerchant)
             cardEntity add DescriptionComponent("Activate to access shop")

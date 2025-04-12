@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
-import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.deactivate
 import com.sq.thed_ck_licker.ecs.get
 import com.sq.thed_ck_licker.ecs.systems.onDeathSystem
@@ -40,6 +39,7 @@ fun Game(innerPadding: PaddingValues) {
 
     val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues()
     val merchant = rememberSaveable { playerSystem.getMerchant() }
+    val merchantCards = rememberSaveable { playerSystem.getMerchantCards() }
     val playerCardCount = rememberSaveable { mutableIntStateOf(0) }
     val latestCard = rememberSaveable { mutableIntStateOf(-1) }
     val playerHealth =
@@ -48,7 +48,6 @@ fun Game(innerPadding: PaddingValues) {
         rememberSaveable { playerSystem.getPlayerMaxHealthM() }
     val playerScore = rememberSaveable { playerSystem.getPlayerScoreM() }
 // TODO we should read more about viewModels and state holding
-
     val modifier = Modifier
 
     val activateCard = {
@@ -71,6 +70,7 @@ fun Game(innerPadding: PaddingValues) {
             println("Yeah yeah, we get it, you are so cool there was no actCounter component ")
         }
         onDiscardSystem()
+        merchant.intValue = -1
         latestCard.intValue = cardsSystem.pullRandomCardFromEntityDeck(playerId())
     }
 
@@ -81,14 +81,16 @@ fun Game(innerPadding: PaddingValues) {
 
         ScoreDisplayer(playerScore.intValue)
 
+        if (merchant.intValue != -1) {
+            cardDisplaySystem.CardsOnMerchantHandView(merchant, merchantCards, modifier, latestCard, playerScore)
+        }
+
         Box(modifier.fillMaxSize()) {
             CardDeck(navigationBarPadding, pullNewCard)
             Box(modifier.align(Alignment.BottomCenter)) {
 
                 Column(modifier.padding(35.dp, 0.dp, 0.dp, 0.dp)) {
-                    if (merchant.intValue != -1) {
-                        cardDisplaySystem.CardsOnMerchantHandView(merchant, modifier, latestCard)
-                    }
+
                     if (latestCard.intValue != -1) {
                         cardDisplaySystem.CardsOnPlayerHandView(
                             playerCardCount,

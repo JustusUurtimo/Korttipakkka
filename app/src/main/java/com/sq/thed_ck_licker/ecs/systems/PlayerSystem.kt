@@ -105,4 +105,7 @@ class PlayerSystem private constructor(private val componentManager: ComponentMa
     fun getMerchant(): MutableIntState {
         return (getPlayerID() get MerchantComponent::class).merchantId
     }
+    fun getMerchantCards(): MutableList<Int> {
+        return (getPlayerID() get MerchantComponent::class).cardsInMerchantsHand
+    }
 }

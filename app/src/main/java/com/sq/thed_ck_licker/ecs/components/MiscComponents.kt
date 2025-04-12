@@ -1,10 +1,12 @@
 package com.sq.thed_ck_licker.ecs.components
 
+import android.os.Parcelable
 import android.util.MutableBoolean
 import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import kotlinx.parcelize.Parcelize
 
 data class HealthComponent(var health: MutableFloatState, val maxHealth: MutableFloatState) {
     /**
@@ -42,12 +44,29 @@ fun ScoreComponent.addScore(scoreComponent: ScoreComponent) {
     this.score.intValue += scoreComponent.score.intValue
 }
 
-data class MerchantComponent(var merchantId: MutableIntState) {
-    constructor(merchantId: Int = -1) : this(mutableIntStateOf(merchantId))
+
+data class MerchantComponent(var merchantId: MutableIntState, var cardsInMerchantsHand: MutableList<Int>) {
+    constructor(merchantId: Int = -1, cardsInMerchantsHand: MutableList<Int> = mutableListOf()) : this(mutableIntStateOf(merchantId), cardsInMerchantsHand)
 }
 
-fun MerchantComponent.addMerchant(merchantComponent: MerchantComponent) {
-    this.merchantId.intValue = merchantComponent.merchantId.intValue
+fun MerchantComponent.addCardToMerchantHand(cardId: Int) {
+    this.cardsInMerchantsHand.add(cardId)
 }
+
+fun MerchantComponent.removeAllCardsFromMerchantHand() {
+    this.cardsInMerchantsHand.removeAll(this.cardsInMerchantsHand)
+}
+
+fun MerchantComponent.getCardsInMerchantHand(): List<Int> {
+    return this.cardsInMerchantsHand.toList()
+}
+
+//this should be implemented after we refactor the card creations system
+data class CardPriceComponent(var price: MutableIntState) {
+    constructor(price: Int = 50) : this(mutableIntStateOf(price))
+}
+
+
+
 
 
