@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
+import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.deactivate
 import com.sq.thed_ck_licker.ecs.get
 import com.sq.thed_ck_licker.ecs.systems.onDeathSystem
@@ -87,7 +87,7 @@ fun Game(innerPadding: PaddingValues) {
 
                 Column(modifier.padding(35.dp, 0.dp, 0.dp, 0.dp)) {
                     if (merchant.intValue != -1) {
-                        cardDisplaySystem.CardsOnMerchantHandView(merchant.intValue, modifier, latestCard)
+                        cardDisplaySystem.CardsOnMerchantHandView(merchant, modifier, latestCard)
                     }
                     if (latestCard.intValue != -1) {
                         cardDisplaySystem.CardsOnPlayerHandView(

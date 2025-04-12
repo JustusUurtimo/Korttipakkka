@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
@@ -85,29 +86,71 @@ class CardDisplaySystem private constructor(private val componentManager: Compon
     }
 
     @Composable
-    fun CardsOnMerchantHandView(merchantId: Int, modifier: Modifier, latestCard: MutableIntState) {
+    fun CardsOnMerchantHandView(
+        merchant: MutableIntState,
+        modifier: Modifier,
+        latestCard: MutableIntState
+    ) {
+        val merchantId = merchant.intValue
 
         val merchantCard1 = cardsSystem.pullRandomCardFromEntityDeck(merchantId)
         val merchantCard2 = cardsSystem.pullRandomCardFromEntityDeck(merchantId)
         val merchantCard3 = cardsSystem.pullRandomCardFromEntityDeck(merchantId)
 
+        println("Merchant cards: $merchantCard1, $merchantCard2, $merchantCard3")
+
         fun chooseMerchantCard(cardId: Int) {
             latestCard.intValue = cardId
             val merchantHp = merchantId get HealthComponent::class
             merchantHp.health.floatValue -= 1
+            merchant.intValue = -1
+            onDeathSystem()
         }
 
         Row(
             modifier = modifier
-                .width(120.dp)
+                .fillMaxWidth()  // Use available width
                 .height(170.dp)
-                .background(color = Color.Magenta),
-
-
+                .background(Color.Magenta)
+        ) {
+            // Column 1
+            Column(
+                modifier = Modifier
+                    .weight(1f)  // Equal width distribution
+                    .padding(8.dp)  // Reasonable padding
             ) {
-            EntityDisplay(merchantCard1, { chooseMerchantCard(merchantCard1) }, modifier)
-            EntityDisplay(merchantCard2, { chooseMerchantCard(merchantCard2) }, modifier)
-            EntityDisplay(merchantCard3, { chooseMerchantCard(merchantCard3) }, modifier)
+                EntityDisplay(
+                    merchantCard1,
+                    { chooseMerchantCard(merchantCard1) },
+                    Modifier.fillMaxSize()
+                )
+            }
+
+            // Column 2
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(8.dp)
+            ) {
+                EntityDisplay(
+                    merchantCard2,
+                    { chooseMerchantCard(merchantCard2) },
+                    Modifier.fillMaxSize()
+                )
+            }
+
+            // Column 3
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(8.dp)
+            ) {
+                EntityDisplay(
+                    merchantCard3,
+                    { chooseMerchantCard(merchantCard3) },
+                    Modifier.fillMaxSize()
+                )
+            }
         }
 
     }
