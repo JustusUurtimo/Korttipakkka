@@ -1,5 +1,6 @@
 package com.sq.thed_ck_licker.ecs.components
 
+import android.util.MutableBoolean
 import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.mutableFloatStateOf
@@ -40,3 +41,13 @@ data class ScoreComponent(var score: MutableIntState) {
 fun ScoreComponent.addScore(scoreComponent: ScoreComponent) {
     this.score.intValue += scoreComponent.score.intValue
 }
+
+data class MerchantComponent(var merchantId: MutableIntState) {
+    constructor(merchantId: Int = -1) : this(mutableIntStateOf(merchantId))
+}
+
+fun MerchantComponent.addMerchant(merchantComponent: MerchantComponent) {
+    this.merchantId.intValue = merchantComponent.merchantId.intValue
+}
+
+

@@ -1,6 +1,7 @@
 package com.sq.thed_ck_licker.ecs.systems
 
 import androidx.compose.runtime.MutableIntState
+import com.sq.thed_ck_licker.R
 import com.sq.thed_ck_licker.ecs.ComponentManager
 import com.sq.thed_ck_licker.ecs.EntityId
 import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID
@@ -13,6 +14,7 @@ import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.ImageComponent
+import com.sq.thed_ck_licker.ecs.components.MerchantComponent
 import com.sq.thed_ck_licker.ecs.components.NameComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent
@@ -56,11 +58,13 @@ class CardsSystem private constructor(private val componentManager: ComponentMan
     }
 
     // Function to pull a random card from deck
-    fun pullRandomCardFromEntityDeck(entityId: Int, latestCard: MutableIntState) {
+    fun pullRandomCardFromEntityDeck(entityId: Int) : Int {
         val drawDeck = componentManager.getComponent(entityId, DrawDeckComponent::class)
         check(drawDeck.drawCardDeck.isNotEmpty()) { "No cards available" }
-        latestCard.intValue = drawDeck.drawCardDeck.getRandomElement()
+        return drawDeck.drawCardDeck.getRandomElement()
     }
+
+
 
 
     fun activateCard(latestCard: MutableIntState, playerCardCount: MutableIntState) {
@@ -101,6 +105,44 @@ class CardsSystem private constructor(private val componentManager: ComponentMan
     *   Thou that would mean order of operation does not matter, which might be wanted.
     */
 
+    fun addMerchantCards(amount: Int = 5): List<EntityId> {
+        val cardIds: MutableList<EntityId> = mutableListOf()
+        for (i in 1..amount) {
+            val cardEntity = generateEntity()
+            cardIds.add(cardEntity)
+            //I know this is duplicate code, but we have to unify deck building to a one system
+            // its on issue #48 atm
+            val onActivationHeal = { id: Int ->
+                (id get HealthComponent::class).health.floatValue += 5f
+            }
+            val healingCards = initCards(
+                5,
+                R.drawable.heal_10,
+                "This card heals you",
+                "Heal",
+                listOf(CardTag.CARD),
+                cardComponent = EffectComponent(onPlay = onActivationHeal)
+            )
+            val scoreGainerCards = addScoreGainerTestCard()
+            val maxHpCards = addMaxHpTrapCard()
+            val allCards = emptyList<Int>() + healingCards + scoreGainerCards + maxHpCards + emptyList<Int>()
+
+            cardEntity add DrawDeckComponent(allCards as MutableList<Int>)
+            cardEntity add ImageComponent()
+            cardEntity add HealthComponent(2f)
+            cardEntity add ActivationCounterComponent()
+            val openMerchant = { id: Int ->
+                val target = id get MerchantComponent::class
+                target.merchantId.intValue = cardEntity
+            }
+            cardEntity add EffectComponent(onPlay = openMerchant)
+            cardEntity add DescriptionComponent("Activate to access shop")
+            cardEntity add NameComponent("Merchant #$i")
+            cardEntity add TagsComponent(listOf(CardTag.CARD))
+        }
+        return cardIds.toList()
+    }
+
     fun addMaxHpTrapCard(amount: Int = 5): List<EntityId> {
         val cardIds: MutableList<EntityId> = mutableListOf()
         for (i in 1..amount) {
@@ -111,7 +153,7 @@ class CardsSystem private constructor(private val componentManager: ComponentMan
             cardEntity add ActivationCounterComponent()
             val maxHpIt = { id: Int ->
                 val playerHp = id get HealthComponent::class
-                if(Random.Default.nextFloat() <= 0.2f) {
+                if (Random.Default.nextFloat() <= 0.2f) {
                     (cardEntity get HealthComponent::class).health.floatValue -= 99999f
                     playerHp.health.floatValue = (playerHp.health.floatValue.div(2))
                 } else {

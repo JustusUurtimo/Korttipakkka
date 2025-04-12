@@ -11,6 +11,7 @@ import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
+import com.sq.thed_ck_licker.ecs.components.MerchantComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 import com.sq.thed_ck_licker.ecs.get
 import com.sq.thed_ck_licker.ecs.systems.CardsSystem.Companion.instance as cardsSystem
@@ -25,6 +26,7 @@ class PlayerSystem private constructor(private val componentManager: ComponentMa
     fun initPlayer() {
         getPlayerID() add HealthComponent(100f)
         getPlayerID() add ScoreComponent()
+        getPlayerID() add MerchantComponent()
         getPlayerID() add DrawDeckComponent(initPlayerDeck() as MutableList<Int>)
         getPlayerID() add EffectStackComponent()
     }
@@ -70,6 +72,10 @@ class PlayerSystem private constructor(private val componentManager: ComponentMa
         val scoreGainerCards = cardsSystem.addScoreGainerTestCard()
         val beerGogglesCards = cardsSystem.addBeerGogglesTestCard()
         val maxHpCards = cardsSystem.addMaxHpTrapCard()
+        val merchantCards = cardsSystem.addMerchantCards()
+        println("##################################################")
+        println(componentManager.getAllComponentsOfEntity(37))
+        println("##################################################")
 
         return emptyList<Int>() +
                 playerHealingCards +
@@ -81,6 +87,7 @@ class PlayerSystem private constructor(private val componentManager: ComponentMa
                 scoreGainerCards +
                 beerGogglesCards +
                 maxHpCards +
+                merchantCards +
                 emptyList<Int>()
     }
 
@@ -94,5 +101,8 @@ class PlayerSystem private constructor(private val componentManager: ComponentMa
 
     fun getPlayerMaxHealthM(): MutableFloatState {
         return (getPlayerID() get HealthComponent::class).maxHealth
+    }
+    fun getMerchant(): MutableIntState {
+        return (getPlayerID() get MerchantComponent::class).merchantId
     }
 }

@@ -3,6 +3,7 @@ package com.sq.thed_ck_licker.ecs.systems
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,8 +25,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.sq.thed_ck_licker.ecs.ComponentManager
 import com.sq.thed_ck_licker.ecs.components.DescriptionComponent
+import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.ImageComponent
 import com.sq.thed_ck_licker.ecs.components.NameComponent
+import com.sq.thed_ck_licker.ecs.systems.CardsSystem.Companion.instance as cardsSystem
+import com.sq.thed_ck_licker.ecs.get
 
 class CardDisplaySystem private constructor(private val componentManager: ComponentManager) {
 
@@ -36,46 +40,81 @@ class CardDisplaySystem private constructor(private val componentManager: Compon
     }
 
     @Composable
-    fun EntityDisplay(entityId: Int = 1) {
+    private fun EntityDisplay(entityId: Int = 1, activateCard: () -> Unit, modifier: Modifier) {
         val image =
             componentManager.getComponent(entityId, ImageComponent::class).cardImage
         val name = componentManager.getComponent(entityId, NameComponent::class).name
         val description =
             componentManager.getComponent(entityId, DescriptionComponent::class).description.value
 
+        Card(
+            modifier = modifier
+                .background(color = Color.Green)
+                .scale(0.99f),
+            onClick = activateCard
 
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .paint(
-                    painterResource(image), contentScale = ContentScale.FillBounds
-                )
         ) {
-            Column(
+            Box(
                 modifier = Modifier
-                    .align(BiasAlignment(0f, 0.7f))
-                    .fillMaxWidth()
+                    .fillMaxSize()
+                    .paint(
+                        painterResource(image), contentScale = ContentScale.FillBounds
+                    )
             ) {
-                Text(
-                    text = name,
+                Column(
                     modifier = Modifier
-                        .background(color = Color.Cyan)
+                        .align(BiasAlignment(0f, 0.7f))
                         .fillMaxWidth()
-                )
-                Text(
-                    text = description,
-                    softWrap = true,
-                    modifier = Modifier
-                        .background(color = Color.Yellow)
-                        .fillMaxWidth()
-                )
+                ) {
+                    Text(
+                        text = name,
+                        modifier = Modifier
+                            .background(color = Color.Cyan)
+                            .fillMaxWidth()
+                    )
+                    Text(
+                        text = description,
+                        softWrap = true,
+                        modifier = Modifier
+                            .background(color = Color.Yellow)
+                            .fillMaxWidth()
+                    )
+                }
             }
         }
     }
 
+    @Composable
+    fun CardsOnMerchantHandView(merchantId: Int, modifier: Modifier, latestCard: MutableIntState) {
+
+        val merchantCard1 = cardsSystem.pullRandomCardFromEntityDeck(merchantId)
+        val merchantCard2 = cardsSystem.pullRandomCardFromEntityDeck(merchantId)
+        val merchantCard3 = cardsSystem.pullRandomCardFromEntityDeck(merchantId)
+
+        fun chooseMerchantCard(cardId: Int) {
+            latestCard.intValue = cardId
+            val merchantHp = merchantId get HealthComponent::class
+            merchantHp.health.floatValue -= 1
+        }
+
+        Row(
+            modifier = modifier
+                .width(120.dp)
+                .height(170.dp)
+                .background(color = Color.Magenta),
+
+
+            ) {
+            EntityDisplay(merchantCard1, { chooseMerchantCard(merchantCard1) }, modifier)
+            EntityDisplay(merchantCard2, { chooseMerchantCard(merchantCard2) }, modifier)
+            EntityDisplay(merchantCard3, { chooseMerchantCard(merchantCard3) }, modifier)
+        }
+
+    }
+
 
     @Composable
-    fun CardsOnHandView(
+    fun CardsOnPlayerHandView(
         playerCardCount: MutableIntState,
         modifier: Modifier,
         latestCard: MutableIntState,
@@ -99,15 +138,8 @@ class CardDisplaySystem private constructor(private val componentManager: Compon
             ) {
             // TODO: There might be some modifier that "just rounds the corners"
             //  And then it could be just passed via modifier passing or something
-            Card(
-                modifier = modifier
-                    .background(color = Color.Green)
-                    .scale(0.99f),
-                onClick = activateCard
 
-            ) {
-                EntityDisplay(latestCard.intValue)
-            }
+            EntityDisplay(latestCard.intValue, activateCard, modifier)
         }
     }
 
