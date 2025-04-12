@@ -125,7 +125,7 @@ class CardsSystem private constructor(private val componentManager: ComponentMan
             )
             val scoreGainerCards = addScoreGainerTestCard()
             val maxHpCards = addMaxHpTrapCard()
-            val allCards = emptyList<Int>() + scoreGainerCards + maxHpCards + emptyList<Int>()
+            val allCards = emptyList<Int>() + healingCards + scoreGainerCards + maxHpCards + emptyList<Int>()
 
             cardEntity add DrawDeckComponent(allCards as MutableList<Int>)
             cardEntity add ImageComponent()
