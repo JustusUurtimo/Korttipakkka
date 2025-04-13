@@ -12,11 +12,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.sq.thed_ck_licker.ui.theme.TheD_ck_LickerTheme
 import com.sq.thed_ck_licker.ecs.systems.DescriptionSystem.Companion.instance as descriptionSystem
 import com.sq.thed_ck_licker.ecs.systems.PlayerSystem.Companion.instance as playerSystem
+import com.sq.thed_ck_licker.ecs.systems.MerchantSystem.Companion.instance as merchantSystem
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         playerSystem.initPlayer()
+        merchantSystem.initRegularMerchant()
 
         descriptionSystem.updateAllDescriptions()
 

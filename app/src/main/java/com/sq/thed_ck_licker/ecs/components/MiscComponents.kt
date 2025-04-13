@@ -45,20 +45,8 @@ fun ScoreComponent.addScore(scoreComponent: ScoreComponent) {
 }
 
 
-data class MerchantComponent(var merchantId: MutableIntState, var cardsInMerchantsHand: MutableList<Int>) {
-    constructor(merchantId: Int = -1, cardsInMerchantsHand: MutableList<Int> = mutableListOf()) : this(mutableIntStateOf(merchantId), cardsInMerchantsHand)
-}
-
-fun MerchantComponent.addCardToMerchantHand(cardId: Int) {
-    this.cardsInMerchantsHand.add(cardId)
-}
-
-fun MerchantComponent.removeAllCardsFromMerchantHand() {
-    this.cardsInMerchantsHand.removeAll(this.cardsInMerchantsHand)
-}
-
-fun MerchantComponent.getCardsInMerchantHand(): List<Int> {
-    return this.cardsInMerchantsHand.toList()
+data class MerchantComponent(var merchantId: MutableIntState) {
+    constructor(merchantId: Int = -1) : this(mutableIntStateOf(merchantId))
 }
 
 //this should be implemented after we refactor the card creations system

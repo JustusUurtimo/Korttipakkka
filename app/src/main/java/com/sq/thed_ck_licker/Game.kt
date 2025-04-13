@@ -38,8 +38,7 @@ import com.sq.thed_ck_licker.ecs.systems.PlayerSystem.Companion.instance as play
 fun Game(innerPadding: PaddingValues) {
 
     val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues()
-    val merchant = rememberSaveable { playerSystem.getMerchant() }
-    val merchantCards = rememberSaveable { playerSystem.getMerchantCards() }
+    val playerActiveMerchant = rememberSaveable { playerSystem.getMerchant() }
     val playerCardCount = rememberSaveable { mutableIntStateOf(0) }
     val latestCard = rememberSaveable { mutableIntStateOf(-1) }
     val playerHealth =
@@ -70,7 +69,7 @@ fun Game(innerPadding: PaddingValues) {
             println("Yeah yeah, we get it, you are so cool there was no actCounter component ")
         }
         onDiscardSystem()
-        merchant.intValue = -1
+        playerActiveMerchant.intValue = -1
         latestCard.intValue = cardsSystem.pullRandomCardFromEntityDeck(playerId())
     }
 
@@ -81,8 +80,8 @@ fun Game(innerPadding: PaddingValues) {
 
         ScoreDisplayer(playerScore.intValue)
 
-        if (merchant.intValue != -1) {
-            cardDisplaySystem.CardsOnMerchantHandView(merchant, merchantCards, modifier, latestCard, playerScore)
+        if (playerActiveMerchant.intValue != -1) {
+            cardDisplaySystem.CardsOnMerchantHandView(playerActiveMerchant, modifier, latestCard, playerScore)
         }
 
         Box(modifier.fillMaxSize()) {

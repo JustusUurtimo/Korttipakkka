@@ -8,6 +8,9 @@ object EntityManager {
     private const val PLAYER_ID: EntityId = -1
     fun getPlayerID() = PLAYER_ID
 
+    private const val REGULAR_MERCHANT_ID: EntityId = -2
+    fun getRegularMerchantID() = REGULAR_MERCHANT_ID
+
     private var nextID: EntityId = 1
 
 

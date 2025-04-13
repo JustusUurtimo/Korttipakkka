@@ -15,14 +15,12 @@ import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.ImageComponent
 import com.sq.thed_ck_licker.ecs.components.MerchantComponent
+import com.sq.thed_ck_licker.ecs.components.MerchantHandComponent
 import com.sq.thed_ck_licker.ecs.components.NameComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent
 import com.sq.thed_ck_licker.ecs.components.activate
-import com.sq.thed_ck_licker.ecs.components.addCardToMerchantHand
 import com.sq.thed_ck_licker.ecs.components.addEntity
-import com.sq.thed_ck_licker.ecs.components.getCardsInMerchantHand
-import com.sq.thed_ck_licker.ecs.components.removeAllCardsFromMerchantHand
 import com.sq.thed_ck_licker.ecs.generateEntity
 import com.sq.thed_ck_licker.ecs.get
 import com.sq.thed_ck_licker.helpers.getRandomElement
@@ -61,13 +59,11 @@ class CardsSystem private constructor(private val componentManager: ComponentMan
     }
 
     // Function to pull a random card from deck
-    fun pullRandomCardFromEntityDeck(entityId: Int) : Int {
+    fun pullRandomCardFromEntityDeck(entityId: Int): Int {
         val drawDeck = componentManager.getComponent(entityId, DrawDeckComponent::class)
         check(drawDeck.drawCardDeck.isNotEmpty()) { "No cards available" }
         return drawDeck.drawCardDeck.getRandomElement()
     }
-
-
 
 
     fun activateCard(latestCard: MutableIntState, playerCardCount: MutableIntState) {
@@ -108,55 +104,32 @@ class CardsSystem private constructor(private val componentManager: ComponentMan
     *   Thou that would mean order of operation does not matter, which might be wanted.
     */
 
-    fun addMerchantCards(amount: Int = 5): List<EntityId> {
+    fun addMerchantCards(amount: Int, merchantId: Int): List<EntityId> {
         val cardIds: MutableList<EntityId> = mutableListOf()
-        for (i in 1..amount) {
-            val cardEntity = generateEntity()
-            cardIds.add(cardEntity)
-            //I know this is duplicate code, but we have to unify deck building to a one system
-            // its on issue #48 atm
-            val onActivationHeal = { id: Int ->
-                (id get HealthComponent::class).health.floatValue += 5f
+        val openMerchant = { id: Int ->
+            val target = id get MerchantComponent::class
+            val activations = merchantId get ActivationCounterComponent::class
+            if(activations.activations.intValue > 1) {
+                val score = id get ScoreComponent::class
+                score.score.intValue -= 500
             }
-            val healingCards = initCards(
-                5,
-                R.drawable.heal_10,
-                "This card heals you",
-                "Heal",
-                listOf(CardTag.CARD),
-                cardComponent = EffectComponent(onPlay = onActivationHeal)
-            )
-            val scoreGainerCards = addScoreGainerTestCard()
-            val maxHpCards = addMaxHpTrapCard()
-            val allCards = emptyList<Int>() + healingCards + scoreGainerCards + maxHpCards + emptyList<Int>()
-
-            cardEntity add DrawDeckComponent(allCards as MutableList<Int>)
-            cardEntity add ImageComponent()
-            cardEntity add HealthComponent(99999f)
-            cardEntity add ActivationCounterComponent()
-            val openMerchant = { id: Int ->
-                val target = id get MerchantComponent::class
-                if(target.merchantId.intValue == -1) {
-                    target.merchantId.intValue = cardEntity
-                    repeat(3) {
-                        target.addCardToMerchantHand(pullRandomCardFromEntityDeck(cardEntity))
-                    }
-                } else {
-                    val score = id get ScoreComponent::class
-                    score.score.intValue -= 500
-                    target.merchantId.intValue = cardEntity
-                    target.removeAllCardsFromMerchantHand()
-                    repeat(3) {
-                        target.addCardToMerchantHand(pullRandomCardFromEntityDeck(cardEntity))
-                    }
-                }
-
-            }
-            cardEntity add EffectComponent(onPlay = openMerchant)
-            cardEntity add DescriptionComponent("Activate to access shop")
-            cardEntity add NameComponent("Merchant #$i")
-            cardEntity add TagsComponent(listOf(CardTag.CARD))
+            val merchantHand = merchantId get MerchantHandComponent::class
+            merchantHand.merchantHand.clear()
+            target.merchantId.intValue = -99
+            target.merchantId.intValue = merchantId
         }
+        merchantId add ImageComponent()
+        merchantId add HealthComponent(99999f)
+        merchantId add ActivationCounterComponent()
+        merchantId add EffectComponent(onPlay = openMerchant)
+        merchantId add DescriptionComponent("Activate to access shop")
+        merchantId add NameComponent("Merchant #$merchantId")
+        merchantId add TagsComponent(listOf(CardTag.CARD))
+
+        repeat(amount) {
+            cardIds.add(merchantId)
+        }
+
         return cardIds.toList()
     }
 

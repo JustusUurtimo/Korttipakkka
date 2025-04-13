@@ -28,6 +28,7 @@ import com.sq.thed_ck_licker.ecs.ComponentManager
 import com.sq.thed_ck_licker.ecs.components.DescriptionComponent
 import com.sq.thed_ck_licker.ecs.components.ImageComponent
 import com.sq.thed_ck_licker.ecs.components.NameComponent
+import com.sq.thed_ck_licker.ecs.systems.MerchantSystem.Companion.instance as merchantSystem
 
 class CardDisplaySystem private constructor(private val componentManager: ComponentManager) {
 
@@ -84,17 +85,16 @@ class CardDisplaySystem private constructor(private val componentManager: Compon
 
     @Composable
     fun CardsOnMerchantHandView(
-        merchantID: MutableIntState,
-        merchantCards: MutableList<Int>,
+        merchantId: MutableIntState,
         modifier: Modifier,
         latestCard: MutableIntState,
         playerScore: MutableIntState
     ) {
-
+        val merchantHand = merchantSystem.getMerchantHand(merchantId.intValue)
         fun chooseMerchantCard(cardId: Int) {
             playerScore.intValue -= 100
             latestCard.intValue = cardId
-            merchantID.intValue = -1
+            merchantId.intValue = -1
         }
 
         Row(
@@ -103,7 +103,7 @@ class CardDisplaySystem private constructor(private val componentManager: Compon
                 .height(170.dp)
                 .background(Color.Magenta)
         ) {
-            for (card in merchantCards) {
+            for (card in merchantHand) {
                 Column(
                     modifier = Modifier
                         .weight(1f)

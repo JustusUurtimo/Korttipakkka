@@ -5,6 +5,7 @@ import androidx.compose.runtime.MutableIntState
 import com.sq.thed_ck_licker.R
 import com.sq.thed_ck_licker.ecs.ComponentManager
 import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID
+import com.sq.thed_ck_licker.ecs.EntityManager.getRegularMerchantID
 import com.sq.thed_ck_licker.ecs.add
 import com.sq.thed_ck_licker.ecs.components.CardTag
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
@@ -72,10 +73,7 @@ class PlayerSystem private constructor(private val componentManager: ComponentMa
         val scoreGainerCards = cardsSystem.addScoreGainerTestCard()
         val beerGogglesCards = cardsSystem.addBeerGogglesTestCard()
         val maxHpCards = cardsSystem.addMaxHpTrapCard()
-        val merchantCards = cardsSystem.addMerchantCards()
-        println("##################################################")
-        println(componentManager.getAllComponentsOfEntity(37))
-        println("##################################################")
+        val merchantCards = cardsSystem.addMerchantCards(5, getRegularMerchantID())
 
         return emptyList<Int>() +
                 playerHealingCards +
@@ -104,8 +102,5 @@ class PlayerSystem private constructor(private val componentManager: ComponentMa
     }
     fun getMerchant(): MutableIntState {
         return (getPlayerID() get MerchantComponent::class).merchantId
-    }
-    fun getMerchantCards(): MutableList<Int> {
-        return (getPlayerID() get MerchantComponent::class).cardsInMerchantsHand
     }
 }
