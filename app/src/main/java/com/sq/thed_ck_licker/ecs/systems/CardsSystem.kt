@@ -22,6 +22,7 @@ import com.sq.thed_ck_licker.ecs.components.activate
 import com.sq.thed_ck_licker.ecs.components.addEntity
 import com.sq.thed_ck_licker.ecs.generateEntity
 import com.sq.thed_ck_licker.ecs.get
+import com.sq.thed_ck_licker.helpers.MyRandom
 import com.sq.thed_ck_licker.helpers.getRandomElement
 import kotlin.math.min
 import kotlin.random.Random
@@ -135,7 +136,7 @@ class CardsSystem private constructor(private val componentManager: ComponentMan
             cardEntity add ActivationCounterComponent()
             val maxHpIt = { id: Int ->
                 val playerHp = id get HealthComponent::class
-                if (Random.Default.nextFloat() <= 0.2f) {
+                if (MyRandom.getRandomInt() <= 2) {
                     (cardEntity get HealthComponent::class).health.floatValue -= 99999f
                     playerHp.health.floatValue = (playerHp.health.floatValue.div(2))
                 } else {
