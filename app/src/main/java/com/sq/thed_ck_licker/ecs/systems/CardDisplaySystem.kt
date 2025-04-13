@@ -15,7 +15,10 @@ import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
@@ -25,10 +28,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.sq.thed_ck_licker.ecs.ComponentManager
+import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.DescriptionComponent
 import com.sq.thed_ck_licker.ecs.components.ImageComponent
 import com.sq.thed_ck_licker.ecs.components.NameComponent
+import com.sq.thed_ck_licker.ecs.get
 import com.sq.thed_ck_licker.ecs.systems.MerchantSystem.Companion.instance as merchantSystem
+
 
 class CardDisplaySystem private constructor(private val componentManager: ComponentManager) {
 
@@ -88,9 +94,11 @@ class CardDisplaySystem private constructor(private val componentManager: Compon
         merchantId: MutableIntState,
         modifier: Modifier,
         latestCard: MutableIntState,
-        playerScore: MutableIntState
+        playerScore: MutableIntState,
     ) {
-        val merchantHand = merchantSystem.getMerchantHand(merchantId.intValue)
+
+        val merchantHand =  merchantSystem.getMerchantHand(merchantId.intValue)
+
         fun chooseMerchantCard(cardId: Int) {
             playerScore.intValue -= 100
             latestCard.intValue = cardId

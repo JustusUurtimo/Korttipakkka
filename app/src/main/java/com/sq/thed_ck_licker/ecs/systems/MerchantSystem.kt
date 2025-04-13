@@ -4,11 +4,11 @@ import com.sq.thed_ck_licker.R
 import com.sq.thed_ck_licker.ecs.ComponentManager
 import com.sq.thed_ck_licker.ecs.EntityManager.getRegularMerchantID
 import com.sq.thed_ck_licker.ecs.add
+import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.CardTag
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
-import com.sq.thed_ck_licker.ecs.components.MerchantHandComponent
 import com.sq.thed_ck_licker.ecs.get
 import com.sq.thed_ck_licker.ecs.systems.CardsSystem.Companion.instance as cardsSystem
 
@@ -21,9 +21,7 @@ class MerchantSystem private constructor(private val componentManager: Component
     //I know this is duplicate code, but we have to unify deck building to a one system
     // its on issue #48 atm
     fun initRegularMerchant() {
-        getRegularMerchantID() add HealthComponent(100f)
         getRegularMerchantID() add DrawDeckComponent(initRegularMerchantDeck() as MutableList<Int>)
-        getRegularMerchantID() add MerchantHandComponent(mutableListOf<Int>())
     }
 
     private fun initRegularMerchantDeck(): List<Int> {
@@ -52,10 +50,11 @@ class MerchantSystem private constructor(private val componentManager: Component
     }
 
     fun getMerchantHand(merchantId: Int): MutableList<Int> {
-        val merchantHand = merchantId get MerchantHandComponent::class
+        val merchantHand = mutableListOf<Int>()
         repeat(3) {
-            merchantHand.merchantHand.add(cardsSystem.pullRandomCardFromEntityDeck(merchantId))
+            merchantHand.add(cardsSystem.pullRandomCardFromEntityDeck(merchantId))
         }
-        return merchantHand.merchantHand
+        return merchantHand
     }
+
 }

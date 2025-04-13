@@ -15,7 +15,6 @@ import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.ImageComponent
 import com.sq.thed_ck_licker.ecs.components.MerchantComponent
-import com.sq.thed_ck_licker.ecs.components.MerchantHandComponent
 import com.sq.thed_ck_licker.ecs.components.NameComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent
@@ -108,18 +107,11 @@ class CardsSystem private constructor(private val componentManager: ComponentMan
         val cardIds: MutableList<EntityId> = mutableListOf()
         val openMerchant = { id: Int ->
             val target = id get MerchantComponent::class
-            val activations = merchantId get ActivationCounterComponent::class
-            if(activations.activations.intValue > 1) {
-                val score = id get ScoreComponent::class
-                score.score.intValue -= 500
-            }
-            val merchantHand = merchantId get MerchantHandComponent::class
-            merchantHand.merchantHand.clear()
+            //forces merhant reroll draw
             target.merchantId.intValue = -99
             target.merchantId.intValue = merchantId
         }
         merchantId add ImageComponent()
-        merchantId add HealthComponent(99999f)
         merchantId add ActivationCounterComponent()
         merchantId add EffectComponent(onPlay = openMerchant)
         merchantId add DescriptionComponent("Activate to access shop")
@@ -278,8 +270,8 @@ class CardsSystem private constructor(private val componentManager: ComponentMan
         val activationComponent = ActivationCounterComponent()
         val activateAction = { id: Int ->
             val playerScoreComponent = id get ScoreComponent::class
-            playerScoreComponent.score.intValue += amount
             activationComponent.activate()
+            playerScoreComponent.score.intValue += amount
         }
         entity add activationComponent
 

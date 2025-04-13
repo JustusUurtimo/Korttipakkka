@@ -41,6 +41,7 @@ fun Game(innerPadding: PaddingValues) {
     val playerActiveMerchant = rememberSaveable { playerSystem.getMerchant() }
     val playerCardCount = rememberSaveable { mutableIntStateOf(0) }
     val latestCard = rememberSaveable { mutableIntStateOf(-1) }
+
     val playerHealth =
         rememberSaveable { playerSystem.getPlayerHealthM() }
     val playerMaxHealth =
@@ -79,9 +80,13 @@ fun Game(innerPadding: PaddingValues) {
         HealthBar(playerHealth, playerMaxHealth, modifier.padding(innerPadding))
 
         ScoreDisplayer(playerScore.intValue)
-
         if (playerActiveMerchant.intValue != -1) {
-            cardDisplaySystem.CardsOnMerchantHandView(playerActiveMerchant, modifier, latestCard, playerScore)
+            cardDisplaySystem.CardsOnMerchantHandView(
+                playerActiveMerchant,
+                modifier,
+                latestCard,
+                playerScore,
+            )
         }
 
         Box(modifier.fillMaxSize()) {
