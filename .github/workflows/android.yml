@@ -25,7 +25,7 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew --version
      # run: ./gradlew build --scan --debug
-    #- name: Do kover
-      #run: ./gradlew koverHtmlReport
     - name: Do kover
-      run: ./gradlew koverXmlReport
+      run: ./gradlew koverHtmlReport
+    #- name: Do kover
+      #run: ./gradlew koverXmlReport
