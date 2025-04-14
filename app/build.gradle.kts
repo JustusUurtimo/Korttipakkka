@@ -8,6 +8,8 @@ plugins {
 
 
     id("org.jetbrains.kotlinx.kover")
+
+    id("org.sonarqube")
 }
 var isDebug by extra(true)
 
@@ -69,6 +71,14 @@ android {
             it.useJUnitPlatform()
         }
 
+    }
+}
+
+sonar {
+    properties {
+        property("sonar.projectKey", "JustusUurtimo_Korttipakkka")
+        property("sonar.organization", "korttipakka")
+        property("sonar.host.url", "https://sonarcloud.io")
     }
 }
 
