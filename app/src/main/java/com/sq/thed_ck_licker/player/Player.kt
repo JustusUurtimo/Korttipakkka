@@ -5,6 +5,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -37,6 +38,7 @@ fun HealthBar(
             .height(24.dp)
             .fillMaxWidth()
     ) {
+
         drawRoundRect(
             color = Color.Gray.copy(alpha = 0.3f),
             cornerRadius = CornerRadius(8f),
@@ -56,9 +58,16 @@ fun HealthBar(
         }
 
     }
-    //nää pitäis pystyy myöhemmin piirtää canvaksen sisään: drawText
+    LinearProgressIndicator(
+        progress = { (currentHealth.value.toFloat() / 100f) },
+        modifier = modifier
+            .fillMaxWidth()
+            .height(15.dp),
+        color = Color.Red, //remaining health
+        trackColor = Color.LightGray,
+    )
+
     Text("player Health: ${currentHealth.value.toInt()}", modifier)
-    Text("player Max Health: ${maxHealth.value.toInt()}", modifier)
 }
 
 @Composable
