@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Card
@@ -17,8 +19,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
@@ -97,14 +102,21 @@ class CardDisplaySystem private constructor(private val componentManager: Compon
         playerScore: MutableIntState,
     ) {
 
-        val merchantHand =  merchantSystem.getMerchantHand(merchantId.intValue)
+        var merchantHand by remember { mutableStateOf(emptyList<Int>()) }
+        val count = rememberSaveable { merchantSystem.getReRollCount(merchantId.intValue) }
+
+        LaunchedEffect(count.intValue) {
+            if (count.intValue > 1) {
+                playerScore.intValue -= 500
+            }
+            merchantHand = merchantSystem.reRollMerchantHand(merchantId.intValue)
+        }
 
         fun chooseMerchantCard(cardId: Int) {
             playerScore.intValue -= 100
             latestCard.intValue = cardId
             merchantId.intValue = -1
         }
-
         Row(
             modifier = modifier
                 .fillMaxWidth()
@@ -124,9 +136,8 @@ class CardDisplaySystem private constructor(private val componentManager: Compon
                     )
                 }
             }
+
         }
-
-
     }
 
 

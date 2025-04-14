@@ -1,5 +1,6 @@
 package com.sq.thed_ck_licker.ecs.systems
 
+import androidx.compose.runtime.MutableIntState
 import com.sq.thed_ck_licker.R
 import com.sq.thed_ck_licker.ecs.ComponentManager
 import com.sq.thed_ck_licker.ecs.EntityManager.getRegularMerchantID
@@ -18,6 +19,7 @@ class MerchantSystem private constructor(private val componentManager: Component
             MerchantSystem(ComponentManager.componentManager)
         }
     }
+
     //I know this is duplicate code, but we have to unify deck building to a one system
     // its on issue #48 atm
     fun initRegularMerchant() {
@@ -49,12 +51,14 @@ class MerchantSystem private constructor(private val componentManager: Component
                 emptyList<Int>()
     }
 
-    fun getMerchantHand(merchantId: Int): MutableList<Int> {
-        val merchantHand = mutableListOf<Int>()
-        repeat(3) {
-            merchantHand.add(cardsSystem.pullRandomCardFromEntityDeck(merchantId))
-        }
-        return merchantHand
+
+    fun reRollMerchantHand(merchantId: Int): List<Int> {
+        val newHand = List(3) { cardsSystem.pullRandomCardFromEntityDeck(merchantId) }
+        return newHand
+    }
+
+    fun getReRollCount(merchantId: Int): MutableIntState {
+        return (merchantId get ActivationCounterComponent::class).activations
     }
 
 }

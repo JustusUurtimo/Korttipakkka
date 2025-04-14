@@ -1,7 +1,6 @@
 package com.sq.thed_ck_licker.ecs.systems
 
 import androidx.compose.runtime.MutableIntState
-import com.sq.thed_ck_licker.R
 import com.sq.thed_ck_licker.ecs.ComponentManager
 import com.sq.thed_ck_licker.ecs.EntityId
 import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID
@@ -25,7 +24,6 @@ import com.sq.thed_ck_licker.ecs.get
 import com.sq.thed_ck_licker.helpers.MyRandom
 import com.sq.thed_ck_licker.helpers.getRandomElement
 import kotlin.math.min
-import kotlin.random.Random
 
 class CardsSystem private constructor(private val componentManager: ComponentManager) {
 
@@ -108,8 +106,6 @@ class CardsSystem private constructor(private val componentManager: ComponentMan
         val cardIds: MutableList<EntityId> = mutableListOf()
         val openMerchant = { id: Int ->
             val target = id get MerchantComponent::class
-            //forces merhant reroll draw
-            target.merchantId.intValue = -99
             target.merchantId.intValue = merchantId
         }
         merchantId add ImageComponent()

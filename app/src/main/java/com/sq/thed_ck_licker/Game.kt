@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -41,7 +42,6 @@ fun Game(innerPadding: PaddingValues) {
     val playerActiveMerchant = rememberSaveable { playerSystem.getMerchant() }
     val playerCardCount = rememberSaveable { mutableIntStateOf(0) }
     val latestCard = rememberSaveable { mutableIntStateOf(-1) }
-
     val playerHealth =
         rememberSaveable { playerSystem.getPlayerHealthM() }
     val playerMaxHealth =
@@ -78,7 +78,6 @@ fun Game(innerPadding: PaddingValues) {
     Column(modifier.fillMaxWidth()) {
 
         HealthBar(playerHealth, playerMaxHealth, modifier.padding(innerPadding))
-
         ScoreDisplayer(playerScore.intValue)
         if (playerActiveMerchant.intValue != -1) {
             cardDisplaySystem.CardsOnMerchantHandView(
