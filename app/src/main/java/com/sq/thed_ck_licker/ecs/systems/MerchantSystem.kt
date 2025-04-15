@@ -57,8 +57,8 @@ class MerchantSystem private constructor(private val componentManager: Component
         return newHand
     }
 
-    fun getReRollCount(merchantId: Int): MutableIntState {
-        return (merchantId get ActivationCounterComponent::class).activations
+    fun getReRollCount(merchantCardId: Int): MutableIntState {
+        return (merchantCardId get ActivationCounterComponent::class).activations
     }
 
 }

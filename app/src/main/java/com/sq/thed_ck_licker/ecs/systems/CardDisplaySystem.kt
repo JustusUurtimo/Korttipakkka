@@ -103,7 +103,7 @@ class CardDisplaySystem private constructor(private val componentManager: Compon
     ) {
 
         var merchantHand by remember { mutableStateOf(emptyList<Int>()) }
-        val count = rememberSaveable { merchantSystem.getReRollCount(merchantId.intValue) }
+        val count = rememberSaveable { merchantSystem.getReRollCount(latestCard.intValue) }
 
         LaunchedEffect(count.intValue) {
             if (count.intValue > 1) {

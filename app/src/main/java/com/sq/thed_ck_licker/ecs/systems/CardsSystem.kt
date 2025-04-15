@@ -108,15 +108,16 @@ class CardsSystem private constructor(private val componentManager: ComponentMan
             val target = id get MerchantComponent::class
             target.merchantId.intValue = merchantId
         }
-        merchantId add ImageComponent()
-        merchantId add ActivationCounterComponent()
-        merchantId add EffectComponent(onPlay = openMerchant)
-        merchantId add DescriptionComponent("Activate to access shop")
-        merchantId add NameComponent("Merchant #$merchantId")
-        merchantId add TagsComponent(listOf(CardTag.CARD))
 
         repeat(amount) {
-            cardIds.add(merchantId)
+            val cardEntity = generateEntity()
+            cardEntity add ImageComponent()
+            cardEntity add ActivationCounterComponent()
+            cardEntity add EffectComponent(onPlay = openMerchant)
+            cardEntity add DescriptionComponent("Activate to access shop")
+            cardEntity add NameComponent("Merchant #$merchantId")
+            cardEntity add TagsComponent(listOf(CardTag.CARD))
+            cardIds.add(cardEntity)
         }
 
         return cardIds.toList()
