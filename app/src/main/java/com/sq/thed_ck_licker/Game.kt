@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -22,17 +21,17 @@ import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.deactivate
 import com.sq.thed_ck_licker.ecs.get
-import com.sq.thed_ck_licker.ecs.systems.onDeathSystem
-import com.sq.thed_ck_licker.ecs.systems.onDiscardSystem
-import com.sq.thed_ck_licker.ecs.systems.onTurnStartEffectStackSystem
+import com.sq.thed_ck_licker.ecs.systems.helperSystems.onDeathSystem
+import com.sq.thed_ck_licker.ecs.systems.helperSystems.onDiscardSystem
+import com.sq.thed_ck_licker.ecs.systems.helperSystems.onTurnStartEffectStackSystem
 import com.sq.thed_ck_licker.player.HealthBar
 import com.sq.thed_ck_licker.player.ScoreDisplayer
 import com.sq.thed_ck_licker.ui.components.buttons.PullCardButton
 import com.sq.thed_ck_licker.ui.components.views.CardDeck
 import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID as playerId
-import com.sq.thed_ck_licker.ecs.systems.CardDisplaySystem.Companion.instance as cardDisplaySystem
-import com.sq.thed_ck_licker.ecs.systems.CardsSystem.Companion.instance as cardsSystem
-import com.sq.thed_ck_licker.ecs.systems.PlayerSystem.Companion.instance as playerSystem
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardDisplaySystem.Companion.instance as cardDisplaySystem
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem.Companion.instance as cardsSystem
+import com.sq.thed_ck_licker.ecs.systems.characterSystems.PlayerSystem.Companion.instance as playerSystem
 
 
 @Composable
@@ -59,7 +58,7 @@ fun Game(innerPadding: PaddingValues) {
 
     val pullNewCard = {
         try {
-            (latestCard.intValue get EffectComponent::class).onDeactivate.invoke(getPlayerID())
+            (latestCard.intValue get EffectComponent::class).onDeactivate.invoke(getPlayerID(), latestCard.intValue)
         } catch (_: Exception) {
             println("Yeah yeah, we get it, you are so cool there was no effect component ")
         }

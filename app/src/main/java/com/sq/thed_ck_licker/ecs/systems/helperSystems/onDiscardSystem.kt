@@ -1,4 +1,4 @@
-package com.sq.thed_ck_licker.ecs.systems
+package com.sq.thed_ck_licker.ecs.systems.helperSystems
 
 import com.sq.thed_ck_licker.ecs.ComponentManager
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
@@ -13,7 +13,7 @@ fun onDiscardSystem(componentManager: ComponentManager = ComponentManager.compon
         val effectStack = effectTarget.value as EffectStackComponent
         for (effectEntity in effectStack.effectEntities) {
             val effect = effectEntity get EffectComponent::class
-            effect.onDeactivate(effectTarget.key)
+            effect.onDeactivate(effectTarget.key, effectEntity)
         }
     }
 }
