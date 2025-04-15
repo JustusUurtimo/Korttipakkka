@@ -72,7 +72,7 @@ class PlayerSystem private constructor(private val componentManager: ComponentMa
         val trapCards = cardsSystem.addTrapTestCard()
         val scoreGainerCards = cardsSystem.addScoreGainerTestCard()
         val beerGogglesCards = cardsSystem.addBeerGogglesTestCard()
-        val maxHpCards = cardsSystem.addMaxHpTrapCard()
+        val maxHpCards = cardsSystem.addMaxHpTrapCards()
         val merchantCards = cardsSystem.addMerchantCards(5, getRegularMerchantID())
 
         return emptyList<Int>() +

@@ -1,6 +1,7 @@
 package com.sq.thed_ck_licker.ecs.systems
 
 import androidx.compose.runtime.MutableIntState
+import com.sq.thed_ck_licker.R
 import com.sq.thed_ck_licker.ecs.ComponentManager
 import com.sq.thed_ck_licker.ecs.EntityId
 import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID
@@ -34,27 +35,15 @@ class CardsSystem private constructor(private val componentManager: ComponentMan
         }
     }
 
-    fun <T : Any> initCards(
-        amount: Int,
-        cardImage: Int,
-        description: String,
-        name: String,
-        tags: List<CardTag>,
-        cardComponent: T
-    ): List<Int> {
-        val cardIds: MutableList<Int> = mutableListOf()
-        repeat(amount) {
-            val cardEntity = generateEntity()
-            componentManager.addComponent(cardEntity, ImageComponent(cardImage))
-            componentManager.addComponent(cardEntity, cardComponent)
-            componentManager.addComponent(cardEntity, DescriptionComponent(description))
-            componentManager.addComponent(cardEntity, NameComponent(name))
-            componentManager.addComponent(cardEntity, TagsComponent(tags))
-            cardEntity add ActivationCounterComponent()
-            cardIds.add(cardEntity)
-        }
-        return cardIds
-    }
+    /* TODO: multipliers and such can be nicely implemented with:
+*   Make each effect function that takes in the thing  to be multiplied.
+*   Then just pump all things through pipeline full of the multiplier functions.
+*   To get the pipeline just loop all things and collect the multiplier functions.
+*   Something like multiplier system.
+*   If one wants to be wild they can even put three lists as pipeline, one for additions, one for increases and one for multiplications
+*   Thou that would mean order of operation does not matter, which might be wanted.
+*/
+
 
     // Function to pull a random card from deck
     fun pullRandomCardFromEntityDeck(entityId: Int): Int {
@@ -70,7 +59,7 @@ class CardsSystem private constructor(private val componentManager: ComponentMan
         val latestCardId = latestCard.intValue
 
         try {
-            (latestCardId get EffectComponent::class).onPlay.invoke(getPlayerID())
+            (latestCardId get EffectComponent::class).onPlay.invoke(getPlayerID(), latestCardId)
         } catch (_: Exception) {
             println("Yeah yeah, we get it, you are so cool there was no effect component")
         }
@@ -92,94 +81,110 @@ class CardsSystem private constructor(private val componentManager: ComponentMan
         }
     }
 
-
-    /* TODO: multipliers and such can be nicely implemented with:
-    *   Make each effect function that takes in the thing  to be multiplied.
-    *   Then just pump all things through pipeline full of the multiplier functions.
-    *   To get the pipeline just loop all things and collect the multiplier functions.
-    *   Something like multiplier system.
-    *   If one wants to be wild they can even put three lists as pipeline, one for additions, one for increases and one for multiplications
-    *   Thou that would mean order of operation does not matter, which might be wanted.
-    */
-
     fun addMerchantCards(amount: Int, merchantId: Int): List<EntityId> {
-        val cardIds: MutableList<EntityId> = mutableListOf()
-        val openMerchant = { id: Int ->
+        val openMerchant = { id: Int, _: Int ->
             val target = id get MerchantComponent::class
             target.merchantId.intValue = merchantId
         }
 
-        repeat(amount) {
-            val cardEntity = generateEntity()
-            cardEntity add ImageComponent()
-            cardEntity add ActivationCounterComponent()
-            cardEntity add EffectComponent(onPlay = openMerchant)
-            cardEntity add DescriptionComponent("Activate to access shop")
-            cardEntity add NameComponent("Merchant #$merchantId")
-            cardEntity add TagsComponent(listOf(CardTag.CARD))
-            cardIds.add(cardEntity)
-        }
+        return initCards(
+            null,
+            null,
+            amount,
+            R.drawable.placeholder,
+            "Activate to access shop",
+            "Merchant #$merchantId",
+            listOf(CardTag.CARD),
+            openMerchant,
+            null
+        )
 
-        return cardIds.toList()
     }
 
-    fun addMaxHpTrapCard(amount: Int = 5): List<EntityId> {
-        val cardIds: MutableList<EntityId> = mutableListOf()
-        for (i in 1..amount) {
-            val cardEntity = generateEntity()
-            cardIds.add(cardEntity)
-            cardEntity add ImageComponent()
-            cardEntity add HealthComponent(99999f)
-            cardEntity add ActivationCounterComponent()
-            val maxHpIt = { id: Int ->
-                val playerHp = id get HealthComponent::class
-                if (MyRandom.getRandomInt() <= 2) {
-                    (cardEntity get HealthComponent::class).health.floatValue -= 99999f
-                    playerHp.health.floatValue = (playerHp.health.floatValue.div(2))
-                } else {
-                    playerHp.maxHealth.floatValue += 10f
-                }
+    fun addMaxHpTrapCards(amount: Int = 5): List<EntityId> {
+        val maxHpIt = { playerId: Int, cardEntity: Int ->
+            val playerHp = playerId get HealthComponent::class
+            if (MyRandom.getRandomInt() <= 2) {
+                (cardEntity get HealthComponent::class).health.floatValue -= 99999f
+                playerHp.health.floatValue = (playerHp.health.floatValue.div(2))
+            } else {
+                playerHp.maxHealth.floatValue += 10f
             }
-            cardEntity add EffectComponent(onPlay = maxHpIt)
-            cardEntity add DescriptionComponent("Gain 10 max health on play, might explode")
-            cardEntity add NameComponent("Max HP Trap Card #$i")
-            cardEntity add TagsComponent(listOf(CardTag.CARD))
         }
-        return cardIds.toList()
+        return initCards(
+            99999f,
+            null,
+            amount,
+            R.drawable.placeholder,
+            "Gain 10 max health on play, might explode",
+            "Max HP Trap Card",
+            listOf(CardTag.CARD),
+            maxHpIt,
+            null
+        )
     }
+
 
     fun addBreakingDefaultCards(amount: Int = 7): List<EntityId> {
-        val cardIds: MutableList<EntityId> = mutableListOf()
-        for (i in 1..amount) {
-            val cardEntity = generateEntity()
-            cardIds.add(cardEntity)
-            val omaScore = ScoreComponent(10 * i)
-            componentManager.addComponent(cardEntity, ImageComponent())
-            componentManager.addComponent(cardEntity, omaScore)
-            componentManager.addComponent(
-                cardEntity, DescriptionComponent()
-            )
-            componentManager.addComponent(cardEntity, NameComponent("Default Card #$i"))
-            componentManager.addComponent(cardEntity, TagsComponent(listOf(CardTag.CARD)))
-
-            cardEntity add ActivationCounterComponent()
-            val scoreIt = { id: Int ->
-                val target = id get ScoreComponent::class
-                target.score.intValue += omaScore.score.intValue
-            }
-
-            cardEntity add EffectComponent(onPlay = scoreIt)
-            cardEntity add HealthComponent(10f)
+        val scoreIt = { playerId: Int, cardEntity: Int ->
+            val target = playerId get ScoreComponent::class
+            val omaScore = cardEntity get ScoreComponent::class
+            target.score.intValue += omaScore.score.intValue
         }
-        return cardIds.toList()
+        return initCards(
+            10f,
+            100,
+            amount,
+            R.drawable.placeholder,
+            "",
+            "Default Card",
+            listOf(CardTag.CARD),
+            scoreIt,
+            null
+        )
+    }
+
+    private fun initCards(
+        cardHealth: Float?,
+        scoreAmount: Int?,
+        amount: Int,
+        cardImage: Int,
+        description: String,
+        name: String,
+        tags: List<CardTag>,
+        onCardPlay: (Int, Int) -> Unit,
+        onCardDeactivate: (Int, Int) -> Unit = { _, _ -> }
+    ): List<Int> {
+        val cardIds: MutableList<Int> = mutableListOf()
+        repeat(amount) {
+            val cardEntity = generateEntity()
+            cardHealth?.let { health -> cardEntity add HealthComponent(health) }
+            scoreAmount?.let { score -> cardEntity add ScoreComponent(score) }
+            cardEntity add ActivationCounterComponent()
+            cardEntity add ImageComponent(cardImage)
+            cardEntity add EffectComponent(onDeactivate = onCardDeactivate, onPlay = onCardPlay)
+            cardEntity add DescriptionComponent(description)
+            cardEntity add NameComponent(name)
+            cardEntity add TagsComponent(tags)
+            cardIds.add(cardEntity)
+        }
+        return cardIds
     }
 
     fun addDeactivationTestCards(amount: Int = 2): List<EntityId> {
-        val cardIds: MutableList<EntityId> = mutableListOf()
 
-        val riskPoints = ScoreComponent()
-        val deactivateAction = { id: Int ->
-            val target = id get HealthComponent::class
+        val onActivation = { playerId: Int, cardEntity: Int ->
+            val target = playerId get ScoreComponent::class
+            val riskPoints = cardEntity get ScoreComponent::class
+            val scoreIncrease = riskPoints.score.intValue * 3
+            target.score.intValue += (scoreIncrease)
+            riskPoints.score.intValue = 0
+            println("Now its activated")
+            println("Gave $scoreIncrease points")
+        }
+        val deactivateAction = { playerId: Int, cardEntity: Int ->
+            val target = playerId get HealthComponent::class
+            val riskPoints = cardEntity get ScoreComponent::class
             riskPoints.score.intValue += 1
             target.health.floatValue -= riskPoints.score.intValue.toFloat()
             println("Now its deactivated")
@@ -187,17 +192,9 @@ class CardsSystem private constructor(private val componentManager: ComponentMan
             println("Holds ${riskPoints.score.intValue} points")
 
         }
-        val onActivation = { id: Int ->
-            val target = id get ScoreComponent::class
-            val scoreIncrease = riskPoints.score.intValue * 3
-            target.score.intValue += (scoreIncrease)
-            riskPoints.score.intValue = 0
-            println("Now its activated")
-            println("Gave $scoreIncrease points")
-        }
+
         for (i in 1..amount) {
             val cardEntity = generateEntity()
-            cardIds.add(cardEntity)
             cardEntity add ImageComponent()
             cardEntity add DescriptionComponent("On deactivate you lose health, on activation you gain score * 3")
             cardEntity add EffectComponent(onDeactivate = deactivateAction, onPlay = onActivation)
@@ -206,7 +203,16 @@ class CardsSystem private constructor(private val componentManager: ComponentMan
             cardEntity add riskPoints
             cardEntity add ActivationCounterComponent()
         }
-        return cardIds.toList()
+        return initCards(
+            null,
+            0,
+            amount,
+            R.drawable.placeholder,
+            "On deactivate you lose health, on activation you gain score * 3",
+            "Deactivation Card ",
+            listOf(CardTag.CARD),
+            onActivation,
+            { _, _ -> })
     }
 
     fun addTrapTestCard(amount: Int = 2): List<EntityId> {

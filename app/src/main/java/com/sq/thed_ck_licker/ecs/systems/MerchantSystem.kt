@@ -41,7 +41,7 @@ class MerchantSystem private constructor(private val componentManager: Component
 
         val trapCards = cardsSystem.addTrapTestCard()
         val scoreGainerCards = cardsSystem.addScoreGainerTestCard()
-        val maxHpCards = cardsSystem.addMaxHpTrapCard()
+        val maxHpCards = cardsSystem.addMaxHpTrapCards()
 
         return emptyList<Int>() +
                 playerHealingCards +
