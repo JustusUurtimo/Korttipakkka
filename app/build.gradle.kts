@@ -3,6 +3,13 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("org.jetbrains.kotlin.plugin.parcelize")
+
+    id("de.mannodermaus.android-junit5")
+
+
+    id("org.jetbrains.kotlinx.kover")
+
+    id("org.sonarqube")
 }
 var isDebug by extra(true)
 
@@ -59,7 +66,23 @@ android {
         compose = true
         buildConfig = true
     }
+    testOptions {
+        unitTests.all {
+            it.useJUnitPlatform()
+        }
+
+    }
 }
+
+sonar {
+    properties {
+        property("sonar.projectKey", "JustusUurtimo_Korttipakkka")
+        property("sonar.organization", "korttipakka")
+        property("sonar.host.url", "https://sonarcloud.io")
+    }
+}
+
+
 
 dependencies {
 
@@ -78,4 +101,17 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+
+    // (Required) Writing and executing Unit Tests on the JUnit Platform
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.2")
+
+    // (Optional) If you need "Parameterized Tests"
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.7.2")
+
+    // (Optional) If you also have JUnit 4-based tests
+//    testImplementation("junit:junit:4.13.2") == testImplementation(libs.junit)
+    testImplementation(libs.junit)
+    testImplementation("org.junit.vintage:junit-vintage-engine:5.7.2")
 }

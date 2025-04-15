@@ -19,3 +19,4 @@ local.properties
 /.idea/runConfigurations/app.xml
 /.idea/AndroidProjectSystem.xml
 /.idea/limited-wip.xml
+/.idea/appInsightsSettings.xml
