@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -38,6 +39,7 @@ import com.sq.thed_ck_licker.ecs.systems.PlayerSystem.Companion.instance as play
 fun Game(innerPadding: PaddingValues) {
 
     val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues()
+    val playerActiveMerchant = rememberSaveable { playerSystem.getMerchant() }
     val playerCardCount = rememberSaveable { mutableIntStateOf(0) }
     val latestCard = rememberSaveable { mutableIntStateOf(-1) }
     val playerHealth =
@@ -46,7 +48,6 @@ fun Game(innerPadding: PaddingValues) {
         rememberSaveable { playerSystem.getPlayerMaxHealthM() }
     val playerScore = rememberSaveable { playerSystem.getPlayerScoreM() }
 // TODO we should read more about viewModels and state holding
-
     val modifier = Modifier
 
     val activateCard = {
@@ -69,25 +70,32 @@ fun Game(innerPadding: PaddingValues) {
             println("Yeah yeah, we get it, you are so cool there was no actCounter component ")
         }
         onDiscardSystem()
-        cardsSystem.pullRandomCardFromEntityDeck(playerId(), latestCard)
+        playerActiveMerchant.intValue = -1
+        latestCard.intValue = cardsSystem.pullRandomCardFromEntityDeck(playerId())
     }
 
 
     Column(modifier.fillMaxWidth()) {
 
-        // tällä toteutuksella hp menee takas täyteen ku se menee alle 0 :D
-        // Se voinee miettiä kuntoon, sit ku saadaan game state käyntiin paremmin
         HealthBar(playerHealth, playerMaxHealth, modifier.padding(innerPadding))
-
         ScoreDisplayer(playerScore.intValue)
+        if (playerActiveMerchant.intValue != -1) {
+            cardDisplaySystem.CardsOnMerchantHandView(
+                playerActiveMerchant,
+                modifier,
+                latestCard,
+                playerScore,
+            )
+        }
 
         Box(modifier.fillMaxSize()) {
-            CardDeck(navigationBarPadding, latestCard)
+            CardDeck(navigationBarPadding, pullNewCard)
             Box(modifier.align(Alignment.BottomCenter)) {
 
                 Column(modifier.padding(35.dp, 0.dp, 0.dp, 0.dp)) {
+
                     if (latestCard.intValue != -1) {
-                        cardDisplaySystem.CardsOnHandView(
+                        cardDisplaySystem.CardsOnPlayerHandView(
                             playerCardCount,
                             modifier,
                             latestCard,

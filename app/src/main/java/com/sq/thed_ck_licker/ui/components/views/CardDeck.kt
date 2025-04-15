@@ -15,20 +15,17 @@ import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableIntState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.sq.thed_ck_licker.R
-import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID as playerId
-import com.sq.thed_ck_licker.ecs.systems.CardsSystem.Companion.instance as cardsSystem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CardDeck(
     navigationBarPadding: PaddingValues,
-    latestCard: MutableIntState
+    pullNewCard: () -> Unit
 ) {
     // TODO: This probably should only be the deck, and as always the positioning should be relative, not absolute
 
@@ -44,12 +41,7 @@ fun CardDeck(
 //                    top = 400.dp,
                     bottom = navigationBarPadding.calculateBottomPadding() // Add bottom padding for the navigation bar
                 )
-                .clickable {
-                    cardsSystem.pullRandomCardFromEntityDeck(
-                        playerId(),
-                        latestCard,
-                    )
-                }
+                .clickable { pullNewCard() }
         ) {
             TooltipBox(
                 tooltip = {

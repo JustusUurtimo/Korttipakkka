@@ -22,7 +22,7 @@ fun onDeathSystem(componentManager: ComponentManager = ComponentManager.componen
 
 private fun healthDeath(componentManager: ComponentManager): List<EntityId> {
     val dying = componentManager.getEntitiesWithComponent(HealthComponent::class)
-    if (dying == null) return emptyList()
+        ?: return emptyList()
     val deaths = mutableListOf<EntityId>()
     for (entity in dying) {
 
@@ -38,7 +38,7 @@ private fun healthDeath(componentManager: ComponentManager): List<EntityId> {
 
 private fun durationDeath(componentManager: ComponentManager): List<EntityId> {
     val dying = componentManager.getEntitiesWithComponent(DurationComponent::class)
-    if (dying == null) return emptyList()
+        ?: return emptyList()
     val deaths = mutableListOf<EntityId>()
     for (entity in dying) {
         val duraComp = (entity.value as DurationComponent)
@@ -70,25 +70,22 @@ private fun deathHappening(
  * Probably needs refactor to some observer/event-based/subscriber pattern
  */
 fun performCleanup(componentManager: ComponentManager, deaths: List<EntityId>) {
-    val toClean = componentManager.getEntitiesWithComponent(EffectStackComponent::class)
+    val toClean = componentManager.getEntitiesWithComponent(EffectStackComponent::class) ?: return
 
-    if (toClean == null) return
     for (entityAndComp in toClean) {
         val component = entityAndComp.value as EffectStackComponent
         component.effectEntities.removeAll(deaths)
     }
 
-    val toClean2 = componentManager.getEntitiesWithComponent(DrawDeckComponent::class)
+    val toClean2 = componentManager.getEntitiesWithComponent(DrawDeckComponent::class) ?: return
 
-    if (toClean2 == null) return
     for (entityAndComp in toClean2) {
         val component = entityAndComp.value as DrawDeckComponent
         component.drawCardDeck.removeAll(deaths)
     }
 
-    val toClean3 = componentManager.getEntitiesWithComponent(DiscardDeckComponent::class)
+    val toClean3 = componentManager.getEntitiesWithComponent(DiscardDeckComponent::class) ?: return
 
-    if (toClean3 == null) return
     for (entityAndComp in toClean3) {
         val component = entityAndComp.value as DiscardDeckComponent
         component.discardDeck.removeAll(deaths)

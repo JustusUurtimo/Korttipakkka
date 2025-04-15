@@ -7,8 +7,7 @@ import com.sq.thed_ck_licker.ecs.get
 
 fun onDiscardSystem(componentManager: ComponentManager = ComponentManager.componentManager) {
     val targetsWithEffectStack =
-        componentManager.getEntitiesWithComponent(EffectStackComponent::class)
-    if (targetsWithEffectStack == null) return
+        componentManager.getEntitiesWithComponent(EffectStackComponent::class) ?: return
 
     for (effectTarget in targetsWithEffectStack) {
         val effectStack = effectTarget.value as EffectStackComponent
