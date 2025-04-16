@@ -63,7 +63,7 @@ class PlayerSystemTest {
 
         pullNewCardSystem(mutableIntStateOf(-1), merc).invoke()
 
-        assert(drawDeck.size() == 0) //{ "No cards removed on draw" }
+        assert(drawDeck.size() == 0)
     }
 
     @Test

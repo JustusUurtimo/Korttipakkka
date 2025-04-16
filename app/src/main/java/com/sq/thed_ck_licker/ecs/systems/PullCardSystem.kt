@@ -1,6 +1,5 @@
 package com.sq.thed_ck_licker.ecs.systems
 
-import android.R.attr.targetId
 import android.util.Log
 import androidx.compose.runtime.MutableIntState
 import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID
@@ -24,7 +23,8 @@ fun pullNewCardSystem(
     } catch (_: IllegalStateException) {
         Log.i(
             "pullNewCardSystem",
-            "No effect component found for pullNewCardSystem \nYeah yeah, we get it, you are so cool there was no effect component"
+            "No effect component found for pullNewCardSystem \n" +
+                    "Yeah yeah, we get it, you are so cool there was no effect component"
         )
     }
 
@@ -33,7 +33,8 @@ fun pullNewCardSystem(
     } catch (_: IllegalStateException) {
         Log.i(
             "pullNewCardSystem",
-            "No actCounter component found for pullNewCardSystem \nYeah yeah, we get it, you are so cool there was no actCounter component"
+            "No actCounter component found for pullNewCardSystem \n" +
+                    "Yeah yeah, we get it, you are so cool there was no actCounter component"
         )
     }
 //    onDiscardSystem()
@@ -41,16 +42,21 @@ fun pullNewCardSystem(
     playerActiveMerchant.intValue = -1
 
 
-    reshuffleDecks()
+    val drawDeck2 = getPlayerID() get DrawDeckComponent::class
+    if (latestCard.intValue > 0){
+        drawDeck2.drawCardDeck.add(latestCard.intValue)
+    }
+
+    putDiscardToDeckAndShuffle()
 
     latestCard.intValue = cardsSystem.pullRandomCardFromEntityDeck(getPlayerID())
 
 }
 
-private fun reshuffleDecks(targetId: Int = getPlayerID()) {
+private fun putDiscardToDeckAndShuffle(targetId: Int = getPlayerID(), forceReshuffle: Boolean = false) {
     val drawDeck = targetId get DrawDeckComponent::class
     val discardDeck = targetId get DiscardDeckComponent::class
-    if (drawDeck.drawCardDeck.isEmpty() || discardDeck.discardDeck.isNotEmpty()) {
+    if ((drawDeck.drawCardDeck.isEmpty() && discardDeck.discardDeck.isNotEmpty()) || forceReshuffle) {
         drawDeck.drawCardDeck += discardDeck.discardDeck.toMutableList()
         //There is argument for shuffling only the discard deck but that is worry for another time.
         drawDeck.drawCardDeck.shuffle()

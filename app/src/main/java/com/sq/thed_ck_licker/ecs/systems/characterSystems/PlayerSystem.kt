@@ -43,6 +43,7 @@ class PlayerSystem private constructor(private val componentManager: ComponentMa
         val beerGogglesCards = cardCreationSystem.addBeerGogglesTestCard()
         val maxHpCards = cardCreationSystem.addMaxHpTrapCards()
         val merchantCards = cardCreationSystem.addMerchantCards(5, getRegularMerchantID())
+        val basicScoreCards = cardCreationSystem.addBasicScoreCards(2)
 
         return emptyList<Int>() +
                 playerHealingCards +
@@ -54,6 +55,7 @@ class PlayerSystem private constructor(private val componentManager: ComponentMa
                 beerGogglesCards +
                 maxHpCards +
                 merchantCards +
+                basicScoreCards +
                 emptyList<Int>()
     }
 
