@@ -1,4 +1,4 @@
-package com.sq.thed_ck_licker.ecs.systems
+package com.sq.thed_ck_licker.ecs.systems.characterSystems
 
 import androidx.compose.runtime.MutableIntState
 import com.sq.thed_ck_licker.R
@@ -11,7 +11,11 @@ import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.get
-import com.sq.thed_ck_licker.ecs.systems.CardsSystem.Companion.instance as cardsSystem
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem.Companion
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem.Companion.instance as cardsSystem
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem.Companion.instance as cardCreationSystem
+
 
 class MerchantSystem private constructor(private val componentManager: ComponentManager) {
     companion object {
@@ -27,21 +31,11 @@ class MerchantSystem private constructor(private val componentManager: Component
     }
 
     private fun initRegularMerchantDeck(): List<Int> {
-        val onActivationHeal = { id: Int ->
-            (id get HealthComponent::class).health.floatValue += 5f
-        }
-        val playerHealingCards = cardsSystem.initCards(
-            5,
-            R.drawable.heal_10,
-            "This card heals you",
-            "Heal",
-            listOf(CardTag.CARD),
-            cardComponent = EffectComponent(onPlay = onActivationHeal)
-        )
 
-        val trapCards = cardsSystem.addTrapTestCard()
-        val scoreGainerCards = cardsSystem.addScoreGainerTestCard()
-        val maxHpCards = cardsSystem.addMaxHpTrapCard()
+        val playerHealingCards = cardCreationSystem.addHealingCards(5)
+        val trapCards = cardCreationSystem.addTrapTestCard()
+        val scoreGainerCards = cardCreationSystem.addScoreGainerTestCard()
+        val maxHpCards = cardCreationSystem.addMaxHpTrapCards()
 
         return emptyList<Int>() +
                 playerHealingCards +

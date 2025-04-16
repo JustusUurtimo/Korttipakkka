@@ -1,4 +1,4 @@
-package com.sq.thed_ck_licker.ecs.systems
+package com.sq.thed_ck_licker.ecs.systems.helperSystems
 
 import com.sq.thed_ck_licker.ecs.ComponentManager
 import com.sq.thed_ck_licker.ecs.components.EffectComponent

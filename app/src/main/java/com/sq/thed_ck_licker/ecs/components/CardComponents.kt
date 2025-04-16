@@ -64,8 +64,8 @@ data class EffectComponent(
     val onDeath: (Int) -> Unit = {},
     val onSpawn: (Int) -> Unit = {},
     val onTurnStart: (Int) -> Unit = {},
-    val onPlay: (Int) -> Unit = {},
-    val onDeactivate: (Int) -> Unit = {},
+    val onPlay: (Int, Int) -> Unit = { _, _ -> },
+    val onDeactivate: (Int, Int) -> Unit = {_, _ ->},
 )
 
 /**

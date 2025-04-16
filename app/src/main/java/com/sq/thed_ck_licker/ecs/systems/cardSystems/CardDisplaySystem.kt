@@ -1,4 +1,4 @@
-package com.sq.thed_ck_licker.ecs.systems
+package com.sq.thed_ck_licker.ecs.systems.cardSystems
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Card
@@ -33,12 +31,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.sq.thed_ck_licker.ecs.ComponentManager
-import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.DescriptionComponent
 import com.sq.thed_ck_licker.ecs.components.ImageComponent
 import com.sq.thed_ck_licker.ecs.components.NameComponent
-import com.sq.thed_ck_licker.ecs.get
-import com.sq.thed_ck_licker.ecs.systems.MerchantSystem.Companion.instance as merchantSystem
+import com.sq.thed_ck_licker.ecs.systems.characterSystems.MerchantSystem.Companion.instance as merchantSystem
 
 
 class CardDisplaySystem private constructor(private val componentManager: ComponentManager) {

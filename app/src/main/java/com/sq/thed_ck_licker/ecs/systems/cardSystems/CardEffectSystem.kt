@@ -1,4 +1,4 @@
-package com.sq.thed_ck_licker.ecs.systems
+package com.sq.thed_ck_licker.ecs.systems.cardSystems
 
 import androidx.compose.runtime.MutableFloatState
 import com.sq.thed_ck_licker.ecs.ComponentManager
