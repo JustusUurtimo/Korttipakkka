@@ -18,7 +18,7 @@ fun pullNewCardSystem(
             getPlayerID(),
             latestCard.intValue
         )
-    } catch (_: Exception) {
+    } catch (_: IllegalStateException) {
         Log.i(
             "pullNewCardSystem",
             "No effect component found for pullNewCardSystem \nYeah yeah, we get it, you are so cool there was no effect component"
@@ -27,7 +27,7 @@ fun pullNewCardSystem(
 
     try {
         (latestCard.intValue get ActivationCounterComponent::class).deactivate()
-    } catch (_: Exception) {
+    } catch (_: IllegalStateException) {
         Log.i(
             "pullNewCardSystem",
             "No actCounter component found for pullNewCardSystem \nYeah yeah, we get it, you are so cool there was no actCounter component"

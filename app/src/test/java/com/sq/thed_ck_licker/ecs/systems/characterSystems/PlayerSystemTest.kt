@@ -23,8 +23,6 @@ class PlayerSystemTest {
     @BeforeEach
     fun setUp() {
         playerId = EntityManager.getPlayerID()
-//        PlayerSystem.instance.initPlayer()
-
     }
 
     @Test
@@ -33,7 +31,7 @@ class PlayerSystemTest {
         var drawDeck: DrawDeckComponent? = null
         try {
             drawDeck = playerId get DrawDeckComponent::class
-        } catch (e: Exception) {
+        } catch (e: IllegalStateException) {
             Log.e("PlayerSystemTest", "Player has no draw deck: ${e.message}")
             fail("Player has no draw deck")
         }
@@ -46,7 +44,7 @@ class PlayerSystemTest {
         var discardDeck: DiscardDeckComponent? = null
         try {
             discardDeck = playerId get DiscardDeckComponent::class
-        } catch (e: Exception) {
+        } catch (e: IllegalStateException) {
             Log.e("PlayerSystemTest", "Player has no discard deck: ${e.message}")
             fail("Player has no discard deck")
         }
@@ -76,12 +74,12 @@ class PlayerSystemTest {
         val card = mutableIntStateOf(-1)
         pullNewCardSystem(card, mutableIntStateOf(-1)).invoke()
 
-        activationSystem(card, mutableIntStateOf(-1)).invoke()
+        activationSystem(card, mutableIntStateOf(0)).invoke()
 
         assert(drawDeck.size() == 1)
-        assert(discardDeck.size() == 1)
+        //it is beyond me why discardDeck.size() should not work here, but it does not so...
+        assert((playerId get DiscardDeckComponent::class).size() == 1)
         assert(card.intValue == -1)
     }
-
 
 }

@@ -57,7 +57,7 @@ private fun deathHappening(
         // TODO: onDeaths can currently target only the player, not other entities
         //  Gotta think this one for a moment, maybe some targetComponent or something.
         (entity.key get EffectComponent::class).onDeath.invoke(getPlayerID())
-    } catch (_: Exception) {
+    } catch (_: IllegalStateException) {
         println("No cool death for you, mate. ${entity.key} ")
     }
     componentManager.removeEntity(entity.key)

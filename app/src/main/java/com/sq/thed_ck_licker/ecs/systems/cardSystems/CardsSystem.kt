@@ -8,6 +8,7 @@ import com.sq.thed_ck_licker.ecs.add
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.CardTag
 import com.sq.thed_ck_licker.ecs.components.DescriptionComponent
+import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
@@ -18,8 +19,10 @@ import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent
 import com.sq.thed_ck_licker.ecs.components.activate
 import com.sq.thed_ck_licker.ecs.components.addEntity
+import com.sq.thed_ck_licker.ecs.components.size
 import com.sq.thed_ck_licker.ecs.generateEntity
 import com.sq.thed_ck_licker.ecs.get
+import com.sq.thed_ck_licker.ecs.systems.helperSystems.discardSystem
 import com.sq.thed_ck_licker.helpers.getRandomElement
 import kotlin.math.min
 
@@ -47,10 +50,11 @@ class CardsSystem private constructor(private val componentManager: ComponentMan
 
         try {
             (latestCardId get EffectComponent::class).onPlay.invoke(getPlayerID(), latestCardId)
-        } catch (_: Exception) {
+        } catch (_: IllegalStateException) {
             Log.i(
                 "CardsSystem",
-                "No effect component found for activation \nYeah yeah, we get it, you are so cool there was no effect component"
+                "No effect component found for activation \n" +
+                        "Yeah yeah, we get it, you are so cool there was no effect component"
             )
         }
 
@@ -63,21 +67,25 @@ class CardsSystem private constructor(private val componentManager: ComponentMan
             if ((latestCardId get HealthComponent::class).health.floatValue <= 0) {
                 latestCard.intValue = -1
             }
-        } catch (_: Exception) {
+        } catch (_: IllegalStateException) {
             Log.i(
                 "CardsSystem",
-                "No health component found for activation \nYeah yeah, we get it, you are so cool there was no health component"
+                "No health component found for activation \n" +
+                        "Yeah yeah, we get it, you are so cool there was no health component"
             )
         }
 
         try {
             (latestCardId get ActivationCounterComponent::class).activate()
-        } catch (_: Exception) {
+        } catch (_: IllegalStateException) {
             Log.i(
                 "CardsSystem",
-                "No actCounter component found for activation \nYeah yeah, we get it, you are so cool there was no actCounter component"
+                "No actCounter component found for activation \n" +
+                        "Yeah yeah, we get it, you are so cool there was no actCounter component"
             )
         }
+        discardSystem(ownerId = getPlayerID(), cardId = latestCardId)
+        latestCard.intValue = -1
     }
 
     fun addPassiveScoreGainerToEntity(targetId: Int, pointsPerCard: Int = 3) {
