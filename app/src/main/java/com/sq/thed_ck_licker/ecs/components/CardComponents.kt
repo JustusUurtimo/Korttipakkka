@@ -1,6 +1,7 @@
 package com.sq.thed_ck_licker.ecs.components
 
 import android.os.Parcelable
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
@@ -88,12 +89,18 @@ data class ActivationCounterComponent(
 
 fun ActivationCounterComponent.activate() {
     this.activations.intValue += 1
-    println("This has been activated ${this.activations.intValue} times")
+    Log.i(
+        "ActivationCounterComponent",
+        "This has been activated ${this.activations.intValue} times"
+    )
 }
 
 fun ActivationCounterComponent.deactivate() {
     this.deactivations.intValue += 1
-    println("This has been deactivated ${this.deactivations.intValue} times")
+    Log.i(
+        "ActivationCounterComponent",
+        "This has been deactivated ${this.deactivations.intValue} times"
+    )
 }
 
 data class DurationComponent(val duration: Int = -1, val infinite: Boolean = false)

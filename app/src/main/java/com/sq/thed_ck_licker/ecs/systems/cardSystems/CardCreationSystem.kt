@@ -21,6 +21,24 @@ class CardCreationSystem private constructor(private val componentManager: Compo
         }
     }
 
+    fun addBasicScoreCards(amount: Int): List<EntityId> {
+        val scoreAmount = 10
+        val onActivation = { targetId: Int, _: Int ->
+            (targetId get ScoreComponent::class).score.intValue += scoreAmount
+        }
+
+        return cardsSystem.initCards(
+            cardHealth = 10f,
+            scoreAmount,
+            amount,
+            R.drawable.placeholder,
+            description = "Gives small amount of score",
+            name = "Basic score card",
+            tags = listOf(CardTag.CARD),
+            onActivation
+        )
+    }
+
     fun addHealingCards(amount: Int): List<EntityId> {
         val onActivation = { targetId: Int, _: Int ->
             (targetId get HealthComponent::class).health.floatValue += 5f

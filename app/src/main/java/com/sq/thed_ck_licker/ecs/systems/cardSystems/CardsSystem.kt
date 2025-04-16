@@ -1,5 +1,6 @@
 package com.sq.thed_ck_licker.ecs.systems.cardSystems
 
+import android.util.Log
 import androidx.compose.runtime.MutableIntState
 import com.sq.thed_ck_licker.ecs.ComponentManager
 import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID
@@ -31,47 +32,51 @@ class CardsSystem private constructor(private val componentManager: ComponentMan
         }
     }
 
-    /* TODO: multipliers and such can be nicely implemented with:
-*   Make each effect function that takes in the thing  to be multiplied.
-*   Then just pump all things through pipeline full of the multiplier functions.
-*   To get the pipeline just loop all things and collect the multiplier functions.
-*   Something like multiplier system.
-*   If one wants to be wild they can even put three lists as pipeline, one for additions, one for increases and one for multiplications
-*   Thou that would mean order of operation does not matter, which might be wanted.
-*/
-
 
     fun pullRandomCardFromEntityDeck(entityId: Int): Int {
         val drawDeck = entityId get DrawDeckComponent::class
         check(drawDeck.drawCardDeck.isNotEmpty()) { "No cards available" }
-        return drawDeck.drawCardDeck.getRandomElement()
+        val theCard = drawDeck.drawCardDeck.getRandomElement()
+        drawDeck.drawCardDeck.remove(theCard)
+        return theCard
     }
 
     fun activateCard(latestCard: MutableIntState, playerCardCount: MutableIntState) {
-
         playerCardCount.intValue += 1
         val latestCardId = latestCard.intValue
 
         try {
             (latestCardId get EffectComponent::class).onPlay.invoke(getPlayerID(), latestCardId)
         } catch (_: Exception) {
-            println("Yeah yeah, we get it, you are so cool there was no effect component")
+            Log.i(
+                "CardsSystem",
+                "No effect component found for activation \nYeah yeah, we get it, you are so cool there was no effect component"
+            )
         }
 
         try {
             (latestCardId get HealthComponent::class).health.floatValue -= 1f
-            println("Health is now ${(latestCardId get HealthComponent::class).health.floatValue}")
+            Log.i(
+                "CardsSystem",
+                "Health is now ${(latestCardId get HealthComponent::class).health.floatValue}"
+            )
             if ((latestCardId get HealthComponent::class).health.floatValue <= 0) {
                 latestCard.intValue = -1
             }
         } catch (_: Exception) {
-            println("Yeah yeah, we get it, you are so cool there was no health component")
+            Log.i(
+                "CardsSystem",
+                "No health component found for activation \nYeah yeah, we get it, you are so cool there was no health component"
+            )
         }
 
         try {
             (latestCardId get ActivationCounterComponent::class).activate()
         } catch (_: Exception) {
-            println("Yeah yeah, we get it, you are so cool there was no actCounter component ")
+            Log.i(
+                "CardsSystem",
+                "No actCounter component found for activation \nYeah yeah, we get it, you are so cool there was no actCounter component"
+            )
         }
     }
 
@@ -116,6 +121,17 @@ class CardsSystem private constructor(private val componentManager: ComponentMan
         targetEffectStackComp addEntity (limitedHealEntity)
     }
 
+    /**
+     *  @param cardHealth Health of card
+     *  @param scoreAmount Score of card
+     *  @param amount Amount of cards to create
+     *  @param cardImage Image of card
+     *  @param description Description of card
+     *  @param name Name of card
+     *  @param tags Tags of card
+     *  @param onCardPlay Action to perform when card is played
+     *  @param onCardDeactivate Action to perform when card is deactivated
+     */
     fun initCards(
         cardHealth: Float?,
         scoreAmount: Int?,
@@ -124,7 +140,7 @@ class CardsSystem private constructor(private val componentManager: ComponentMan
         description: String,
         name: String,
         tags: List<CardTag>,
-        onCardPlay: (Int, Int) -> Unit = {_, _ ->},
+        onCardPlay: (Int, Int) -> Unit = { _, _ -> },
         onCardDeactivate: (Int, Int) -> Unit = { _, _ -> }
     ): List<Int> {
         val cardIds: MutableList<Int> = mutableListOf()

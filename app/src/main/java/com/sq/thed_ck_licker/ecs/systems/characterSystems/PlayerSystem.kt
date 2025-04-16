@@ -27,14 +27,14 @@ class PlayerSystem private constructor(private val componentManager: ComponentMa
         getPlayerID() add HealthComponent(100f)
         getPlayerID() add ScoreComponent()
         getPlayerID() add MerchantComponent()
-        getPlayerID() add DrawDeckComponent(initDiscardTestingDeck() as MutableList<Int>)
+        getPlayerID() add DrawDeckComponent(initPlayerDeck() as MutableList<Int>)
         getPlayerID() add EffectStackComponent()
         getPlayerID() add DiscardDeckComponent()
     }
 
     private fun initPlayerDeck(): List<Int> {
 
-        val playerHealingCards = cardCreationSystem.addHealingCards(5)
+        val playerHealingCards = cardCreationSystem.addHealingCards(1)
         val playerDamageCards = cardCreationSystem.addDamageCards(5)
         val defaultCards = cardCreationSystem.addBreakingDefaultCards(10)
         val deactivationCards = cardCreationSystem.addDeactivationTestCards(2)
@@ -57,9 +57,6 @@ class PlayerSystem private constructor(private val componentManager: ComponentMa
                 emptyList<Int>()
     }
 
-    private fun initDiscardTestingDeck(): List<Int>{
-    return cardCreationSystem.addHealingCards(2)
-    }
 
     fun getPlayerHealthM(): MutableFloatState {
         return (getPlayerID() get HealthComponent::class).health
