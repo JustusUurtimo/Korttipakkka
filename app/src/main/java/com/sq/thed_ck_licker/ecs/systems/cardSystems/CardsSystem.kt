@@ -75,44 +75,45 @@ class CardsSystem private constructor(private val componentManager: ComponentMan
         }
     }
 
-    fun addPassiveScoreGainerToThePlayer(playerId: Int, pointsPerCard: Int = 3) {
+    fun addPassiveScoreGainerToEntity(targetId: Int, pointsPerCard: Int = 3) {
 
-        val entity = generateEntity()
-        val activationComponent = ActivationCounterComponent()
+        val gainerEntity = generateEntity()
+        val gainerActCounterComp = ActivationCounterComponent()
         val activateAction = { id: Int ->
-            val playerScoreComponent = id get ScoreComponent::class
-            activationComponent.activate()
-            playerScoreComponent.score.intValue += pointsPerCard
+            val targetScoreComp = id get ScoreComponent::class
+            gainerActCounterComp.activate()
+            targetScoreComp.score.intValue += pointsPerCard
         }
-        entity add activationComponent
-        entity add EffectComponent(onTurnStart = activateAction)
-        val effStackComp = (playerId get EffectStackComponent::class)
-        effStackComp addEntity (entity)  // I think i have gone mad from the power
+        gainerEntity add gainerActCounterComp
+        gainerEntity add EffectComponent(onTurnStart = activateAction)
+
+        val targetEffectStackComp = (targetId get EffectStackComponent::class)
+        targetEffectStackComp addEntity (gainerEntity)  // I think i have gone mad from the power
     }
 
-    fun addLimitedSupplyAutoHealToThePlayer(playerId: Int, health: Float) {
-        val entity = generateEntity()
+    fun addLimitedSupplyAutoHealToEntity(targetEntityId: Int, health: Float) {
+        val limitedHealEntity = generateEntity()
         val selfHp = HealthComponent(health)
-        entity add selfHp
+        limitedHealEntity add selfHp
         val selfActCounter = ActivationCounterComponent()
-        entity add selfActCounter
+        limitedHealEntity add selfActCounter
 
-        entity add EffectComponent(onTurnStart = { id: Int ->
+        limitedHealEntity add EffectComponent(onTurnStart = { id: Int ->
             val targetHealthComponent = id get HealthComponent::class
             val targetMaxHp = targetHealthComponent.maxHealth.floatValue
             val targetHp = targetHealthComponent.health.floatValue
             if (targetHp < targetMaxHp / 2) {
-                val healAmount = (targetMaxHp * 0.8f) - targetHp
-                val amount = min(selfHp.health.floatValue, healAmount)
-                selfHp.health.floatValue -= amount
-                targetHealthComponent.health.floatValue += amount
+                val amountToHeal = (targetMaxHp * 0.8f) - targetHp
+                val amountOfHealingProvided = min(selfHp.health.floatValue, amountToHeal)
+                selfHp.health.floatValue -= amountOfHealingProvided
+                targetHealthComponent.health.floatValue += amountOfHealingProvided
             }
             println("My name is Beer Goggles")
             println("I am now at ${selfHp.health.floatValue} health \nand have been activated ${selfActCounter.activations.intValue} times")
         })
 
-        val effStackComp = (playerId get EffectStackComponent::class)
-        effStackComp addEntity (entity)
+        val targetEffectStackComp = (targetEntityId get EffectStackComponent::class)
+        targetEffectStackComp addEntity (limitedHealEntity)
     }
 
     fun initCards(

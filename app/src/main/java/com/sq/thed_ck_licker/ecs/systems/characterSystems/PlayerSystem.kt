@@ -26,7 +26,7 @@ class PlayerSystem private constructor(private val componentManager: ComponentMa
         getPlayerID() add HealthComponent(100f)
         getPlayerID() add ScoreComponent()
         getPlayerID() add MerchantComponent()
-        getPlayerID() add DrawDeckComponent(initPlayerDeck() as MutableList<Int>)
+        getPlayerID() add DrawDeckComponent(initDiscardTestingDeck() as MutableList<Int>)
         getPlayerID() add EffectStackComponent()
     }
 
@@ -53,6 +53,10 @@ class PlayerSystem private constructor(private val componentManager: ComponentMa
                 maxHpCards +
                 merchantCards +
                 emptyList<Int>()
+    }
+
+    private fun initDiscardTestingDeck(): List<Int>{
+    return cardCreationSystem.addHealingCards(2)
     }
 
     fun getPlayerHealthM(): MutableFloatState {
