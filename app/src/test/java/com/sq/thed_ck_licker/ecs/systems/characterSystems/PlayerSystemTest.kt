@@ -14,11 +14,14 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.util.Collections
 import kotlin.properties.Delegates
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem.Companion.instance as cardCreationSystem
 
 class PlayerSystemTest {
     var playerId by Delegates.notNull<Int>()
+    val merc = mutableIntStateOf(-1)
+    val cardCount = mutableIntStateOf(0)
 
     @BeforeEach
     fun setUp() {
@@ -58,7 +61,7 @@ class PlayerSystemTest {
         val drawDeck = DrawDeckComponent(cards)
         playerId add drawDeck
 
-        pullNewCardSystem(mutableIntStateOf(-1), mutableIntStateOf(-1)).invoke()
+        pullNewCardSystem(mutableIntStateOf(-1), merc).invoke()
 
         assert(drawDeck.size() == 0) //{ "No cards removed on draw" }
     }
@@ -72,14 +75,41 @@ class PlayerSystemTest {
         val discardDeck = DiscardDeckComponent()
         playerId add discardDeck
         val card = mutableIntStateOf(-1)
-        pullNewCardSystem(card, mutableIntStateOf(-1)).invoke()
+        pullNewCardSystem(card, merc).invoke()
 
-        activationSystem(card, mutableIntStateOf(0)).invoke()
+        activationSystem(card, cardCount).invoke()
 
-        assert(drawDeck.size() == 1)
+        assert((playerId get DrawDeckComponent::class).size() == 1)
         //it is beyond me why discardDeck.size() should not work here, but it does not so...
         assert((playerId get DiscardDeckComponent::class).size() == 1)
         assert(card.intValue == -1)
+    }
+
+    @Test
+    fun `on empty draw  draw, shuffle discard to draw deck`() {
+        val cards = cardCreationSystem.addBasicScoreCards(2) as MutableList<Int>
+        val cards2 = MutableList<Int>(0) { it -> it }
+        cards2.addAll(cards)
+        Collections.copy<Int>(cards2, cards)
+        val drawDeck = DrawDeckComponent(cards2)
+        playerId add drawDeck
+
+        val discardDeck = DiscardDeckComponent()
+        playerId add discardDeck
+        val card = mutableIntStateOf(-1)
+        repeat(2) {
+            pullNewCardSystem(card, merc).invoke()
+            activationSystem(card,cardCount).invoke()
+        }
+        pullNewCardSystem(card, merc).invoke()
+
+        val drawDeck2 = playerId get DrawDeckComponent::class
+        val discardDeck2 = playerId get DiscardDeckComponent::class
+
+
+        assert(drawDeck2.size() == 1)
+        assert(discardDeck2.size() == 0)
+        assert(cards.contains(card.intValue))
     }
 
 }
