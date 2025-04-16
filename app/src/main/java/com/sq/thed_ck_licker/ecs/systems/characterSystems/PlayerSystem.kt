@@ -6,6 +6,7 @@ import com.sq.thed_ck_licker.ecs.ComponentManager
 import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.EntityManager.getRegularMerchantID
 import com.sq.thed_ck_licker.ecs.add
+import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
@@ -28,6 +29,7 @@ class PlayerSystem private constructor(private val componentManager: ComponentMa
         getPlayerID() add MerchantComponent()
         getPlayerID() add DrawDeckComponent(initDiscardTestingDeck() as MutableList<Int>)
         getPlayerID() add EffectStackComponent()
+        getPlayerID() add DiscardDeckComponent()
     }
 
     private fun initPlayerDeck(): List<Int> {

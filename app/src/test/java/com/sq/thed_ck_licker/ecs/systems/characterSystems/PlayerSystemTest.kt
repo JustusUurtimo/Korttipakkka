@@ -15,7 +15,7 @@ class PlayerSystemTest {
         var discardDeck: DiscardDeckComponent? = null
         try {
             discardDeck = playerId get DiscardDeckComponent::class
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             fail("Player has no discard deck")
         }
         assertNotNull(discardDeck)
