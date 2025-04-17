@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,6 +24,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
@@ -31,9 +33,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.sq.thed_ck_licker.ecs.get
 import com.sq.thed_ck_licker.ecs.ComponentManager
+import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.components.DescriptionComponent
 import com.sq.thed_ck_licker.ecs.components.ImageComponent
+import com.sq.thed_ck_licker.ecs.components.MerchantComponent
 import com.sq.thed_ck_licker.ecs.components.NameComponent
 import com.sq.thed_ck_licker.ecs.systems.characterSystems.MerchantSystem.Companion.instance as merchantSystem
 
@@ -48,11 +53,9 @@ class CardDisplaySystem private constructor(private val componentManager: Compon
 
     @Composable
     private fun EntityDisplay(entityId: Int = 1, activateCard: () -> Unit, modifier: Modifier) {
-        val image =
-            componentManager.getComponent(entityId, ImageComponent::class).cardImage
-        val name = componentManager.getComponent(entityId, NameComponent::class).name
-        val description =
-            componentManager.getComponent(entityId, DescriptionComponent::class).description.value
+        val image = (entityId get ImageComponent::class).cardImage
+        val name = (entityId get NameComponent::class).name
+        val description = (entityId get DescriptionComponent::class).description.value
 
         Card(
             modifier = modifier
@@ -99,43 +102,58 @@ class CardDisplaySystem private constructor(private val componentManager: Compon
         playerScore: MutableIntState,
     ) {
 
-        var merchantHand by remember { mutableStateOf(emptyList<Int>()) }
-        val count =
-            rememberSaveable { mutableIntStateOf(0) }
-//        rememberSaveable { merchantSystem.getReRollCount(latestCard.intValue) }
-
-        LaunchedEffect(count.intValue) {
-            if (count.intValue > 1) {
-                playerScore.intValue -= 500
-            }
-            merchantHand = merchantSystem.reRollMerchantHand(merchantId.intValue)
-        }
+        var merchantHand by remember { mutableStateOf(merchantSystem.reRollMerchantHand(merchantId.intValue)) }
+        val activeMerchantSummonCard = rememberSaveable {(getPlayerID() get MerchantComponent::class).activeMerchantSummonCard }
+        val count = rememberSaveable { merchantSystem.getReRollCount(activeMerchantSummonCard.intValue) }
 
         fun chooseMerchantCard(cardId: Int) {
             playerScore.intValue -= 100
             latestCard.intValue = cardId
             merchantId.intValue = -1
         }
-        Row(
-            modifier = modifier
-                .fillMaxWidth()
-                .height(170.dp)
-                .background(Color.Magenta)
-        ) {
-            for (card in merchantHand) {
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(8.dp)
-                ) {
-                    EntityDisplay(
-                        card,
-                        { chooseMerchantCard(card) },
-                        Modifier.fillMaxSize()
-                    )
-                }
-            }
 
+        fun reRollShop(): () -> Unit = {
+            if (count.intValue > 1) {
+                playerScore.intValue -= 500
+            }
+            count.intValue++
+            merchantHand = merchantSystem.reRollMerchantHand(merchantId.intValue)
+        }
+
+
+        Box(
+            modifier = modifier
+                .height(225.dp)
+                .background(
+                    color = Color.Magenta
+                ),
+        ) {
+            Row(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .height(170.dp)
+                    .background(Color.Magenta)
+            ) {
+                for (card in merchantHand) {
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(8.dp)
+                    ) {
+                        EntityDisplay(
+                            card,
+                            { chooseMerchantCard(card) },
+                            Modifier.fillMaxSize()
+                        )
+                    }
+                }
+
+            }
+            Button(
+                modifier = modifier
+                    .align(Alignment.BottomCenter),
+                onClick = reRollShop()
+            ) { Text("Re-roll shop") }
         }
     }
 

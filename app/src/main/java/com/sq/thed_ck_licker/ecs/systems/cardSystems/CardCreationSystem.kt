@@ -8,6 +8,7 @@ import com.sq.thed_ck_licker.ecs.components.CardTag
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.MerchantComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
+import com.sq.thed_ck_licker.ecs.components.heal
 import com.sq.thed_ck_licker.ecs.get
 import com.sq.thed_ck_licker.helpers.MyRandom
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem.Companion.instance as cardsSystem
@@ -40,8 +41,8 @@ class CardCreationSystem private constructor(@Suppress("unused") private val com
     }
 
     fun addHealingCards(amount: Int): List<EntityId> {
-        val onActivation = { targetId: Int, _: Int ->
-            (targetId get HealthComponent::class).health.floatValue += 5f
+        val onActivation = { playerId: Int, _: Int ->
+            (playerId get HealthComponent::class).heal(10f)
         }
 
         return cardsSystem.initCards(
@@ -74,9 +75,10 @@ class CardCreationSystem private constructor(@Suppress("unused") private val com
     }
 
     fun addMerchantCards(amount: Int, merchantId: Int): List<EntityId> {
-        val openMerchant = { id: Int, _: Int ->
-            val target = id get MerchantComponent::class
+        val openMerchant = { targetId: Int, cardEntity: Int ->
+            val target = targetId get MerchantComponent::class
             target.merchantId.intValue = merchantId
+            target.activeMerchantSummonCard.intValue = cardEntity
         }
 
         return cardsSystem.initCards(

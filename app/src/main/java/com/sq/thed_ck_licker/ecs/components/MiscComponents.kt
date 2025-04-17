@@ -6,6 +6,7 @@ import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import com.sq.thed_ck_licker.ecs.get
 import kotlinx.parcelize.Parcelize
 
 data class HealthComponent(var health: MutableFloatState, val maxHealth: MutableFloatState) {
@@ -26,12 +27,12 @@ data class HealthComponent(var health: MutableFloatState, val maxHealth: Mutable
     )
 }
 
-fun HealthComponent.addHealth(healthComponent: HealthComponent) {
+fun HealthComponent.heal(healAmount: Float) {
     println("this is going to be modified ${this}")
-    if (healthComponent.health.floatValue != 0f) {
-        this.health.floatValue += healthComponent.health.floatValue
-    } else if (healthComponent.maxHealth.floatValue != 0f) {
-        this.maxHealth.floatValue += healthComponent.maxHealth.floatValue
+    if ((this.health.floatValue + healAmount) > this.maxHealth.floatValue) {
+        this.health.floatValue = this.maxHealth.floatValue
+    } else {
+        this.health.floatValue += healAmount
     }
     println("and the end result is ${this}")
 }
@@ -45,9 +46,17 @@ fun ScoreComponent.addScore(scoreComponent: ScoreComponent) {
 }
 
 
-data class MerchantComponent(var merchantId: MutableIntState) {
-    constructor(merchantId: Int = -1) : this(mutableIntStateOf(merchantId))
+data class MerchantComponent(
+    var merchantId: MutableIntState,
+    val activeMerchantSummonCard: MutableIntState
+) {
+    constructor(merchantId: Int = -1, activeMerchantSummonCard: Int = -1) : this(
+        mutableIntStateOf(
+            merchantId
+        ), mutableIntStateOf(activeMerchantSummonCard)
+    )
 }
+
 
 //this should be implemented after we refactor the card creations system
 data class CardPriceComponent(var price: MutableIntState) {
