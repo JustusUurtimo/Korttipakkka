@@ -17,7 +17,7 @@ import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem.Companion.insta
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem.Companion.instance as cardCreationSystem
 
 
-class MerchantSystem private constructor(private val componentManager: ComponentManager) {
+class MerchantSystem private constructor(@Suppress("unused") private val componentManager: ComponentManager) {
     companion object {
         val instance: MerchantSystem by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
             MerchantSystem(ComponentManager.componentManager)
