@@ -5,7 +5,6 @@ import com.sq.thed_ck_licker.ecs.ComponentManager
 import com.sq.thed_ck_licker.ecs.EntityId
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.CardTag
-import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.MerchantComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent

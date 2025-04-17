@@ -1,20 +1,14 @@
 package com.sq.thed_ck_licker.ecs.systems.characterSystems
 
 import androidx.compose.runtime.MutableIntState
-import com.sq.thed_ck_licker.R
 import com.sq.thed_ck_licker.ecs.ComponentManager
 import com.sq.thed_ck_licker.ecs.EntityManager.getRegularMerchantID
 import com.sq.thed_ck_licker.ecs.add
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
-import com.sq.thed_ck_licker.ecs.components.CardTag
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
-import com.sq.thed_ck_licker.ecs.components.EffectComponent
-import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.get
-import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem
-import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem.Companion
-import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem.Companion.instance as cardsSystem
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem.Companion.instance as cardCreationSystem
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem.Companion.instance as cardsSystem
 
 
 class MerchantSystem private constructor(@Suppress("unused") private val componentManager: ComponentManager) {
