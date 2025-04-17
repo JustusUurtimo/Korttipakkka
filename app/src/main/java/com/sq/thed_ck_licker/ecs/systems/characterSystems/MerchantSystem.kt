@@ -18,8 +18,6 @@ class MerchantSystem private constructor(@Suppress("unused") private val compone
         }
     }
 
-    //I know this is duplicate code, but we have to unify deck building to a one system
-    // its on issue #48 atm
     fun initRegularMerchant() {
         getRegularMerchantID() add DrawDeckComponent(initRegularMerchantDeck().toMutableList())
     }

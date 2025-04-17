@@ -46,9 +46,17 @@ fun ScoreComponent.addScore(scoreComponent: ScoreComponent) {
 }
 
 
-data class MerchantComponent(var merchantId: MutableIntState) {
-    constructor(merchantId: Int = -1) : this(mutableIntStateOf(merchantId))
+data class MerchantComponent(
+    var merchantId: MutableIntState,
+    val activeMerchantSummonCard: MutableIntState
+) {
+    constructor(merchantId: Int = -1, activeMerchantSummonCard: Int = -1) : this(
+        mutableIntStateOf(
+            merchantId
+        ), mutableIntStateOf(activeMerchantSummonCard)
+    )
 }
+
 
 //this should be implemented after we refactor the card creations system
 data class CardPriceComponent(var price: MutableIntState) {

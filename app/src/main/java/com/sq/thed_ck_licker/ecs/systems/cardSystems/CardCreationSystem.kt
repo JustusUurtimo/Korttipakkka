@@ -75,9 +75,10 @@ class CardCreationSystem private constructor(@Suppress("unused") private val com
     }
 
     fun addMerchantCards(amount: Int, merchantId: Int): List<EntityId> {
-        val openMerchant = { id: Int, _: Int ->
-            val target = id get MerchantComponent::class
+        val openMerchant = { targetId: Int, cardEntity: Int ->
+            val target = targetId get MerchantComponent::class
             target.merchantId.intValue = merchantId
+            target.activeMerchantSummonCard.intValue = cardEntity
         }
 
         return cardsSystem.initCards(
