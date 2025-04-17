@@ -23,7 +23,12 @@ class CardCreationSystem private constructor(@Suppress("unused") private val com
 
     fun addHealingCards(amount: Int): List<EntityId> {
         val onActivation = { playerId: Int, _: Int ->
-            (playerId get HealthComponent::class).health.floatValue += 5f
+            val playerHealthComponent = (playerId get HealthComponent::class)
+            if((playerHealthComponent.health.floatValue + 5f) > playerHealthComponent.maxHealth.floatValue) {
+                playerHealthComponent.health.floatValue = playerHealthComponent.maxHealth.floatValue
+            } else {
+                playerHealthComponent.health.floatValue += 5f
+            }
         }
 
         return cardsSystem.initCards(
