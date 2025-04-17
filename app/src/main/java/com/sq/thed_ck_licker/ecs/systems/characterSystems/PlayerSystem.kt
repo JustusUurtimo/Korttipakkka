@@ -15,7 +15,7 @@ import com.sq.thed_ck_licker.ecs.get
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem.Companion.instance as cardCreationSystem
 
 
-class PlayerSystem private constructor(private val componentManager: ComponentManager) {
+class PlayerSystem private constructor(@Suppress("unused") private val componentManager: ComponentManager) {
     companion object {
         val instance: PlayerSystem by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
             PlayerSystem(ComponentManager.componentManager)
