@@ -16,21 +16,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID
-import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
-import com.sq.thed_ck_licker.ecs.components.EffectComponent
-import com.sq.thed_ck_licker.ecs.components.deactivate
-import com.sq.thed_ck_licker.ecs.get
-import com.sq.thed_ck_licker.ecs.systems.helperSystems.onDeathSystem
-import com.sq.thed_ck_licker.ecs.systems.helperSystems.onDiscardSystem
-import com.sq.thed_ck_licker.ecs.systems.helperSystems.onTurnStartEffectStackSystem
+import com.sq.thed_ck_licker.ecs.systems.activationSystem
+import com.sq.thed_ck_licker.ecs.systems.pullNewCardSystem
 import com.sq.thed_ck_licker.player.HealthBar
 import com.sq.thed_ck_licker.player.ScoreDisplayer
 import com.sq.thed_ck_licker.ui.components.buttons.PullCardButton
 import com.sq.thed_ck_licker.ui.components.views.CardDeck
-import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID as playerId
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardDisplaySystem.Companion.instance as cardDisplaySystem
-import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem.Companion.instance as cardsSystem
 import com.sq.thed_ck_licker.ecs.systems.characterSystems.PlayerSystem.Companion.instance as playerSystem
 
 
@@ -46,33 +38,7 @@ fun Game(innerPadding: PaddingValues) {
     val playerMaxHealth =
         rememberSaveable { playerSystem.getPlayerMaxHealthM() }
     val playerScore = rememberSaveable { playerSystem.getPlayerScoreM() }
-// TODO we should read more about viewModels and state holding
     val modifier = Modifier
-
-    val activateCard = {
-        // TODO: I now think all these should be such as the one bellow, just nice clean function calls
-        onTurnStartEffectStackSystem()
-        cardsSystem.activateCard(latestCard, playerCardCount)
-        onDeathSystem()
-    }
-
-    val pullNewCard = {
-        try {
-            (latestCard.intValue get EffectComponent::class).onDeactivate.invoke(getPlayerID(), latestCard.intValue)
-        } catch (_: Exception) {
-            println("Yeah yeah, we get it, you are so cool there was no effect component ")
-        }
-
-        try {
-            (latestCard.intValue get ActivationCounterComponent::class).deactivate()
-        } catch (_: Exception) {
-            println("Yeah yeah, we get it, you are so cool there was no actCounter component ")
-        }
-        onDiscardSystem()
-        playerActiveMerchant.intValue = -1
-        latestCard.intValue = cardsSystem.pullRandomCardFromEntityDeck(playerId())
-    }
-
 
     Column(modifier.fillMaxWidth()) {
 
@@ -88,7 +54,7 @@ fun Game(innerPadding: PaddingValues) {
         }
 
         Box(modifier.fillMaxSize()) {
-            CardDeck(navigationBarPadding, pullNewCard)
+            CardDeck(navigationBarPadding, pullNewCardSystem(latestCard, playerActiveMerchant))
             Box(modifier.align(Alignment.BottomCenter)) {
 
                 Column(modifier.padding(35.dp, 0.dp, 0.dp, 0.dp)) {
@@ -98,13 +64,13 @@ fun Game(innerPadding: PaddingValues) {
                             playerCardCount,
                             modifier,
                             latestCard,
-                            activateCard
+                            activationSystem(latestCard, playerCardCount)
                         )
                     }
                     PullCardButton(
                         navigationBarPadding,
                         modifier.offset((-15).dp),
-                        pullNewCard
+                        pullNewCardSystem(latestCard, playerActiveMerchant)
                     )
                 }
 
