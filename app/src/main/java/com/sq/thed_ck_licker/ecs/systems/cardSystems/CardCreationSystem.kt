@@ -8,6 +8,7 @@ import com.sq.thed_ck_licker.ecs.components.CardTag
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.MerchantComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
+import com.sq.thed_ck_licker.ecs.components.heal
 import com.sq.thed_ck_licker.ecs.get
 import com.sq.thed_ck_licker.helpers.MyRandom
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem.Companion.instance as cardsSystem
@@ -21,14 +22,27 @@ class CardCreationSystem private constructor(@Suppress("unused") private val com
         }
     }
 
+    fun addBasicScoreCards(amount: Int): List<EntityId> {
+        val scoreAmount = 10
+        val onActivation = { targetId: Int, _: Int ->
+            (targetId get ScoreComponent::class).score.intValue += scoreAmount
+        }
+
+        return cardsSystem.initCards(
+            cardHealth = 10f,
+            scoreAmount,
+            amount,
+            R.drawable.placeholder,
+            description = "Gives small amount of score",
+            name = "Basic score card",
+            tags = listOf(CardTag.CARD),
+            onActivation
+        )
+    }
+
     fun addHealingCards(amount: Int): List<EntityId> {
         val onActivation = { playerId: Int, _: Int ->
-            val playerHealthComponent = (playerId get HealthComponent::class)
-            if((playerHealthComponent.health.floatValue + 5f) > playerHealthComponent.maxHealth.floatValue) {
-                playerHealthComponent.health.floatValue = playerHealthComponent.maxHealth.floatValue
-            } else {
-                playerHealthComponent.health.floatValue += 5f
-            }
+            (playerId get HealthComponent::class).heal(10f)
         }
 
         return cardsSystem.initCards(
@@ -44,8 +58,8 @@ class CardCreationSystem private constructor(@Suppress("unused") private val com
     }
 
     fun addDamageCards(amount: Int): List<EntityId> {
-        val onActivation = { playerId: Int, _: Int ->
-            (playerId get HealthComponent::class).health.floatValue -= 5f
+        val onActivation = { targetId: Int, _: Int ->
+            (targetId get HealthComponent::class).health.floatValue -= 5f
         }
 
         return cardsSystem.initCards(
@@ -80,13 +94,13 @@ class CardCreationSystem private constructor(@Suppress("unused") private val com
     }
 
     fun addMaxHpTrapCards(amount: Int = 5): List<EntityId> {
-        val maxHpIt = { playerId: Int, cardEntity: Int ->
-            val playerHp = playerId get HealthComponent::class
+        val maxHpIt = { targetId: Int, cardEntity: Int ->
+            val targetHp = targetId get HealthComponent::class
             if (MyRandom.getRandomInt() <= 2) {
                 (cardEntity get HealthComponent::class).health.floatValue -= 99999f
-                playerHp.health.floatValue = (playerHp.health.floatValue.div(2))
+                targetHp.health.floatValue = (targetHp.health.floatValue.div(2))
             } else {
-                playerHp.maxHealth.floatValue += 10f
+                targetHp.maxHealth.floatValue += 10f
             }
         }
         return cardsSystem.initCards(
@@ -103,8 +117,8 @@ class CardCreationSystem private constructor(@Suppress("unused") private val com
 
 
     fun addBreakingDefaultCards(amount: Int = 7): List<EntityId> {
-        val scoreIt = { playerId: Int, cardEntity: Int ->
-            val target = playerId get ScoreComponent::class
+        val scoreIt = { targetId: Int, cardEntity: Int ->
+            val target = targetId get ScoreComponent::class
             val omaScore = cardEntity get ScoreComponent::class
             target.score.intValue += omaScore.score.intValue
         }
@@ -123,8 +137,8 @@ class CardCreationSystem private constructor(@Suppress("unused") private val com
 
     fun addDeactivationTestCards(amount: Int = 2): List<EntityId> {
 
-        val onActivation = { playerId: Int, cardEntity: Int ->
-            val target = playerId get ScoreComponent::class
+        val onActivation = { targetId: Int, cardEntity: Int ->
+            val target = targetId get ScoreComponent::class
             val riskPoints = cardEntity get ScoreComponent::class
             val scoreIncrease = riskPoints.score.intValue * 3
             target.score.intValue += (scoreIncrease)
@@ -157,13 +171,13 @@ class CardCreationSystem private constructor(@Suppress("unused") private val com
 
     fun addTrapTestCard(amount: Int = 2): List<EntityId> {
 
-        val onDeactivation = { playerId: Int, entityId: Int ->
-            val target = playerId get ScoreComponent::class
+        val onDeactivation = { targetId: Int, entityId: Int ->
+            val target = targetId get ScoreComponent::class
             val activationComponent = entityId get ActivationCounterComponent::class
             target.score.intValue -= (activationComponent.deactivations.intValue * 3)
         }
-        val onActivation = { playerId: Int, entityId: Int ->
-            val target = playerId get HealthComponent::class
+        val onActivation = { targetId: Int, entityId: Int ->
+            val target = targetId get HealthComponent::class
             val activationComponent = entityId get ActivationCounterComponent::class
             target.health.floatValue -= (activationComponent.activations.intValue * 5)
         }
@@ -185,7 +199,7 @@ class CardCreationSystem private constructor(@Suppress("unused") private val com
     fun addScoreGainerTestCard(amount: Int = 1): List<EntityId> {
         val pointsPerCard = 3
         val onActivation = { playerId: Int, _: Int ->
-            cardsSystem.addPassiveScoreGainerToThePlayer(playerId, pointsPerCard)
+            cardsSystem.addPassiveScoreGainerToEntity(playerId, pointsPerCard)
         }
         return cardsSystem.initCards(
             1f,
@@ -201,7 +215,7 @@ class CardCreationSystem private constructor(@Suppress("unused") private val com
 
     fun addBeerGogglesTestCard(amount: Int = 1): List<EntityId> {
         val onActivation = { playerId: Int, _: Int ->
-            cardsSystem.addLimitedSupplyAutoHealToThePlayer(playerId, 150f)
+            cardsSystem.addLimitedSupplyAutoHealToEntity(playerId, 150f)
         }
         return cardsSystem.initCards(
             1f,

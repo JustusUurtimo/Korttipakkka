@@ -1,5 +1,7 @@
 package com.sq.thed_ck_licker.ecs
 
+import android.util.Log
+
 /**
  * Fixed Id things can grow towards negative and normal dynamic ones can be normal integers
  */
@@ -16,7 +18,7 @@ object EntityManager {
 
     fun createNewEntity(): EntityId {
         nextID++
-        println("New entity created with ID: $nextID")
+        Log.i("EntityManager", "New entity created with ID: $nextID")
         return nextID - 1
     }
 }

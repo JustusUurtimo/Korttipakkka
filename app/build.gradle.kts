@@ -70,6 +70,8 @@ android {
         unitTests.all {
             it.useJUnitPlatform()
         }
+//        unitTests.returnDefaultValues = true
+        unitTests.isReturnDefaultValues = true
 
     }
 }

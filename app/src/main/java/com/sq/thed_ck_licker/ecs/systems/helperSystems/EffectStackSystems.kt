@@ -1,5 +1,6 @@
 package com.sq.thed_ck_licker.ecs.systems.helperSystems
 
+import android.util.Log
 import com.sq.thed_ck_licker.ecs.ComponentManager
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
@@ -14,9 +15,10 @@ fun onTurnStartEffectStackSystem(componentManager: ComponentManager = ComponentM
         for (effectEntity in effectStack.effectEntities) {
             val effect = effectEntity get EffectComponent::class
             effect.onTurnStart(effectTarget.key)
-            println("Activating $effect on ${effectTarget.key}")
+            Log.i("onTurnStartEffectStackSystem", "Activating $effect on ${effectTarget.key}")
         }
-        println("effectTarget.key: ${effectTarget.key}")
-        println("effectTarget.value: ${effectTarget.value}")
+        Log.i("onTurnStartEffectStackSystem", "Effect stack size: ${effectStack.effectEntities.size}")
+        Log.i("onTurnStartEffectStackSystem", "effectTarget.key: ${effectTarget.key}")
+        Log.i("onTurnStartEffectStackSystem", "effectTarget.value: ${effectTarget.value}")
     }
 }
