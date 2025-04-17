@@ -1,20 +1,14 @@
 package com.sq.thed_ck_licker.ecs.systems.characterSystems
 
 import androidx.compose.runtime.MutableIntState
-import com.sq.thed_ck_licker.R
 import com.sq.thed_ck_licker.ecs.ComponentManager
 import com.sq.thed_ck_licker.ecs.EntityManager.getRegularMerchantID
 import com.sq.thed_ck_licker.ecs.add
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
-import com.sq.thed_ck_licker.ecs.components.CardTag
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
-import com.sq.thed_ck_licker.ecs.components.EffectComponent
-import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.get
-import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem
-import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem.Companion
-import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem.Companion.instance as cardsSystem
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem.Companion.instance as cardCreationSystem
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem.Companion.instance as cardsSystem
 
 
 class MerchantSystem private constructor(private val componentManager: ComponentManager) {
@@ -27,7 +21,7 @@ class MerchantSystem private constructor(private val componentManager: Component
     //I know this is duplicate code, but we have to unify deck building to a one system
     // its on issue #48 atm
     fun initRegularMerchant() {
-        getRegularMerchantID() add DrawDeckComponent(initRegularMerchantDeck() as MutableList<Int>)
+        getRegularMerchantID() add DrawDeckComponent(initRegularMerchantDeck().toMutableList())
     }
 
     private fun initRegularMerchantDeck(): List<Int> {
@@ -47,6 +41,10 @@ class MerchantSystem private constructor(private val componentManager: Component
 
 
     fun reRollMerchantHand(merchantId: Int): List<Int> {
+        val deck = (merchantId get DrawDeckComponent::class).drawCardDeck
+        if (deck.size < 3) {
+            deck.addAll(initRegularMerchantDeck())
+        }
         val newHand = List(3) { cardsSystem.pullRandomCardFromEntityDeck(merchantId) }
         return newHand
     }

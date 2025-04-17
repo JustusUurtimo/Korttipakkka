@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -99,7 +100,9 @@ class CardDisplaySystem private constructor(private val componentManager: Compon
     ) {
 
         var merchantHand by remember { mutableStateOf(emptyList<Int>()) }
-        val count = rememberSaveable { merchantSystem.getReRollCount(latestCard.intValue) }
+        val count =
+            rememberSaveable { mutableIntStateOf(0) }
+//        rememberSaveable { merchantSystem.getReRollCount(latestCard.intValue) }
 
         LaunchedEffect(count.intValue) {
             if (count.intValue > 1) {
