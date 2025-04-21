@@ -8,7 +8,6 @@ import com.sq.thed_ck_licker.ecs.components.CardTag
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.MerchantComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
-import com.sq.thed_ck_licker.ecs.components.heal
 import com.sq.thed_ck_licker.ecs.get
 import com.sq.thed_ck_licker.helpers.MyRandom
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem.Companion.instance as cardsSystem

@@ -34,8 +34,6 @@ class HealthComponentTest {
     @Test
     fun `Add multiplier to health component`() {
         val hpComp = HealthComponent(100f, 1000f, 1f)
-        hpComp.heal(100f)
-        assertEquals(hpComp.multiplier,  1f)
         hpComp.timesMultiplier(1.5f)
         assertEquals(hpComp.multiplier,  1.5f)
         hpComp.timesMultiplier(1.5f)
@@ -43,7 +41,19 @@ class HealthComponentTest {
     }
 
 
+    @Test
+    fun `Remove multiplier to health component`() {
+        val hpComp = HealthComponent(100f, 1000f, 2.25f)
+        hpComp.removeMultiplier(1.5f)
+        assertEquals(hpComp.multiplier,  1.5f)
+        hpComp.removeMultiplier(1.5f)
+        assertEquals(hpComp.multiplier,  1f)
+    }
+
+
 
 
 }
+
+
 

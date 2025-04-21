@@ -28,26 +28,26 @@ data class HealthComponent(
         mutableFloatStateOf(maxHealth),
         multiplier
     )
-}
 
-fun HealthComponent.heal(healAmount: Float) {
-    val realAmount = healAmount * this.multiplier
-    val toHealed = this.health.floatValue + realAmount
-    this.health.floatValue = min(toHealed, this.maxHealth.floatValue)
-}
+    fun timesMultiplier(f: Float) {
+        this.multiplier *= f
+    }
 
+    fun heal(healAmount: Float) {
+        val realAmount = healAmount * this.multiplier
+        val toHealed = this.health.floatValue + realAmount
+        this.health.floatValue = min(toHealed, this.maxHealth.floatValue)
+    }
 
-fun HealthComponent.timesMultiplier(f: Float) {
-    this.multiplier *= f
+    fun removeMultiplier(f: Float) {
+        this.multiplier *= 1 / f
+    }
 }
 
 data class ScoreComponent(var score: MutableIntState) {
     constructor(score: Int = 0) : this(mutableIntStateOf(score))
 }
 
-fun ScoreComponent.addScore(scoreComponent: ScoreComponent) {
-    this.score.intValue += scoreComponent.score.intValue
-}
 
 
 data class MerchantComponent(
@@ -62,10 +62,6 @@ data class MerchantComponent(
 }
 
 
-//this should be implemented after we refactor the card creations system
-data class CardPriceComponent(var price: MutableIntState) {
-    constructor(price: Int = 50) : this(mutableIntStateOf(price))
-}
 
 
 
