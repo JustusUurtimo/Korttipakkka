@@ -31,19 +31,14 @@ data class HealthComponent(
 }
 
 fun HealthComponent.heal(healAmount: Float) {
-//    println("this is going to be modified ${this}")
-//    if ((this.health.floatValue + healAmount) > this.maxHealth.floatValue) {
-//        this.health.floatValue = this.maxHealth.floatValue
-//    } else {
-//        this.health.floatValue += healAmount
-//    }
-//    println("and the end result is ${this}")
     val realAmount = healAmount * this.multiplier
     val toHealed = this.health.floatValue + realAmount
-
     this.health.floatValue = min(toHealed, this.maxHealth.floatValue)
+}
 
 
+fun HealthComponent.timesMultiplier(f: Float) {
+    this.multiplier *= f
 }
 
 data class ScoreComponent(var score: MutableIntState) {

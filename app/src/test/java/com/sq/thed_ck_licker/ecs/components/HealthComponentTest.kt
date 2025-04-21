@@ -21,7 +21,6 @@ class HealthComponentTest {
         val hpComp = HealthComponent(100f)
          hpComp.heal(100f)
         assertEquals(hpComp.health.floatValue, 100f)
-//        assertEquals(overHeal, 100f)
     }
 
     @Test
@@ -32,6 +31,19 @@ class HealthComponentTest {
     }
 
 
+    @Test
+    fun `Add multiplier to health component`() {
+        val hpComp = HealthComponent(100f, 1000f, 1f)
+        hpComp.heal(100f)
+        assertEquals(hpComp.multiplier,  1f)
+        hpComp.timesMultiplier(1.5f)
+        assertEquals(hpComp.multiplier,  1.5f)
+        hpComp.timesMultiplier(1.5f)
+        assertEquals(hpComp.multiplier,  2.25f)
+    }
+
+
 
 
 }
+
