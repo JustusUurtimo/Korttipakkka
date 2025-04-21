@@ -1,0 +1,149 @@
+package com.sq.thed_ck_licker.ecs
+
+import com.sq.thed_ck_licker.ecs.components.HealthComponent
+import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
+import com.sq.thed_ck_licker.ecs.components.ScoreComponent
+import org.junit.jupiter.api.Test
+
+class ComponentManagerTest {
+
+    @Test
+    fun `Add component to entity`() {
+        val entityId = 1
+        val component = ScoreComponent(100)
+        entityId add component
+        val componentFromEntity = entityId get ScoreComponent::class
+        assert(componentFromEntity.score.intValue == 100){"Score should be 100 but was ${componentFromEntity.score.intValue}"}
+    }
+
+    @Test
+    fun `Copy Entity with Score Component`() {
+        val entityId = EntityManager.createNewEntity()
+        val component = ScoreComponent(100)
+        entityId add component
+
+        val componentManager = ComponentManager.componentManager
+        val copiedEntity = componentManager.copy(entityId)
+
+        val originalComponent = entityId get ScoreComponent::class
+        originalComponent.score.intValue = 201
+
+        val copiedComponent = copiedEntity get ScoreComponent::class
+
+        assert(copiedComponent.score.intValue == 100) {"Score for the copied entity should be 100 but was ${copiedComponent.score.intValue}"}
+        assert(originalComponent != copiedComponent) {"Original and copied components should not be the same after the change."}
+    }
+
+    @Test
+    fun `Copy Entity with Multiplier Component`() {
+        val entityId = EntityManager.createNewEntity()
+        val component = MultiplierComponent(1.1f)
+        entityId add component
+
+        val componentManager = ComponentManager.componentManager
+        val copiedEntity = componentManager.copy(entityId)
+
+        val originalComponent = entityId get MultiplierComponent::class
+        originalComponent.timesMultiplier(1.5f)
+
+        val copiedComponent = copiedEntity get MultiplierComponent::class
+
+        assert(copiedComponent.multiplier == 1.1f) {"Multiplier for the copied entity should be 1.1f but was ${copiedComponent.multiplier}"}
+        assert(originalComponent != copiedComponent) {"Original and copied components should not be the same after the change."}
+    }
+
+
+    @Test
+    fun `Get the difference between Health Components`() {
+        val entityId = EntityManager.createNewEntity()
+        val healthA = 100f
+        entityId add HealthComponent(healthA)
+
+        val entity2Id = EntityManager.createNewEntity()
+        val healthB = 25f
+        entity2Id add HealthComponent(healthB)
+
+        val resultEntity = entityId difference entity2Id
+        val healthDifference = resultEntity get HealthComponent::class
+        assert(healthDifference.health.floatValue == healthA - healthB) { "Health should be ${healthA - healthB} but was ${healthDifference.health.floatValue}" }
+        assert(healthDifference.maxHealth.floatValue == healthA) { "Max Health should be $healthA but was ${healthDifference.maxHealth.floatValue}" }
+
+        val resultEntity2 = entity2Id difference entityId
+        val healthDifference2 = resultEntity2 get HealthComponent::class
+        assert(healthDifference2.health.floatValue == healthB - healthA) { "Health should be ${healthB - healthA} but was ${healthDifference2.health.floatValue}" }
+    }
+
+    @Test
+    fun `Get the difference between Score Components`() {
+        val entityId = EntityManager.createNewEntity()
+        entityId add ScoreComponent(100)
+
+        val entity2Id = EntityManager.createNewEntity()
+        entity2Id add ScoreComponent(25)
+
+        val resultEntity = entityId difference entity2Id
+        val resultScore = resultEntity get ScoreComponent::class
+        assert(resultScore.score.intValue == 75) { "Score should be 75 but was ${resultScore.score.intValue}" }
+
+        val resultEntity2 = entity2Id difference entityId
+        val scoreDifference = resultEntity2 get ScoreComponent::class
+        assert(scoreDifference.score.intValue == -75) { "Score should be -75 but was ${scoreDifference.score.intValue}" }
+    }
+
+
+    @Test
+    fun `Get the difference between Multiplier Components`() {
+        val entityId = EntityManager.createNewEntity()
+        val multiplierA = 1.5f
+        entityId add MultiplierComponent(multiplierA)
+
+        val entity2Id = EntityManager.createNewEntity()
+        val multiplierB = 1f
+        entity2Id add MultiplierComponent(multiplierB)
+
+        val resultEntity = entityId difference entity2Id
+        val resultMultiplierComp = resultEntity get MultiplierComponent::class
+        assert(resultMultiplierComp.multiplier == multiplierA - multiplierB) { "Multiplier should be ${multiplierA - multiplierB} but was ${resultMultiplierComp.multiplier}" }
+
+        val resultEntity2 = entity2Id difference entityId
+        val resultMultiplierComp2 = resultEntity2 get MultiplierComponent::class
+        assert(resultMultiplierComp2.multiplier == multiplierB - multiplierA) { "Multiplier should be ${multiplierB - multiplierA} but was ${resultMultiplierComp2.multiplier}" }
+    }
+
+
+    @Test
+    fun `Get the difference between miss matching Components`() {
+        val entityId = EntityManager.createNewEntity()
+        val scoreA = 100
+        entityId add ScoreComponent(scoreA)
+        entityId add MultiplierComponent(1.5f)
+
+        val entity2Id = EntityManager.createNewEntity()
+        val scoreB = 25
+        entity2Id add ScoreComponent(scoreB)
+        entity2Id add HealthComponent(75f)
+
+        val resultEntity = entityId difference entity2Id
+
+        val resultScoreComp = resultEntity get ScoreComponent::class
+        assert(resultScoreComp.score.intValue == scoreA - scoreB) { "Score should be ${scoreA - scoreB} but was ${resultScoreComp.score.intValue}" }
+
+        var didCatchException = false
+        try {
+            resultEntity get HealthComponent::class
+        } catch (_: IllegalStateException) {
+            didCatchException = true
+        }
+        assert(didCatchException) { "Should have thrown an exception for HealthComponent" }
+
+        didCatchException = false
+        try {
+            resultEntity get MultiplierComponent::class
+        } catch (_: IllegalStateException) {
+            didCatchException = true
+        }
+        assert(didCatchException) { "Should have thrown an exception for MultiplierComponent" }
+    }
+
+
+}

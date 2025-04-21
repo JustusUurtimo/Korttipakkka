@@ -1,49 +1,53 @@
 package com.sq.thed_ck_licker.ecs.components
 
-import android.os.Parcelable
-import android.util.MutableBoolean
 import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
-import com.sq.thed_ck_licker.ecs.get
-import kotlinx.parcelize.Parcelize
+import kotlin.math.min
 
-data class HealthComponent(var health: MutableFloatState, val maxHealth: MutableFloatState) {
+data class HealthComponent(
+    var health: MutableFloatState,
+    val maxHealth: MutableFloatState,
+    var multiplier: Float = 1f
+) {
     /**
      * This can be used in cases where you want thing to be not on full hp at the start
      */
-    constructor(health: Float = 100f, maxHealth: Float = 100f) : this(
+    constructor(health: Float = 100f, maxHealth: Float = 100f, multiplier: Float = 1f) : this(
         mutableFloatStateOf(health),
-        mutableFloatStateOf(maxHealth)
+        mutableFloatStateOf(maxHealth),
+        multiplier
     )
 
     /**
      * This can be used to construct Health component with health same as max health
+     * and multiplier of 1
      */
     constructor(maxHealth: Float = 100f) : this(
         mutableFloatStateOf(maxHealth),
         mutableFloatStateOf(maxHealth)
     )
-}
 
-fun HealthComponent.heal(healAmount: Float) {
-    println("this is going to be modified ${this}")
-    if ((this.health.floatValue + healAmount) > this.maxHealth.floatValue) {
-        this.health.floatValue = this.maxHealth.floatValue
-    } else {
-        this.health.floatValue += healAmount
+    fun timesMultiplier(f: Float) {
+        this.multiplier *= f
     }
-    println("and the end result is ${this}")
+
+    fun heal(healAmount: Float) {
+        val realAmount = healAmount * this.multiplier
+        val toHealed = this.health.floatValue + realAmount
+        this.health.floatValue = min(toHealed, this.maxHealth.floatValue)
+    }
+
+    fun removeMultiplier(f: Float) {
+        this.multiplier *= 1 / f
+    }
 }
 
 data class ScoreComponent(var score: MutableIntState) {
     constructor(score: Int = 0) : this(mutableIntStateOf(score))
 }
 
-fun ScoreComponent.addScore(scoreComponent: ScoreComponent) {
-    this.score.intValue += scoreComponent.score.intValue
-}
 
 
 data class MerchantComponent(
@@ -58,10 +62,6 @@ data class MerchantComponent(
 }
 
 
-//this should be implemented after we refactor the card creations system
-data class CardPriceComponent(var price: MutableIntState) {
-    constructor(price: Int = 50) : this(mutableIntStateOf(price))
-}
 
 
 

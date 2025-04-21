@@ -1,20 +1,20 @@
 package com.sq.thed_ck_licker.ecs
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.snapshots.SnapshotStateMap
-import com.sq.thed_ck_licker.ecs.components.CardTag
-import com.sq.thed_ck_licker.ecs.components.TagsComponent
-import kotlinx.parcelize.IgnoredOnParcel
+import com.sq.thed_ck_licker.ecs.components.HealthComponent
+import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
+import com.sq.thed_ck_licker.ecs.components.ScoreComponent
+import kotlin.math.max
 import kotlin.reflect.KClass
 
-// Component Manager
 class ComponentManager private constructor() {
 
     companion object {
         val componentManager: ComponentManager = ComponentManager()
     }
 
-    @IgnoredOnParcel
     private val components = mutableStateMapOf<KClass<*>, SnapshotStateMap<Int, Any>>()
 
     fun <T : Any> addComponent(entity: Int, component: T) {
@@ -42,38 +42,7 @@ class ComponentManager private constructor() {
         return components[componentClass]
     }
 
-    fun <T : Any> getEntitiesWithTheseComponents(componentClasses: List<KClass<T>>): List<EntityId> {
-        val result = mutableListOf<List<EntityId>>()
-        for (componentClass in componentClasses) {
-            val componentMap = components[componentClass]
-            if (componentMap != null) {
-                result.add(componentMap.keys.toList())
-            }
-        }
-        val result2 = result.flatten().groupingBy { it }.eachCount()
-            .filter { it.value >= result.size }.keys.toList()
-        return result2
-    }
 
-
-    fun getEntitiesWithTags(tags: List<CardTag>): Map<Int, Any> {
-        val entities = getEntitiesWithComponent(TagsComponent::class)
-        if (entities == null) {
-            throw IllegalStateException("No entities with TagsComponent found")
-        } else {
-            val matchingEntities = entities.filter { (_, value) ->
-                (value as TagsComponent).tags.containsAll(tags)
-            }
-            return matchingEntities
-        }
-    }
-
-    /* TODO: There is argument for having two lists,
-     *  one from the component view and one from the entity view
-     *  When made correctly and as private things that the Component manager controls,
-     *  it will be really easy to uphold both of them.
-     *  Thou it might also be premature optimization.
-     */
     fun getAllComponentsOfEntity(entityId: Int): List<Any> {
         val result = ArrayList<Any>()
         for (componentMap in components.values) {
@@ -85,14 +54,34 @@ class ComponentManager private constructor() {
         return result
     }
 
-    fun removeComponent(entity: Int, componentClass: KClass<*>) {
-        val componentMap = components[componentClass]
-        componentMap?.remove(entity)
-    }
 
     fun removeEntity(entity: Int) {
         for (componentMap in components.values) {
             componentMap.remove(entity)
+        }
+    }
+
+    fun copy(entity: EntityId): EntityId {
+        val entityCopy = EntityManager.createNewEntity()
+        for (component in getAllComponentsOfEntity(entity)) {
+            val copiedComponent = deepCopyComponent(component)
+            if (copiedComponent == null) continue
+            entityCopy add copiedComponent
+        }
+
+        return entityCopy
+    }
+
+    fun deepCopyComponent(component: Any): Any? {
+        return when (component) {
+            is HealthComponent -> HealthComponent(
+                component.health.floatValue,
+                component.maxHealth.floatValue
+            )
+
+            is ScoreComponent -> ScoreComponent(component.score.intValue)
+            is MultiplierComponent -> MultiplierComponent(component.multiplier)
+            else -> null
         }
     }
 }
@@ -115,4 +104,48 @@ infix fun <T : Any> EntityId.get(componentClass: KClass<T>): T {
  */
 inline fun <reified T> List<Any>.hasComponent(): Boolean {
     return any { it is T }
+}
+
+
+infix fun EntityId.difference(entity: EntityId): EntityId {
+    val result = EntityManager.createNewEntity()
+    val entity1Components = ComponentManager.componentManager.getAllComponentsOfEntity(this)
+
+
+
+    for (component in entity1Components) {
+        var secondComponent: Any? = null
+        try {
+            secondComponent = entity get component::class
+        } catch (_: Exception) {
+            continue
+        }
+        result add when (component) {
+            is HealthComponent -> {
+                secondComponent as HealthComponent
+                HealthComponent(
+                    component.health.floatValue - secondComponent.health.floatValue,
+                    max(component.maxHealth.floatValue, secondComponent.maxHealth.floatValue)
+                )
+            }
+
+            is ScoreComponent -> {
+                secondComponent as ScoreComponent
+                ScoreComponent(component.score.intValue - secondComponent.score.intValue)
+            }
+
+            is MultiplierComponent -> {
+                secondComponent as MultiplierComponent
+                MultiplierComponent(component.multiplier - secondComponent.multiplier)
+            }
+
+            else -> {
+                Log.i(
+                    "Entity Difference",
+                    "One of the entities did not have this component: ${component::class.simpleName}"
+                )
+            }
+        }
+    }
+    return result
 }
