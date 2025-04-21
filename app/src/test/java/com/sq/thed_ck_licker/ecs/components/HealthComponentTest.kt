@@ -1,7 +1,7 @@
 package com.sq.thed_ck_licker.ecs.components
 
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -18,13 +18,9 @@ class HealthComponentTest {
 
     @Test
     fun `Heal health component over max health`() {
-        val hpComp = HealthComponent(100f, 100f)
-
+        val hpComp = HealthComponent(100f)
         hpComp.heal(100f)
-
         assertEquals(hpComp.health.floatValue, 100f)
-
-
     }
 
 
