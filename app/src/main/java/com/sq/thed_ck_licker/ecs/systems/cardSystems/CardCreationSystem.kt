@@ -12,7 +12,7 @@ import com.sq.thed_ck_licker.ecs.components.heal
 import com.sq.thed_ck_licker.ecs.get
 import com.sq.thed_ck_licker.helpers.MyRandom
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem.Companion.instance as cardsSystem
-
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem.Companion.instance as cardBuilder
 
 class CardCreationSystem private constructor(@Suppress("unused") private val componentManager: ComponentManager) {
 
@@ -23,21 +23,21 @@ class CardCreationSystem private constructor(@Suppress("unused") private val com
     }
 
     fun addBasicScoreCards(amount: Int): List<EntityId> {
-        val scoreAmount = 10
+        val score = 10
         val onActivation = { targetId: Int, _: Int ->
-            (targetId get ScoreComponent::class).score.intValue += scoreAmount
+            (targetId get ScoreComponent::class).score.intValue += score
         }
 
-        return cardsSystem.initCards(
-            cardHealth = 10f,
-            scoreAmount,
-            amount,
-            R.drawable.placeholder,
-            description = "Gives small amount of score",
-            name = "Basic score card",
-            tags = listOf(CardTag.CARD),
-            onActivation
-        )
+        return cardBuilder.buildCards {
+            cardHealth = 10f
+            scoreAmount = score
+            cardAmount = amount
+            cardImage = R.drawable.placeholder
+            description = "Gives small amount of score"
+            name = "Basic score card"
+            tags = listOf(CardTag.CARD)
+            onCardPlay = onActivation
+        }
     }
 
     fun addHealingCards(amount: Int): List<EntityId> {
@@ -45,16 +45,16 @@ class CardCreationSystem private constructor(@Suppress("unused") private val com
             (playerId get HealthComponent::class).heal(10f)
         }
 
-        return cardsSystem.initCards(
-            null,
-            null,
-            amount,
-            R.drawable.heal_10,
-            "This card heals you",
-            "Heal",
-            listOf(CardTag.CARD),
-            onActivation
-        )
+        return cardBuilder.buildCards {
+            cardHealth = null
+            scoreAmount = null
+            cardAmount = amount
+            cardImage = R.drawable.heal_10
+            description = "This card heals you"
+            name = "Heal"
+            tags = listOf(CardTag.CARD)
+            onCardPlay = onActivation
+        }
     }
 
     fun addDamageCards(amount: Int): List<EntityId> {
@@ -62,16 +62,16 @@ class CardCreationSystem private constructor(@Suppress("unused") private val com
             (targetId get HealthComponent::class).health.floatValue -= 5f
         }
 
-        return cardsSystem.initCards(
-            null,
-            null,
-            amount,
-            R.drawable.damage_6,
-            "This card deals damage to you",
-            "Damage",
-            listOf(CardTag.CARD),
-            onActivation
-        )
+        return cardBuilder.buildCards {
+            cardHealth = null
+            scoreAmount = null
+            cardAmount = amount
+            cardImage = R.drawable.damage_6
+            description = "This card deals damage to you"
+            name = "Damage"
+            tags = listOf(CardTag.CARD)
+            onCardPlay = onActivation
+        }
     }
 
     fun addMerchantCards(amount: Int, merchantId: Int): List<EntityId> {
@@ -81,21 +81,21 @@ class CardCreationSystem private constructor(@Suppress("unused") private val com
             target.activeMerchantSummonCard.intValue = cardEntity
         }
 
-        return cardsSystem.initCards(
-            null,
-            null,
-            amount,
-            R.drawable.placeholder,
-            "Activate to access shop",
-            "Merchant #$merchantId",
-            listOf(CardTag.CARD),
-            openMerchant,
-        )
+        return cardBuilder.buildCards {
+            cardHealth = null
+            scoreAmount = null
+            cardAmount = amount
+            cardImage = R.drawable.placeholder
+            description = "Activate to access shop"
+            name = "Merchant #$merchantId"
+            tags = listOf(CardTag.CARD)
+            onCardPlay = openMerchant
+        }
 
     }
 
     fun addMaxHpTrapCards(amount: Int = 5): List<EntityId> {
-        val maxHpIt = { targetId: Int, cardEntity: Int ->
+        val onActivation = { targetId: Int, cardEntity: Int ->
             val targetHp = targetId get HealthComponent::class
             if (MyRandom.getRandomInt() <= 2) {
                 (cardEntity get HealthComponent::class).health.floatValue -= 99999f
@@ -104,16 +104,17 @@ class CardCreationSystem private constructor(@Suppress("unused") private val com
                 targetHp.maxHealth.floatValue += 10f
             }
         }
-        return cardsSystem.initCards(
-            99999f,
-            null,
-            amount,
-            R.drawable.placeholder,
-            "Gain 10 max health on play, might explode",
-            "Max HP Trap Card",
-            listOf(CardTag.CARD),
-            maxHpIt,
-        )
+
+        return cardBuilder.buildCards {
+            cardHealth = 99999f
+            scoreAmount = null
+            cardAmount = amount
+            cardImage = R.drawable.placeholder
+            description = "Gain 10 max health on play, might explode"
+            name = "Max HP Trap Card"
+            tags = listOf(CardTag.CARD)
+            onCardPlay = onActivation
+        }
     }
 
 
@@ -123,16 +124,17 @@ class CardCreationSystem private constructor(@Suppress("unused") private val com
             val omaScore = cardEntity get ScoreComponent::class
             target.score.intValue += omaScore.score.intValue
         }
-        return cardsSystem.initCards(
-            10f,
-            100,
-            amount,
-            R.drawable.placeholder,
-            "",
-            "Default Card",
-            listOf(CardTag.CARD),
-            scoreIt
-        )
+
+        return cardBuilder.buildCards {
+            cardHealth = 10f
+            scoreAmount = 100
+            cardAmount = amount
+            cardImage = R.drawable.placeholder
+            description = ""
+            name = "Default Card"
+            tags = listOf(CardTag.CARD)
+            onCardPlay = scoreIt
+        }
     }
 
 
@@ -157,20 +159,21 @@ class CardCreationSystem private constructor(@Suppress("unused") private val com
             println("Holds ${riskPoints.score.intValue} points")
 
         }
-        return cardsSystem.initCards(
-            null,
-            0,
-            amount,
-            R.drawable.placeholder,
-            "On deactivate you lose health, on activation you gain score * 3",
-            "Deactivation Card ",
-            listOf(CardTag.CARD),
-            onActivation,
-            deactivateAction
-        )
+
+        return cardBuilder.buildCards {
+            cardHealth = null
+            scoreAmount = 0
+            cardAmount = amount
+            cardImage = R.drawable.placeholder
+            description = "On deactivate you lose health, on activation you gain score * 3"
+            name = "Deactivation Card "
+            tags = listOf(CardTag.CARD)
+            onCardPlay = onActivation
+            onCardDeactivate = deactivateAction
+        }
     }
 
-    fun addTrapTestCard(amount: Int = 2): List<EntityId> {
+    fun addTrapTestCards(amount: Int = 2): List<EntityId> {
 
         val onDeactivation = { targetId: Int, entityId: Int ->
             val target = targetId get ScoreComponent::class
@@ -183,52 +186,52 @@ class CardCreationSystem private constructor(@Suppress("unused") private val com
             target.health.floatValue -= (activationComponent.activations.intValue * 5)
         }
 
-        return cardsSystem.initCards(
-            null,
-            1,
-            amount,
-            R.drawable.placeholder,
-            "On deactivate you lose score, on activation you lose health",
-            "Trap card",
-            listOf(CardTag.CARD),
-            onActivation,
-            onDeactivation
-        )
+        return cardBuilder.buildCards {
+            cardHealth = null
+            scoreAmount = 1
+            cardAmount = amount
+            cardImage = R.drawable.placeholder
+            description = "On deactivate you lose score, on activation you lose health"
+            name = "Trap card"
+            tags = listOf(CardTag.CARD)
+            onCardPlay = onActivation
+            onCardDeactivate = onDeactivation
+        }
     }
 
 
-    fun addScoreGainerTestCard(amount: Int = 1): List<EntityId> {
+    fun addScoreGainerTestCards(amount: Int = 1): List<EntityId> {
         val pointsPerCard = 3
         val onActivation = { playerId: Int, _: Int ->
             cardsSystem.addPassiveScoreGainerToEntity(playerId, pointsPerCard)
         }
-        return cardsSystem.initCards(
-            1f,
-            3,
-            amount,
-            R.drawable.placeholder,
-            "Gain Score gainer on play. \nEvery time you play card you gain $pointsPerCard points\"",
-            "Score Gainer Card",
-            listOf(CardTag.CARD),
-            onActivation
-        )
+
+        return cardBuilder.buildCards {
+            cardHealth = 1f
+            scoreAmount = 3
+            cardAmount = amount
+            cardImage = R.drawable.placeholder
+            description = "Gain Score gainer on play. \nEvery time you play card you gain $pointsPerCard points\""
+            name = "Score Gainer Card"
+            tags = listOf(CardTag.CARD)
+            onCardPlay = onActivation
+        }
     }
 
-    fun addBeerGogglesTestCard(amount: Int = 1): List<EntityId> {
+    fun addBeerGogglesTestCards(amount: Int = 1): List<EntityId> {
         val onActivation = { playerId: Int, _: Int ->
             cardsSystem.addLimitedSupplyAutoHealToEntity(playerId, 150f)
         }
-        return cardsSystem.initCards(
-            1f,
-            null,
-            amount,
-            R.drawable.placeholder,
-            "Equip Beer Goggles that will heal you bit.",
-            "Beer Goggles Card",
-            listOf(CardTag.CARD),
-            onActivation
-        )
+
+        return cardBuilder.buildCards {
+            cardHealth = 1f
+            scoreAmount = null
+            cardAmount = amount
+            cardImage = R.drawable.placeholder
+            description = "Equip Beer Goggles that will heal you bit."
+            name = "Beer Goggles Card"
+            tags = listOf(CardTag.CARD)
+            onCardPlay = onActivation
+        }
     }
-
-
 }

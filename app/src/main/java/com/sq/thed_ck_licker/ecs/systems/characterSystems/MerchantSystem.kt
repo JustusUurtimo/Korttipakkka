@@ -25,8 +25,8 @@ class MerchantSystem private constructor(@Suppress("unused") private val compone
     private fun initRegularMerchantDeck(): List<Int> {
 
         val playerHealingCards = cardCreationSystem.addHealingCards(5)
-        val trapCards = cardCreationSystem.addTrapTestCard()
-        val scoreGainerCards = cardCreationSystem.addScoreGainerTestCard()
+        val trapCards = cardCreationSystem.addTrapTestCards()
+        val scoreGainerCards = cardCreationSystem.addScoreGainerTestCards()
         val maxHpCards = cardCreationSystem.addMaxHpTrapCards()
 
         return emptyList<Int>() +
