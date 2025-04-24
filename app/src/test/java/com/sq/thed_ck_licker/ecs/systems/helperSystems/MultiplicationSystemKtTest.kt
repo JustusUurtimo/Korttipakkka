@@ -12,7 +12,7 @@ class MultiplicationSystemKtTest {
     @Test
     fun `Apply Multiplier Component To Score Component`() {
         val entityId = EntityManager.createNewEntity()
-        entityId add MultiplierComponent(2f)
+        entityId add MultiplierComponent(1.75f)
         entityId add ScoreComponent(100)
 
         val componentManager = ComponentManager.componentManager
