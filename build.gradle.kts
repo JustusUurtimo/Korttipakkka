@@ -17,6 +17,7 @@ buildscript{
     dependencies {
 
         classpath("de.mannodermaus.gradle.plugins:android-junit5:1.12.0.0")
+        classpath("org.jetbrains.kotlin:kotlin-reflect:${libs.versions.kotlin}")
     }
 
 }

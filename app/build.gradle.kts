@@ -116,4 +116,7 @@ dependencies {
 //    testImplementation("junit:junit:4.13.2") == testImplementation(libs.junit)
     testImplementation(libs.junit)
     testImplementation("org.junit.vintage:junit-vintage-engine:5.7.2")
+
+    // https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-reflect
+    implementation("org.jetbrains.kotlin:kotlin-reflect:2.1.20")
 }
