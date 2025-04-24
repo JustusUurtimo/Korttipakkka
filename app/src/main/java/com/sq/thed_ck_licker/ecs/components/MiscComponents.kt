@@ -7,8 +7,8 @@ import androidx.compose.runtime.mutableIntStateOf
 import kotlin.math.min
 
 data class HealthComponent(
-    var health: MutableFloatState,
-    val maxHealth: MutableFloatState,
+    var mutableStateHealth: MutableFloatState,
+    val mutableStateMaxHealth: MutableFloatState,
     var multiplier: Float = 1f
 ) {
     /**
@@ -29,14 +29,27 @@ data class HealthComponent(
         mutableFloatStateOf(maxHealth)
     )
 
+    var health
+        get() = this.mutableStateHealth.floatValue
+        set(value) {
+            this.mutableStateHealth.floatValue = value
+        }
+    var maxHealth
+        get() = this.mutableStateMaxHealth.floatValue
+        set(value) {
+            this.mutableStateMaxHealth.floatValue = value
+        }
+
+
+
     fun timesMultiplier(f: Float) {
         this.multiplier *= f
     }
 
     fun heal(healAmount: Float) {
         val realAmount = healAmount * this.multiplier
-        val toHealed = this.health.floatValue + realAmount
-        this.health.floatValue = min(toHealed, this.maxHealth.floatValue)
+        val toHealed = this.mutableStateHealth.floatValue + realAmount
+        this.mutableStateHealth.floatValue = min(toHealed, this.mutableStateMaxHealth.floatValue)
     }
 
     fun removeMultiplier(f: Float) {
@@ -50,16 +63,16 @@ data class HealthComponent(
         other as HealthComponent
 
         if (multiplier != other.multiplier) return false
-        if (health.floatValue != other.health.floatValue) return false
-        if (maxHealth.floatValue != other.maxHealth.floatValue) return false
+        if (mutableStateHealth.floatValue != other.mutableStateHealth.floatValue) return false
+        if (mutableStateMaxHealth.floatValue != other.mutableStateMaxHealth.floatValue) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = multiplier.hashCode()
-        result = 31 * result + health.floatValue.hashCode()
-        result = 31 * result + maxHealth.floatValue.hashCode()
+        result = 31 * result + mutableStateHealth.floatValue.hashCode()
+        result = 31 * result + mutableStateMaxHealth.floatValue.hashCode()
         return result
     }
 

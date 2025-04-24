@@ -38,16 +38,16 @@ fun DescriptionComponent.addScore(scoreC: ScoreComponent) {
 }
 
 fun DescriptionComponent.addHealth(healthC: HealthComponent) {
-    if (healthC.health.floatValue > 0) {
-        description.value += "Heal for ${healthC.health.floatValue} points"
-    } else if (healthC.health.floatValue < 0) {
-        description.value += "Lose ${healthC.health.floatValue} health"
+    if (healthC.mutableStateHealth.floatValue > 0) {
+        description.value += "Heal for ${healthC.mutableStateHealth.floatValue} points"
+    } else if (healthC.mutableStateHealth.floatValue < 0) {
+        description.value += "Lose ${healthC.mutableStateHealth.floatValue} health"
     }
 
-    if (healthC.maxHealth.floatValue > 0) {
-        description.value += "Gain ${healthC.maxHealth.floatValue} max health"
-    } else if (healthC.maxHealth.floatValue < 0) {
-        description.value += "Lose ${healthC.maxHealth.floatValue} max health"
+    if (healthC.mutableStateMaxHealth.floatValue > 0) {
+        description.value += "Gain ${healthC.mutableStateMaxHealth.floatValue} max health"
+    } else if (healthC.mutableStateMaxHealth.floatValue < 0) {
+        description.value += "Lose ${healthC.mutableStateMaxHealth.floatValue} max health"
     }
 }
 

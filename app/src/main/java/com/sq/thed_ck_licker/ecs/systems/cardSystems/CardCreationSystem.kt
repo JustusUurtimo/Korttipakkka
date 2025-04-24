@@ -58,7 +58,7 @@ class CardCreationSystem private constructor(@Suppress("unused") private val com
 
     fun addDamageCards(amount: Int): List<EntityId> {
         val onActivation = { targetId: Int, _: Int ->
-            (targetId get HealthComponent::class).health.floatValue -= 5f
+            (targetId get HealthComponent::class).mutableStateHealth.floatValue -= 5f
         }
 
         return cardsSystem.initCards(
@@ -97,10 +97,10 @@ class CardCreationSystem private constructor(@Suppress("unused") private val com
         val maxHpIt = { targetId: Int, cardEntity: Int ->
             val targetHp = targetId get HealthComponent::class
             if (MyRandom.getRandomInt() <= 2) {
-                (cardEntity get HealthComponent::class).health.floatValue -= 99999f
-                targetHp.health.floatValue = (targetHp.health.floatValue.div(2))
+                (cardEntity get HealthComponent::class).mutableStateHealth.floatValue -= 99999f
+                targetHp.mutableStateHealth.floatValue = (targetHp.mutableStateHealth.floatValue.div(2))
             } else {
-                targetHp.maxHealth.floatValue += 10f
+                targetHp.mutableStateMaxHealth.floatValue += 10f
             }
         }
         return cardsSystem.initCards(
@@ -150,7 +150,7 @@ class CardCreationSystem private constructor(@Suppress("unused") private val com
             val target = playerId get HealthComponent::class
             val riskPoints = cardEntity get ScoreComponent::class
             riskPoints.score.intValue += 1
-            target.health.floatValue -= riskPoints.score.intValue.toFloat()
+            target.mutableStateHealth.floatValue -= riskPoints.score.intValue.toFloat()
             println("Now its deactivated")
             println("Risk is rising!")
             println("Holds ${riskPoints.score.intValue} points")
@@ -179,7 +179,7 @@ class CardCreationSystem private constructor(@Suppress("unused") private val com
         val onActivation = { targetId: Int, entityId: Int ->
             val target = targetId get HealthComponent::class
             val activationComponent = entityId get ActivationCounterComponent::class
-            target.health.floatValue -= (activationComponent.activations.intValue * 5)
+            target.mutableStateHealth.floatValue -= (activationComponent.activations.intValue * 5)
         }
 
         return cardsSystem.initCards(

@@ -57,12 +57,12 @@ class CardsSystem private constructor(@Suppress("unused") private val componentM
         }
 
         try {
-            (latestCardId get HealthComponent::class).health.floatValue -= 1f
+            (latestCardId get HealthComponent::class).mutableStateHealth.floatValue -= 1f
             Log.i(
                 "CardsSystem",
-                "Health is now ${(latestCardId get HealthComponent::class).health.floatValue}"
+                "Health is now ${(latestCardId get HealthComponent::class).mutableStateHealth.floatValue}"
             )
-            if ((latestCardId get HealthComponent::class).health.floatValue <= 0) {
+            if ((latestCardId get HealthComponent::class).mutableStateHealth.floatValue <= 0) {
                 latestCard.intValue = -1
             }
         } catch (_: IllegalStateException) {
@@ -111,16 +111,16 @@ class CardsSystem private constructor(@Suppress("unused") private val componentM
 
         limitedHealEntity add EffectComponent(onTurnStart = { id: Int ->
             val targetHealthComponent = id get HealthComponent::class
-            val targetMaxHp = targetHealthComponent.maxHealth.floatValue
-            val targetHp = targetHealthComponent.health.floatValue
+            val targetMaxHp = targetHealthComponent.mutableStateMaxHealth.floatValue
+            val targetHp = targetHealthComponent.mutableStateHealth.floatValue
             if (targetHp < targetMaxHp / 2) {
                 val amountToHeal = (targetMaxHp * 0.8f) - targetHp
-                val amountOfHealingProvided = min(selfHp.health.floatValue, amountToHeal)
-                selfHp.health.floatValue -= amountOfHealingProvided
-                targetHealthComponent.health.floatValue += amountOfHealingProvided
+                val amountOfHealingProvided = min(selfHp.mutableStateHealth.floatValue, amountToHeal)
+                selfHp.mutableStateHealth.floatValue -= amountOfHealingProvided
+                targetHealthComponent.mutableStateHealth.floatValue += amountOfHealingProvided
             }
             println("My name is Beer Goggles")
-            println("I am now at ${selfHp.health.floatValue} health \nand have been activated ${selfActCounter.activations.intValue} times")
+            println("I am now at ${selfHp.mutableStateHealth.floatValue} health \nand have been activated ${selfActCounter.activations.intValue} times")
         })
 
         val targetEffectStackComp = (targetEntityId get EffectStackComponent::class)
