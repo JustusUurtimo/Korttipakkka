@@ -83,6 +83,9 @@ class ComponentManager private constructor() {
             else -> null
         }
     }
+    fun replaceComponent(target: EntityId, replacementComponent: Any) {
+
+    }
 }
 
 /**

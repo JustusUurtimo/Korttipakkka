@@ -194,8 +194,15 @@ class ComponentManagerTest {
 
     @Test
     fun `Replace component of entity`() {
-
+        val entityId = EntityManager.createNewEntity()
+        entityId add ScoreComponent(100)
+//        ComponentManager.componentManager.replaceComponent(entityId, ScoreComponent(200))
+        entityId add ScoreComponent(200)
+        val componentFromEntity = entityId get ScoreComponent::class
+        assert(componentFromEntity.score == 200){"Score should be 200 but was ${componentFromEntity.score}"}
     }
 
 
 }
+
+
