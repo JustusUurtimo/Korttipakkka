@@ -20,10 +20,12 @@ class MultiplicationSystemKtTest {
 
         (entityId get ScoreComponent::class).score.intValue += 100
 
-        assert((entityId get ScoreComponent::class).score.intValue == 200)
+        var scoreComponent = (entityId get ScoreComponent::class)
+        assert((entityId get ScoreComponent::class).score.intValue == 200) {"Score should be 200, but was ${scoreComponent.score.intValue}"}
 
         multiplyEntityValues(oldEntity, entityId)
 
-//        assert((entityId get ScoreComponent::class).score.intValue == 300)
+        scoreComponent = (entityId get ScoreComponent::class)
+        assert(scoreComponent.score.intValue == 300) {"Score should be 300, but was ${scoreComponent.score.intValue}"}
     }
 }

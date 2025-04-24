@@ -6,7 +6,6 @@ import androidx.compose.runtime.snapshots.SnapshotStateMap
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
-import kotlin.math.max
 import kotlin.reflect.KClass
 
 class ComponentManager private constructor() {
@@ -125,7 +124,7 @@ infix fun EntityId.difference(entity: EntityId): EntityId {
                 secondComponent as HealthComponent
                 HealthComponent(
                     component.health.floatValue - secondComponent.health.floatValue,
-                    max(component.maxHealth.floatValue, secondComponent.maxHealth.floatValue)
+                    component.maxHealth.floatValue - secondComponent.maxHealth.floatValue
                 )
             }
 

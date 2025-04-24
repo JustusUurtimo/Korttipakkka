@@ -42,6 +42,28 @@ data class HealthComponent(
     fun removeMultiplier(f: Float) {
         this.multiplier *= 1 / f
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as HealthComponent
+
+        if (multiplier != other.multiplier) return false
+        if (health.floatValue != other.health.floatValue) return false
+        if (maxHealth.floatValue != other.maxHealth.floatValue) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = multiplier.hashCode()
+        result = 31 * result + health.floatValue.hashCode()
+        result = 31 * result + maxHealth.floatValue.hashCode()
+        return result
+    }
+
+
 }
 
 data class ScoreComponent(var score: MutableIntState) {
