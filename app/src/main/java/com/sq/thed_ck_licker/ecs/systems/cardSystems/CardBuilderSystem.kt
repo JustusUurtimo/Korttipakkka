@@ -1,5 +1,6 @@
 package com.sq.thed_ck_licker.ecs.systems.cardSystems
 
+import com.sq.thed_ck_licker.R
 import com.sq.thed_ck_licker.ecs.ComponentManager
 import com.sq.thed_ck_licker.ecs.add
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
@@ -22,10 +23,10 @@ class CardBuilderSystem private constructor(@Suppress("unused") private val comp
     var cardHealth: Float? = null
     var scoreAmount: Int? = null
     var cardAmount: Int = 1
-    var cardImage: Int = 0
+    var cardImage: Int = R.drawable.placeholder
     var description: String = ""
     var name: String = ""
-    var tags: List<CardTag> = emptyList()
+    var tags: List<CardTag> = listOf(CardTag.CARD)
     var onCardPlay: (Int, Int) -> Unit = { _, _ -> }
     var onCardDeactivate: (Int, Int) -> Unit = { _, _ -> }
 

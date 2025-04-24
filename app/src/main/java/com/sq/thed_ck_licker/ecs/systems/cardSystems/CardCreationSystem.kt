@@ -4,15 +4,14 @@ import com.sq.thed_ck_licker.R
 import com.sq.thed_ck_licker.ecs.ComponentManager
 import com.sq.thed_ck_licker.ecs.EntityId
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
-import com.sq.thed_ck_licker.ecs.components.CardTag
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.MerchantComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 import com.sq.thed_ck_licker.ecs.components.heal
 import com.sq.thed_ck_licker.ecs.get
 import com.sq.thed_ck_licker.helpers.MyRandom
-import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem.Companion.instance as cardsSystem
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem.Companion.instance as cardBuilder
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem.Companion.instance as cardsSystem
 
 class CardCreationSystem private constructor(@Suppress("unused") private val componentManager: ComponentManager) {
 
@@ -32,10 +31,8 @@ class CardCreationSystem private constructor(@Suppress("unused") private val com
             cardHealth = 10f
             scoreAmount = score
             cardAmount = amount
-            cardImage = R.drawable.placeholder
             description = "Gives small amount of score"
             name = "Basic score card"
-            tags = listOf(CardTag.CARD)
             onCardPlay = onActivation
         }
     }
@@ -46,13 +43,10 @@ class CardCreationSystem private constructor(@Suppress("unused") private val com
         }
 
         return cardBuilder.buildCards {
-            cardHealth = null
-            scoreAmount = null
             cardAmount = amount
             cardImage = R.drawable.heal_10
             description = "This card heals you"
             name = "Heal"
-            tags = listOf(CardTag.CARD)
             onCardPlay = onActivation
         }
     }
@@ -63,13 +57,10 @@ class CardCreationSystem private constructor(@Suppress("unused") private val com
         }
 
         return cardBuilder.buildCards {
-            cardHealth = null
-            scoreAmount = null
             cardAmount = amount
             cardImage = R.drawable.damage_6
             description = "This card deals damage to you"
             name = "Damage"
-            tags = listOf(CardTag.CARD)
             onCardPlay = onActivation
         }
     }
@@ -82,13 +73,9 @@ class CardCreationSystem private constructor(@Suppress("unused") private val com
         }
 
         return cardBuilder.buildCards {
-            cardHealth = null
-            scoreAmount = null
             cardAmount = amount
-            cardImage = R.drawable.placeholder
             description = "Activate to access shop"
             name = "Merchant #$merchantId"
-            tags = listOf(CardTag.CARD)
             onCardPlay = openMerchant
         }
 
@@ -107,12 +94,9 @@ class CardCreationSystem private constructor(@Suppress("unused") private val com
 
         return cardBuilder.buildCards {
             cardHealth = 99999f
-            scoreAmount = null
             cardAmount = amount
-            cardImage = R.drawable.placeholder
             description = "Gain 10 max health on play, might explode"
             name = "Max HP Trap Card"
-            tags = listOf(CardTag.CARD)
             onCardPlay = onActivation
         }
     }
@@ -129,10 +113,7 @@ class CardCreationSystem private constructor(@Suppress("unused") private val com
             cardHealth = 10f
             scoreAmount = 100
             cardAmount = amount
-            cardImage = R.drawable.placeholder
-            description = ""
             name = "Default Card"
-            tags = listOf(CardTag.CARD)
             onCardPlay = scoreIt
         }
     }
@@ -161,19 +142,16 @@ class CardCreationSystem private constructor(@Suppress("unused") private val com
         }
 
         return cardBuilder.buildCards {
-            cardHealth = null
             scoreAmount = 0
             cardAmount = amount
-            cardImage = R.drawable.placeholder
             description = "On deactivate you lose health, on activation you gain score * 3"
             name = "Deactivation Card "
-            tags = listOf(CardTag.CARD)
             onCardPlay = onActivation
             onCardDeactivate = deactivateAction
         }
     }
 
-    fun addTrapTestCards(amount: Int = 2): List<EntityId> {
+    fun addTrapTestCards(amount: Int = 1): List<EntityId> {
 
         val onDeactivation = { targetId: Int, entityId: Int ->
             val target = targetId get ScoreComponent::class
@@ -187,13 +165,10 @@ class CardCreationSystem private constructor(@Suppress("unused") private val com
         }
 
         return cardBuilder.buildCards {
-            cardHealth = null
             scoreAmount = 1
             cardAmount = amount
-            cardImage = R.drawable.placeholder
             description = "On deactivate you lose score, on activation you lose health"
             name = "Trap card"
-            tags = listOf(CardTag.CARD)
             onCardPlay = onActivation
             onCardDeactivate = onDeactivation
         }
@@ -210,10 +185,8 @@ class CardCreationSystem private constructor(@Suppress("unused") private val com
             cardHealth = 1f
             scoreAmount = 3
             cardAmount = amount
-            cardImage = R.drawable.placeholder
             description = "Gain Score gainer on play. \nEvery time you play card you gain $pointsPerCard points\""
             name = "Score Gainer Card"
-            tags = listOf(CardTag.CARD)
             onCardPlay = onActivation
         }
     }
@@ -225,12 +198,9 @@ class CardCreationSystem private constructor(@Suppress("unused") private val com
 
         return cardBuilder.buildCards {
             cardHealth = 1f
-            scoreAmount = null
             cardAmount = amount
-            cardImage = R.drawable.placeholder
             description = "Equip Beer Goggles that will heal you bit."
             name = "Beer Goggles Card"
-            tags = listOf(CardTag.CARD)
             onCardPlay = onActivation
         }
     }
