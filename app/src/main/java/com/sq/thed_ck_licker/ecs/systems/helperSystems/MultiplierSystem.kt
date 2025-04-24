@@ -21,6 +21,7 @@ fun multiplyEntityValues(oldEntityId: EntityId, targetEntityId: EntityId) {
         val declaredThings = component::class.declaredMembers
         println("Declared Things: $declaredThings")
         for (declaredThing in declaredThings) {
+            println("Declared Thing: $declaredThing")
         }
     }
 
