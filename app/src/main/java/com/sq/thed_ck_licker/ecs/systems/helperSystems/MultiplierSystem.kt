@@ -80,6 +80,7 @@ fun multiplyEntityValues(oldEntityId: EntityId, targetEntityId: EntityId) {
                 println("Failed to modify ${member.name}: ${e.message}")
             }
         }
+
 //        val targetComponent = (targetEntityId get component::class)
 //        targetComponent = component
     }

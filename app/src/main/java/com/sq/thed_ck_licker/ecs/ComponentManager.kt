@@ -7,6 +7,12 @@ import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 import kotlin.reflect.KClass
+import kotlin.reflect.KMutableProperty
+import kotlin.reflect.KVisibility
+import kotlin.reflect.full.createInstance
+import kotlin.reflect.full.declaredMembers
+import kotlin.reflect.full.isSubclassOf
+import kotlin.reflect.full.memberProperties
 
 class ComponentManager private constructor() {
 
@@ -156,3 +162,59 @@ infix fun EntityId.difference(entity: EntityId): EntityId {
     }
     return result
 }
+
+inline fun <reified T : Any> T.combineWith(other: T): T {
+    val newInstance = this::class.createInstance()
+
+    this::class.memberProperties.forEach { prop ->
+        if (prop is KMutableProperty<*> && prop.visibility == KVisibility.PUBLIC) {
+            val thisValue = prop.getter.call(this)
+            val otherValue = prop.getter.call(other)
+
+            when {
+                thisValue is Number && otherValue is Number -> {
+                    val sum = thisValue.toDouble() + otherValue.toDouble()
+                    when (prop.returnType.classifier) {
+                        Int::class -> prop.setter.call(newInstance, sum.toInt())
+                        Float::class -> prop.setter.call(newInstance, sum.toFloat())
+                        Double::class -> prop.setter.call(newInstance, sum)
+                        // Add other number types as needed
+                    }
+                }
+                else -> prop.setter.call(newInstance, thisValue) // Keep original for non-numbers
+            }
+        }
+    }
+
+    return newInstance
+}
+
+//inline fun <reified T> T.timesAssign(component: T): T{
+//
+//    val declaredMembers = T::class.declaredMembers
+//    for (member in declaredMembers) {
+//        // Skip if not a property or not mutable
+//        if (member !is KMutableProperty<*>) continue
+//
+//        // Check if the property type is a subclass of Number
+//        val propertyType = member.returnType.classifier as? KClass<*>
+//        if (propertyType?.isSubclassOf(Number::class) != true) continue
+//
+//        try {
+//            // Get the current value
+//            val currentValue = member.getter.call(component) as Number
+//            println("Current Value: $currentValue (${currentValue::class.simpleName})")
+//
+//            val newValue = currentValue.toFloat() * multiplier
+//            println("New Value: $newValue")
+//            when (propertyType) {
+//                Int::class -> member.setter.call(component, newValue.toInt())
+//                Float::class -> member.setter.call(component, newValue.toFloat())
+//                else -> member.setter.call(component, newValue.toFloat())
+//            }
+//
+//        } catch (e: Exception) {
+//            println("Failed to modify ${member.name}: ${e.message}")
+//        }
+//    }
+//}

@@ -201,7 +201,18 @@ class ComponentManagerTest {
         assert(componentFromEntity.score == 200){"Score should be 200 but was ${componentFromEntity.score}"}
     }
 
+    @Test
+    fun `Add two components together`() { //Ed...ward...Eed...ward....
+        val scoreComponent = ScoreComponent(100)
+        val scoreComponent2 = ScoreComponent(200)
+        val combinedComponent = scoreComponent.combineWith(scoreComponent2)
+        assert(combinedComponent.score == 300){"Score should be 300 but was ${combinedComponent.score}"}
+
+    }
+
 
 }
+
+
 
 
