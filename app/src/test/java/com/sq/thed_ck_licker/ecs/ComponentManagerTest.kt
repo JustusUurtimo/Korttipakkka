@@ -192,4 +192,10 @@ class ComponentManagerTest {
 
 
 
+    @Test
+    fun `Replace component of entity`() {
+
+    }
+
+
 }

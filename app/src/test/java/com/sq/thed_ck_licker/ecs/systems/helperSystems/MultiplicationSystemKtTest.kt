@@ -12,20 +12,24 @@ class MultiplicationSystemKtTest {
     @Test
     fun `Apply Multiplier Component To Score Component`() {
         val entityId = EntityManager.createNewEntity()
-        entityId add MultiplierComponent(1.75f)
-        entityId add ScoreComponent(100)
+        val multiplier = 1.75f
+        entityId add MultiplierComponent(multiplier)
+        val scoreA = 100
+        entityId add ScoreComponent(scoreA)
 
         val componentManager = ComponentManager.componentManager
         val oldEntity = componentManager.copy(entityId)
 
-        (entityId get ScoreComponent::class).score += 100
+        (entityId get ScoreComponent::class).score += scoreA
 
         var scoreComponent = (entityId get ScoreComponent::class)
-        assert((entityId get ScoreComponent::class).score == 200) {"Score should be 200, but was ${scoreComponent.score}"}
+        val scoreSum = scoreA + scoreA
+        assert(scoreComponent.score == scoreSum) { "Score should be $scoreSum, but was ${scoreComponent.score}" }
 
         multiplyEntityValues(oldEntity, entityId)
-
+        
         scoreComponent = (entityId get ScoreComponent::class)
-//        assert(scoreComponent.score == 300) {"Score should be 300, but was ${scoreComponent.score}"}
+        val correctScore = scoreA + (scoreA.toFloat() * multiplier).toInt()
+//        assert((entityId get ScoreComponent::class).score == correctScore) { "Score should be $correctScore, but was ${scoreComponent.score}" }
     }
 }

@@ -51,6 +51,8 @@ fun multiplyEntityValues(oldEntityId: EntityId, targetEntityId: EntityId) {
 
     val multiplier = (targetEntityId get MultiplierComponent::class).multiplier - 1
 
+
+    //Beyond here lays mad max style wasteland with out any sensibilities left
     for (component in diffComponents) {
         val declaredMembers = component::class.declaredMembers
         for (member in declaredMembers) {
@@ -66,20 +68,19 @@ fun multiplyEntityValues(oldEntityId: EntityId, targetEntityId: EntityId) {
                 val currentValue = member.getter.call(component) as Number
                 println("Current Value: $currentValue (${currentValue::class.simpleName})")
 
-                // Calculate new value
                 val newValue = currentValue.toFloat() * multiplier
-
                 println("New Value: $newValue")
-
-                // Set the new value (handling different numeric types)
                 when (propertyType) {
                     Int::class -> member.setter.call(component, newValue.toInt())
                     Float::class -> member.setter.call(component, newValue.toFloat())
                     else -> member.setter.call(component, newValue.toFloat())
                 }
+
             } catch (e: Exception) {
                 println("Failed to modify ${member.name}: ${e.message}")
             }
         }
+//        val targetComponent = (targetEntityId get component::class)
+//        targetComponent = component
     }
 }
