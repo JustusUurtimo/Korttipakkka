@@ -146,5 +146,50 @@ class ComponentManagerTest {
         assert(didCatchException) { "Should have thrown an exception for MultiplierComponent" }
     }
 
+    @Test
+    fun `Entity should not have score component with 0 values as difference2`() {
+        testComponentDifferenceGeneric<ScoreComponent>(
+            ScoreComponent(120),
+            "Difference entity should not have a ScoreComponent"
+        )
+    }
+
+    @Test
+    fun `Entity should not have health component with 0 values as difference2`() {
+        testComponentDifferenceGeneric<HealthComponent>(
+            HealthComponent(120f),
+            "Difference entity should not have a HealthComponent"
+        )
+    }
+
+    @Test
+    fun `Entity should not have multiplier component with 0 values as difference2`() {
+        testComponentDifferenceGeneric<MultiplierComponent>(
+            MultiplierComponent(12f),
+            "Difference entity should not have a MultiplierComponent"
+        )
+    }
+
+    inline fun <reified T : Any> testComponentDifferenceGeneric(
+        component: T,
+        assertionMessage: String
+    ) {
+        val entityId = EntityManager.createNewEntity()
+        entityId add component
+
+        val entity2Id = EntityManager.createNewEntity()
+        entity2Id add component
+
+        val resultEntity = entityId difference entity2Id
+        var didCatchException = false
+        try {
+            resultEntity.get(T::class)
+        } catch (_: IllegalStateException) {
+            didCatchException = true
+        }
+        assert(didCatchException) { assertionMessage }
+    }
+
+
 
 }

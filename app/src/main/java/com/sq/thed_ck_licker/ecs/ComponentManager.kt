@@ -122,6 +122,8 @@ infix fun EntityId.difference(entity: EntityId): EntityId {
         result add when (component) {
             is HealthComponent -> {
                 secondComponent as HealthComponent
+                if (component.health - secondComponent.health == 0f) continue
+                if (component.maxHealth - secondComponent.maxHealth == 0f) continue
                 HealthComponent(
                     component.health - secondComponent.health,
                     component.maxHealth - secondComponent.maxHealth
@@ -130,11 +132,14 @@ infix fun EntityId.difference(entity: EntityId): EntityId {
 
             is ScoreComponent -> {
                 secondComponent as ScoreComponent
+                if (component.score - secondComponent.score == 0) continue
                 ScoreComponent(component.score - secondComponent.score)
             }
 
             is MultiplierComponent -> {
+
                 secondComponent as MultiplierComponent
+                if (component.multiplier - secondComponent.multiplier == 0f) continue
                 MultiplierComponent(component.multiplier - secondComponent.multiplier)
             }
 
