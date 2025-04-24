@@ -18,14 +18,14 @@ class MultiplicationSystemKtTest {
         val componentManager = ComponentManager.componentManager
         val oldEntity = componentManager.copy(entityId)
 
-        (entityId get ScoreComponent::class).score.intValue += 100
+        (entityId get ScoreComponent::class).score += 100
 
         var scoreComponent = (entityId get ScoreComponent::class)
-        assert((entityId get ScoreComponent::class).score.intValue == 200) {"Score should be 200, but was ${scoreComponent.score.intValue}"}
+        assert((entityId get ScoreComponent::class).score == 200) {"Score should be 200, but was ${scoreComponent.score}"}
 
         multiplyEntityValues(oldEntity, entityId)
 
         scoreComponent = (entityId get ScoreComponent::class)
-        assert(scoreComponent.score.intValue == 300) {"Score should be 300, but was ${scoreComponent.score.intValue}"}
+        assert(scoreComponent.score == 300) {"Score should be 300, but was ${scoreComponent.score}"}
     }
 }

@@ -13,7 +13,7 @@ class ComponentManagerTest {
         val component = ScoreComponent(100)
         entityId add component
         val componentFromEntity = entityId get ScoreComponent::class
-        assert(componentFromEntity.score.intValue == 100){"Score should be 100 but was ${componentFromEntity.score.intValue}"}
+        assert(componentFromEntity.score == 100){"Score should be 100 but was ${componentFromEntity.score}"}
     }
 
     @Test
@@ -26,11 +26,11 @@ class ComponentManagerTest {
         val copiedEntity = componentManager.copy(entityId)
 
         val originalComponent = entityId get ScoreComponent::class
-        originalComponent.score.intValue = 201
+        originalComponent.score = 201
 
         val copiedComponent = copiedEntity get ScoreComponent::class
 
-        assert(copiedComponent.score.intValue == 100) {"Score for the copied entity should be 100 but was ${copiedComponent.score.intValue}"}
+        assert(copiedComponent.score == 100) {"Score for the copied entity should be 100 but was ${copiedComponent.score}"}
         assert(originalComponent != copiedComponent) {"Original and copied components should not be the same after the change."}
     }
 
@@ -84,11 +84,11 @@ class ComponentManagerTest {
 
         val resultEntity = entityId difference entity2Id
         val resultScore = resultEntity get ScoreComponent::class
-        assert(resultScore.score.intValue == 75) { "Score should be 75 but was ${resultScore.score.intValue}" }
+        assert(resultScore.score == 75) { "Score should be 75 but was ${resultScore.score}" }
 
         val resultEntity2 = entity2Id difference entityId
         val scoreDifference = resultEntity2 get ScoreComponent::class
-        assert(scoreDifference.score.intValue == -75) { "Score should be -75 but was ${scoreDifference.score.intValue}" }
+        assert(scoreDifference.score == -75) { "Score should be -75 but was ${scoreDifference.score}" }
     }
 
 
@@ -127,7 +127,7 @@ class ComponentManagerTest {
         val resultEntity = entityId difference entity2Id
 
         val resultScoreComp = resultEntity get ScoreComponent::class
-        assert(resultScoreComp.score.intValue == scoreA - scoreB) { "Score should be ${scoreA - scoreB} but was ${resultScoreComp.score.intValue}" }
+        assert(resultScoreComp.score == scoreA - scoreB) { "Score should be ${scoreA - scoreB} but was ${resultScoreComp.score}" }
 
         var didCatchException = false
         try {

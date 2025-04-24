@@ -93,7 +93,7 @@ class CardsSystem private constructor(@Suppress("unused") private val componentM
         val activateAction = { id: Int ->
             val targetScoreComp = id get ScoreComponent::class
             gainerActCounterComp.activate()
-            targetScoreComp.score.intValue += pointsPerCard
+            targetScoreComp.score += pointsPerCard
         }
         gainerEntity add gainerActCounterComp
         gainerEntity add EffectComponent(onTurnStart = activateAction)

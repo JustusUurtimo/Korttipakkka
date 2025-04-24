@@ -34,7 +34,7 @@ data class DescriptionComponent(var description: MutableState<String>) {
 }
 
 fun DescriptionComponent.addScore(scoreC: ScoreComponent) {
-    description.value += "Get ${scoreC.score.intValue} points"
+    description.value += "Get ${scoreC.score} points"
 }
 
 fun DescriptionComponent.addHealth(healthC: HealthComponent) {

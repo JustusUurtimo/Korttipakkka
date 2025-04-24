@@ -65,7 +65,7 @@ class PlayerSystem private constructor(@Suppress("unused") private val component
     }
 
     fun getPlayerScoreM(): MutableIntState {
-        return (getPlayerID() get ScoreComponent::class).score
+        return (getPlayerID() get ScoreComponent::class).mutableStateScore
     }
 
     fun getPlayerMaxHealthM(): MutableFloatState {

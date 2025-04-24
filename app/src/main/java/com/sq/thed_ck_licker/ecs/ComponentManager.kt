@@ -78,7 +78,7 @@ class ComponentManager private constructor() {
                 component.maxHealth
             )
 
-            is ScoreComponent -> ScoreComponent(component.score.intValue)
+            is ScoreComponent -> ScoreComponent(component.score)
             is MultiplierComponent -> MultiplierComponent(component.multiplier)
             else -> null
         }
@@ -130,7 +130,7 @@ infix fun EntityId.difference(entity: EntityId): EntityId {
 
             is ScoreComponent -> {
                 secondComponent as ScoreComponent
-                ScoreComponent(component.score.intValue - secondComponent.score.intValue)
+                ScoreComponent(component.score - secondComponent.score)
             }
 
             is MultiplierComponent -> {
