@@ -67,15 +67,7 @@ fun multiplyEntityValues(oldEntityId: EntityId, targetEntityId: EntityId) {
                 println("Current Value: $currentValue (${currentValue::class.simpleName})")
 
                 // Calculate new value
-                val newValue = when (currentValue) {
-                    is Int -> currentValue * multiplier.toInt()
-                    is Float -> currentValue * multiplier.toFloat()
-                    is Double -> currentValue * multiplier.toDouble()
-                    is Long -> currentValue * multiplier.toLong()
-                    is Short -> (currentValue * multiplier.toInt()).toShort()
-                    is Byte -> (currentValue * multiplier.toInt()).toByte()
-                    else -> currentValue.toFloat() * multiplier.toFloat()
-                }
+                val newValue = currentValue.toFloat() * multiplier
 
                 println("New Value: $newValue")
 
@@ -83,10 +75,6 @@ fun multiplyEntityValues(oldEntityId: EntityId, targetEntityId: EntityId) {
                 when (propertyType) {
                     Int::class -> member.setter.call(component, newValue.toInt())
                     Float::class -> member.setter.call(component, newValue.toFloat())
-                    Double::class -> member.setter.call(component, newValue.toDouble())
-                    Long::class -> member.setter.call(component, newValue.toLong())
-                    Short::class -> member.setter.call(component, newValue.toShort())
-                    Byte::class -> member.setter.call(component, newValue.toByte())
                     else -> member.setter.call(component, newValue.toFloat())
                 }
             } catch (e: Exception) {
