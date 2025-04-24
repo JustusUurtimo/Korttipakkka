@@ -22,6 +22,8 @@ fun multiplyEntityValues(oldEntityId: EntityId, targetEntityId: EntityId) {
         println("Declared Things: $declaredThings")
         for (declaredThing in declaredThings) {
             println("Declared Thing: $declaredThing")
+            println("Declared Thing Name: ${declaredThing.name}")
+            println("Declared Thing Type: ${declaredThing.returnType}")
         }
     }
 
