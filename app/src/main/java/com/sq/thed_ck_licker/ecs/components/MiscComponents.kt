@@ -48,8 +48,8 @@ data class HealthComponent(
 
     fun heal(healAmount: Float) {
         val realAmount = healAmount * this.multiplier
-        val toHealed = this.mutableStateHealth.floatValue + realAmount
-        this.mutableStateHealth.floatValue = min(toHealed, this.mutableStateMaxHealth.floatValue)
+        val toHealed = this.health + realAmount
+        this.health = min(toHealed, this.maxHealth)
     }
 
     fun removeMultiplier(f: Float) {
@@ -63,16 +63,16 @@ data class HealthComponent(
         other as HealthComponent
 
         if (multiplier != other.multiplier) return false
-        if (mutableStateHealth.floatValue != other.mutableStateHealth.floatValue) return false
-        if (mutableStateMaxHealth.floatValue != other.mutableStateMaxHealth.floatValue) return false
+        if (health != other.health) return false
+        if (maxHealth != other.maxHealth) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = multiplier.hashCode()
-        result = 31 * result + mutableStateHealth.floatValue.hashCode()
-        result = 31 * result + mutableStateMaxHealth.floatValue.hashCode()
+        result = 31 * result + health.hashCode()
+        result = 31 * result + maxHealth.hashCode()
         return result
     }
 

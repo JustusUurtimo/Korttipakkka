@@ -74,8 +74,8 @@ class ComponentManager private constructor() {
     fun deepCopyComponent(component: Any): Any? {
         return when (component) {
             is HealthComponent -> HealthComponent(
-                component.mutableStateHealth.floatValue,
-                component.mutableStateMaxHealth.floatValue
+                component.health,
+                component.maxHealth
             )
 
             is ScoreComponent -> ScoreComponent(component.score.intValue)
@@ -123,8 +123,8 @@ infix fun EntityId.difference(entity: EntityId): EntityId {
             is HealthComponent -> {
                 secondComponent as HealthComponent
                 HealthComponent(
-                    component.mutableStateHealth.floatValue - secondComponent.mutableStateHealth.floatValue,
-                    component.mutableStateMaxHealth.floatValue - secondComponent.mutableStateMaxHealth.floatValue
+                    component.health - secondComponent.health,
+                    component.maxHealth - secondComponent.maxHealth
                 )
             }
 

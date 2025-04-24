@@ -10,14 +10,14 @@ class HealthComponentTest {
     fun `Heal health component over max health`() {
         val hpComp = HealthComponent(100f)
          hpComp.heal(100f)
-        assertEquals(hpComp.mutableStateHealth.floatValue, 100f)
+        assertEquals(hpComp.health, 100f)
     }
 
     @Test
     fun `Use multiplier with heal`() {
         val hpComp = HealthComponent(100f, 1000f, 1.5f)
         hpComp.heal(100f)
-        assertEquals(hpComp.mutableStateHealth.floatValue, 250f)
+        assertEquals(hpComp.health, 250f)
     }
 
 

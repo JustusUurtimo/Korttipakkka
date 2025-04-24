@@ -65,13 +65,13 @@ class ComponentManagerTest {
 
         val resultEntity = entityId difference entity2Id
         val healthDifference = resultEntity get HealthComponent::class
-        assert(healthDifference.mutableStateHealth.floatValue == healthA - healthB) { "Health should be ${healthA - healthB} but was ${healthDifference.mutableStateHealth.floatValue}" }
-        assert(healthDifference.mutableStateMaxHealth.floatValue == healthA - healthB) { "Max Health should be ${healthA - healthB} but was ${healthDifference.mutableStateMaxHealth.floatValue}" }
+        assert(healthDifference.health == healthA - healthB) { "Health should be ${healthA - healthB} but was ${healthDifference.health}" }
+        assert(healthDifference.maxHealth == healthA - healthB) { "Max Health should be ${healthA - healthB} but was ${healthDifference.maxHealth}" }
 
         val resultEntity2 = entity2Id difference entityId
         val healthDifference2 = resultEntity2 get HealthComponent::class
-        assert(healthDifference2.mutableStateHealth.floatValue == healthB - healthA) { "Health should be ${healthB - healthA} but was ${healthDifference2.mutableStateHealth.floatValue}" }
-        assert(healthDifference2.mutableStateMaxHealth.floatValue == healthB - healthA) { "Max Health should be ${healthB - healthA} but was ${healthDifference.mutableStateMaxHealth.floatValue}" }
+        assert(healthDifference2.health == healthB - healthA) { "Health should be ${healthB - healthA} but was ${healthDifference2.health}" }
+        assert(healthDifference2.maxHealth == healthB - healthA) { "Max Health should be ${healthB - healthA} but was ${healthDifference.maxHealth}" }
     }
 
     @Test
