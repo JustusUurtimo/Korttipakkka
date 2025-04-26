@@ -4,11 +4,11 @@ import android.util.Log
 import com.sq.thed_ck_licker.ecs.ComponentManager
 import com.sq.thed_ck_licker.ecs.EntityId
 import com.sq.thed_ck_licker.ecs.add
-import com.sq.thed_ck_licker.ecs.combineHealthComponents
-import com.sq.thed_ck_licker.ecs.combineScoreComponents
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
+import com.sq.thed_ck_licker.ecs.components.combineHealthComponents
+import com.sq.thed_ck_licker.ecs.components.combineScoreComponents
 import com.sq.thed_ck_licker.ecs.difference
 import com.sq.thed_ck_licker.ecs.get
 import kotlin.reflect.KClass

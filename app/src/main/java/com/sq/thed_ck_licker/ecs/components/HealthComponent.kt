@@ -76,3 +76,11 @@ data class HealthComponent(
         return result
     }
 }
+
+fun HealthComponent.combineHealthComponents(other: HealthComponent): HealthComponent {
+    return HealthComponent(
+        this.health + other.health,
+        this.maxHealth + other.maxHealth,
+        this.multiplier + other.multiplier - 1
+    )
+}

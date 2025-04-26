@@ -7,8 +7,15 @@ data class ScoreComponent(var mutableStateScore: MutableIntState) {
     constructor(score: Int = 0) : this(mutableIntStateOf(score))
 
     var score
-        get() = mutableStateScore.intValue
+        get() = this.mutableStateScore.intValue
         set(value) {
-            mutableStateScore.intValue = value
+            println("Setting score to $value")
+           this.mutableStateScore.intValue = value
         }
+}
+
+fun ScoreComponent.combineScoreComponents(other: ScoreComponent): ScoreComponent {
+//    this.score += other.score
+//    return this
+    return ScoreComponent(this.score + other.score)
 }

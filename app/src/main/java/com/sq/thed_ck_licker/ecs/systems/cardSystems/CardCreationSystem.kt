@@ -203,4 +203,19 @@ class CardCreationSystem private constructor(@Suppress("unused") private val com
             onCardPlay = onActivation
         }
     }
+
+
+    fun addMoreDrugTestCards(amount: Int = 1): List<EntityId> {
+        val onActivation = { playerId: Int, _: Int ->
+            cardsSystem.addTemporaryMultiplierTo(playerId)
+        }
+
+        return cardBuilder.buildCards {
+            cardHealth = 1f
+            cardAmount = amount
+            description = "Take some drugs that make you whoosh"
+            name = "Take Drugs?"
+            onCardPlay = onActivation
+        }
+    }
 }

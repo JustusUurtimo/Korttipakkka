@@ -11,6 +11,7 @@ import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.MerchantComponent
+import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 import com.sq.thed_ck_licker.ecs.get
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem.Companion.instance as cardCreationSystem
@@ -30,6 +31,7 @@ class PlayerSystem private constructor(@Suppress("unused") private val component
         getPlayerID() add DrawDeckComponent(initPlayerDeck() as MutableList<Int>)
         getPlayerID() add EffectStackComponent()
         getPlayerID() add DiscardDeckComponent()
+        getPlayerID() add MultiplierComponent()
     }
 
     private fun initPlayerDeck(): List<Int> {
@@ -43,19 +45,21 @@ class PlayerSystem private constructor(@Suppress("unused") private val component
         val beerGogglesCards = cardCreationSystem.addBeerGogglesTestCards()
         val maxHpCards = cardCreationSystem.addMaxHpTrapCards()
         val merchantCards = cardCreationSystem.addMerchantCards(5, getRegularMerchantID())
-        val basicScoreCards = cardCreationSystem.addBasicScoreCards(2)
+        val basicScoreCards = cardCreationSystem.addBasicScoreCards(10)
+        val druggieCards = cardCreationSystem.addMoreDrugTestCards()
 
         return emptyList<Int>() +
-                playerHealingCards +
+//                playerHealingCards +
                 playerDamageCards +
                 defaultCards +
-                deactivationCards +
-                trapCards +
+//                deactivationCards +
+//                trapCards +
                 scoreGainerCards +
-                beerGogglesCards +
-                maxHpCards +
-                merchantCards +
-                basicScoreCards +
+//                beerGogglesCards +
+//                maxHpCards +
+//                merchantCards +
+//                basicScoreCards +
+                druggieCards +
                 emptyList<Int>()
     }
 

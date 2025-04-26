@@ -156,15 +156,3 @@ infix fun EntityId.difference(entity: EntityId): EntityId {
     }
     return result
 }
-
-fun ScoreComponent.combineScoreComponents(other: ScoreComponent): ScoreComponent {
-    return ScoreComponent(this.score + other.score)
-}
-
-fun HealthComponent.combineHealthComponents(other: HealthComponent): HealthComponent {
-    return HealthComponent(
-        this.health + other.health,
-        this.maxHealth + other.maxHealth,
-        this.multiplier + other.multiplier - 1
-    )
-}
