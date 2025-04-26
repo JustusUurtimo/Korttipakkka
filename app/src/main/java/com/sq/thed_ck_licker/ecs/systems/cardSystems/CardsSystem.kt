@@ -6,16 +6,11 @@ import com.sq.thed_ck_licker.ecs.ComponentManager
 import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.add
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
-import com.sq.thed_ck_licker.ecs.components.CardTag
-import com.sq.thed_ck_licker.ecs.components.DescriptionComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
-import com.sq.thed_ck_licker.ecs.components.ImageComponent
-import com.sq.thed_ck_licker.ecs.components.NameComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
-import com.sq.thed_ck_licker.ecs.components.TagsComponent
 import com.sq.thed_ck_licker.ecs.components.activate
 import com.sq.thed_ck_licker.ecs.components.addEntity
 import com.sq.thed_ck_licker.ecs.generateEntity
@@ -125,44 +120,6 @@ class CardsSystem private constructor(@Suppress("unused") private val componentM
 
         val targetEffectStackComp = (targetEntityId get EffectStackComponent::class)
         targetEffectStackComp addEntity (limitedHealEntity)
-    }
-
-    /**
-     *  @param cardHealth Health of card
-     *  @param scoreAmount Score of card
-     *  @param amount Amount of cards to create
-     *  @param cardImage Image of card
-     *  @param description Description of card
-     *  @param name Name of card
-     *  @param tags Tags of card
-     *  @param onCardPlay Action to perform when card is played
-     *  @param onCardDeactivate Action to perform when card is deactivated
-     */
-    fun initCards(
-        cardHealth: Float?,
-        scoreAmount: Int?,
-        amount: Int,
-        cardImage: Int,
-        description: String,
-        name: String,
-        tags: List<CardTag>,
-        onCardPlay: (Int, Int) -> Unit = { _, _ -> },
-        onCardDeactivate: (Int, Int) -> Unit = { _, _ -> }
-    ): List<Int> {
-        val cardIds: MutableList<Int> = mutableListOf()
-        repeat(amount) {
-            val cardEntity = generateEntity()
-            cardHealth?.let { health -> cardEntity add HealthComponent(health) }
-            scoreAmount?.let { score -> cardEntity add ScoreComponent(score) }
-            cardEntity add ActivationCounterComponent()
-            cardEntity add ImageComponent(cardImage)
-            cardEntity add EffectComponent(onDeactivate = onCardDeactivate, onPlay = onCardPlay)
-            cardEntity add DescriptionComponent(description)
-            cardEntity add NameComponent(name)
-            cardEntity add TagsComponent(tags)
-            cardIds.add(cardEntity)
-        }
-        return cardIds
     }
 
 }
