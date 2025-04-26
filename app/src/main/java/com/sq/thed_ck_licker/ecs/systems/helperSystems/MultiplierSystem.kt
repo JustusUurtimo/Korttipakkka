@@ -2,6 +2,8 @@ package com.sq.thed_ck_licker.ecs.systems.helperSystems
 
 import com.sq.thed_ck_licker.ecs.ComponentManager
 import com.sq.thed_ck_licker.ecs.EntityId
+import com.sq.thed_ck_licker.ecs.add
+import com.sq.thed_ck_licker.ecs.combineWith
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
 import com.sq.thed_ck_licker.ecs.difference
 import com.sq.thed_ck_licker.ecs.get
@@ -81,7 +83,9 @@ fun multiplyEntityValues(oldEntityId: EntityId, targetEntityId: EntityId) {
             }
         }
 
-//        val targetComponent = (targetEntityId get component::class)
-//        targetComponent = component
+        val targetComponent = (targetEntityId get component::class)
+        val combinedComponent = targetComponent.combineWith(component)
+        println("Combined Component: $combinedComponent")
+        targetEntityId add combinedComponent
     }
 }
