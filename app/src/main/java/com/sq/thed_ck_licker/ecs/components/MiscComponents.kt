@@ -37,6 +37,10 @@ fun HealthComponent.heal(healAmount: Float) {
     println("and the end result is ${this}")
 }
 
+fun HealthComponent.damage(damageAmount: Float) {
+    this.health.floatValue -= damageAmount
+}
+
 data class ScoreComponent(var score: MutableIntState) {
     constructor(score: Int = 0) : this(mutableIntStateOf(score))
 }

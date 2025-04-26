@@ -7,6 +7,7 @@ import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.MerchantComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
+import com.sq.thed_ck_licker.ecs.components.damage
 import com.sq.thed_ck_licker.ecs.components.heal
 import com.sq.thed_ck_licker.ecs.get
 import com.sq.thed_ck_licker.helpers.MyRandom
@@ -53,7 +54,7 @@ class CardCreationSystem private constructor(@Suppress("unused") private val com
 
     fun addDamageCards(amount: Int): List<EntityId> {
         val onActivation = { targetId: Int, _: Int ->
-            (targetId get HealthComponent::class).health.floatValue -= 5f
+            (targetId get HealthComponent::class).damage(5f)
         }
 
         return cardBuilder.buildCards {

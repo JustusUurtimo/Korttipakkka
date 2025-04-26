@@ -1,4 +1,4 @@
-package com.sq.thed_ck_licker.ui.components.views
+package com.sq.thed_ck_licker.ecs.systems.viewSystems
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable

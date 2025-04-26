@@ -20,9 +20,9 @@ import com.sq.thed_ck_licker.ecs.systems.activationSystem
 import com.sq.thed_ck_licker.ecs.systems.pullNewCardSystem
 import com.sq.thed_ck_licker.player.HealthBar
 import com.sq.thed_ck_licker.player.ScoreDisplayer
-import com.sq.thed_ck_licker.ui.components.buttons.PullCardButton
-import com.sq.thed_ck_licker.ui.components.views.CardDeck
-import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardDisplaySystem.Companion.instance as cardDisplaySystem
+import com.sq.thed_ck_licker.ecs.systems.viewSystems.PullCardButton
+import com.sq.thed_ck_licker.ecs.systems.viewSystems.CardDeck
+import com.sq.thed_ck_licker.ecs.systems.viewSystems.CardDisplaySystem.Companion.instance as cardDisplaySystem
 import com.sq.thed_ck_licker.ecs.systems.characterSystems.PlayerSystem.Companion.instance as playerSystem
 
 

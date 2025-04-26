@@ -1,4 +1,4 @@
-package com.sq.thed_ck_licker.ecs.systems.cardSystems
+package com.sq.thed_ck_licker.ecs.systems.viewSystems
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
