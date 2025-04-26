@@ -10,8 +10,6 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.createInstance
-import kotlin.reflect.full.declaredMembers
-import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.memberProperties
 
 class ComponentManager private constructor() {
@@ -131,11 +129,14 @@ infix fun EntityId.difference(entity: EntityId): EntityId {
         result add when (component) {
             is HealthComponent -> {
                 secondComponent as HealthComponent
-                if (component.health - secondComponent.health == 0f) continue
-                if (component.maxHealth - secondComponent.maxHealth == 0f) continue
+                if (component.health - secondComponent.health == 0f &&
+                    component.maxHealth - secondComponent.maxHealth == 0f &&
+                    component.multiplier - secondComponent.multiplier == 0f
+                ) continue
                 HealthComponent(
                     component.health - secondComponent.health,
-                    component.maxHealth - secondComponent.maxHealth
+                    component.maxHealth - secondComponent.maxHealth,
+                    component.multiplier - secondComponent.multiplier + 1f
                 )
             }
 
@@ -163,30 +164,14 @@ infix fun EntityId.difference(entity: EntityId): EntityId {
     return result
 }
 
-/**
- * This can be used to plus to components of same type.
- * Thou be aware images are carried as int in android so those will be messy.
- */
-inline fun <reified T : Any> T.combineWith(other: T): T {
-    val newInstance = this::class.createInstance()
+fun ScoreComponent.combineScoreComponents(other: ScoreComponent): ScoreComponent {
+    return ScoreComponent(this.score + other.score)
+}
 
-    this::class.memberProperties.forEach { prop ->
-        if (prop is KMutableProperty<*> && prop.visibility == KVisibility.PUBLIC) {
-            val thisValue = prop.getter.call(this)
-            val otherValue = prop.getter.call(other)
-
-            when {
-                thisValue is Number && otherValue is Number -> {
-                    val sum = thisValue.toFloat() + otherValue.toFloat()
-                    when (prop.returnType.classifier) {
-                        Int::class -> prop.setter.call(newInstance, sum.toInt())
-                        Float::class -> prop.setter.call(newInstance, sum.toFloat())
-                    }
-                }
-                else -> prop.setter.call(newInstance, thisValue) // Keep original for non-numbers
-            }
-        }
-    }
-
-    return newInstance
+fun HealthComponent.combineHealthComponents(other: HealthComponent): HealthComponent {
+    return HealthComponent(
+        this.health + other.health,
+        this.maxHealth + other.maxHealth,
+        this.multiplier + other.multiplier - 1
+    )
 }

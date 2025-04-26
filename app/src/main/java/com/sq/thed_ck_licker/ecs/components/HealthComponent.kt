@@ -27,6 +27,8 @@ data class HealthComponent(
         mutableFloatStateOf(maxHealth)
     )
 
+    constructor() : this(0f, 0f, 0f)
+
     var health
         get() = this.mutableStateHealth.floatValue
         set(value) {

@@ -3,8 +3,11 @@ package com.sq.thed_ck_licker.ecs.systems.helperSystems
 import com.sq.thed_ck_licker.ecs.ComponentManager
 import com.sq.thed_ck_licker.ecs.EntityId
 import com.sq.thed_ck_licker.ecs.add
-import com.sq.thed_ck_licker.ecs.combineWith
+import com.sq.thed_ck_licker.ecs.combineHealthComponents
+import com.sq.thed_ck_licker.ecs.combineScoreComponents
+import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
+import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 import com.sq.thed_ck_licker.ecs.difference
 import com.sq.thed_ck_licker.ecs.get
 import kotlin.reflect.KClass
@@ -12,7 +15,6 @@ import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.declaredMembers
 import kotlin.reflect.full.isSubclassOf
-
 
 
 fun multiplyEntityValues2(oldEntityId: EntityId, targetEntityId: EntityId) {
@@ -84,8 +86,20 @@ fun multiplyEntityValues(oldEntityId: EntityId, targetEntityId: EntityId) {
         }
 
         val targetComponent = (targetEntityId get component::class)
-        val combinedComponent = targetComponent.combineWith(component)
-        println("Combined Component: $combinedComponent")
-        targetEntityId add combinedComponent
+        when (component) {
+            is HealthComponent -> {
+                targetComponent as HealthComponent
+                targetEntityId add (component.combineHealthComponents(targetComponent))
+            }
+
+            is ScoreComponent -> {
+                targetComponent as ScoreComponent
+                targetEntityId add (component.combineScoreComponents(targetComponent))
+            }
+        }
+
+//        val combinedComponent = targetComponent.combineWith(component)
+//        println("Combined Component: $combinedComponent")
+//        targetEntityId add combinedComponent
     }
 }

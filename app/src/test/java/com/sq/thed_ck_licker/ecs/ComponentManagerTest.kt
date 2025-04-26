@@ -202,11 +202,21 @@ class ComponentManagerTest {
     }
 
     @Test
-    fun `Add two components together`() { //Ed...ward...Eed...ward....
+    fun `Add two score components together`() { //Ed...ward...Eed...ward....
         val scoreComponent = ScoreComponent(100)
         val scoreComponent2 = ScoreComponent(200)
-        val combinedComponent = scoreComponent.combineWith(scoreComponent2)
+        val combinedComponent = scoreComponent.combineScoreComponents(scoreComponent2)
         assert(combinedComponent.score == 300){"Score should be 300 but was ${combinedComponent.score}"}
+    }
+
+    @Test
+    fun `Add two health components together`() { //Ed...ward...Eed...ward....
+        val hp = HealthComponent(100f)
+        val hpComp2 = HealthComponent(200f)
+        val combinedComponent = hp.combineHealthComponents(hpComp2)
+        assert(combinedComponent.health == 300f) { "Health should be 300 but was ${combinedComponent.health}" }
+        assert(combinedComponent.maxHealth == 300f) { "Max health should be 300 but was ${combinedComponent.maxHealth}" }
+        assert(combinedComponent.multiplier == 1f) { "Multiplier should be 1 but was ${combinedComponent.multiplier}" }
     }
 }
 
