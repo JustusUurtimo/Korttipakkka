@@ -7,10 +7,6 @@ import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 import kotlin.reflect.KClass
-import kotlin.reflect.KMutableProperty
-import kotlin.reflect.KVisibility
-import kotlin.reflect.full.createInstance
-import kotlin.reflect.full.memberProperties
 
 class ComponentManager private constructor() {
 
@@ -86,9 +82,6 @@ class ComponentManager private constructor() {
             is MultiplierComponent -> MultiplierComponent(component.multiplier)
             else -> null
         }
-    }
-    fun replaceComponent(target: EntityId, replacementComponent: Any) {
-
     }
 }
 

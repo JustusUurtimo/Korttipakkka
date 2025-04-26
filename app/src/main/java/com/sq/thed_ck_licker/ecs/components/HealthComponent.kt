@@ -75,6 +75,4 @@ data class HealthComponent(
         result = 31 * result + maxHealth.hashCode()
         return result
     }
-
-
 }

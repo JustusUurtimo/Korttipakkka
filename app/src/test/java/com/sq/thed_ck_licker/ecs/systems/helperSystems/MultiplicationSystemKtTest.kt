@@ -45,20 +45,8 @@ class MultiplicationSystemKtTest {
         val componentManager = ComponentManager.componentManager
         val oldEntity = componentManager.copy(entityId)
 
-        val comps = componentManager.getAllComponentsOfEntity(oldEntity)
-        println("Components: $comps")
-
-        println("Starting health: $startingHealth")
-
         (entityId get HealthComponent::class).heal(startingHealth)
-        println("Starting health: $startingHealth")
-        println("Starting health sum: ${startingHealth + startingHealth}")
 
-        val comps2 = componentManager.getAllComponentsOfEntity(oldEntity)
-        println("Components: $comps2")
-
-        val comps3 = componentManager.getAllComponentsOfEntity(entityId)
-        println("Components: $comps3")
         var entityHealth = (entityId get HealthComponent::class)
         val healthSum = startingHealth + startingHealth
         assert(entityHealth.health == healthSum) { "Starting health should be $healthSum, but was ${entityHealth.health}" }
