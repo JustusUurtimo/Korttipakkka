@@ -67,6 +67,6 @@ class MultiplicationSystemKtTest {
 
         entityHealth = (entityId get HealthComponent::class)
         val correctScore = startingHealth + (startingHealth.toFloat() * multiplier)
-//        assert((entityId get HealthComponent::class).health == correctScore) { "After the multiplication, health should be $correctScore, but was ${entityHealth.health}" }
+        assert((entityId get HealthComponent::class).health == correctScore) { "After the multiplication, health should be $correctScore, but was ${entityHealth.health}" }
     }
 }
