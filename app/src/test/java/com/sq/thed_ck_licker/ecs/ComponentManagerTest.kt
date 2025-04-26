@@ -207,10 +207,7 @@ class ComponentManagerTest {
         val scoreComponent2 = ScoreComponent(200)
         val combinedComponent = scoreComponent.combineWith(scoreComponent2)
         assert(combinedComponent.score == 300){"Score should be 300 but was ${combinedComponent.score}"}
-
     }
-
-
 }
 
 
