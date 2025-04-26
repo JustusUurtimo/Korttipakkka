@@ -163,6 +163,10 @@ infix fun EntityId.difference(entity: EntityId): EntityId {
     return result
 }
 
+/**
+ * This can be used to plus to components of same type.
+ * Thou be aware images are carried as int in android so those will be messy.
+ */
 inline fun <reified T : Any> T.combineWith(other: T): T {
     val newInstance = this::class.createInstance()
 
