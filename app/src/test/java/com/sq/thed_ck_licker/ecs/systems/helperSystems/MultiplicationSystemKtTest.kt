@@ -30,6 +30,6 @@ class MultiplicationSystemKtTest {
 
         scoreComponent = (entityId get ScoreComponent::class)
         val correctScore = scoreA + (scoreA.toFloat() * multiplier).toInt()
-//        assert((entityId get ScoreComponent::class).score == correctScore) { "Score should be $correctScore, but was ${scoreComponent.score}" }
+        assert((entityId get ScoreComponent::class).score == correctScore) { "Score should be $correctScore, but was ${scoreComponent.score}" }
     }
 }
