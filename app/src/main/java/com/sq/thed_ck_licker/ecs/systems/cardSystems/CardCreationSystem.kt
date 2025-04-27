@@ -1,18 +1,19 @@
 package com.sq.thed_ck_licker.ecs.systems.cardSystems
 
 import com.sq.thed_ck_licker.R
-import com.sq.thed_ck_licker.ecs.ComponentManager
-import com.sq.thed_ck_licker.ecs.EntityId
+import com.sq.thed_ck_licker.ecs.managers.ComponentManager
+import com.sq.thed_ck_licker.ecs.managers.EntityId
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.MerchantComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 import com.sq.thed_ck_licker.ecs.components.damage
 import com.sq.thed_ck_licker.ecs.components.heal
-import com.sq.thed_ck_licker.ecs.get
+import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.helpers.MyRandom
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem.Companion.instance as cardBuilder
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem.Companion.instance as cardsSystem
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardEffectSystem.Companion.instance as cardEffectSystem
 
 class CardCreationSystem private constructor(@Suppress("unused") private val componentManager: ComponentManager) {
 
@@ -54,7 +55,8 @@ class CardCreationSystem private constructor(@Suppress("unused") private val com
 
     fun addDamageCards(amount: Int): List<EntityId> {
         val onActivation = { targetId: Int, _: Int ->
-            (targetId get HealthComponent::class).damage(5f)
+            (targetId get HealthComponent::class).damage(2000f)
+            cardEffectSystem.onHealthChanged(targetId)
         }
 
         return cardBuilder.buildCards {

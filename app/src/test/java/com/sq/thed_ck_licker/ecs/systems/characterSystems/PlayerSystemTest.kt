@@ -2,12 +2,12 @@ package com.sq.thed_ck_licker.ecs.systems.characterSystems
 
 import android.util.Log
 import androidx.compose.runtime.mutableIntStateOf
-import com.sq.thed_ck_licker.ecs.EntityManager
-import com.sq.thed_ck_licker.ecs.add
+import com.sq.thed_ck_licker.ecs.managers.EntityManager
+import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.size
-import com.sq.thed_ck_licker.ecs.get
+import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.activationSystem
 import com.sq.thed_ck_licker.ecs.systems.pullNewCardSystem
 import org.junit.jupiter.api.Assertions.assertNotNull

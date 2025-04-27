@@ -1,9 +1,9 @@
 package com.sq.thed_ck_licker.ecs.components
 
 import android.util.Log
-import com.sq.thed_ck_licker.ecs.ComponentManager
-import com.sq.thed_ck_licker.ecs.EntityId
-import com.sq.thed_ck_licker.ecs.hasComponent
+import com.sq.thed_ck_licker.ecs.managers.ComponentManager
+import com.sq.thed_ck_licker.ecs.managers.EntityId
+import com.sq.thed_ck_licker.ecs.managers.hasComponent
 
 
 data class DrawDeckComponent(val drawCardDeck: MutableList<Int> = mutableListOf<Int>())

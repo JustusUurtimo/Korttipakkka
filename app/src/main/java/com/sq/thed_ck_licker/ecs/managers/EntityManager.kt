@@ -1,4 +1,4 @@
-package com.sq.thed_ck_licker.ecs
+package com.sq.thed_ck_licker.ecs.managers
 
 import android.util.Log
 

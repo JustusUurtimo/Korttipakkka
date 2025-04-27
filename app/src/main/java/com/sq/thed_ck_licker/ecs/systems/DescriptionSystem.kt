@@ -1,6 +1,6 @@
 package com.sq.thed_ck_licker.ecs.systems
 
-import com.sq.thed_ck_licker.ecs.ComponentManager
+import com.sq.thed_ck_licker.ecs.managers.ComponentManager
 import com.sq.thed_ck_licker.ecs.components.DescriptionComponent
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent

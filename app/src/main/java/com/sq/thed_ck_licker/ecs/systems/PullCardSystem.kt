@@ -2,13 +2,13 @@ package com.sq.thed_ck_licker.ecs.systems
 
 import android.util.Log
 import androidx.compose.runtime.MutableIntState
-import com.sq.thed_ck_licker.ecs.EntityManager.getPlayerID
+import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.deactivate
-import com.sq.thed_ck_licker.ecs.get
+import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem.Companion.instance as cardsSystem
 
 fun pullNewCardSystem(

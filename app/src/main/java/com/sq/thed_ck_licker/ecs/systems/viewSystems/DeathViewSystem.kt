@@ -29,7 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
-import com.sq.thed_ck_licker.ecs.ComponentManager
+import com.sq.thed_ck_licker.ecs.managers.ComponentManager
 
 
 class DeathViewSystem private constructor(private val componentManager: ComponentManager) {

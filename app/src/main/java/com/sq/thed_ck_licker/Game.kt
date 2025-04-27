@@ -18,17 +18,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.sq.thed_ck_licker.ecs.systems.activationSystem
 import com.sq.thed_ck_licker.ecs.systems.pullNewCardSystem
+import com.sq.thed_ck_licker.ecs.systems.viewSystems.CardDeck
+import com.sq.thed_ck_licker.ecs.systems.viewSystems.PullCardButton
 import com.sq.thed_ck_licker.player.HealthBar
 import com.sq.thed_ck_licker.player.ScoreDisplayer
-import com.sq.thed_ck_licker.ecs.systems.viewSystems.PullCardButton
-import com.sq.thed_ck_licker.ecs.systems.viewSystems.CardDeck
-import com.sq.thed_ck_licker.ecs.systems.viewSystems.CardDisplaySystem.Companion.instance as cardDisplaySystem
+import com.sq.thed_ck_licker.ui.theme.viewModels.GameViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sq.thed_ck_licker.ecs.systems.characterSystems.PlayerSystem.Companion.instance as playerSystem
-
+import com.sq.thed_ck_licker.ecs.systems.viewSystems.CardDisplaySystem.Companion.instance as cardDisplaySystem
+import com.sq.thed_ck_licker.ecs.systems.viewSystems.DeathViewSystem.Companion.instance as deathViewSystem
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 
 @Composable
-fun Game(innerPadding: PaddingValues) {
-
+fun Game(innerPadding: PaddingValues,  gameViewModel: GameViewModel = viewModel()) {
     val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues()
     val playerActiveMerchant = rememberSaveable { playerSystem.getMerchant() }
     val playerCardCount = rememberSaveable { mutableIntStateOf(0) }
@@ -38,6 +41,7 @@ fun Game(innerPadding: PaddingValues) {
     val playerMaxHealth =
         rememberSaveable { playerSystem.getPlayerMaxHealthM() }
     val playerScore = rememberSaveable { playerSystem.getPlayerScoreM() }
+    val isPlayerDead by gameViewModel.isPlayerDead.collectAsState()
     val modifier = Modifier
 
     Column(modifier.fillMaxWidth()) {
@@ -51,6 +55,12 @@ fun Game(innerPadding: PaddingValues) {
                 latestCard,
                 playerScore,
             )
+        }
+
+        if (isPlayerDead) {
+            deathViewSystem.DeathScreen(
+                onRetry = { gameViewModel.restartGame() },
+                onQuit = { gameViewModel.exitToMenu() })
         }
 
         Box(modifier.fillMaxSize()) {

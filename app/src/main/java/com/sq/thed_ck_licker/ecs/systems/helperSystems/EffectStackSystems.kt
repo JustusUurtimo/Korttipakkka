@@ -1,10 +1,10 @@
 package com.sq.thed_ck_licker.ecs.systems.helperSystems
 
 import android.util.Log
-import com.sq.thed_ck_licker.ecs.ComponentManager
+import com.sq.thed_ck_licker.ecs.managers.ComponentManager
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
-import com.sq.thed_ck_licker.ecs.get
+import com.sq.thed_ck_licker.ecs.managers.get
 
 fun onTurnStartEffectStackSystem(componentManager: ComponentManager = ComponentManager.componentManager) {
     val targetsWithEffectStack =

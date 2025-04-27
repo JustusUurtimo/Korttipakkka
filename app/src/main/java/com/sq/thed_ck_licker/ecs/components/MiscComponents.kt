@@ -1,13 +1,12 @@
 package com.sq.thed_ck_licker.ecs.components
 
-import android.os.Parcelable
-import android.util.MutableBoolean
 import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
-import com.sq.thed_ck_licker.ecs.get
-import kotlinx.parcelize.Parcelize
+import androidx.compose.runtime.setValue
 
 data class HealthComponent(var health: MutableFloatState, val maxHealth: MutableFloatState) {
     /**
@@ -25,7 +24,11 @@ data class HealthComponent(var health: MutableFloatState, val maxHealth: Mutable
         mutableFloatStateOf(maxHealth),
         mutableFloatStateOf(maxHealth)
     )
+    private val _health = mutableFloatStateOf(health.floatValue)
+    fun observeHealth(): State<Float> = _health
 }
+
+
 
 fun HealthComponent.heal(healAmount: Float) {
     println("this is going to be modified ${this}")
