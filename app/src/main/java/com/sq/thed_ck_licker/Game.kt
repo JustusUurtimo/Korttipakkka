@@ -11,49 +11,52 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sq.thed_ck_licker.ecs.systems.activationSystem
 import com.sq.thed_ck_licker.ecs.systems.pullNewCardSystem
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.CardDeck
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.PullCardButton
 import com.sq.thed_ck_licker.player.HealthBar
-import com.sq.thed_ck_licker.player.ScoreDisplayer
+import com.sq.thed_ck_licker.player.ScoreDisplay
 import com.sq.thed_ck_licker.ui.theme.viewModels.GameViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.sq.thed_ck_licker.ecs.systems.characterSystems.PlayerSystem.Companion.instance as playerSystem
+import com.sq.thed_ck_licker.ui.theme.viewModels.MerchantViewModel
+import com.sq.thed_ck_licker.ui.theme.viewModels.PlayerViewModel
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.CardDisplaySystem.Companion.instance as cardDisplaySystem
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.DeathViewSystem.Companion.instance as deathViewSystem
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 
 @Composable
-fun Game(innerPadding: PaddingValues,  gameViewModel: GameViewModel = viewModel()) {
+fun Game(
+    innerPadding: PaddingValues,
+    gameViewModel: GameViewModel = viewModel(),
+    playerViewModel: PlayerViewModel = viewModel(),
+    merchantViewModel: MerchantViewModel = viewModel(),
+) {
     val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues()
-    val playerActiveMerchant = rememberSaveable { playerSystem.getMerchant() }
     val playerCardCount = rememberSaveable { mutableIntStateOf(0) }
     val latestCard = rememberSaveable { mutableIntStateOf(-1) }
-    val playerHealth =
-        rememberSaveable { playerSystem.getPlayerHealthM() }
-    val playerMaxHealth =
-        rememberSaveable { playerSystem.getPlayerMaxHealthM() }
-    val playerScore = rememberSaveable { playerSystem.getPlayerScoreM() }
     val isPlayerDead by gameViewModel.isPlayerDead.collectAsState()
+    val playerState by playerViewModel.playerState.collectAsState()
+    val merchantHand by merchantViewModel.merchantHand.collectAsState()
     val modifier = Modifier
 
     Column(modifier.fillMaxWidth()) {
 
-        HealthBar(playerHealth, playerMaxHealth, modifier.padding(innerPadding))
-        ScoreDisplayer(playerScore.intValue)
-        if (playerActiveMerchant.intValue != -1) {
+        HealthBar(playerState.health, playerState.maxHealth, modifier.padding(innerPadding))
+        ScoreDisplay(playerState.score)
+        if (playerState.merchantId != -1) {
             cardDisplaySystem.CardsOnMerchantHandView(
-                playerActiveMerchant,
+                playerState.merchantId,
                 modifier,
                 latestCard,
-                playerScore,
+                playerState.score,
+                onRerollShop = { merchantViewModel.onReRollShop() }
             )
         }
 
@@ -64,7 +67,7 @@ fun Game(innerPadding: PaddingValues,  gameViewModel: GameViewModel = viewModel(
         }
 
         Box(modifier.fillMaxSize()) {
-            CardDeck(navigationBarPadding, pullNewCardSystem(latestCard, playerActiveMerchant))
+            CardDeck(navigationBarPadding, pullNewCardSystem(latestCard, playerState.merchantId))
             Box(modifier.align(Alignment.BottomCenter)) {
 
                 Column(modifier.padding(35.dp, 0.dp, 0.dp, 0.dp)) {

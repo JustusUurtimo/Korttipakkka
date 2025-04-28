@@ -25,13 +25,11 @@ private fun healthDeath(componentManager: ComponentManager): List<EntityId> {
         ?: return emptyList()
     val deaths = mutableListOf<EntityId>()
     for (entity in dying) {
-        if (entity.key != getPlayerID()) {
-            val health = (entity.value as HealthComponent).health.floatValue
-            if (health <= 0) {
-                deaths.add(deathHappening(entity, componentManager))
-                println("Death happened, such shame")
-                println("Entity #${entity.key} is dead now")
-            }
+        val health = (entity.value as HealthComponent).health.floatValue
+        if (health <= 0) {
+            deaths.add(deathHappening(entity, componentManager))
+            println("Death happened, such shame")
+            println("Entity #${entity.key} is dead now")
         }
     }
     return deaths

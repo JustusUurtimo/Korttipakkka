@@ -1,7 +1,6 @@
 package com.sq.thed_ck_licker.ecs.systems.characterSystems
 
-import androidx.compose.runtime.MutableFloatState
-import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.snapshotFlow
 import com.sq.thed_ck_licker.ecs.managers.ComponentManager
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getRegularMerchantID
@@ -13,10 +12,16 @@ import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.MerchantComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.get
+import com.sq.thed_ck_licker.ecs.states.PlayerState
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem.Companion.instance as cardCreationSystem
 
 
 class PlayerSystem private constructor(@Suppress("unused") private val componentManager: ComponentManager) {
+
     companion object {
         val instance: PlayerSystem by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
             PlayerSystem(ComponentManager.componentManager)
@@ -60,18 +65,55 @@ class PlayerSystem private constructor(@Suppress("unused") private val component
     }
 
 
-    fun getPlayerHealthM(): MutableFloatState {
-        return (getPlayerID() get HealthComponent::class).health
+    fun getPlayerHealth(): Float {
+        return (getPlayerID() get HealthComponent::class).health.floatValue
     }
 
-    fun getPlayerScoreM(): MutableIntState {
-        return (getPlayerID() get ScoreComponent::class).score
+    fun getPlayerScore(): Int {
+        return (getPlayerID() get ScoreComponent::class).score.intValue
     }
 
-    fun getPlayerMaxHealthM(): MutableFloatState {
-        return (getPlayerID() get HealthComponent::class).maxHealth
+    fun getPlayerMaxHealth(): Float {
+        return (getPlayerID() get HealthComponent::class).maxHealth.floatValue
     }
-    fun getMerchant(): MutableIntState {
-        return (getPlayerID() get MerchantComponent::class).merchantId
+
+    fun getPlayerMerchantId(): Int {
+        return (getPlayerID() get MerchantComponent::class).merchantId.intValue
+    }
+
+    fun getPlayerActiveMerchantCard(): Int {
+        return (getPlayerID() get MerchantComponent::class).activeMerchantSummonCard.intValue
+    }
+
+    fun updateHealth(amount: Float) {
+        (getPlayerID() get HealthComponent::class).health.floatValue += amount
+    }
+
+    fun updateMaxHealth(amount: Float) {
+        (getPlayerID() get HealthComponent::class).maxHealth.floatValue += amount
+    }
+
+    fun updateScore(amount: Int) {
+        (getPlayerID() get ScoreComponent::class).score.intValue += amount
+    }
+
+    fun updateMerchantId(id: Int) {
+        (getPlayerID() get MerchantComponent::class).merchantId.intValue = id
+    }
+
+    fun playerUpdates(): Flow<PlayerState> {
+        return combine(
+            snapshotFlow { getPlayerHealth() },
+            snapshotFlow { getPlayerMaxHealth() },
+            snapshotFlow { getPlayerScore() },
+            snapshotFlow { getPlayerMerchantId() }
+        ) { health, maxHealth, score, merchantId ->
+            PlayerState(
+                health = health,
+                maxHealth = maxHealth,
+                score = score,
+                merchantId = merchantId
+            )
+        }
     }
 }

@@ -94,30 +94,12 @@ class CardDisplaySystem private constructor(private val componentManager: Compon
 
     @Composable
     fun CardsOnMerchantHandView(
-        merchantId: MutableIntState,
+        merchantId: Int,
         modifier: Modifier,
         latestCard: MutableIntState,
-        playerScore: MutableIntState,
+        playerScore: Int,
+        onReRollShop: () -> Unit,
     ) {
-
-        var merchantHand by remember { mutableStateOf(merchantSystem.reRollMerchantHand(merchantId.intValue)) }
-        val activeMerchantSummonCard = rememberSaveable {(getPlayerID() get MerchantComponent::class).activeMerchantSummonCard }
-        val count = rememberSaveable { merchantSystem.getReRollCount(activeMerchantSummonCard.intValue) }
-
-        fun chooseMerchantCard(cardId: Int) {
-            playerScore.intValue -= 100
-            latestCard.intValue = cardId
-            merchantId.intValue = -1
-        }
-
-        fun reRollShop(): () -> Unit = {
-            if (count.intValue > 1) {
-                playerScore.intValue -= 500
-            }
-            count.intValue++
-            merchantHand = merchantSystem.reRollMerchantHand(merchantId.intValue)
-        }
-
 
         Box(
             modifier = modifier
@@ -150,7 +132,7 @@ class CardDisplaySystem private constructor(private val componentManager: Compon
             Button(
                 modifier = modifier
                     .align(Alignment.BottomCenter),
-                onClick = reRollShop()
+                onClick = onReRollShop
             ) { Text("Re-roll shop") }
         }
     }

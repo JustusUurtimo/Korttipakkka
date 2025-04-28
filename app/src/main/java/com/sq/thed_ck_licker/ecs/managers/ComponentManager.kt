@@ -95,6 +95,10 @@ class ComponentManager private constructor() {
             componentMap.remove(entity)
         }
     }
+
+    fun clear() {
+        components.clear()
+    }
 }
 
 /**

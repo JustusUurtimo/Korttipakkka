@@ -13,7 +13,7 @@ import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem.Companion.insta
 
 fun pullNewCardSystem(
     latestCard: MutableIntState,
-    playerActiveMerchant: MutableIntState
+    playerActiveMerchant: Int
 ): () -> Unit = {
     try {
         (latestCard.intValue get EffectComponent::class).onDeactivate.invoke(
@@ -39,7 +39,7 @@ fun pullNewCardSystem(
     }
 //    onDiscardSystem()
 
-    playerActiveMerchant.intValue = -1
+    playerActiveMerchant = -1
 
 
     val drawDeck2 = getPlayerID() get DrawDeckComponent::class
