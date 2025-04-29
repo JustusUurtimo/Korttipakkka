@@ -20,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sq.thed_ck_licker.ecs.systems.activationSystem
-import com.sq.thed_ck_licker.ecs.systems.pullNewCardSystem
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.CardDeck
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.PullCardButton
 import com.sq.thed_ck_licker.player.HealthBar
@@ -28,8 +27,9 @@ import com.sq.thed_ck_licker.player.ScoreDisplay
 import com.sq.thed_ck_licker.ui.theme.viewModels.GameViewModel
 import com.sq.thed_ck_licker.ui.theme.viewModels.MerchantViewModel
 import com.sq.thed_ck_licker.ui.theme.viewModels.PlayerViewModel
-import com.sq.thed_ck_licker.ecs.systems.viewSystems.CardDisplaySystem.Companion.instance as cardDisplaySystem
-import com.sq.thed_ck_licker.ecs.systems.viewSystems.DeathViewSystem.Companion.instance as deathViewSystem
+import com.sq.thed_ck_licker.ui.theme.views.DeathScreen
+import com.sq.thed_ck_licker.ui.theme.views.MerchantHandView
+import com.sq.thed_ck_licker.ui.theme.views.PlayerHandView
 
 @Composable
 fun Game(
@@ -51,29 +51,28 @@ fun Game(
         HealthBar(playerState.health, playerState.maxHealth, modifier.padding(innerPadding))
         ScoreDisplay(playerState.score)
         if (playerState.merchantId != -1) {
-            cardDisplaySystem.CardsOnMerchantHandView(
-                playerState.merchantId,
+            MerchantHandView(
                 modifier,
-                latestCard,
-                playerState.score,
-                onRerollShop = { merchantViewModel.onReRollShop() }
+                merchantHand,
+                chooseMerchantCard = { merchantViewModel.onChooseMerchantCard(it) },
+                onReRollShop = { merchantViewModel.onReRollShop() },
             )
         }
 
         if (isPlayerDead) {
-            deathViewSystem.DeathScreen(
+            DeathScreen(
                 onRetry = { gameViewModel.restartGame() },
                 onQuit = { gameViewModel.exitToMenu() })
         }
 
         Box(modifier.fillMaxSize()) {
-            CardDeck(navigationBarPadding, pullNewCardSystem(latestCard, playerState.merchantId))
+            CardDeck(navigationBarPadding) { playerViewModel.onPullNewCard(latestCard) }
             Box(modifier.align(Alignment.BottomCenter)) {
 
                 Column(modifier.padding(35.dp, 0.dp, 0.dp, 0.dp)) {
 
                     if (latestCard.intValue != -1) {
-                        cardDisplaySystem.CardsOnPlayerHandView(
+                        PlayerHandView(
                             playerCardCount,
                             modifier,
                             latestCard,
@@ -83,8 +82,7 @@ fun Game(
                     PullCardButton(
                         navigationBarPadding,
                         modifier.offset((-15).dp),
-                        pullNewCardSystem(latestCard, playerActiveMerchant)
-                    )
+                    ) { playerViewModel.onPullNewCard(latestCard) }
                 }
 
             }

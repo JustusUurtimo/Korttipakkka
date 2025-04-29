@@ -15,12 +15,7 @@ import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem.Companion.insta
 import com.sq.thed_ck_licker.ecs.systems.characterSystems.PlayerSystem.Companion.instance as playerSystem
 
 
-class MerchantSystem private constructor(@Suppress("unused") private val componentManager: ComponentManager) {
-    companion object {
-        val instance: MerchantSystem by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
-            MerchantSystem(ComponentManager.componentManager)
-        }
-    }
+class MerchantSystem {
 
     fun initRegularMerchant() {
         getRegularMerchantID() add DrawDeckComponent(initRegularMerchantDeck().toMutableList())

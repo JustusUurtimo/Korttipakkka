@@ -8,7 +8,7 @@ import kotlinx.parcelize.IgnoredOnParcel
 import kotlin.reflect.KClass
 
 // Component Manager
-class ComponentManager private constructor() {
+class ComponentManager {
 
     companion object {
         val componentManager: ComponentManager = ComponentManager()

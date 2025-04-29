@@ -5,10 +5,9 @@ plugins {
     id("org.jetbrains.kotlin.plugin.parcelize")
 
     id("de.mannodermaus.android-junit5")
-
-
     id("org.jetbrains.kotlinx.kover")
-
+    id("com.google.dagger.hilt.android")
+    id("com.google.devtools.ksp")
     id("org.sonarqube")
 }
 var isDebug by extra(true)
@@ -58,6 +57,8 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
     kotlinOptions {
         jvmTarget = "11"
@@ -104,7 +105,8 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
 
     // (Required) Writing and executing Unit Tests on the JUnit Platform
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.2")

@@ -5,7 +5,8 @@ plugins {
     alias(libs.plugins.kotlin.compose) apply false
     jacoco
     id("org.jetbrains.kotlinx.kover") version "0.9.1"
-
+    id("com.google.dagger.hilt.android") version "2.56.1" apply false
+    id("com.google.devtools.ksp") version "2.0.0-1.0.24" apply false
     id("org.sonarqube") version "6.0.1.5171"
 }
 buildscript{
@@ -16,7 +17,7 @@ buildscript{
 
     dependencies {
 
-        classpath("de.mannodermaus.gradle.plugins:android-junit5:1.12.0.0")
+        classpath(libs.android.junit5)
     }
 
 }

@@ -1,27 +1,22 @@
 package com.sq.thed_ck_licker.ecs.systems.cardSystems
 
 import com.sq.thed_ck_licker.R
-import com.sq.thed_ck_licker.ecs.managers.ComponentManager
-import com.sq.thed_ck_licker.ecs.managers.EntityId
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.MerchantComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 import com.sq.thed_ck_licker.ecs.components.damage
 import com.sq.thed_ck_licker.ecs.components.heal
+import com.sq.thed_ck_licker.ecs.managers.EntityId
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.helpers.MyRandom
-import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem.Companion.instance as cardBuilder
-import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem.Companion.instance as cardsSystem
-import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardEffectSystem.Companion.instance as cardEffectSystem
+import jakarta.inject.Inject
 
-class CardCreationSystem private constructor(@Suppress("unused") private val componentManager: ComponentManager) {
-
-    companion object {
-        val instance: CardCreationSystem by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
-            CardCreationSystem(ComponentManager.componentManager)
-        }
-    }
+class CardCreationSystem @Inject constructor(
+    private val cardsSystem: CardsSystem,
+    private val cardEffectSystem: CardEffectSystem,
+    private val cardBuilder: CardBuilderSystem
+) {
 
     fun addBasicScoreCards(amount: Int): List<EntityId> {
         val score = 10
@@ -188,7 +183,8 @@ class CardCreationSystem private constructor(@Suppress("unused") private val com
             cardHealth = 1f
             scoreAmount = 3
             cardAmount = amount
-            description = "Gain Score gainer on play. \nEvery time you play card you gain $pointsPerCard points\""
+            description =
+                "Gain Score gainer on play. \nEvery time you play card you gain $pointsPerCard points\""
             name = "Score Gainer Card"
             onCardPlay = onActivation
         }

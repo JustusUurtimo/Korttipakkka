@@ -3,13 +3,18 @@ package com.sq.thed_ck_licker.ui.theme.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sq.thed_ck_licker.ecs.managers.GameEvents
-import com.sq.thed_ck_licker.ecs.systems.helperSystems.WorldCreationSystem
+import com.sq.thed_ck_licker.ecs.systems.WorldCreationSystem
+import dagger.hilt.android.lifecycle.HiltViewModel
+import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+@HiltViewModel
+class GameViewModel @Inject constructor(
+    private val worldCreationSystem: WorldCreationSystem
+) : ViewModel() {
 
-class GameViewModel(private val worldCreationSystem: WorldCreationSystem) : ViewModel() {
     private val _isPlayerDead = MutableStateFlow(false)
     val isPlayerDead: StateFlow<Boolean> = _isPlayerDead
 

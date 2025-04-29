@@ -17,16 +17,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem.Companion.instance as cardCreationSystem
 
 
-class PlayerSystem private constructor(@Suppress("unused") private val componentManager: ComponentManager) {
-
-    companion object {
-        val instance: PlayerSystem by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
-            PlayerSystem(ComponentManager.componentManager)
-        }
-    }
+class PlayerSystem {
 
     fun initPlayer() {
         getPlayerID() add HealthComponent(100f)

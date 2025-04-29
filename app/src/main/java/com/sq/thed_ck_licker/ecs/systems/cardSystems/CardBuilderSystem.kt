@@ -1,8 +1,6 @@
 package com.sq.thed_ck_licker.ecs.systems.cardSystems
 
 import com.sq.thed_ck_licker.R
-import com.sq.thed_ck_licker.ecs.managers.ComponentManager
-import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.CardTag
 import com.sq.thed_ck_licker.ecs.components.DescriptionComponent
@@ -12,14 +10,13 @@ import com.sq.thed_ck_licker.ecs.components.ImageComponent
 import com.sq.thed_ck_licker.ecs.components.NameComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent
+import com.sq.thed_ck_licker.ecs.managers.ComponentManager
+import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.generateEntity
+import jakarta.inject.Inject
 
-class CardBuilderSystem private constructor(@Suppress("unused") private val componentManager: ComponentManager) {
-    companion object {
-        val instance: CardBuilderSystem by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
-            CardBuilderSystem(ComponentManager.componentManager)
-        }
-    }
+class CardBuilderSystem @Inject constructor(private val componentManager: ComponentManager) {
+
     var cardHealth: Float? = null
     var scoreAmount: Int? = null
     var cardAmount: Int = 1
