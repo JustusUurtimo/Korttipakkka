@@ -16,6 +16,9 @@ android {
     namespace = "com.sq.thed_ck_licker"
     compileSdk = 35
 
+    configurations.all {
+        exclude(group = "org.bouncycastle", module = "bcprov-jdk15on")
+    }
 
     defaultConfig {
         applicationId = "com.sq.thed_ck_licker"
@@ -24,7 +27,6 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunner = "dagger.hilt.android.testing.HiltTestRunner"
 
         defaultPublishConfig("debug")
@@ -105,12 +107,12 @@ dependencies {
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     androidTestImplementation(libs.androidx.junit.v115)
-    androidTestImplementation (libs.androidx.runner)
-    androidTestImplementation (libs.androidx.rules)
-    androidTestImplementation (libs.androidx.runner.v152)
-    androidTestImplementation ("androidx.test:core-ktx:1.5.0")
-    androidTestImplementation ("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation ("androidx.test:rules:1.5.0")
+    androidTestImplementation(libs.androidx.runner)
+    androidTestImplementation(libs.androidx.rules)
+    androidTestImplementation(libs.androidx.runner.v152)
+    androidTestImplementation("androidx.test:core-ktx:1.5.0")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test:rules:1.5.0")
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.hilt.android)
@@ -130,7 +132,6 @@ dependencies {
     testImplementation("org.junit.vintage:junit-vintage-engine:5.7.2")
     testImplementation(libs.hilt.android.testing)
     kspTest(libs.hilt.android.compiler)
-    kspAndroidTest(libs.hilt.android.compiler)
-    androidTestImplementation(libs.hilt.android.testing)
-
+    kspAndroidTest(libs.hilt.android.compiler.v244)
+    androidTestImplementation (libs.hilt.android.testing.v244)
 }

@@ -5,6 +5,8 @@ androidxJunit = "1.1.5"
 androidxRunner = "1.5.2"
 bcprovJdk15on = "1.70"
 hiltAndroidCompiler = "2.56.1"
+hiltAndroidCompilerVersion = "2.44"
+hiltAndroidTesting = "2.44"
 hiltNavigationCompose = "1.2.0"
 kotlin = "2.0.0"
 coreKtx = "1.15.0"
@@ -36,7 +38,9 @@ bcpkix-jdk15on = { module = "org.bouncycastle:bcpkix-jdk15on", version.ref = "bc
 bcprov-jdk15on = { module = "org.bouncycastle:bcprov-jdk15on", version.ref = "bcprovJdk15on" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroidCompiler" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidCompiler" }
+hilt-android-compiler-v244 = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidCompilerVersion" }
 hilt-android-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "hiltAndroidCompiler" }
+hilt-android-testing-v244 = { module = "com.google.dagger:hilt-android-testing", version.ref = "hiltAndroidTesting" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
