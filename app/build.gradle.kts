@@ -16,6 +16,7 @@ android {
     namespace = "com.sq.thed_ck_licker"
     compileSdk = 35
 
+
     defaultConfig {
         applicationId = "com.sq.thed_ck_licker"
         minSdk = 26
@@ -97,11 +98,19 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.junit.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
+    androidTestImplementation(libs.androidx.junit.v115)
+    androidTestImplementation (libs.androidx.runner)
+    androidTestImplementation (libs.androidx.rules)
+    androidTestImplementation (libs.androidx.runner.v152)
+    androidTestImplementation ("androidx.test:core-ktx:1.5.0")
+    androidTestImplementation ("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation ("androidx.test:rules:1.5.0")
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.hilt.android)
@@ -119,11 +128,9 @@ dependencies {
 //    testImplementation("junit:junit:4.13.2") == testImplementation(libs.junit)
     testImplementation(libs.junit)
     testImplementation("org.junit.vintage:junit-vintage-engine:5.7.2")
-    testImplementation (libs.mockito.core)
     testImplementation(libs.hilt.android.testing)
     kspTest(libs.hilt.android.compiler)
     kspAndroidTest(libs.hilt.android.compiler)
     androidTestImplementation(libs.hilt.android.testing)
-    androidTestImplementation (libs.mockito.android)
 
 }

@@ -27,14 +27,13 @@ private fun healthDeath(componentManager: ComponentManager): List<EntityId> {
     for (entity in dying) {
         //this is because otherwise the player health component gets killed too early :D
         //If you know a better way im all for since this is kinda hacky
-        if (entity.key != getPlayerID()) {
+        if (entity.key != getPlayerID()) continue
             val health = (entity.value as HealthComponent).health.floatValue
             if (health <= 0) {
                 deaths.add(deathHappening(entity, componentManager))
                 println("Death happened, such shame")
                 println("Entity #${entity.key} is dead now")
             }
-        }
     }
     return deaths
 

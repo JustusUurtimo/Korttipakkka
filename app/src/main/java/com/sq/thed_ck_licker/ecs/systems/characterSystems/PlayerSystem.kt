@@ -21,13 +21,12 @@ import kotlinx.coroutines.flow.combine
 class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreationSystem) {
 
     fun initPlayer() {
-        println(("Initializing player ############################"))
         getPlayerID() add HealthComponent(100f)
         getPlayerID() add ScoreComponent()
         getPlayerID() add MerchantComponent()
         getPlayerID() add DrawDeckComponent(initPlayerDeck() as MutableList<Int>)
         getPlayerID() add EffectStackComponent()
-        getPlayerID() add DiscardDeckComponent()
+        getPlayerID() add DiscardDeckComponent(mutableListOf<Int>())
     }
 
     private fun initPlayerDeck(): List<Int> {
@@ -76,14 +75,6 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
 
     fun getPlayerActiveMerchantCard(): Int {
         return (getPlayerID() get MerchantComponent::class).activeMerchantSummonCard.intValue
-    }
-
-    fun updateHealth(amount: Float) {
-        (getPlayerID() get HealthComponent::class).health.floatValue += amount
-    }
-
-    fun updateMaxHealth(amount: Float) {
-        (getPlayerID() get HealthComponent::class).maxHealth.floatValue += amount
     }
 
     fun updateScore(amount: Int) {

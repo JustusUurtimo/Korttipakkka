@@ -2,6 +2,7 @@ package com.sq.thed_ck_licker.ecs.systems.characterSystems
 
 import android.util.Log
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.size
@@ -10,52 +11,63 @@ import com.sq.thed_ck_licker.ecs.managers.EntityManager
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.CardPullingSystem
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Before
+import org.junit.Rule
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.Mock
-import org.mockito.Mockito.any
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.`when`
-import org.mockito.MockitoAnnotations
+import org.junit.runner.RunWith
 import java.util.Collections
+import javax.inject.Inject
 import kotlin.properties.Delegates
 
+@HiltAndroidTest
+@RunWith(AndroidJUnit4::class)
 class PlayerSystemTest {
 
-    @Mock
-    var playerSystem: PlayerSystem = mock()
+    @get:Rule
+    var hiltRule = HiltAndroidRule(this)
 
-    @Mock
-    var cardPullingSystem: CardPullingSystem = mock()
+    @Before
+    fun setUp() {
+        hiltRule.inject()
+    }
 
-    @Mock
-    var cardsSystem: CardsSystem = mock()
 
-    @Mock
-    var cardCreationSystem: CardCreationSystem = mock()
+    @Inject
+    lateinit var playerSystem: PlayerSystem
 
-    @Mock
-    var componentManager: ComponentManager = mock()
+    @Inject
+    lateinit var cardPullingSystem: CardPullingSystem
 
-    @Mock
-    var drawDeckComponent: DrawDeckComponent = mock()
+    @Inject
+    lateinit var cardsSystem: CardsSystem
 
-    @Mock
-    var discardDeck: DiscardDeckComponent = mock()
+    @Inject
+    lateinit var cardCreationSystem: CardCreationSystem
+
+    @Inject
+    lateinit var componentManager: ComponentManager
+
+    @Inject
+    lateinit var drawDeckComponent: DrawDeckComponent
+
+    @Inject
+    lateinit var discardDeck: DiscardDeckComponent
+
+    @Inject
+    lateinit var cardBuilderSystem: CardBuilderSystem
 
 
     var playerId by Delegates.notNull<Int>()
     val cardCount = mutableIntStateOf(0)
 
-    @Before
-    fun setUp() {
-        MockitoAnnotations.openMocks(this)
-    }
 
     @BeforeEach
     fun setUp2() {
@@ -65,13 +77,10 @@ class PlayerSystemTest {
     @Test
     fun `player has draw deck`() {
         playerSystem.initPlayer()
-        `when`(componentManager.getComponent(playerId, DrawDeckComponent::class)).thenReturn(
-            drawDeckComponent
-        )
         var drawDeck: DrawDeckComponent? = null
         try {
             //I have no idea why the 'get' thing would not work here..
-            drawDeck = componentManager.getComponent(playerId, DrawDeckComponent::class)
+            drawDeck = playerId get DrawDeckComponent::class
         } catch (e: IllegalStateException) {
             Log.e("PlayerSystemTest", "Player has no draw deck: ${e.message}")
             fail("Player has no draw deck")
@@ -82,12 +91,9 @@ class PlayerSystemTest {
     @Test
     fun `player has discard deck`() {
         playerSystem.initPlayer()
-        `when`(componentManager.getComponent(playerId, DiscardDeckComponent::class)).thenReturn(
-            discardDeck
-        )
         var discardDeck: DiscardDeckComponent? = null
         try {
-            discardDeck = componentManager.getComponent(playerId, DiscardDeckComponent::class)
+            discardDeck = playerId get DiscardDeckComponent::class
         } catch (e: IllegalStateException) {
             Log.e("PlayerSystemTest", "Player has no discard deck: ${e.message}")
             fail("Player has no discard deck")
@@ -109,12 +115,11 @@ class PlayerSystemTest {
 
     @Test
     fun `on activation card goes to discard deck`() {
-        `when`(cardCreationSystem.addBasicScoreCards(2)).thenReturn(listOf(1, 2))
         val cards = cardCreationSystem.addBasicScoreCards(2) as MutableList<Int>
         val drawDeck = DrawDeckComponent(cards)
         playerId add drawDeck
 
-        val discardDeck = DiscardDeckComponent()
+        val discardDeck = DiscardDeckComponent(mutableListOf<Int>())
         playerId add discardDeck
         val card = mutableIntStateOf(-1)
         cardPullingSystem.pullNewCard(card)
@@ -136,7 +141,7 @@ class PlayerSystemTest {
         val drawDeck = DrawDeckComponent(cards2)
         playerId add drawDeck
 
-        val discardDeck = DiscardDeckComponent()
+        val discardDeck = DiscardDeckComponent(mutableListOf<Int>())
         playerId add discardDeck
         val card = mutableIntStateOf(-1)
         repeat(2) {
