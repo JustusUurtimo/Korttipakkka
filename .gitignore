@@ -20,3 +20,5 @@ local.properties
 /.idea/AndroidProjectSystem.xml
 /.idea/limited-wip.xml
 /.idea/appInsightsSettings.xml
+
+.idea/deploymentTargetDropDown.xml
