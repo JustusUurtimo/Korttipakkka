@@ -24,6 +24,7 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "dagger.hilt.android.testing.HiltTestRunner"
 
         defaultPublishConfig("debug")
     }
@@ -118,4 +119,11 @@ dependencies {
 //    testImplementation("junit:junit:4.13.2") == testImplementation(libs.junit)
     testImplementation(libs.junit)
     testImplementation("org.junit.vintage:junit-vintage-engine:5.7.2")
+    testImplementation (libs.mockito.core)
+    testImplementation(libs.hilt.android.testing)
+    kspTest(libs.hilt.android.compiler)
+    kspAndroidTest(libs.hilt.android.compiler)
+    androidTestImplementation(libs.hilt.android.testing)
+    androidTestImplementation (libs.mockito.android)
+
 }
