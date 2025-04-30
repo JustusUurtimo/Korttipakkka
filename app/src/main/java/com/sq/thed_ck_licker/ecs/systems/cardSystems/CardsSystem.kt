@@ -15,8 +15,10 @@ import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.generateEntity
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.discardSystem
+import com.sq.thed_ck_licker.ecs.systems.helperSystems.onDeathSystem
+import com.sq.thed_ck_licker.ecs.systems.helperSystems.onTurnStartEffectStackSystem
 import com.sq.thed_ck_licker.helpers.getRandomElement
-import jakarta.inject.Inject
+import javax.inject.Inject
 import kotlin.math.min
 
 class CardsSystem @Inject constructor() {
@@ -30,7 +32,16 @@ class CardsSystem @Inject constructor() {
         return theCard
     }
 
-    fun activateCard(latestCard: MutableIntState, playerCardCount: MutableIntState) {
+    fun cardActivation(
+        latestCard: MutableIntState,
+        playerCardCount: MutableIntState
+    ) {
+        onTurnStartEffectStackSystem()
+        activateCard(latestCard, playerCardCount)
+        onDeathSystem()
+    }
+
+    private fun activateCard(latestCard: MutableIntState, playerCardCount: MutableIntState) {
         playerCardCount.intValue += 1
         val latestCardId = latestCard.intValue
 

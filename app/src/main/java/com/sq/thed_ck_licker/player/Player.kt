@@ -21,7 +21,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.sq.thed_ck_licker.ui.theme.viewModels.PlayerViewModel
+import com.sq.thed_ck_licker.viewModels.PlayerViewModel
 
 @Composable
 fun HealthBar(

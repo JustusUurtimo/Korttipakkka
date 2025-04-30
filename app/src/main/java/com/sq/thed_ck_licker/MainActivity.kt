@@ -12,15 +12,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.sq.thed_ck_licker.ecs.systems.WorldCreationSystem
 import com.sq.thed_ck_licker.ui.theme.TheD_ck_LickerTheme
 import dagger.hilt.android.AndroidEntryPoint
-import jakarta.inject.Inject
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @Inject lateinit var worldCreationSystem: WorldCreationSystem
     override fun onCreate(savedInstanceState: Bundle?) {
-        worldCreationSystem.initWorld()
-
         super.onCreate(savedInstanceState)
+
+        worldCreationSystem.createWorld()
         enableEdgeToEdge()
         setContent {
             TheD_ck_LickerTheme {

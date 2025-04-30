@@ -1,10 +1,11 @@
-package com.sq.thed_ck_licker.ui.theme.viewModels
+package com.sq.thed_ck_licker.viewModels
 
+import androidx.compose.runtime.MutableIntState
 import androidx.lifecycle.ViewModel
 import com.sq.thed_ck_licker.ecs.systems.characterSystems.MerchantSystem
 import com.sq.thed_ck_licker.ecs.systems.characterSystems.PlayerSystem
 import dagger.hilt.android.lifecycle.HiltViewModel
-import jakarta.inject.Inject
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -17,11 +18,12 @@ class MerchantViewModel @Inject constructor(
     private val _merchantHand = MutableStateFlow<List<Int>>(emptyList())
     val merchantHand: StateFlow<List<Int>> get() = _merchantHand
 
-    fun onChooseMerchantCard(cardId: Int) {
-        merchantSystem.chooseMerchantCard(cardId)
+    fun onChooseMerchantCard(latestCard: MutableIntState, newcard: Int) {
+        merchantSystem.chooseMerchantCard(latestCard, newcard)
     }
 
-    fun onReRollShop(): () -> Unit = {
+    fun onReRollShop() {
+        println("Re-rolling shop")
         val activeMerchantSummonCard = playerSystem.getPlayerActiveMerchantCard()
 
         if (merchantSystem.getReRollCount(activeMerchantSummonCard).intValue > 1) {

@@ -1,27 +1,27 @@
 package com.sq.thed_ck_licker.ecs.systems.characterSystems
 
 import androidx.compose.runtime.snapshotFlow
-import com.sq.thed_ck_licker.ecs.managers.ComponentManager
-import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
-import com.sq.thed_ck_licker.ecs.managers.EntityManager.getRegularMerchantID
-import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.MerchantComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
+import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
+import com.sq.thed_ck_licker.ecs.managers.EntityManager.getRegularMerchantID
+import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.states.PlayerState
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 
 
-class PlayerSystem {
+class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreationSystem) {
 
     fun initPlayer() {
+        println(("Initializing player ############################"))
         getPlayerID() add HealthComponent(100f)
         getPlayerID() add ScoreComponent()
         getPlayerID() add MerchantComponent()

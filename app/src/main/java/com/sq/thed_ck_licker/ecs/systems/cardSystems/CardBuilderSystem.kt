@@ -13,7 +13,7 @@ import com.sq.thed_ck_licker.ecs.components.TagsComponent
 import com.sq.thed_ck_licker.ecs.managers.ComponentManager
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.generateEntity
-import jakarta.inject.Inject
+import javax.inject.Inject
 
 class CardBuilderSystem @Inject constructor(private val componentManager: ComponentManager) {
 

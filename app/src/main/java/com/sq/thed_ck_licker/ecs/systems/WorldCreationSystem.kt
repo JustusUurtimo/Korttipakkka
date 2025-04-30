@@ -3,14 +3,13 @@ package com.sq.thed_ck_licker.ecs.systems
 import com.sq.thed_ck_licker.ecs.managers.ComponentManager
 import com.sq.thed_ck_licker.ecs.systems.characterSystems.MerchantSystem
 import com.sq.thed_ck_licker.ecs.systems.characterSystems.PlayerSystem
-import jakarta.inject.Inject
-import com.sq.thed_ck_licker.ecs.systems.DescriptionSystem.Companion.instance as descriptionSystem
-
+import javax.inject.Inject
 
 class WorldCreationSystem @Inject constructor(
     private val componentManager: ComponentManager,
     private val playerSystem: PlayerSystem,
-    private val merchantSystem: MerchantSystem
+    private val merchantSystem: MerchantSystem,
+    private val descriptionSystem: DescriptionSystem
 ) {
 
     fun destroyWorld() {
@@ -18,7 +17,11 @@ class WorldCreationSystem @Inject constructor(
         initWorld()
     }
 
-    fun initWorld() {
+    fun createWorld() {
+        descriptionSystem.updateAllDescriptions()
+    }
+
+    private fun initWorld() {
         playerSystem.initPlayer()
         merchantSystem.initRegularMerchant()
         descriptionSystem.updateAllDescriptions()

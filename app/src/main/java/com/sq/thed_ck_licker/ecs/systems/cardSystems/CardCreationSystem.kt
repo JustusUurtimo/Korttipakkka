@@ -68,6 +68,7 @@ class CardCreationSystem @Inject constructor(
             val target = targetId get MerchantComponent::class
             target.merchantId.intValue = merchantId
             target.activeMerchantSummonCard.intValue = cardEntity
+
         }
 
         return cardBuilder.buildCards {

@@ -1,4 +1,4 @@
-package com.sq.thed_ck_licker.ui.theme.views
+package com.sq.thed_ck_licker.ecs.systems.viewSystems
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.height

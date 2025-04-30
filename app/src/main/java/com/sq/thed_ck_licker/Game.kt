@@ -18,25 +18,24 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.sq.thed_ck_licker.ecs.systems.activationSystem
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.CardDeck
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.PullCardButton
 import com.sq.thed_ck_licker.player.HealthBar
 import com.sq.thed_ck_licker.player.ScoreDisplay
-import com.sq.thed_ck_licker.ui.theme.viewModels.GameViewModel
-import com.sq.thed_ck_licker.ui.theme.viewModels.MerchantViewModel
-import com.sq.thed_ck_licker.ui.theme.viewModels.PlayerViewModel
-import com.sq.thed_ck_licker.ui.theme.views.DeathScreen
-import com.sq.thed_ck_licker.ui.theme.views.MerchantHandView
-import com.sq.thed_ck_licker.ui.theme.views.PlayerHandView
+import com.sq.thed_ck_licker.viewModels.GameViewModel
+import com.sq.thed_ck_licker.viewModels.MerchantViewModel
+import com.sq.thed_ck_licker.viewModels.PlayerViewModel
+import com.sq.thed_ck_licker.ecs.systems.viewSystems.DeathScreen
+import com.sq.thed_ck_licker.ecs.systems.viewSystems.MerchantHandView
+import com.sq.thed_ck_licker.ecs.systems.viewSystems.PlayerHandView
 
 @Composable
 fun Game(
     innerPadding: PaddingValues,
-    gameViewModel: GameViewModel = viewModel(),
-    playerViewModel: PlayerViewModel = viewModel(),
-    merchantViewModel: MerchantViewModel = viewModel(),
+    gameViewModel: GameViewModel = hiltViewModel(),
+    playerViewModel: PlayerViewModel = hiltViewModel(),
+    merchantViewModel: MerchantViewModel = hiltViewModel(),
 ) {
     val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues()
     val playerCardCount = rememberSaveable { mutableIntStateOf(0) }
@@ -54,7 +53,7 @@ fun Game(
             MerchantHandView(
                 modifier,
                 merchantHand,
-                chooseMerchantCard = { merchantViewModel.onChooseMerchantCard(it) },
+                chooseMerchantCard = { merchantViewModel.onChooseMerchantCard(latestCard, it) },
                 onReRollShop = { merchantViewModel.onReRollShop() },
             )
         }
@@ -76,13 +75,19 @@ fun Game(
                             playerCardCount,
                             modifier,
                             latestCard,
-                            activationSystem(latestCard, playerCardCount)
+                            activateCard = {
+                                playerViewModel.onActivateCard(
+                                    latestCard,
+                                    playerCardCount
+                                )
+                            }
                         )
                     }
                     PullCardButton(
                         navigationBarPadding,
                         modifier.offset((-15).dp),
-                    ) { playerViewModel.onPullNewCard(latestCard) }
+                        pullNewCard = { playerViewModel.onPullNewCard(latestCard) }
+                    )
                 }
 
             }

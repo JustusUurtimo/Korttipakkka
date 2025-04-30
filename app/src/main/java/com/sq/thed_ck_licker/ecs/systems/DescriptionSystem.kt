@@ -6,14 +6,9 @@ import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 import com.sq.thed_ck_licker.ecs.components.addHealth
 import com.sq.thed_ck_licker.ecs.components.addScore
+import javax.inject.Inject
 
-class DescriptionSystem private constructor(private val componentManager: ComponentManager = ComponentManager.componentManager) {
-
-    companion object {
-        val instance: DescriptionSystem by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
-            DescriptionSystem(ComponentManager.componentManager)
-        }
-    }
+class DescriptionSystem @Inject constructor(private val componentManager: ComponentManager) {
 
     fun updateAllDescriptions(componentManager: ComponentManager = this.componentManager) {
         val entitiesWithDescription =

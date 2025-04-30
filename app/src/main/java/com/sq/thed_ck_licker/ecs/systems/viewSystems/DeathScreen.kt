@@ -1,14 +1,17 @@
-package com.sq.thed_ck_licker.ui.theme.views
+package com.sq.thed_ck_licker.ecs.systems.viewSystems
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,10 +40,9 @@ fun DeathScreen(
     onQuit: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // Animated appearance
     var visibility by remember { mutableFloatStateOf(0f) }
     LaunchedEffect(Unit) {
-        visibility = 1f // Animate in
+        visibility = 1f
     }
 
     val transition = rememberInfiniteTransition()
@@ -53,11 +55,12 @@ fun DeathScreen(
         )
     )
 
+    val text = "YOU DIED"
+
     Box(
         modifier = modifier
             .fillMaxSize()
             .background(Color.Black.copy(alpha = 0.7f * visibility))
-            .graphicsLayer { alpha = visibility }
     ) {
         Column(
             modifier = Modifier
@@ -65,17 +68,41 @@ fun DeathScreen(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Death message
-            Text(
-                "YOU DIED",
-                style = MaterialTheme.typography.displayLarge,
-                color = Color.Red,
-                modifier = Modifier
-                    .padding(bottom = 24.dp)
-                    .graphicsLayer { alpha = pulseAlpha }
-            )
+            // Animate each letter individually with a bouncing effect
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                text.forEachIndexed { index, char ->
+                    // Infinite up-and-down bounce animation
+                    val animatedOffsetY by transition.animateFloat(
+                        initialValue = 0f, // Resting position
+                        targetValue = -10f, // Bounce up
+                        animationSpec = infiniteRepeatable(
+                            animation = tween(
+                                durationMillis = 500,
+                                delayMillis = index * 100, // Staggered bounce
+                                easing = LinearEasing
+                            ),
+                            repeatMode = RepeatMode.Reverse // Go back down
+                        )
+                    )
 
-            // Buttons
+                    Text(
+                        text = char.toString(),
+                        style = MaterialTheme.typography.displayLarge,
+                        color = Color.Red,
+                        modifier = Modifier
+                            .graphicsLayer(
+                                translationY = animatedOffsetY, // Apply Y bounce animation
+                                alpha = pulseAlpha // Add pulsing effect
+                            )
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
             Button(
                 onClick = onRetry,
                 modifier = Modifier.fillMaxWidth(0.6f)

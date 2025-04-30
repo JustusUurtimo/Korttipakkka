@@ -1,4 +1,4 @@
-package com.sq.thed_ck_licker.ui.theme.views
+package com.sq.thed_ck_licker.ecs.systems.viewSystems
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -23,6 +23,9 @@ fun MerchantHandView(
     chooseMerchantCard: (Int) -> Unit = {},
     onReRollShop: () -> Unit,
 ) {
+    if (merchantHand.isEmpty()) {
+        onReRollShop()
+    }
 
     Box(
         modifier = modifier
