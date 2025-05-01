@@ -102,6 +102,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.junit.ktx)
     testImplementation(libs.junit)
+    testImplementation(libs.hilt.android.testing.v244)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
@@ -116,9 +117,12 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.hilt.android)
-    ksp(libs.hilt.android.compiler)
+    implementation("com.google.dagger:hilt-android:2.56.1")
+    ksp(libs.hilt.compiler)
+    kspTest(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
-
+    testImplementation ("org.mockito:mockito-core:5.17.0")
+    testImplementation ("com.google.dagger:dagger:2.44")
     // (Required) Writing and executing Unit Tests on the JUnit Platform
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.2")
