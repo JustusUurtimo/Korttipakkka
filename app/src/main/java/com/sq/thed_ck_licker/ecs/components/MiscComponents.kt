@@ -4,6 +4,7 @@ import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import com.sq.thed_ck_licker.ecs.managers.GameEvents
 
 data class HealthComponent(var health: MutableFloatState, val maxHealth: MutableFloatState) {
     /**
@@ -24,7 +25,6 @@ data class HealthComponent(var health: MutableFloatState, val maxHealth: Mutable
 }
 
 
-
 fun HealthComponent.heal(healAmount: Float) {
     println("this is going to be modified ${this}")
     if ((this.health.floatValue + healAmount) > this.maxHealth.floatValue) {
@@ -37,6 +37,9 @@ fun HealthComponent.heal(healAmount: Float) {
 
 fun HealthComponent.damage(damageAmount: Float) {
     this.health.floatValue -= damageAmount
+    if (this.health.floatValue <= 0) {
+        GameEvents.onPlayerDied.tryEmit(Unit)
+    }
 }
 
 data class ScoreComponent(var score: MutableIntState) {

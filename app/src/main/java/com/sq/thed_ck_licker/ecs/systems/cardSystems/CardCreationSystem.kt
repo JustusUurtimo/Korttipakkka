@@ -14,7 +14,6 @@ import jakarta.inject.Inject
 
 class CardCreationSystem @Inject constructor(
     private val cardsSystem: CardsSystem,
-    private val cardEffectSystem: CardEffectSystem,
     private val cardBuilder: CardBuilderSystem
 ) {
 
@@ -51,7 +50,6 @@ class CardCreationSystem @Inject constructor(
     fun addDamageCards(amount: Int): List<EntityId> {
         val onActivation = { targetId: Int, _: Int ->
             (targetId get HealthComponent::class).damage(2000f)
-            cardEffectSystem.onHealthChanged(targetId)
         }
 
         return cardBuilder.buildCards {

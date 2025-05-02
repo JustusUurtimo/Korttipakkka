@@ -16,10 +16,6 @@ android {
     namespace = "com.sq.thed_ck_licker"
     compileSdk = 35
 
-    configurations.all {
-        exclude(group = "org.bouncycastle", module = "bcprov-jdk15on")
-    }
-
     defaultConfig {
         applicationId = "com.sq.thed_ck_licker"
         minSdk = 26
@@ -27,7 +23,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "dagger.hilt.android.testing.HiltTestRunner"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         defaultPublishConfig("debug")
     }
@@ -100,29 +96,17 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.junit.ktx)
     testImplementation(libs.junit)
-    testImplementation(libs.hilt.android.testing.v244)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
-    androidTestImplementation(libs.androidx.junit.v115)
-    androidTestImplementation(libs.androidx.runner)
-    androidTestImplementation(libs.androidx.rules)
-    androidTestImplementation(libs.androidx.runner.v152)
-    androidTestImplementation("androidx.test:core-ktx:1.5.0")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test:rules:1.5.0")
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.hilt.android)
-    implementation("com.google.dagger:hilt-android:2.56.1")
-    ksp(libs.hilt.compiler)
-    kspTest(libs.hilt.compiler)
+    ksp(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
-    testImplementation ("org.mockito:mockito-core:5.17.0")
-    testImplementation ("com.google.dagger:dagger:2.44")
+
     // (Required) Writing and executing Unit Tests on the JUnit Platform
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.2")
@@ -134,8 +118,4 @@ dependencies {
 //    testImplementation("junit:junit:4.13.2") == testImplementation(libs.junit)
     testImplementation(libs.junit)
     testImplementation("org.junit.vintage:junit-vintage-engine:5.7.2")
-    testImplementation(libs.hilt.android.testing)
-    kspTest(libs.hilt.android.compiler)
-    kspAndroidTest(libs.hilt.android.compiler.v244)
-    androidTestImplementation (libs.hilt.android.testing.v244)
 }

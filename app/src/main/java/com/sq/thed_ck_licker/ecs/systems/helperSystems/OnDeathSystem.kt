@@ -9,6 +9,7 @@ import com.sq.thed_ck_licker.ecs.components.DurationComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
+import com.sq.thed_ck_licker.ecs.managers.GameEvents
 import com.sq.thed_ck_licker.ecs.managers.get
 
 fun onDeathSystem(componentManager: ComponentManager = ComponentManager.componentManager) {
@@ -27,13 +28,16 @@ private fun healthDeath(componentManager: ComponentManager): List<EntityId> {
     for (entity in dying) {
         //this is because otherwise the player health component gets killed too early :D
         //If you know a better way im all for since this is kinda hacky
-        if (entity.key != getPlayerID()) continue
-            val health = (entity.value as HealthComponent).health.floatValue
-            if (health <= 0) {
-                deaths.add(deathHappening(entity, componentManager))
-                println("Death happened, such shame")
-                println("Entity #${entity.key} is dead now")
-            }
+        if ((getPlayerID() get HealthComponent::class).health.floatValue <= 0) {
+            continue
+        }
+        val health = (entity.value as HealthComponent).health.floatValue
+        if (health <= 0) {
+            deaths.add(deathHappening(entity, componentManager))
+            println("Death happened, such shame")
+            println("Entity #${entity.key} is dead now")
+
+        }
     }
     return deaths
 
