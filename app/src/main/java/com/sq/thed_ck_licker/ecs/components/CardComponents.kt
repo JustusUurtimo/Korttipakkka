@@ -23,16 +23,18 @@ fun DescriptionComponent.addScore(scoreC: ScoreComponent) {
 }
 
 fun DescriptionComponent.addHealth(healthC: HealthComponent) {
-    if (healthC.health.floatValue > 0) {
-        description.value += "Heal for ${healthC.health.floatValue} points"
-    } else if (healthC.health.floatValue < 0) {
-        description.value += "Lose ${healthC.health.floatValue} health"
+    val health = healthC.getHealth()
+    val maxHealth = healthC.getMaxHealth()
+    if (health > 0) {
+        description.value += "Heal for $health points"
+    } else if (health < 0) {
+        description.value += "Lose $health health"
     }
 
-    if (healthC.maxHealth.floatValue > 0) {
-        description.value += "Gain ${healthC.maxHealth.floatValue} max health"
-    } else if (healthC.maxHealth.floatValue < 0) {
-        description.value += "Lose ${healthC.maxHealth.floatValue} max health"
+    if (maxHealth > 0) {
+        description.value += "Gain $maxHealth max health"
+    } else if (maxHealth < 0) {
+        description.value += "Lose $maxHealth max health"
     }
 }
 
@@ -51,7 +53,7 @@ data class EffectComponent(
     val onSpawn: (Int) -> Unit = {},
     val onTurnStart: (Int) -> Unit = {},
     val onPlay: (Int, Int) -> Unit = { _, _ -> },
-    val onDeactivate: (Int, Int) -> Unit = {_, _ ->},
+    val onDeactivate: (Int, Int) -> Unit = { _, _ -> },
 )
 
 /**

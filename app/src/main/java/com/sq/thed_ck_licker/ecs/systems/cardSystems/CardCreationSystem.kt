@@ -5,8 +5,6 @@ import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.MerchantComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
-import com.sq.thed_ck_licker.ecs.components.damage
-import com.sq.thed_ck_licker.ecs.components.heal
 import com.sq.thed_ck_licker.ecs.managers.EntityId
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.helpers.MyRandom
@@ -49,7 +47,7 @@ class CardCreationSystem @Inject constructor(
 
     fun addDamageCards(amount: Int): List<EntityId> {
         val onActivation = { targetId: Int, _: Int ->
-            (targetId get HealthComponent::class).damage(2000f)
+            (targetId get HealthComponent::class).damage(2000f, targetId)
         }
 
         return cardBuilder.buildCards {
@@ -82,10 +80,11 @@ class CardCreationSystem @Inject constructor(
         val onActivation = { targetId: Int, cardEntity: Int ->
             val targetHp = targetId get HealthComponent::class
             if (MyRandom.getRandomInt() <= 2) {
-                (cardEntity get HealthComponent::class).health.floatValue -= 99999f
-                targetHp.health.floatValue = (targetHp.health.floatValue.div(2))
+                (cardEntity get HealthComponent::class).damage(99999f, cardEntity)
+                val damageAmount = targetHp.getHealth().div(2)
+                targetHp.damage(damageAmount, targetId)
             } else {
-                targetHp.maxHealth.floatValue += 10f
+                targetHp.increaseMaxHealth(10f)
             }
         }
 
@@ -131,7 +130,7 @@ class CardCreationSystem @Inject constructor(
             val target = playerId get HealthComponent::class
             val riskPoints = cardEntity get ScoreComponent::class
             riskPoints.score.intValue += 1
-            target.health.floatValue -= riskPoints.score.intValue.toFloat()
+            target.damage(riskPoints.score.intValue.toFloat(), playerId)
             println("Now its deactivated")
             println("Risk is rising!")
             println("Holds ${riskPoints.score.intValue} points")
@@ -158,7 +157,8 @@ class CardCreationSystem @Inject constructor(
         val onActivation = { targetId: Int, entityId: Int ->
             val target = targetId get HealthComponent::class
             val activationComponent = entityId get ActivationCounterComponent::class
-            target.health.floatValue -= (activationComponent.activations.intValue * 5)
+            val damageAmount = (activationComponent.activations.intValue * 5).toFloat()
+            target.damage(damageAmount, targetId)
         }
 
         return cardBuilder.buildCards {

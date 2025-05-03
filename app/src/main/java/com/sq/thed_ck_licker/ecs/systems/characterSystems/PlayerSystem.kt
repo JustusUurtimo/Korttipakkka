@@ -58,7 +58,7 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
 
 
     fun getPlayerHealth(): Float {
-        return (getPlayerID() get HealthComponent::class).health.floatValue
+        return (getPlayerID() get HealthComponent::class).getHealth()
     }
 
     fun getPlayerScore(): Int {
@@ -66,7 +66,7 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
     }
 
     fun getPlayerMaxHealth(): Float {
-        return (getPlayerID() get HealthComponent::class).maxHealth.floatValue
+        return (getPlayerID() get HealthComponent::class).getMaxHealth()
     }
 
     fun getPlayerMerchantId(): Int {

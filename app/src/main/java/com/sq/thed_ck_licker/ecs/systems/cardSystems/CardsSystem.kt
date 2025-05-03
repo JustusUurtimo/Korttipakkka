@@ -44,6 +44,18 @@ class CardsSystem @Inject constructor() {
     private fun activateCard(latestCard: MutableIntState, playerCardCount: MutableIntState) {
         playerCardCount.intValue += 1
         val latestCardId = latestCard.intValue
+        var latestCardHp : HealthComponent? = null
+
+        try {
+            latestCardHp = (latestCardId get HealthComponent::class)
+        } catch (_: IllegalStateException) {
+            Log.i(
+                "CardsSystem",
+                "No health component found for activation \n" +
+                        "Yeah yeah, we get it, you are so cool there was no health component"
+            )
+        }
+
 
         try {
             (latestCardId get EffectComponent::class).onPlay.invoke(getPlayerID(), latestCardId)
@@ -55,22 +67,16 @@ class CardsSystem @Inject constructor() {
             )
         }
 
-        try {
-            (latestCardId get HealthComponent::class).health.floatValue -= 1f
+        latestCardHp?.apply {
+            damage(1f, latestCardId)
             Log.i(
                 "CardsSystem",
-                "Health is now ${(latestCardId get HealthComponent::class).health.floatValue}"
+                "Health is now ${latestCardHp.getHealth()}"
             )
-            if ((latestCardId get HealthComponent::class).health.floatValue <= 0) {
+            if (latestCardHp.getHealth() <= 0) {
                 latestCard.intValue = -1
             }
-        } catch (_: IllegalStateException) {
-            Log.i(
-                "CardsSystem",
-                "No health component found for activation \n" +
-                        "Yeah yeah, we get it, you are so cool there was no health component"
-            )
-        }
+        } ?: Log.i("CardsSystem", "No health component found for activation")
 
         try {
             (latestCardId get ActivationCounterComponent::class).activate()
@@ -110,16 +116,16 @@ class CardsSystem @Inject constructor() {
 
         limitedHealEntity add EffectComponent(onTurnStart = { id: Int ->
             val targetHealthComponent = id get HealthComponent::class
-            val targetMaxHp = targetHealthComponent.maxHealth.floatValue
-            val targetHp = targetHealthComponent.health.floatValue
+            val targetMaxHp = targetHealthComponent.getMaxHealth()
+            val targetHp = targetHealthComponent.getHealth()
             if (targetHp < targetMaxHp / 2) {
                 val amountToHeal = (targetMaxHp * 0.8f) - targetHp
-                val amountOfHealingProvided = min(selfHp.health.floatValue, amountToHeal)
-                selfHp.health.floatValue -= amountOfHealingProvided
-                targetHealthComponent.health.floatValue += amountOfHealingProvided
+                val amountOfHealingProvided = min(selfHp.getHealth(), amountToHeal)
+                selfHp.damage(amountOfHealingProvided, limitedHealEntity)
+                targetHealthComponent.heal(amountOfHealingProvided)
             }
             println("My name is Beer Goggles")
-            println("I am now at ${selfHp.health.floatValue} health \nand have been activated ${selfActCounter.activations.intValue} times")
+            println("I am now at ${selfHp.getHealth()} health \nand have been activated ${selfActCounter.activations.intValue} times")
         })
 
         val targetEffectStackComp = (targetEntityId get EffectStackComponent::class)

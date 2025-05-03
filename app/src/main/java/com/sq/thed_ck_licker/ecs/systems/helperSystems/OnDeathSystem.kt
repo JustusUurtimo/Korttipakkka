@@ -1,15 +1,14 @@
 package com.sq.thed_ck_licker.ecs.systems.helperSystems
 
-import com.sq.thed_ck_licker.ecs.managers.ComponentManager
-import com.sq.thed_ck_licker.ecs.managers.EntityId
-import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DurationComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
-import com.sq.thed_ck_licker.ecs.managers.GameEvents
+import com.sq.thed_ck_licker.ecs.managers.ComponentManager
+import com.sq.thed_ck_licker.ecs.managers.EntityId
+import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.managers.get
 
 fun onDeathSystem(componentManager: ComponentManager = ComponentManager.componentManager) {
@@ -26,12 +25,8 @@ private fun healthDeath(componentManager: ComponentManager): List<EntityId> {
         ?: return emptyList()
     val deaths = mutableListOf<EntityId>()
     for (entity in dying) {
-        //this is because otherwise the player health component gets killed too early :D
-        //If you know a better way im all for since this is kinda hacky
-        if ((getPlayerID() get HealthComponent::class).health.floatValue <= 0) {
-            continue
-        }
-        val health = (entity.value as HealthComponent).health.floatValue
+        if (entity.key == getPlayerID()) continue
+        val health = (entity.value as HealthComponent).getHealth()
         if (health <= 0) {
             deaths.add(deathHappening(entity, componentManager))
             println("Death happened, such shame")
