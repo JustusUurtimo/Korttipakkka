@@ -1,5 +1,5 @@
 package com.sq.thed_ck_licker.ecs.systems.characterSystems
-
+/*
 import androidx.compose.runtime.mutableIntStateOf
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
@@ -10,8 +10,6 @@ import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.CardPullingSystem
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem
-import dagger.hilt.android.testing.HiltAndroidRule
-import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
@@ -20,7 +18,7 @@ import org.junit.jupiter.api.Test
 import javax.inject.Inject
 import kotlin.properties.Delegates
 
-/*
+
 class PlayerSystemTest {
 
     @Inject
