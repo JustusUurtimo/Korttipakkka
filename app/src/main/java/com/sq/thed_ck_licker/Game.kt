@@ -11,66 +11,82 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.sq.thed_ck_licker.ecs.systems.activationSystem
-import com.sq.thed_ck_licker.ecs.systems.pullNewCardSystem
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.sq.thed_ck_licker.ecs.systems.viewSystems.CardDeck
+import com.sq.thed_ck_licker.ecs.systems.viewSystems.PullCardButton
 import com.sq.thed_ck_licker.player.HealthBar
-import com.sq.thed_ck_licker.player.ScoreDisplayer
-import com.sq.thed_ck_licker.ui.components.buttons.PullCardButton
-import com.sq.thed_ck_licker.ui.components.views.CardDeck
-import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardDisplaySystem.Companion.instance as cardDisplaySystem
-import com.sq.thed_ck_licker.ecs.systems.characterSystems.PlayerSystem.Companion.instance as playerSystem
-
+import com.sq.thed_ck_licker.player.ScoreDisplay
+import com.sq.thed_ck_licker.viewModels.GameViewModel
+import com.sq.thed_ck_licker.viewModels.MerchantViewModel
+import com.sq.thed_ck_licker.viewModels.PlayerViewModel
+import com.sq.thed_ck_licker.ecs.systems.viewSystems.DeathScreen
+import com.sq.thed_ck_licker.ecs.systems.viewSystems.MerchantHandView
+import com.sq.thed_ck_licker.ecs.systems.viewSystems.PlayerHandView
 
 @Composable
-fun Game(innerPadding: PaddingValues) {
-
+fun Game(
+    innerPadding: PaddingValues,
+    gameViewModel: GameViewModel = hiltViewModel(),
+    playerViewModel: PlayerViewModel = hiltViewModel(),
+    merchantViewModel: MerchantViewModel = hiltViewModel(),
+) {
     val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues()
-    val playerActiveMerchant = rememberSaveable { playerSystem.getMerchant() }
     val playerCardCount = rememberSaveable { mutableIntStateOf(0) }
     val latestCard = rememberSaveable { mutableIntStateOf(-1) }
-    val playerHealth =
-        rememberSaveable { playerSystem.getPlayerHealthM() }
-    val playerMaxHealth =
-        rememberSaveable { playerSystem.getPlayerMaxHealthM() }
-    val playerScore = rememberSaveable { playerSystem.getPlayerScoreM() }
+    val isPlayerDead by gameViewModel.isPlayerDead.collectAsState()
+    val playerState by playerViewModel.playerState.collectAsState()
+    val merchantHand by merchantViewModel.merchantHand.collectAsState()
     val modifier = Modifier
 
     Column(modifier.fillMaxWidth()) {
 
-        HealthBar(playerHealth, playerMaxHealth, modifier.padding(innerPadding))
-        ScoreDisplayer(playerScore.intValue)
-        if (playerActiveMerchant.intValue != -1) {
-            cardDisplaySystem.CardsOnMerchantHandView(
-                playerActiveMerchant,
+        HealthBar(playerState.health, playerState.maxHealth, modifier.padding(innerPadding))
+        ScoreDisplay(playerState.score)
+        if (playerState.merchantId != -1) {
+            MerchantHandView(
                 modifier,
-                latestCard,
-                playerScore,
+                merchantHand,
+                chooseMerchantCard = { merchantViewModel.onChooseMerchantCard(latestCard, it) },
+                onReRollShop = { merchantViewModel.onReRollShop() },
             )
         }
 
+        if (isPlayerDead) {
+            DeathScreen(
+                onRetry = { gameViewModel.restartGame() },
+                onQuit = { gameViewModel.exitToMenu() })
+        }
+
         Box(modifier.fillMaxSize()) {
-            CardDeck(navigationBarPadding, pullNewCardSystem(latestCard, playerActiveMerchant))
+            CardDeck(navigationBarPadding) { playerViewModel.onPullNewCard(latestCard) }
             Box(modifier.align(Alignment.BottomCenter)) {
 
                 Column(modifier.padding(35.dp, 0.dp, 0.dp, 0.dp)) {
 
                     if (latestCard.intValue != -1) {
-                        cardDisplaySystem.CardsOnPlayerHandView(
+                        PlayerHandView(
                             playerCardCount,
                             modifier,
                             latestCard,
-                            activationSystem(latestCard, playerCardCount)
+                            activateCard = {
+                                playerViewModel.onActivateCard(
+                                    latestCard,
+                                    playerCardCount
+                                )
+                            }
                         )
                     }
                     PullCardButton(
                         navigationBarPadding,
                         modifier.offset((-15).dp),
-                        pullNewCardSystem(latestCard, playerActiveMerchant)
+                        pullNewCard = { playerViewModel.onPullNewCard(latestCard) }
                     )
                 }
 

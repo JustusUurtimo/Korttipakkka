@@ -1,22 +1,23 @@
 package com.sq.thed_ck_licker.ecs.systems.characterSystems
 
 import androidx.compose.runtime.MutableIntState
-import com.sq.thed_ck_licker.ecs.ComponentManager
-import com.sq.thed_ck_licker.ecs.EntityManager.getRegularMerchantID
-import com.sq.thed_ck_licker.ecs.add
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
-import com.sq.thed_ck_licker.ecs.get
-import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem.Companion.instance as cardCreationSystem
-import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem.Companion.instance as cardsSystem
+import com.sq.thed_ck_licker.ecs.components.MerchantComponent
+import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
+import com.sq.thed_ck_licker.ecs.managers.EntityManager.getRegularMerchantID
+import com.sq.thed_ck_licker.ecs.managers.add
+import com.sq.thed_ck_licker.ecs.managers.get
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem
+import javax.inject.Inject
 
 
-class MerchantSystem private constructor(@Suppress("unused") private val componentManager: ComponentManager) {
-    companion object {
-        val instance: MerchantSystem by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
-            MerchantSystem(ComponentManager.componentManager)
-        }
-    }
+class MerchantSystem @Inject constructor(
+    private val cardCreationSystem: CardCreationSystem,
+    private val playerSystem: PlayerSystem,
+    private val cardsSystem: CardsSystem
+) {
 
     fun initRegularMerchant() {
         getRegularMerchantID() add DrawDeckComponent(initRegularMerchantDeck().toMutableList())
@@ -38,7 +39,8 @@ class MerchantSystem private constructor(@Suppress("unused") private val compone
     }
 
 
-    fun reRollMerchantHand(merchantId: Int): List<Int> {
+    fun reRollMerchantHand(): List<Int> {
+        val merchantId = (getPlayerID() get MerchantComponent::class).merchantId.intValue
         val deck = (merchantId get DrawDeckComponent::class).drawCardDeck
         if (deck.size < 3) {
             deck.addAll(initRegularMerchantDeck())
@@ -49,6 +51,12 @@ class MerchantSystem private constructor(@Suppress("unused") private val compone
 
     fun getReRollCount(merchantCardId: Int): MutableIntState {
         return (merchantCardId get ActivationCounterComponent::class).activations
+    }
+
+    fun chooseMerchantCard(latestCard: MutableIntState, newcard: Int) {
+        playerSystem.updateScore(-100)
+        latestCard.intValue = newcard
+        playerSystem.updateMerchantId(-1)
     }
 
 }

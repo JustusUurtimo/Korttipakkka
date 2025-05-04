@@ -1,4 +1,4 @@
-package com.sq.thed_ck_licker.ecs
+package com.sq.thed_ck_licker.ecs.managers
 
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.snapshots.SnapshotStateMap
@@ -8,7 +8,7 @@ import kotlinx.parcelize.IgnoredOnParcel
 import kotlin.reflect.KClass
 
 // Component Manager
-class ComponentManager private constructor() {
+class ComponentManager {
 
     companion object {
         val componentManager: ComponentManager = ComponentManager()
@@ -94,6 +94,10 @@ class ComponentManager private constructor() {
         for (componentMap in components.values) {
             componentMap.remove(entity)
         }
+    }
+
+    fun clear() {
+        components.clear()
     }
 }
 

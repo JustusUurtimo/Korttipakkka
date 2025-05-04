@@ -1,4 +1,4 @@
-package com.sq.thed_ck_licker.ui.components.buttons
+package com.sq.thed_ck_licker.ecs.systems.viewSystems
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues

@@ -1,15 +1,14 @@
 package com.sq.thed_ck_licker.ecs.components
 
-import android.os.Parcelable
-import android.util.MutableBoolean
 import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
-import com.sq.thed_ck_licker.ecs.get
-import kotlinx.parcelize.Parcelize
+import com.sq.thed_ck_licker.ecs.managers.GameEvents
+import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 
-data class HealthComponent(var health: MutableFloatState, val maxHealth: MutableFloatState) {
+
+data class HealthComponent(private var health: MutableFloatState, private val maxHealth: MutableFloatState) {
     /**
      * This can be used in cases where you want thing to be not on full hp at the start
      */
@@ -25,16 +24,32 @@ data class HealthComponent(var health: MutableFloatState, val maxHealth: Mutable
         mutableFloatStateOf(maxHealth),
         mutableFloatStateOf(maxHealth)
     )
-}
-
-fun HealthComponent.heal(healAmount: Float) {
-    println("this is going to be modified ${this}")
-    if ((this.health.floatValue + healAmount) > this.maxHealth.floatValue) {
-        this.health.floatValue = this.maxHealth.floatValue
-    } else {
-        this.health.floatValue += healAmount
+    fun getHealth(): Float {
+        return this.health.floatValue
     }
-    println("and the end result is ${this}")
+    fun getMaxHealth(): Float {
+        return this.maxHealth.floatValue
+    }
+    fun increaseMaxHealth(amount: Float) {
+        this.maxHealth.floatValue += amount
+    }
+
+    fun heal(healAmount: Float) {
+        println("this is going to be modified ${this}")
+        if ((this.health.floatValue + healAmount) > this.maxHealth.floatValue) {
+            this.health.floatValue = this.maxHealth.floatValue
+        } else {
+            this.health.floatValue += healAmount
+        }
+        println("and the end result is ${this}")
+    }
+
+    fun damage(damageAmount: Float, targetId: Int) {
+        this.health.floatValue -= damageAmount
+        if (targetId == getPlayerID() && this.health.floatValue <= 0) {
+            GameEvents.onPlayerDied.tryEmit(Unit)
+        }
+    }
 }
 
 data class ScoreComponent(var score: MutableIntState) {
@@ -44,7 +59,6 @@ data class ScoreComponent(var score: MutableIntState) {
 fun ScoreComponent.addScore(scoreComponent: ScoreComponent) {
     this.score.intValue += scoreComponent.score.intValue
 }
-
 
 data class MerchantComponent(
     var merchantId: MutableIntState,
@@ -56,7 +70,6 @@ data class MerchantComponent(
         ), mutableIntStateOf(activeMerchantSummonCard)
     )
 }
-
 
 //this should be implemented after we refactor the card creations system
 data class CardPriceComponent(var price: MutableIntState) {

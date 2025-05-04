@@ -9,20 +9,18 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.sq.thed_ck_licker.ecs.systems.WorldCreationSystem
 import com.sq.thed_ck_licker.ui.theme.TheD_ck_LickerTheme
-import com.sq.thed_ck_licker.ecs.systems.DescriptionSystem.Companion.instance as descriptionSystem
-import com.sq.thed_ck_licker.ecs.systems.characterSystems.PlayerSystem.Companion.instance as playerSystem
-import com.sq.thed_ck_licker.ecs.systems.characterSystems.MerchantSystem.Companion.instance as merchantSystem
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @Inject lateinit var worldCreationSystem: WorldCreationSystem
     override fun onCreate(savedInstanceState: Bundle?) {
-
-        playerSystem.initPlayer()
-        merchantSystem.initRegularMerchant()
-
-        descriptionSystem.updateAllDescriptions()
-
         super.onCreate(savedInstanceState)
+
+        worldCreationSystem.createWorld()
         enableEdgeToEdge()
         setContent {
             TheD_ck_LickerTheme {

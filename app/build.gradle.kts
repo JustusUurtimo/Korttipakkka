@@ -5,10 +5,9 @@ plugins {
     id("org.jetbrains.kotlin.plugin.parcelize")
 
     id("de.mannodermaus.android-junit5")
-
-
     id("org.jetbrains.kotlinx.kover")
-
+    id("com.google.dagger.hilt.android")
+    id("com.google.devtools.ksp")
     id("org.sonarqube")
 }
 var isDebug by extra(true)
@@ -87,7 +86,8 @@ sonar {
 
 
 dependencies {
-
+    implementation(libs.androidx.runtime.livedata)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -103,7 +103,9 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
 
     // (Required) Writing and executing Unit Tests on the JUnit Platform
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.2")

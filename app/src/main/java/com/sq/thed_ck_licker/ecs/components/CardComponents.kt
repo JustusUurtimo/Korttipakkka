@@ -1,6 +1,5 @@
 package com.sq.thed_ck_licker.ecs.components
 
-import android.os.Parcelable
 import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.runtime.MutableIntState
@@ -8,24 +7,10 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import com.sq.thed_ck_licker.R
-import kotlinx.parcelize.Parcelize
 
-// Enums
-enum class CardClassification { EVIL, GOOD, MISC }
-enum class CardEffectType { HP_REGEN, HEAL, DAMAGE, MAX_HP, DOUBLE_TROUBLE, REVERSE_DAMAGE, SHOP_COUPON }
-enum class CardEffectValue(val value: Float) {
-    DAMAGE_5(5f), DAMAGE_6(6f), HEAL_5(5f), HEAL_2(2f), HEAL_10(10f),
-    MAX_HP_2(2f), DOUBLE_TROUBLE(0f), REVERSE_DAMAGE(0f), SHOP_COUPON(100f)
-}
 
 enum class CardTag { CARD }
 
-@Parcelize
-data class CardEffect(
-    val classification: CardClassification,
-    val effectType: CardEffectType,
-    val effectValue: CardEffectValue
-) : Parcelable
 
 data class ImageComponent(@DrawableRes val cardImage: Int = R.drawable.placeholder)
 
@@ -38,16 +23,18 @@ fun DescriptionComponent.addScore(scoreC: ScoreComponent) {
 }
 
 fun DescriptionComponent.addHealth(healthC: HealthComponent) {
-    if (healthC.health.floatValue > 0) {
-        description.value += "Heal for ${healthC.health.floatValue} points"
-    } else if (healthC.health.floatValue < 0) {
-        description.value += "Lose ${healthC.health.floatValue} health"
+    val health = healthC.getHealth()
+    val maxHealth = healthC.getMaxHealth()
+    if (health > 0) {
+        description.value += "Heal for $health points"
+    } else if (health < 0) {
+        description.value += "Lose $health health"
     }
 
-    if (healthC.maxHealth.floatValue > 0) {
-        description.value += "Gain ${healthC.maxHealth.floatValue} max health"
-    } else if (healthC.maxHealth.floatValue < 0) {
-        description.value += "Lose ${healthC.maxHealth.floatValue} max health"
+    if (maxHealth > 0) {
+        description.value += "Gain $maxHealth max health"
+    } else if (maxHealth < 0) {
+        description.value += "Lose $maxHealth max health"
     }
 }
 
@@ -66,7 +53,7 @@ data class EffectComponent(
     val onSpawn: (Int) -> Unit = {},
     val onTurnStart: (Int) -> Unit = {},
     val onPlay: (Int, Int) -> Unit = { _, _ -> },
-    val onDeactivate: (Int, Int) -> Unit = {_, _ ->},
+    val onDeactivate: (Int, Int) -> Unit = { _, _ -> },
 )
 
 /**

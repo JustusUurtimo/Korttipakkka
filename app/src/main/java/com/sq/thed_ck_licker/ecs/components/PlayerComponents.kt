@@ -1,16 +1,17 @@
 package com.sq.thed_ck_licker.ecs.components
 
 import android.util.Log
-import com.sq.thed_ck_licker.ecs.ComponentManager
-import com.sq.thed_ck_licker.ecs.EntityId
-import com.sq.thed_ck_licker.ecs.hasComponent
+import com.sq.thed_ck_licker.ecs.managers.ComponentManager
+import com.sq.thed_ck_licker.ecs.managers.EntityId
+import com.sq.thed_ck_licker.ecs.managers.hasComponent
+import javax.inject.Inject
 
 
-data class DrawDeckComponent(val drawCardDeck: MutableList<Int> = mutableListOf<Int>())
+data class DrawDeckComponent @Inject constructor(val drawCardDeck: MutableList<Int> )
 
 fun DrawDeckComponent.size() = this.drawCardDeck.size
 
-data class DiscardDeckComponent(val discardDeck: MutableList<Int> = mutableListOf<Int>())
+data class DiscardDeckComponent @Inject constructor (val discardDeck: MutableList<Int>)
 
 fun DiscardDeckComponent.size() = this.discardDeck.size
 
