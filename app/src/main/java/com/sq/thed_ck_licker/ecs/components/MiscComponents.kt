@@ -8,7 +8,10 @@ import com.sq.thed_ck_licker.ecs.managers.GameEvents
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 
 
-data class HealthComponent(private var health: MutableFloatState, private val maxHealth: MutableFloatState) {
+data class HealthComponent(
+    private var health: MutableFloatState,
+    private val maxHealth: MutableFloatState
+) {
     /**
      * This can be used in cases where you want thing to be not on full hp at the start
      */
@@ -24,12 +27,15 @@ data class HealthComponent(private var health: MutableFloatState, private val ma
         mutableFloatStateOf(maxHealth),
         mutableFloatStateOf(maxHealth)
     )
+
     fun getHealth(): Float {
         return this.health.floatValue
     }
+
     fun getMaxHealth(): Float {
         return this.maxHealth.floatValue
     }
+
     fun increaseMaxHealth(amount: Float) {
         this.maxHealth.floatValue += amount
     }
@@ -52,28 +58,58 @@ data class HealthComponent(private var health: MutableFloatState, private val ma
     }
 }
 
-data class ScoreComponent(var score: MutableIntState) {
+data class ScoreComponent(private var score: MutableIntState) {
     constructor(score: Int = 0) : this(mutableIntStateOf(score))
+
+    fun addScore(score: Int) {
+        this.score.intValue += score
+    }
+
+    fun reduceScore(score: Int) {
+        this.score.intValue -= score
+    }
+
+    fun getScore(): Int {
+        return this.score.intValue
+    }
+
+    fun setScore(score: Int) {
+        this.score.intValue = score
+    }
+
 }
 
-fun ScoreComponent.addScore(scoreComponent: ScoreComponent) {
-    this.score.intValue += scoreComponent.score.intValue
-}
 
 data class MerchantComponent(
-    var merchantId: MutableIntState,
-    val activeMerchantSummonCard: MutableIntState
+    private var merchantId: MutableIntState,
+    private val activeMerchantSummonCard: MutableIntState
 ) {
     constructor(merchantId: Int = -1, activeMerchantSummonCard: Int = -1) : this(
         mutableIntStateOf(
             merchantId
         ), mutableIntStateOf(activeMerchantSummonCard)
     )
-}
 
-//this should be implemented after we refactor the card creations system
-data class CardPriceComponent(var price: MutableIntState) {
-    constructor(price: Int = 50) : this(mutableIntStateOf(price))
+    fun getMerchantId(): Int {
+        return this.merchantId.intValue
+    }
+
+    fun getActiveMerchantSummonCard(): Int {
+        return this.activeMerchantSummonCard.intValue
+    }
+
+    fun setMerchantId(merchantId: Int) {
+        this.merchantId.intValue = merchantId
+    }
+
+    fun setActiveMerchantSummonCard(activeMerchantSummonCard: Int) {
+        this.activeMerchantSummonCard.intValue = activeMerchantSummonCard
+    }
+
+    //this should be implemented after we refactor the card creations system
+    data class CardPriceComponent(private var price: MutableIntState) {
+        constructor(price: Int = 50) : this(mutableIntStateOf(price))
+    }
 }
 
 

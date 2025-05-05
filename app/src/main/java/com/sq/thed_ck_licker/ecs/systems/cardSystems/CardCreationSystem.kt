@@ -18,7 +18,7 @@ class CardCreationSystem @Inject constructor(
     fun addBasicScoreCards(amount: Int): List<EntityId> {
         val score = 10
         val onActivation = { targetId: Int, _: Int ->
-            (targetId get ScoreComponent::class).score.intValue += score
+            (targetId get ScoreComponent::class).addScore(score)
         }
 
         return cardBuilder.buildCards {
@@ -62,8 +62,8 @@ class CardCreationSystem @Inject constructor(
     fun addMerchantCards(amount: Int, merchantId: Int): List<EntityId> {
         val openMerchant = { targetId: Int, cardEntity: Int ->
             val target = targetId get MerchantComponent::class
-            target.merchantId.intValue = merchantId
-            target.activeMerchantSummonCard.intValue = cardEntity
+            target.setMerchantId(merchantId)
+            target.setActiveMerchantSummonCard(cardEntity)
 
         }
 
@@ -102,7 +102,7 @@ class CardCreationSystem @Inject constructor(
         val scoreIt = { targetId: Int, cardEntity: Int ->
             val target = targetId get ScoreComponent::class
             val omaScore = cardEntity get ScoreComponent::class
-            target.score.intValue += omaScore.score.intValue
+            target.addScore(omaScore.getScore())
         }
 
         return cardBuilder.buildCards {
@@ -120,20 +120,20 @@ class CardCreationSystem @Inject constructor(
         val onActivation = { targetId: Int, cardEntity: Int ->
             val target = targetId get ScoreComponent::class
             val riskPoints = cardEntity get ScoreComponent::class
-            val scoreIncrease = riskPoints.score.intValue * 3
-            target.score.intValue += (scoreIncrease)
-            riskPoints.score.intValue = 0
+            val scoreIncrease = riskPoints.getScore() * 3
+            target.addScore(scoreIncrease)
+            riskPoints.setScore(0)
             println("Now its activated")
             println("Gave $scoreIncrease points")
         }
         val deactivateAction = { playerId: Int, cardEntity: Int ->
             val target = playerId get HealthComponent::class
             val riskPoints = cardEntity get ScoreComponent::class
-            riskPoints.score.intValue += 1
-            target.damage(riskPoints.score.intValue.toFloat(), playerId)
+            riskPoints.addScore(1)
+            target.damage(riskPoints.getScore().toFloat(), playerId)
             println("Now its deactivated")
             println("Risk is rising!")
-            println("Holds ${riskPoints.score.intValue} points")
+            println("Holds ${riskPoints.getScore()} points")
 
         }
 
@@ -151,13 +151,13 @@ class CardCreationSystem @Inject constructor(
 
         val onDeactivation = { targetId: Int, entityId: Int ->
             val target = targetId get ScoreComponent::class
-            val activationComponent = entityId get ActivationCounterComponent::class
-            target.score.intValue -= (activationComponent.deactivations.intValue * 3)
+            val activationComponent = (entityId get ActivationCounterComponent::class)
+            target.reduceScore((activationComponent.getDeactivations() * 3))
         }
         val onActivation = { targetId: Int, entityId: Int ->
             val target = targetId get HealthComponent::class
             val activationComponent = entityId get ActivationCounterComponent::class
-            val damageAmount = (activationComponent.activations.intValue * 5).toFloat()
+            val damageAmount = (activationComponent.getActivations() * 5).toFloat()
             target.damage(damageAmount, targetId)
         }
 

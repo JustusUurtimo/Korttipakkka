@@ -62,7 +62,7 @@ class ComponentManager {
             throw IllegalStateException("No entities with TagsComponent found")
         } else {
             val matchingEntities = entities.filter { (_, value) ->
-                (value as TagsComponent).tags.containsAll(tags)
+                (value as TagsComponent).getTags().containsAll(tags)
             }
             return matchingEntities
         }

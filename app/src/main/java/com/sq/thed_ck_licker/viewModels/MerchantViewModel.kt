@@ -26,10 +26,10 @@ class MerchantViewModel @Inject constructor(
         println("Re-rolling shop")
         val activeMerchantSummonCard = playerSystem.getPlayerActiveMerchantCard()
 
-        if (merchantSystem.getReRollCount(activeMerchantSummonCard).intValue > 1) {
+        if (merchantSystem.getReRollCount(activeMerchantSummonCard) > 1) {
             playerSystem.updateScore(-500)
         }
-        merchantSystem.getReRollCount(activeMerchantSummonCard).intValue++
+        merchantSystem.addReRollCount(activeMerchantSummonCard)
         merchantSystem.reRollMerchantHand().also {
             _merchantHand.value = it
         }

@@ -13,7 +13,7 @@ fun onDiscardSystem(componentManager: ComponentManager = ComponentManager.compon
 
     for (effectTarget in targetsWithEffectStack) {
         val effectStack = effectTarget.value as EffectStackComponent
-        for (effectEntity in effectStack.effectEntities) {
+        for (effectEntity in effectStack.getEffectEntities()) {
             val effect = effectEntity get EffectComponent::class
             effect.onDeactivate(effectTarget.key, effectEntity)
         }
@@ -31,5 +31,5 @@ fun discardSystem(
         Log.i("discardSystem", "No deactivation effect found for card $cardId")
     }
     val discardDeck = ownerId get DiscardDeckComponent::class
-    discardDeck.discardDeck.add(cardId)
+    discardDeck.addCard(cardId)
 }
