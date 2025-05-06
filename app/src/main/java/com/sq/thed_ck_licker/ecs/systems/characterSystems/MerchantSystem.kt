@@ -38,7 +38,6 @@ class MerchantSystem @Inject constructor(
                 emptyList<Int>()
     }
 
-
     fun reRollMerchantHand(): List<Int> {
         val merchantId = (getPlayerID() get MerchantComponent::class).getMerchantId()
         val deck = (merchantId get DrawDeckComponent::class).getDrawCardDeck()
@@ -56,9 +55,9 @@ class MerchantSystem @Inject constructor(
         (merchantCardId get ActivationCounterComponent::class).activate()
     }
 
-    fun chooseMerchantCard(latestCard: MutableIntState, newcard: Int) {
+    fun chooseMerchantCard(latestCard: MutableIntState, newCard: Int) {
         playerSystem.updateScore(-100)
-        latestCard.intValue = newcard
+        latestCard.intValue = newCard
         playerSystem.updateMerchantId(-1)
     }
 

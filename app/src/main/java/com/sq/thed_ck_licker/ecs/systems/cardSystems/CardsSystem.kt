@@ -23,10 +23,11 @@ class CardsSystem @Inject constructor() {
 
 
     fun pullRandomCardFromEntityDeck(entityId: Int): Int {
-        val drawDeck = (entityId get DrawDeckComponent::class).getDrawCardDeck()
-        check(drawDeck.isNotEmpty()) { "No cards available" }
-        val theCard = drawDeck.getRandomElement()
-        drawDeck.remove(theCard)
+        val drawDeckComponent = (entityId get DrawDeckComponent::class)
+        val deck = drawDeckComponent.getDrawCardDeck()
+        check(deck.isNotEmpty()) { "No cards available" }
+        val theCard = deck.getRandomElement()
+        drawDeckComponent.removeCard(theCard)
         return theCard
     }
 

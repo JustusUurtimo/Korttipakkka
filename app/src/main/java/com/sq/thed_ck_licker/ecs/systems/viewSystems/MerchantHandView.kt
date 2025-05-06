@@ -22,9 +22,11 @@ fun MerchantHandView(
     merchantHand: List<Int>,
     chooseMerchantCard: (Int) -> Unit = {},
     onReRollShop: () -> Unit,
+    onOpenShop: () -> Unit
 ) {
+
     if (merchantHand.isEmpty()) {
-        onReRollShop()
+        onOpenShop()
     }
 
     Box(

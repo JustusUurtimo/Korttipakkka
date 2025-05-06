@@ -79,7 +79,7 @@ class CardCreationSystem @Inject constructor(
     fun addMaxHpTrapCards(amount: Int = 5): List<EntityId> {
         val onActivation = { targetId: Int, cardEntity: Int ->
             val targetHp = targetId get HealthComponent::class
-            if (MyRandom.getRandomInt() <= 2) {
+            if (MyRandom.getRandomInt() <= 10) {
                 (cardEntity get HealthComponent::class).damage(99999f, cardEntity)
                 val damageAmount = targetHp.getHealth().div(2)
                 targetHp.damage(damageAmount, targetId)

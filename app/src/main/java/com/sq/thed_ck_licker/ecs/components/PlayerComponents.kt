@@ -18,7 +18,9 @@ data class DrawDeckComponent @Inject constructor(private val drawCardDeck: Mutab
     fun removeCards(cards: List<Int>) {
         this.drawCardDeck.removeAll(cards)
     }
-
+    fun removeCard(cardId: Int) {
+        this.drawCardDeck.remove(cardId)
+    }
 }
 
 
