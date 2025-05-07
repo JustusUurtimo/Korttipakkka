@@ -44,7 +44,7 @@ private fun durationDeath(componentManager: ComponentManager): List<EntityId> {
     val deaths = mutableListOf<EntityId>()
     for (entity in dying) {
         val duraComp = (entity.value as DurationComponent)
-        if (duraComp.duration <= 0 && duraComp.infinite) {
+        if (duraComp.getDuration() <= 0 && duraComp.isInfinite()) {
             deaths.add(deathHappening(entity, componentManager))
         }
     }
@@ -76,21 +76,21 @@ fun performCleanup(componentManager: ComponentManager, deaths: List<EntityId>) {
 
     for (entityAndComp in toClean) {
         val component = entityAndComp.value as EffectStackComponent
-        component.effectEntities.removeAll(deaths)
+        component.removeEntities(deaths)
     }
 
     val toClean2 = componentManager.getEntitiesWithComponent(DrawDeckComponent::class) ?: return
 
     for (entityAndComp in toClean2) {
         val component = entityAndComp.value as DrawDeckComponent
-        component.drawCardDeck.removeAll(deaths)
+        component.removeCards(deaths)
     }
 
     val toClean3 = componentManager.getEntitiesWithComponent(DiscardDeckComponent::class) ?: return
 
     for (entityAndComp in toClean3) {
         val component = entityAndComp.value as DiscardDeckComponent
-        component.discardDeck.removeAll(deaths)
+        component.removeCards(deaths)
     }
 
 }

@@ -55,6 +55,7 @@ fun Game(
                 merchantHand,
                 chooseMerchantCard = { merchantViewModel.onChooseMerchantCard(latestCard, it) },
                 onReRollShop = { merchantViewModel.onReRollShop() },
+                onOpenShop = {merchantViewModel.onOpenShop()}
             )
         }
 

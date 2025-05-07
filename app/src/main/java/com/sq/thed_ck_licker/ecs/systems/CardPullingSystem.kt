@@ -2,12 +2,11 @@ package com.sq.thed_ck_licker.ecs.systems
 
 import android.util.Log
 import androidx.compose.runtime.MutableIntState
-import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
-import com.sq.thed_ck_licker.ecs.components.deactivate
+import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem
 import javax.inject.Inject
@@ -40,9 +39,9 @@ class CardPullingSystem @Inject constructor(private val cardsSystem: CardsSystem
         }
         //    onDiscardSystem()
 
-        val drawDeck2 = getPlayerID() get DrawDeckComponent::class
+        val drawDeck2 = (getPlayerID() get DrawDeckComponent::class).getDrawCardDeck()
         if (latestCard.intValue > 0) {
-            drawDeck2.drawCardDeck.add(latestCard.intValue)
+            drawDeck2.add(latestCard.intValue)
         }
 
         putDiscardToDeckAndShuffle()
@@ -56,13 +55,13 @@ private fun putDiscardToDeckAndShuffle(
     targetId: Int = getPlayerID(),
     forceReshuffle: Boolean = false
 ) {
-    val drawDeck = targetId get DrawDeckComponent::class
-    val discardDeck = targetId get DiscardDeckComponent::class
-    if ((drawDeck.drawCardDeck.isEmpty() && discardDeck.discardDeck.isNotEmpty()) || forceReshuffle) {
-        drawDeck.drawCardDeck += discardDeck.discardDeck.toMutableList()
+    val drawDeck = (targetId get DrawDeckComponent::class).getDrawCardDeck()
+    val discardDeck = (targetId get DiscardDeckComponent::class).getDiscardDeck()
+    if ((drawDeck.isEmpty() && discardDeck.isNotEmpty()) || forceReshuffle) {
+        drawDeck += discardDeck.toMutableList()
         //There is argument for shuffling only the discard deck but that is worry for another time.
-        drawDeck.drawCardDeck.shuffle()
+        drawDeck.shuffle()
         //On shuffle effects here?
-        discardDeck.discardDeck.clear()
+        discardDeck.clear()
     }
 }

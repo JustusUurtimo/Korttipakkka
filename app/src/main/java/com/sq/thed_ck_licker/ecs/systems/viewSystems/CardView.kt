@@ -22,9 +22,9 @@ import com.sq.thed_ck_licker.ecs.managers.get
 
 @Composable
 fun CardView(entityId: Int = 1, activateCard: () -> Unit, modifier: Modifier) {
-    val image = (entityId get ImageComponent::class).cardImage
-    val name = (entityId get NameComponent::class).name
-    val description = (entityId get DescriptionComponent::class).description.value
+    val image = (entityId get ImageComponent::class).getImage()
+    val name = (entityId get NameComponent::class).getName()
+    val description = (entityId get DescriptionComponent::class).getDescription()
 
     Card(
         modifier = modifier

@@ -1,12 +1,11 @@
 package com.sq.thed_ck_licker.ecs.systems
 
-import com.sq.thed_ck_licker.ecs.managers.ComponentManager
 import com.sq.thed_ck_licker.ecs.components.DescriptionComponent
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
-import com.sq.thed_ck_licker.ecs.components.addHealth
-import com.sq.thed_ck_licker.ecs.components.addScore
+import com.sq.thed_ck_licker.ecs.managers.ComponentManager
 import javax.inject.Inject
+import com.sq.thed_ck_licker.ecs.managers.get
 
 class DescriptionSystem @Inject constructor(private val componentManager: ComponentManager) {
 
@@ -37,12 +36,11 @@ class DescriptionSystem @Inject constructor(private val componentManager: Compon
     }
 
     fun updateSingleDescription(
-        entity: Int,
-        componentManager: ComponentManager = this.componentManager
+        entity: Int
     ) {
         val comps = componentManager.getAllComponentsOfEntity(entity)
-        val descComp = componentManager.getComponent(entity, DescriptionComponent::class)
-        descComp.description.value = ""
+        val descComp = (entity get DescriptionComponent::class)
+        descComp.setDescription("")
         for (comp in comps) {
             when (comp) {
                 is ScoreComponent -> descComp.addScore(comp)

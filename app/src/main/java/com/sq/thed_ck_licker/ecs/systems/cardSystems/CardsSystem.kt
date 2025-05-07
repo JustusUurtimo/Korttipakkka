@@ -8,8 +8,6 @@ import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
-import com.sq.thed_ck_licker.ecs.components.activate
-import com.sq.thed_ck_licker.ecs.components.addEntity
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.generateEntity
@@ -25,10 +23,11 @@ class CardsSystem @Inject constructor() {
 
 
     fun pullRandomCardFromEntityDeck(entityId: Int): Int {
-        val drawDeck = entityId get DrawDeckComponent::class
-        check(drawDeck.drawCardDeck.isNotEmpty()) { "No cards available" }
-        val theCard = drawDeck.drawCardDeck.getRandomElement()
-        drawDeck.drawCardDeck.remove(theCard)
+        val drawDeckComponent = (entityId get DrawDeckComponent::class)
+        val deck = drawDeckComponent.getDrawCardDeck()
+        check(deck.isNotEmpty()) { "No cards available" }
+        val theCard = deck.getRandomElement()
+        drawDeckComponent.removeCard(theCard)
         return theCard
     }
 
@@ -98,7 +97,7 @@ class CardsSystem @Inject constructor() {
         val activateAction = { id: Int ->
             val targetScoreComp = id get ScoreComponent::class
             gainerActCounterComp.activate()
-            targetScoreComp.score.intValue += pointsPerCard
+            targetScoreComp.addScore(pointsPerCard)
         }
         gainerEntity add gainerActCounterComp
         gainerEntity add EffectComponent(onTurnStart = activateAction)
@@ -125,7 +124,7 @@ class CardsSystem @Inject constructor() {
                 targetHealthComponent.heal(amountOfHealingProvided)
             }
             println("My name is Beer Goggles")
-            println("I am now at ${selfHp.getHealth()} health \nand have been activated ${selfActCounter.activations.intValue} times")
+            println("I am now at ${selfHp.getHealth()} health \nand have been activated ${selfActCounter.getActivations()} times")
         })
 
         val targetEffectStackComp = (targetEntityId get EffectStackComponent::class)

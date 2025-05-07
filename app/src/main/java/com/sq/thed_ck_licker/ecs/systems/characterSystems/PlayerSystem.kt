@@ -62,7 +62,7 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
     }
 
     fun getPlayerScore(): Int {
-        return (getPlayerID() get ScoreComponent::class).score.intValue
+        return (getPlayerID() get ScoreComponent::class).getScore()
     }
 
     fun getPlayerMaxHealth(): Float {
@@ -70,19 +70,19 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
     }
 
     fun getPlayerMerchantId(): Int {
-        return (getPlayerID() get MerchantComponent::class).merchantId.intValue
+        return (getPlayerID() get MerchantComponent::class).getMerchantId()
     }
 
     fun getPlayerActiveMerchantCard(): Int {
-        return (getPlayerID() get MerchantComponent::class).activeMerchantSummonCard.intValue
+        return (getPlayerID() get MerchantComponent::class).getActiveMerchantSummonCard()
     }
 
     fun updateScore(amount: Int) {
-        (getPlayerID() get ScoreComponent::class).score.intValue += amount
+        (getPlayerID() get ScoreComponent::class).addScore(amount)
     }
 
     fun updateMerchantId(id: Int) {
-        (getPlayerID() get MerchantComponent::class).merchantId.intValue = id
+        (getPlayerID() get MerchantComponent::class).setMerchantId(id)
     }
 
     fun playerUpdates(): Flow<PlayerState> {

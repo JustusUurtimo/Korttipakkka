@@ -12,35 +12,57 @@ import com.sq.thed_ck_licker.R
 enum class CardTag { CARD }
 
 
-data class ImageComponent(@DrawableRes val cardImage: Int = R.drawable.placeholder)
+data class ImageComponent(@DrawableRes private val cardImage: Int = R.drawable.placeholder) {
+    fun getImage(): Int {
+        return this.cardImage
+    }
+}
 
-data class DescriptionComponent(var description: MutableState<String>) {
+data class DescriptionComponent(private var description: MutableState<String>) {
     constructor(desc: String = "") : this(mutableStateOf(desc))
-}
 
-fun DescriptionComponent.addScore(scoreC: ScoreComponent) {
-    description.value += "Get ${scoreC.score.intValue} points"
-}
-
-fun DescriptionComponent.addHealth(healthC: HealthComponent) {
-    val health = healthC.getHealth()
-    val maxHealth = healthC.getMaxHealth()
-    if (health > 0) {
-        description.value += "Heal for $health points"
-    } else if (health < 0) {
-        description.value += "Lose $health health"
+    fun addScore(scoreC: ScoreComponent) {
+        description.value += "Get ${scoreC.getScore()} points"
     }
 
-    if (maxHealth > 0) {
-        description.value += "Gain $maxHealth max health"
-    } else if (maxHealth < 0) {
-        description.value += "Lose $maxHealth max health"
+    fun addHealth(healthC: HealthComponent) {
+        val health = healthC.getHealth()
+        val maxHealth = healthC.getMaxHealth()
+        if (health > 0) {
+            description.value += "Heal for $health points"
+        } else if (health < 0) {
+            description.value += "Lose $health health"
+        }
+
+        if (maxHealth > 0) {
+            description.value += "Gain $maxHealth max health"
+        } else if (maxHealth < 0) {
+            description.value += "Lose $maxHealth max health"
+        }
+    }
+
+    fun getDescription(): String {
+        return this.description.value
+    }
+
+    fun setDescription(desc: String) {
+        this.description.value = desc
     }
 }
 
-data class NameComponent(val name: String = "Placeholder")
 
-data class TagsComponent(val tags: List<CardTag> = emptyList())
+data class NameComponent(private val name: String = "Placeholder") {
+    fun getName(): String {
+        return this.name
+    }
+}
+
+
+data class TagsComponent(private val tags: List<CardTag> = emptyList()) {
+    fun getTags(): List<CardTag> {
+        return this.tags
+    }
+}
 
 /**
  * Used to make more complex activations
@@ -65,29 +87,47 @@ data class EffectComponent(
  *  That could allow us to not farm this to every thing and risk duplicate counting.
  */
 data class ActivationCounterComponent(
-    var activations: MutableIntState,
-    var deactivations: MutableIntState
+    private var activations: MutableIntState,
+    private var deactivations: MutableIntState
 ) {
     constructor(
         activations: Int = 0,
         deactivations: Int = 0
     ) : this(mutableIntStateOf(activations), mutableIntStateOf(deactivations))
+
+    fun activate() {
+        this.activations.intValue += 1
+        Log.i(
+            "ActivationCounterComponent",
+            "This has been activated ${this.activations.intValue} times"
+        )
+    }
+
+    fun deactivate() {
+        this.deactivations.intValue += 1
+        Log.i(
+            "ActivationCounterComponent",
+            "This has been deactivated ${this.deactivations.intValue} times"
+        )
+    }
+
+    fun getActivations(): Int {
+        return this.activations.intValue
+    }
+
+    fun getDeactivations(): Int {
+        return this.deactivations.intValue
+    }
 }
 
-fun ActivationCounterComponent.activate() {
-    this.activations.intValue += 1
-    Log.i(
-        "ActivationCounterComponent",
-        "This has been activated ${this.activations.intValue} times"
-    )
+data class DurationComponent(
+    private val duration: Int = -1,
+    private val infinite: Boolean = false
+) {
+    fun getDuration(): Int {
+        return this.duration
+    }
+    fun isInfinite(): Boolean {
+        return this.infinite
+    }
 }
-
-fun ActivationCounterComponent.deactivate() {
-    this.deactivations.intValue += 1
-    Log.i(
-        "ActivationCounterComponent",
-        "This has been deactivated ${this.deactivations.intValue} times"
-    )
-}
-
-data class DurationComponent(val duration: Int = -1, val infinite: Boolean = false)
