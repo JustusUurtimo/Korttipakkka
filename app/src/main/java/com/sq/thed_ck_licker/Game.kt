@@ -40,6 +40,7 @@ import com.sq.thed_ck_licker.viewModels.GameViewModel
 import com.sq.thed_ck_licker.viewModels.MerchantViewModel
 import com.sq.thed_ck_licker.viewModels.PlayerViewModel
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.DeathScreen
+import com.sq.thed_ck_licker.ecs.systems.viewSystems.HoleView
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.MerchantHandView
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.PlayerHandView
 
@@ -79,37 +80,7 @@ fun Game(
                 onQuit = { gameViewModel.exitToMenu() })
         }
         if (isShovelUsed) {
-            Box(
-                modifier = Modifier
-                    .width(100.dp)
-                    .height(100.dp)
-                    .background(color = Color.Magenta)
-                    .paint(
-                        painterResource(R.drawable.placeholder),
-                        contentScale = ContentScale.FillBounds
-                    )
-                    .clickable { gameViewModel.dropCardInHole(latestCard) }
-            ) {
-                Column(
-                    modifier = Modifier
-                        .align(BiasAlignment(0f, 0.7f))
-                        .fillMaxWidth()
-                ) {
-                    Text(
-                        text = "hole",
-                        modifier = Modifier
-                            .background(color = Color.Cyan)
-                            .fillMaxWidth()
-                    )
-                    Text(
-                        text = "Drop card in hole",
-                        softWrap = true,
-                        modifier = Modifier
-                            .background(color = Color.Yellow)
-                            .fillMaxWidth()
-                    )
-                }
-            }
+            HoleView(modifier, onClickListener = { gameViewModel.dropCardInHole(latestCard) })
         }
 
         Box(modifier.fillMaxSize()) {
