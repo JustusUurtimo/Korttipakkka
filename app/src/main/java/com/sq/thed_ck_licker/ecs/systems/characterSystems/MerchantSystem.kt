@@ -26,13 +26,13 @@ class MerchantSystem @Inject constructor(
     private fun initRegularMerchantDeck(): List<Int> {
 
         val playerHealingCards = cardCreationSystem.addHealingCards(5)
-        val trapCards = cardCreationSystem.addTrapTestCards()
         val scoreGainerCards = cardCreationSystem.addScoreGainerTestCards()
         val maxHpCards = cardCreationSystem.addMaxHpTrapCards()
+        val shovelCards = cardCreationSystem.addShovelCards(10)
 
         return emptyList<Int>() +
+                shovelCards +
                 playerHealingCards +
-                trapCards +
                 scoreGainerCards +
                 maxHpCards +
                 emptyList<Int>()

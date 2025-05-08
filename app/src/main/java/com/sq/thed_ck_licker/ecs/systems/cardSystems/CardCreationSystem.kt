@@ -6,6 +6,7 @@ import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.MerchantComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityId
+import com.sq.thed_ck_licker.ecs.managers.GameEvents
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.helpers.MyRandom
 import jakarta.inject.Inject
@@ -14,6 +15,20 @@ class CardCreationSystem @Inject constructor(
     private val cardsSystem: CardsSystem,
     private val cardBuilder: CardBuilderSystem
 ) {
+
+    fun addShovelCards(amount: Int): List<EntityId> {
+        val onActivation: (Int, Int) -> Unit = { _: Int, _: Int ->
+            GameEvents.onShovelUsed.tryEmit(Unit)
+        }
+
+        return cardBuilder.buildCards {
+            cardHealth = 10f
+            cardAmount = amount
+            description = "This card digs a hole"
+            name = "Shovel"
+            onCardPlay = onActivation
+        }
+    }
 
     fun addBasicScoreCards(amount: Int): List<EntityId> {
         val score = 10
