@@ -84,6 +84,9 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
     fun updateMerchantId(id: Int) {
         (getPlayerID() get MerchantComponent::class).setMerchantId(id)
     }
+    fun removeCardFromDrawDeck(cardId: Int) {
+        (getPlayerID() get DrawDeckComponent::class).removeCard(cardId)
+    }
 
     fun playerUpdates(): Flow<PlayerState> {
         return combine(

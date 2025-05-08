@@ -1,9 +1,12 @@
 package com.sq.thed_ck_licker.viewModels
 
+import androidx.compose.runtime.MutableIntState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sq.thed_ck_licker.ecs.managers.GameEvent
 import com.sq.thed_ck_licker.ecs.managers.GameEvents
 import com.sq.thed_ck_licker.ecs.systems.WorldCreationSystem
+import com.sq.thed_ck_licker.ecs.systems.characterSystems.PlayerSystem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,27 +15,41 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class GameViewModel @Inject constructor(
-    private val worldCreationSystem: WorldCreationSystem
+    private val worldCreationSystem: WorldCreationSystem,
+    private val playerSystem: PlayerSystem
 ) : ViewModel() {
 
     private val _isPlayerDead = MutableStateFlow(false)
     val isPlayerDead: StateFlow<Boolean> = _isPlayerDead
 
+    private val _isShovelUsed = MutableStateFlow(false)
+    val isShovelUsed: StateFlow<Boolean> = _isShovelUsed
+
     init {
         viewModelScope.launch {
-            GameEvents.onPlayerDied.collect {
-                _isPlayerDead.value = true
+            GameEvents.eventStream.collect { event ->
+                when (event) {
+                    is GameEvent.PlayerDied -> _isPlayerDead.value = true
+                    is GameEvent.ShovelUsed -> _isShovelUsed.value = (!isShovelUsed.value)
+                }
             }
         }
     }
 
     fun restartGame() {
         _isPlayerDead.value = false
+        _isShovelUsed.value = false
         worldCreationSystem.destroyWorld()
-        // Reset player, entities, map, etc.
     }
 
     fun exitToMenu() {
         // Trigger navigation or update game state to menu
+    }
+
+    fun dropCardInHole(latestCard: MutableIntState) {
+        if (latestCard.intValue == -1) return
+        playerSystem.removeCardFromDrawDeck(latestCard.intValue)
+        latestCard.intValue = -1
+        playerSystem.updateScore(200)
     }
 }

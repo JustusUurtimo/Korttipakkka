@@ -6,6 +6,7 @@ import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.MerchantComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityId
+import com.sq.thed_ck_licker.ecs.managers.GameEvent
 import com.sq.thed_ck_licker.ecs.managers.GameEvents
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.helpers.MyRandom
@@ -17,8 +18,9 @@ class CardCreationSystem @Inject constructor(
 ) {
 
     fun addShovelCards(amount: Int): List<EntityId> {
-        val onActivation: (Int, Int) -> Unit = { _: Int, _: Int ->
-            GameEvents.onShovelUsed.tryEmit(Unit)
+
+        val onActivation: (Int, Int) -> Unit = { _, _ ->
+            GameEvents.tryEmitEvent(GameEvent.ShovelUsed)
         }
 
         return cardBuilder.buildCards {
