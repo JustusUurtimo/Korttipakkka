@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import com.sq.thed_ck_licker.ecs.managers.GameEvents
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
+import com.sq.thed_ck_licker.ecs.managers.GameEvent
 
 
 data class HealthComponent(
@@ -53,7 +54,7 @@ data class HealthComponent(
     fun damage(damageAmount: Float, targetId: Int) {
         this.health.floatValue -= damageAmount
         if (targetId == getPlayerID() && this.health.floatValue <= 0) {
-            GameEvents.onPlayerDied.tryEmit(Unit)
+            GameEvents.tryEmitEvent(GameEvent.PlayerDied)
         }
     }
 }

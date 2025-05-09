@@ -9,6 +9,8 @@ import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
+import com.sq.thed_ck_licker.ecs.managers.GameEvent
+import com.sq.thed_ck_licker.ecs.managers.GameEvents
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.generateEntity
 import com.sq.thed_ck_licker.ecs.managers.get
@@ -21,14 +23,19 @@ import kotlin.math.min
 
 class CardsSystem @Inject constructor() {
 
-
     fun pullRandomCardFromEntityDeck(entityId: Int): Int {
         val drawDeckComponent = (entityId get DrawDeckComponent::class)
         val deck = drawDeckComponent.getDrawCardDeck()
-        check(deck.isNotEmpty()) { "No cards available" }
-        val theCard = deck.getRandomElement()
-        drawDeckComponent.removeCard(theCard)
-        return theCard
+        println("Deck size is ${deck.size}")
+        println("Deck is ${deck.isEmpty()}")
+        if (deck.isEmpty()) {
+            GameEvents.tryEmitEvent(GameEvent.PlayerDied)
+            return -1
+        } else {
+            val theCard = deck.getRandomElement()
+            drawDeckComponent.removeCard(theCard)
+            return theCard
+        }
     }
 
     fun cardActivation(
@@ -43,7 +50,7 @@ class CardsSystem @Inject constructor() {
     private fun activateCard(latestCard: MutableIntState, playerCardCount: MutableIntState) {
         playerCardCount.intValue += 1
         val latestCardId = latestCard.intValue
-        var latestCardHp : HealthComponent? = null
+        var latestCardHp: HealthComponent? = null
 
         try {
             latestCardHp = (latestCardId get HealthComponent::class)
