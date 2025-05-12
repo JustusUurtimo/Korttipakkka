@@ -17,13 +17,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import com.sq.thed_ck_licker.ecs.components.DescriptionComponent
 import com.sq.thed_ck_licker.ecs.components.ImageComponent
-import com.sq.thed_ck_licker.ecs.components.NameComponent
+import com.sq.thed_ck_licker.ecs.components.IdentificationComponent
 import com.sq.thed_ck_licker.ecs.managers.get
 
 @Composable
 fun CardView(entityId: Int = 1, activateCard: () -> Unit, modifier: Modifier) {
     val image = (entityId get ImageComponent::class).getImage()
-    val name = (entityId get NameComponent::class).getName()
+    val name = (entityId get IdentificationComponent::class).getName()
     val description = (entityId get DescriptionComponent::class).getDescription()
 
     Card(

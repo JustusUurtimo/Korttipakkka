@@ -2,6 +2,7 @@ package com.sq.thed_ck_licker.ecs.systems.cardSystems
 
 import com.sq.thed_ck_licker.R
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
+import com.sq.thed_ck_licker.ecs.components.CardTag
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.MerchantComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
@@ -81,14 +82,15 @@ class CardCreationSystem @Inject constructor(
             val target = targetId get MerchantComponent::class
             target.setMerchantId(merchantId)
             target.setActiveMerchantSummonCard(cardEntity)
-
         }
 
         return cardBuilder.buildCards {
             cardAmount = amount
             description = "Activate to access shop"
             name = "Merchant #$merchantId"
+            characterId = merchantId
             onCardPlay = openMerchant
+            tags = listOf(CardTag.CARD, CardTag.MERCHANT)
         }
 
     }

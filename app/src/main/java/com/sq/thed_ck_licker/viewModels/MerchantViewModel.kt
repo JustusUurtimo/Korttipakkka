@@ -3,19 +3,36 @@ package com.sq.thed_ck_licker.viewModels
 import androidx.compose.runtime.MutableIntState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sq.thed_ck_licker.ecs.states.MerchantState
+import com.sq.thed_ck_licker.ecs.states.PlayerState
 import com.sq.thed_ck_licker.ecs.systems.characterSystems.MerchantSystem
 import com.sq.thed_ck_licker.ecs.systems.characterSystems.PlayerSystem
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class MerchantViewModel @Inject constructor(
     private val merchantSystem: MerchantSystem,
     private val playerSystem: PlayerSystem
 ) : ViewModel() {
+
+    private val _merchantState = MutableStateFlow(
+        MerchantState(
+            affinity = merchantSystem.getMerchantAffinity(),
+        )
+    )
+    val merchantState: StateFlow<MerchantState> get() = _merchantState
+
+    init {
+        viewModelScope.launch {
+            merchantSystem.merchantUpdates().collect { merchantData ->
+                _merchantState.value = merchantData
+            }
+        }
+    }
 
     private val _merchantHand = MutableStateFlow<List<Int>>(emptyList())
     val merchantHand: StateFlow<List<Int>> get() = _merchantHand
