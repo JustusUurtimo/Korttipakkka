@@ -75,7 +75,7 @@ fun Game(
             )
             if(merchantState.affinity < -50) {
                 Text(text = "MERCHANT BIG MAD :D")
-                Text(text = "Everything more expensive :D")
+                Text(text = "Everything more expensive :D Affinity: ${merchantState.affinity}")
             }
 
         }
