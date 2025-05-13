@@ -22,25 +22,25 @@ class PitSystem @Inject constructor(
         if (tagsComponent.cardIsMerchant()) {
             handleMerchantCard(latestCard)
         } else {
-            handleRegularCard(latestCard, bonusScore = 200)
+            handleCardDrop(latestCard, bonusScore = 200)
         }
     }
 
     // Helper Methods
     private fun handleMerchantCard(latestCard: MutableIntState) {
         val cardId = latestCard.intValue
-        if (MyRandom.getRandomInt() <= 30) {
+        if (MyRandom.getRandomInt() <= 3) {
             val merchantId: Int? = (cardId get IdentificationComponent::class).getCharacterId()
             merchantId?.let {
                 merchantSystem.updateMerchantAffinity(-500, it)
             }
             cardPullingSystem.pullNewCard(latestCard)
         } else {
-            handleRegularCard(latestCard, bonusScore = 500)
+            handleCardDrop(latestCard, bonusScore = 500)
         }
     }
 
-    private fun handleRegularCard(latestCard: MutableIntState, bonusScore: Int) {
+    private fun handleCardDrop(latestCard: MutableIntState, bonusScore: Int) {
         val cardId = latestCard.intValue
         playerSystem.removeCardFromDrawDeck(cardId)
         latestCard.intValue = -1
