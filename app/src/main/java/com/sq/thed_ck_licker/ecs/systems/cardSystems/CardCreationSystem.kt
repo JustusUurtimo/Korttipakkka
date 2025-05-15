@@ -4,11 +4,14 @@ import com.sq.thed_ck_licker.R
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.CardTag
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
+import com.sq.thed_ck_licker.ecs.components.IdentificationComponent
 import com.sq.thed_ck_licker.ecs.components.MerchantComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityId
 import com.sq.thed_ck_licker.ecs.managers.GameEvent
 import com.sq.thed_ck_licker.ecs.managers.GameEvents
+import com.sq.thed_ck_licker.ecs.managers.MerchantEvent
+import com.sq.thed_ck_licker.ecs.managers.MerchantEvents
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.helpers.MyRandom
 import jakarta.inject.Inject
@@ -21,7 +24,7 @@ class CardCreationSystem @Inject constructor(
     fun addShovelCards(amount: Int): List<EntityId> {
 
         val onActivation: (Int, Int) -> Unit = { _, _ ->
-            GameEvents.tryEmitEvent(GameEvent.ShovelUsed)
+            GameEvents.tryEmit(GameEvent.ShovelUsed)
         }
 
         return cardBuilder.buildCards {
@@ -78,10 +81,8 @@ class CardCreationSystem @Inject constructor(
     }
 
     fun addMerchantCards(amount: Int, merchantId: Int): List<EntityId> {
-        val openMerchant = { targetId: Int, cardEntity: Int ->
-            val target = targetId get MerchantComponent::class
-            target.setMerchantId(merchantId)
-            target.setActiveMerchantSummonCard(cardEntity)
+        val openMerchant = { _: Int, cardEntity: Int ->
+            MerchantEvents.tryEmit(MerchantEvent.MerchantShopOpened(merchantId, cardEntity))
         }
 
         return cardBuilder.buildCards {

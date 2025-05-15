@@ -24,8 +24,7 @@ class PlayerViewModel @Inject constructor(
         PlayerState(
             health = playerSystem.getPlayerHealth(),
             maxHealth = playerSystem.getPlayerMaxHealth(),
-            score = playerSystem.getPlayerScore(),
-            merchantId = playerSystem.getPlayerMerchantId()
+            score = playerSystem.getPlayerScore()
         )
     )
     val playerState: StateFlow<PlayerState> get() = _playerState
@@ -40,7 +39,6 @@ class PlayerViewModel @Inject constructor(
 
     fun onPullNewCard(latestCard: MutableIntState) {
         cardPullingSystem.pullNewCard(latestCard)
-        playerSystem.updateMerchantId(-1)
     }
 
     fun onActivateCard(latestCard: MutableIntState, cardCount: MutableIntState) {

@@ -23,7 +23,6 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
     fun initPlayer() {
         getPlayerID() add HealthComponent(100f)
         getPlayerID() add ScoreComponent()
-        getPlayerID() add MerchantComponent()
         getPlayerID() add DrawDeckComponent(initPlayerDeck() as MutableList<Int>)
         getPlayerID() add EffectStackComponent()
         getPlayerID() add DiscardDeckComponent(mutableListOf<Int>())
@@ -69,21 +68,10 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         return (getPlayerID() get HealthComponent::class).getMaxHealth()
     }
 
-    fun getPlayerMerchantId(): Int {
-        return (getPlayerID() get MerchantComponent::class).getMerchantId()
-    }
-
-    fun getPlayerActiveMerchantCard(): Int {
-        return (getPlayerID() get MerchantComponent::class).getActiveMerchantSummonCard()
-    }
-
     fun updateScore(amount: Int) {
         (getPlayerID() get ScoreComponent::class).addScore(amount)
     }
 
-    fun updateMerchantId(id: Int) {
-        (getPlayerID() get MerchantComponent::class).setMerchantId(id)
-    }
     fun removeCardFromDrawDeck(cardId: Int) {
         (getPlayerID() get DrawDeckComponent::class).removeCard(cardId)
     }
@@ -92,14 +80,12 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         return combine(
             snapshotFlow { getPlayerHealth() },
             snapshotFlow { getPlayerMaxHealth() },
-            snapshotFlow { getPlayerScore() },
-            snapshotFlow { getPlayerMerchantId() }
-        ) { health, maxHealth, score, merchantId ->
+            snapshotFlow { getPlayerScore() }
+        ) { health, maxHealth, score ->
             PlayerState(
                 health = health,
                 maxHealth = maxHealth,
-                score = score,
-                merchantId = merchantId
+                score = score
             )
         }
     }

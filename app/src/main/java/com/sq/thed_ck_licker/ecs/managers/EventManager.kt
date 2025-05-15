@@ -5,26 +5,47 @@ import kotlinx.coroutines.flow.asSharedFlow
 
 //todo we can expand this later to include events like onGamePaused etc.
 
+
 sealed class GameEvent {
     object PlayerDied : GameEvent()
     object ShovelUsed : GameEvent()
 }
 
-object GameEvents {
-    // MutableSharedFlow allows emitting events
-    private val _eventStream = MutableSharedFlow<GameEvent>(
-        replay = 0, // No replay for new collectors
-        extraBufferCapacity = 64 // Buffer up to 64 events
-    )
+sealed class MerchantEvent {
+    data class MerchantShopOpened(val merchantId: Int, val cardEntity: Int) : MerchantEvent()
+    object MerchantShopClosed : MerchantEvent()
+}
 
-    // Publicly exposed as a read-only SharedFlow
+
+// Event Buses
+object GameEvents {
+    private val _eventStream = MutableSharedFlow<GameEvent>(
+        replay = 0,
+        extraBufferCapacity = 64
+    )
     val eventStream = _eventStream.asSharedFlow()
 
-    suspend fun emitSuspendingEvent(event: GameEvent) {
-        _eventStream.emit(event)
+    fun tryEmit(event: GameEvent) {
+        _eventStream.tryEmit(event)
     }
 
-    fun tryEmitEvent(event: GameEvent) {
+    suspend fun emit(event: GameEvent) {
+        _eventStream.emit(event)
+    }
+}
+
+object MerchantEvents {
+    private val _eventStream = MutableSharedFlow<MerchantEvent>(
+        replay = 0,
+        extraBufferCapacity = 64
+    )
+    val eventStream = _eventStream.asSharedFlow()
+
+    fun tryEmit(event: MerchantEvent) {
         _eventStream.tryEmit(event)
+    }
+
+    suspend fun emit(event: MerchantEvent) {
+        _eventStream.emit(event)
     }
 }
