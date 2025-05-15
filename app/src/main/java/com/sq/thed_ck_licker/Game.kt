@@ -58,6 +58,7 @@ fun Game(
     val isShovelUsed by gameViewModel.isShovelUsed.collectAsState()
     val playerState by playerViewModel.playerState.collectAsState()
     val merchantHand by merchantViewModel.merchantHand.collectAsState()
+    val merchantState by merchantViewModel.merchantState.collectAsState()
     val modifier = Modifier
 
     Column(modifier.fillMaxWidth()) {
@@ -72,6 +73,11 @@ fun Game(
                 onReRollShop = { merchantViewModel.onReRollShop() },
                 onOpenShop = { merchantViewModel.onOpenShop() }
             )
+            if(merchantState.affinity < -50) {
+                Text(text = "MERCHANT BIG MAD :D")
+                Text(text = "Everything more expensive :D Affinity: ${merchantState.affinity}")
+            }
+
         }
 
         if (isPlayerDead) {

@@ -9,7 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import com.sq.thed_ck_licker.R
 
 
-enum class CardTag { CARD }
+enum class CardTag { CARD, MERCHANT }
 
 
 data class ImageComponent(@DrawableRes private val cardImage: Int = R.drawable.placeholder) {
@@ -51,10 +51,14 @@ data class DescriptionComponent(private var description: MutableState<String>) {
 }
 
 
-data class NameComponent(private val name: String = "Placeholder") {
+data class IdentificationComponent(private val name: String = "Placeholder", private val characterId: Int?) {
     fun getName(): String {
         return this.name
     }
+    fun getCharacterId(): Int? {
+        return this.characterId
+    }
+
 }
 
 
@@ -62,6 +66,10 @@ data class TagsComponent(private val tags: List<CardTag> = emptyList()) {
     fun getTags(): List<CardTag> {
         return this.tags
     }
+    fun cardIsMerchant(): Boolean {
+        return this.tags.contains(CardTag.MERCHANT)
+    }
+
 }
 
 /**

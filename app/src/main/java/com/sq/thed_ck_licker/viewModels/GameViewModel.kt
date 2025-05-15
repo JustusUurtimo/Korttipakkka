@@ -5,18 +5,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sq.thed_ck_licker.ecs.managers.GameEvent
 import com.sq.thed_ck_licker.ecs.managers.GameEvents
+import com.sq.thed_ck_licker.ecs.systems.PitSystem
 import com.sq.thed_ck_licker.ecs.systems.WorldCreationSystem
-import com.sq.thed_ck_licker.ecs.systems.characterSystems.PlayerSystem
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class GameViewModel @Inject constructor(
     private val worldCreationSystem: WorldCreationSystem,
-    private val playerSystem: PlayerSystem
+    private val pitSystem: PitSystem,
 ) : ViewModel() {
 
     private val _isPlayerDead = MutableStateFlow(false)
@@ -47,9 +47,6 @@ class GameViewModel @Inject constructor(
     }
 
     fun dropCardInHole(latestCard: MutableIntState) {
-        if (latestCard.intValue == -1) return
-        playerSystem.removeCardFromDrawDeck(latestCard.intValue)
-        latestCard.intValue = -1
-        playerSystem.updateScore(200)
+        pitSystem.dropCardInHole(latestCard)
     }
 }

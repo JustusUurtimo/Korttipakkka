@@ -1,7 +1,7 @@
 package com.sq.thed_ck_licker.helpers
 
 import com.sq.thed_ck_licker.ecs.managers.ComponentManager
-import com.sq.thed_ck_licker.ecs.systems.DescriptionSystem
+import com.sq.thed_ck_licker.ecs.systems.helperSystems.DescriptionSystem
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

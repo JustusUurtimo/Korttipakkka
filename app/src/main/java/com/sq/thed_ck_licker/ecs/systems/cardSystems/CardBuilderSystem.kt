@@ -7,7 +7,7 @@ import com.sq.thed_ck_licker.ecs.components.DescriptionComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.ImageComponent
-import com.sq.thed_ck_licker.ecs.components.NameComponent
+import com.sq.thed_ck_licker.ecs.components.IdentificationComponent
 import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent
 import com.sq.thed_ck_licker.ecs.managers.ComponentManager
@@ -19,6 +19,7 @@ class CardBuilderSystem @Inject constructor(private val componentManager: Compon
 
     var cardHealth: Float? = null
     var scoreAmount: Int? = null
+    var characterId: Int? = null
     var cardAmount: Int = 1
     var cardImage: Int = R.drawable.placeholder
     var description: String = ""
@@ -37,7 +38,7 @@ class CardBuilderSystem @Inject constructor(private val componentManager: Compon
             cardEntity add ImageComponent(cardImage)
             cardEntity add EffectComponent(onDeactivate = onCardDeactivate, onPlay = onCardPlay)
             cardEntity add DescriptionComponent(description)
-            cardEntity add NameComponent(name)
+            cardEntity add IdentificationComponent(name, characterId)
             cardEntity add TagsComponent(tags)
             cardIds.add(cardEntity)
         }

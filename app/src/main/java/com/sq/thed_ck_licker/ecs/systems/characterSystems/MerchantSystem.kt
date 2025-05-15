@@ -1,15 +1,21 @@
 package com.sq.thed_ck_licker.ecs.systems.characterSystems
 
 import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.snapshotFlow
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
+import com.sq.thed_ck_licker.ecs.components.EntityMemoryComponent
 import com.sq.thed_ck_licker.ecs.components.MerchantComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getRegularMerchantID
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.get
+import com.sq.thed_ck_licker.ecs.states.MerchantState
+import com.sq.thed_ck_licker.ecs.states.PlayerState
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
 
 
@@ -21,6 +27,7 @@ class MerchantSystem @Inject constructor(
 
     fun initRegularMerchant() {
         getRegularMerchantID() add DrawDeckComponent(initRegularMerchantDeck().toMutableList())
+        getRegularMerchantID() add EntityMemoryComponent()
     }
 
     private fun initRegularMerchantDeck(): List<Int> {
@@ -56,9 +63,39 @@ class MerchantSystem @Inject constructor(
     }
 
     fun chooseMerchantCard(latestCard: MutableIntState, newCard: Int) {
-        playerSystem.updateScore(-100)
+        val merchantId = (getPlayerID() get MerchantComponent::class).getMerchantId()
+        val merchantAffinity = (merchantId get EntityMemoryComponent::class).getAffinity()
+        when {
+            (merchantAffinity >= 500) -> {playerSystem.updateScore(-50)}
+            (merchantAffinity <= -100) -> {playerSystem.updateScore(-500)}
+            else -> {playerSystem.updateScore(-100)}
+        }
+        updateMerchantAffinity(10, merchantId)
         latestCard.intValue = newCard
         playerSystem.updateMerchantId(-1)
+    }
+
+    fun updateMerchantAffinity(amount: Int, merchantId: Int) {
+        (merchantId get EntityMemoryComponent::class).updateAffinity(amount)
+    }
+    fun getMerchantAffinity(): Int {
+        val merchantId = (getPlayerID() get MerchantComponent::class).getMerchantId()
+        return try {
+            (merchantId get EntityMemoryComponent::class).getAffinity()
+        } catch (e: Exception) {
+            0
+        }
+
+    }
+
+    fun merchantUpdates(): Flow<MerchantState> {
+        return combine(
+            snapshotFlow { getMerchantAffinity() },
+        ) { affinity ->
+            MerchantState(
+                affinity = affinity.first()
+            )
+        }
     }
 
 }
