@@ -54,7 +54,7 @@ data class HealthComponent(
     fun damage(damageAmount: Float, targetId: Int) {
         this.health.floatValue -= damageAmount
         if (targetId == getPlayerID() && this.health.floatValue <= 0) {
-            GameEvents.tryEmitEvent(GameEvent.PlayerDied)
+            GameEvents.tryEmit(GameEvent.PlayerDied)
         }
     }
 }

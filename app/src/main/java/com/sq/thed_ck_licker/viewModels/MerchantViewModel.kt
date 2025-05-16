@@ -3,8 +3,9 @@ package com.sq.thed_ck_licker.viewModels
 import androidx.compose.runtime.MutableIntState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sq.thed_ck_licker.ecs.managers.MerchantEvent
+import com.sq.thed_ck_licker.ecs.managers.MerchantEvents
 import com.sq.thed_ck_licker.ecs.states.MerchantState
-import com.sq.thed_ck_licker.ecs.states.PlayerState
 import com.sq.thed_ck_licker.ecs.systems.characterSystems.MerchantSystem
 import com.sq.thed_ck_licker.ecs.systems.characterSystems.PlayerSystem
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,44 +20,62 @@ class MerchantViewModel @Inject constructor(
     private val playerSystem: PlayerSystem
 ) : ViewModel() {
 
+    private val _activeMerchantId = MutableStateFlow<Int>(-1)
+    val activeMerchantId: StateFlow<Int> get() = _activeMerchantId
+
+    private val _merchantSummonCard = MutableStateFlow<Int>(-1)
+    val merchantSummonCard: StateFlow<Int> get() = _merchantSummonCard
+
+    private val _merchantHand = MutableStateFlow<List<Int>>(emptyList())
+    val merchantHand: StateFlow<List<Int>> get() = _merchantHand
+
     private val _merchantState = MutableStateFlow(
         MerchantState(
-            affinity = merchantSystem.getMerchantAffinity(),
+            affinity = merchantSystem.getMerchantAffinity(activeMerchantId)
         )
     )
     val merchantState: StateFlow<MerchantState> get() = _merchantState
 
     init {
         viewModelScope.launch {
-            merchantSystem.merchantUpdates().collect { merchantData ->
+            merchantSystem.merchantUpdates(activeMerchantId).collect { merchantData ->
                 _merchantState.value = merchantData
+            }
+        }
+        viewModelScope.launch {
+            MerchantEvents.eventStream.collect { event ->
+                when (event) {
+                    is MerchantEvent.MerchantShopOpened -> {
+                        // Handle merchant shop opened
+                        _activeMerchantId.value = event.merchantId
+                        _merchantSummonCard.value = event.cardEntity
+                    }
+                    is MerchantEvent.MerchantShopClosed -> {
+                        // Handle merchant shop closed
+                        _activeMerchantId.value = -1
+                    }
+                }
             }
         }
     }
 
-    private val _merchantHand = MutableStateFlow<List<Int>>(emptyList())
-    val merchantHand: StateFlow<List<Int>> get() = _merchantHand
-
-    fun onChooseMerchantCard(latestCard: MutableIntState, newcard: Int) {
-        merchantSystem.chooseMerchantCard(latestCard, newcard)
+    fun onChooseMerchantCard(latestCard: MutableIntState, newCard: Int, activeMerchant: Int) {
+        merchantSystem.chooseMerchantCard(latestCard, newCard, activeMerchant)
         _merchantHand.value = emptyList()
     }
 
-    fun onOpenShop() {
-        merchantSystem.reRollMerchantHand().also {
+    fun onOpenShop(merchantId: Int) {
+        merchantSystem.rollMerchantHand(merchantId).also {
             _merchantHand.value = it
         }
     }
 
-    fun onReRollShop() {
-        println("Re-rolling shop")
-        val activeMerchantSummonCard = playerSystem.getPlayerActiveMerchantCard()
-
+    fun onReRollShop(activeMerchantSummonCard: Int, merchantId: Int) {
         if (merchantSystem.getReRollCount(activeMerchantSummonCard) > 1) {
             playerSystem.updateScore(-500)
         }
         merchantSystem.addReRollCount(activeMerchantSummonCard)
-        merchantSystem.reRollMerchantHand().also {
+        merchantSystem.rollMerchantHand(merchantId).also {
             _merchantHand.value = it
         }
     }

@@ -7,6 +7,8 @@ import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
+import com.sq.thed_ck_licker.ecs.managers.MerchantEvent
+import com.sq.thed_ck_licker.ecs.managers.MerchantEvents
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem
 import javax.inject.Inject
@@ -15,6 +17,7 @@ class CardPullingSystem @Inject constructor(private val cardsSystem: CardsSystem
     fun pullNewCard(
         latestCard: MutableIntState,
     ) {
+
         try {
             (latestCard.intValue get EffectComponent::class).onDeactivate.invoke(
                 getPlayerID(),
@@ -45,7 +48,7 @@ class CardPullingSystem @Inject constructor(private val cardsSystem: CardsSystem
         }
 
         putDiscardToDeckAndShuffle()
-
+        MerchantEvents.tryEmit(MerchantEvent.MerchantShopClosed)
         latestCard.intValue = cardsSystem.pullRandomCardFromEntityDeck(getPlayerID())
     }
 

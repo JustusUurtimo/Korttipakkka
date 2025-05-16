@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sq.thed_ck_licker.ecs.managers.GameEvent
 import com.sq.thed_ck_licker.ecs.managers.GameEvents
+import com.sq.thed_ck_licker.ecs.managers.MerchantEvent
 import com.sq.thed_ck_licker.ecs.systems.PitSystem
 import com.sq.thed_ck_licker.ecs.systems.WorldCreationSystem
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,6 +25,7 @@ class GameViewModel @Inject constructor(
 
     private val _isShovelUsed = MutableStateFlow(false)
     val isShovelUsed: StateFlow<Boolean> = _isShovelUsed
+
 
     init {
         viewModelScope.launch {

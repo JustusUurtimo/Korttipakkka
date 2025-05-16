@@ -4,5 +4,4 @@ data class PlayerState(
     val health: Float,
     val maxHealth: Float,
     val score: Int,
-    val merchantId: Int,
 )
