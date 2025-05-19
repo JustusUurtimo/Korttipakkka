@@ -42,10 +42,6 @@ class GameViewModel @Inject constructor(
         worldCreationSystem.destroyWorld()
     }
 
-    fun exitToMenu() {
-        // Trigger navigation or update game state to menu
-    }
-
     fun dropCardInHole(latestCard: MutableIntState) {
         pitSystem.dropCardInHole(latestCard)
     }

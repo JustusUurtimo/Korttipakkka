@@ -1,8 +1,5 @@
 package com.sq.thed_ck_licker
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -10,12 +7,9 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -23,34 +17,30 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.paint
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.CardDeck
+import com.sq.thed_ck_licker.ecs.systems.viewSystems.DeathScreen
+import com.sq.thed_ck_licker.ecs.systems.viewSystems.HoleView
+import com.sq.thed_ck_licker.ecs.systems.viewSystems.MerchantHandView
+import com.sq.thed_ck_licker.ecs.systems.viewSystems.PlayerHandView
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.PullCardButton
 import com.sq.thed_ck_licker.player.HealthBar
 import com.sq.thed_ck_licker.player.ScoreDisplay
 import com.sq.thed_ck_licker.viewModels.GameViewModel
 import com.sq.thed_ck_licker.viewModels.MerchantViewModel
 import com.sq.thed_ck_licker.viewModels.PlayerViewModel
-import com.sq.thed_ck_licker.ecs.systems.viewSystems.DeathScreen
-import com.sq.thed_ck_licker.ecs.systems.viewSystems.HoleView
-import com.sq.thed_ck_licker.ecs.systems.viewSystems.MerchantHandView
-import com.sq.thed_ck_licker.ecs.systems.viewSystems.PlayerHandView
 
 @Composable
 fun Game(
+    modifier: Modifier = Modifier,
     innerPadding: PaddingValues,
     gameViewModel: GameViewModel = hiltViewModel(),
     playerViewModel: PlayerViewModel = hiltViewModel(),
     merchantViewModel: MerchantViewModel = hiltViewModel(),
-) {
+
+    ) {
     val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues()
     val playerCardCount = rememberSaveable { mutableIntStateOf(0) }
     val latestCard = rememberSaveable { mutableIntStateOf(-1) }
@@ -59,7 +49,6 @@ fun Game(
     val playerState by playerViewModel.playerState.collectAsState()
     val merchantHand by merchantViewModel.merchantHand.collectAsState()
     val merchantState by merchantViewModel.merchantState.collectAsState()
-    val modifier = Modifier
 
     Column(modifier.fillMaxWidth()) {
 
@@ -73,7 +62,7 @@ fun Game(
                 onReRollShop = { merchantViewModel.onReRollShop() },
                 onOpenShop = { merchantViewModel.onOpenShop() }
             )
-            if(merchantState.affinity < -50) {
+            if (merchantState.affinity < -50) {
                 Text(text = "MERCHANT BIG MAD :D")
                 Text(text = "Everything more expensive :D Affinity: ${merchantState.affinity}")
             }
@@ -82,8 +71,7 @@ fun Game(
 
         if (isPlayerDead) {
             DeathScreen(
-                onRetry = { gameViewModel.restartGame() },
-                onQuit = { gameViewModel.exitToMenu() })
+                onRetry = { gameViewModel.restartGame() })
         }
         if (isShovelUsed) {
             HoleView(modifier, onClickListener = { gameViewModel.dropCardInHole(latestCard) })

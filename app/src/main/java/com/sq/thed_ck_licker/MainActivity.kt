@@ -1,6 +1,9 @@
 package com.sq.thed_ck_licker
 
+import android.os.Build
 import android.os.Bundle
+import android.view.View
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -20,7 +23,6 @@ class MainActivity : ComponentActivity() {
     @Inject lateinit var worldCreationSystem: WorldCreationSystem
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         worldCreationSystem.createWorld()
         enableEdgeToEdge()
         setContent {
@@ -38,7 +40,7 @@ class MainActivity : ComponentActivity() {
 fun GreetingPreview() {
     TheD_ck_LickerTheme {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-            Game(innerPadding)
+            Game(modifier = Modifier, innerPadding)
         }
     }
 }

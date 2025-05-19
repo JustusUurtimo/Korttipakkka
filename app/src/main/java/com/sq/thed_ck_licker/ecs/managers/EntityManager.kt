@@ -26,3 +26,4 @@ object EntityManager {
 fun generateEntity() = EntityManager.createNewEntity()
 
 typealias EntityId = Int
+
