@@ -41,7 +41,6 @@ fun DeathScreen(
     onRetry: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val navController = rememberNavController()
     var visibility by remember { mutableFloatStateOf(0f) }
     LaunchedEffect(Unit) {
         visibility = 1f
