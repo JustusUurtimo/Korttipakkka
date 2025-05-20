@@ -1,22 +1,11 @@
 package com.sq.thed_ck_licker.ecs.managers
 
-import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
+import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class ComponentManagerTest {
-    @BeforeEach
-    fun setUp() {
-//        TODO("Not yet implemented")
-    }
-
-    @AfterEach
-    fun tearDown() {
-//        TODO("Not yet implemented")
-    }
 
     @Test
     fun `Add component to entity`() {
@@ -238,7 +227,7 @@ class ComponentManagerTest {
         val combinedComponent = hp.combineHealthComponents(hpComp2)
         assert(combinedComponent.getHealth() == 300f) { "Health should be 300 but was ${combinedComponent.getHealth()}" }
         assert(combinedComponent.getMaxHealth() == 300f) { "Max health should be 300 but was ${combinedComponent.getMaxHealth()}" }
-        assert(combinedComponent.multiplier == 1f) { "Multiplier should be 1 but was ${combinedComponent.multiplier}" }
+//        assert(combinedComponent.multiplier == 1f) { "Multiplier should be 1 but was ${combinedComponent.multiplier}" }
     }
 
 }

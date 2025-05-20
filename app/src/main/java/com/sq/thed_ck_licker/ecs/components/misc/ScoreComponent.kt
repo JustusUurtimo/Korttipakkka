@@ -21,5 +21,8 @@ data class ScoreComponent(private var score: MutableIntState) {
     fun setScore(score: Int) {
         this.score.intValue = score
     }
+    fun combineScoreComponents(other: ScoreComponent): ScoreComponent {
+        return ScoreComponent(this.getScore() + other.getScore())
+    }
 
 }
