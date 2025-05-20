@@ -3,10 +3,8 @@ package com.sq.thed_ck_licker.ecs.systems.cardSystems
 import com.sq.thed_ck_licker.R
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.CardTag
-import com.sq.thed_ck_licker.ecs.components.HealthComponent
-import com.sq.thed_ck_licker.ecs.components.IdentificationComponent
-import com.sq.thed_ck_licker.ecs.components.MerchantComponent
-import com.sq.thed_ck_licker.ecs.components.ScoreComponent
+import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
+import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityId
 import com.sq.thed_ck_licker.ecs.managers.GameEvent
 import com.sq.thed_ck_licker.ecs.managers.GameEvents

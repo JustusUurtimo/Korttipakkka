@@ -4,8 +4,7 @@ import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.snapshotFlow
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
-import com.sq.thed_ck_licker.ecs.components.EntityMemoryComponent
-import com.sq.thed_ck_licker.ecs.components.IdentificationComponent
+import com.sq.thed_ck_licker.ecs.components.misc.EntityMemoryComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getRegularMerchantID
 import com.sq.thed_ck_licker.ecs.managers.MerchantEvent
 import com.sq.thed_ck_licker.ecs.managers.MerchantEvents

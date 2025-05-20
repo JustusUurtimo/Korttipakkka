@@ -4,9 +4,8 @@ import androidx.compose.runtime.snapshotFlow
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
-import com.sq.thed_ck_licker.ecs.components.HealthComponent
-import com.sq.thed_ck_licker.ecs.components.MerchantComponent
-import com.sq.thed_ck_licker.ecs.components.ScoreComponent
+import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
+import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getRegularMerchantID
 import com.sq.thed_ck_licker.ecs.managers.add
