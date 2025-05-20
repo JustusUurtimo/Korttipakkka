@@ -220,4 +220,19 @@ class CardCreationSystem @Inject constructor(
             onCardPlay = onActivation
         }
     }
+
+    fun addTempMultiplierTestCards(amount: Int = 1): List<EntityId> {
+        val onActivation = { targetId: Int, _: Int ->
+            cardsSystem.addTemporaryMultiplierTo(targetId)
+        }
+
+        return cardBuilder.buildCards {
+            cardHealth = 1f
+            cardAmount = amount
+            description = "Inject steroids and make more every time you do any thing."
+            name = "Steroids"
+            onCardPlay = onActivation
+        }
+    }
+
 }

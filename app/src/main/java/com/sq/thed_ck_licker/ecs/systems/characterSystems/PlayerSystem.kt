@@ -4,6 +4,7 @@ import androidx.compose.runtime.snapshotFlow
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
+import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
@@ -25,6 +26,7 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         getPlayerID() add DrawDeckComponent(initPlayerDeck() as MutableList<Int>)
         getPlayerID() add EffectStackComponent()
         getPlayerID() add DiscardDeckComponent(mutableListOf<Int>())
+        getPlayerID() add MultiplierComponent()
     }
 
     private fun initPlayerDeck(): List<Int> {
@@ -39,18 +41,20 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         val maxHpCards = cardCreationSystem.addMaxHpTrapCards()
         val merchantCards = cardCreationSystem.addMerchantCards(5, getRegularMerchantID())
         val basicScoreCards = cardCreationSystem.addBasicScoreCards(2)
+        val multiplierCards = cardCreationSystem.addTempMultiplierTestCards(2)
 
         return emptyList<Int>() +
-                playerHealingCards +
-                playerDamageCards +
-                defaultCards +
-                deactivationCards +
-                trapCards +
-                scoreGainerCards +
-                beerGogglesCards +
-                maxHpCards +
-                merchantCards +
+//                playerHealingCards +
+//                playerDamageCards +
+//                defaultCards +
+//                deactivationCards +
+//                trapCards +
+//                scoreGainerCards +
+//                beerGogglesCards +
+//                maxHpCards +
+//                merchantCards +
                 basicScoreCards +
+                multiplierCards +
                 emptyList<Int>()
     }
 
