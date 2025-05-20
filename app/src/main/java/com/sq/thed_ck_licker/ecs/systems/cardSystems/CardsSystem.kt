@@ -8,6 +8,7 @@ import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
+import com.sq.thed_ck_licker.ecs.managers.ComponentManager
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.managers.GameEvent
 import com.sq.thed_ck_licker.ecs.managers.GameEvents
@@ -15,6 +16,7 @@ import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.generateEntity
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.discardSystem
+import com.sq.thed_ck_licker.ecs.systems.helperSystems.multiplyEntityValues
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.onDeathSystem
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.onTurnStartEffectStackSystem
 import com.sq.thed_ck_licker.helpers.getRandomElement
@@ -40,9 +42,11 @@ class CardsSystem @Inject constructor() {
         latestCard: MutableIntState,
         playerCardCount: MutableIntState
     ) {
+        val oldPlayer = ComponentManager.componentManager.copy(getPlayerID())
         onTurnStartEffectStackSystem()
         activateCard(latestCard, playerCardCount)
         onDeathSystem()
+        multiplyEntityValues(oldEntityId = oldPlayer, targetEntityId = getPlayerID())
     }
 
     private fun activateCard(latestCard: MutableIntState, playerCardCount: MutableIntState) {

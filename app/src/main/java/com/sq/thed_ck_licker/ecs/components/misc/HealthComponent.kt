@@ -25,7 +25,9 @@ data class HealthComponent(
         mutableFloatStateOf(maxHealth),
         mutableFloatStateOf(maxHealth)
     )
-
+    fun setHealth(health: Float) {
+        this.health.floatValue = health
+    }
     fun getHealth(): Float {
         return this.health.floatValue
     }
