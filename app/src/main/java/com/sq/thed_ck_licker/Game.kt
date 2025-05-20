@@ -21,24 +21,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.CardDeck
+import com.sq.thed_ck_licker.ecs.systems.viewSystems.DeathScreen
+import com.sq.thed_ck_licker.ecs.systems.viewSystems.HoleView
+import com.sq.thed_ck_licker.ecs.systems.viewSystems.MerchantHandView
+import com.sq.thed_ck_licker.ecs.systems.viewSystems.PlayerHandView
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.PullCardButton
 import com.sq.thed_ck_licker.player.HealthBar
 import com.sq.thed_ck_licker.player.ScoreDisplay
 import com.sq.thed_ck_licker.viewModels.GameViewModel
 import com.sq.thed_ck_licker.viewModels.MerchantViewModel
 import com.sq.thed_ck_licker.viewModels.PlayerViewModel
-import com.sq.thed_ck_licker.ecs.systems.viewSystems.DeathScreen
-import com.sq.thed_ck_licker.ecs.systems.viewSystems.HoleView
-import com.sq.thed_ck_licker.ecs.systems.viewSystems.MerchantHandView
-import com.sq.thed_ck_licker.ecs.systems.viewSystems.PlayerHandView
 
 @Composable
 fun Game(
+    modifier: Modifier = Modifier,
     innerPadding: PaddingValues,
     gameViewModel: GameViewModel = hiltViewModel(),
     playerViewModel: PlayerViewModel = hiltViewModel(),
     merchantViewModel: MerchantViewModel = hiltViewModel(),
-) {
+
+    ) {
     val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues()
     val playerCardCount = rememberSaveable { mutableIntStateOf(0) }
     val latestCard = rememberSaveable { mutableIntStateOf(-1) }
@@ -49,7 +51,6 @@ fun Game(
     val playerState by playerViewModel.playerState.collectAsState()
     val merchantHand by merchantViewModel.merchantHand.collectAsState()
     val merchantState by merchantViewModel.merchantState.collectAsState()
-    val modifier = Modifier
 
     Column(modifier.fillMaxWidth()) {
         HealthBar(playerState.health, playerState.maxHealth, modifier.padding(innerPadding))
@@ -62,7 +63,7 @@ fun Game(
                 onReRollShop = { merchantViewModel.onReRollShop(merchantSummonCard, activeMerchant) },
                 onOpenShop = { merchantViewModel.onOpenShop(activeMerchant) }
             )
-            if(merchantState.affinity < -50) {
+            if (merchantState.affinity < -50) {
                 Text(text = "MERCHANT BIG MAD :D")
                 Text(text = "Everything more expensive :D Affinity: ${merchantState.affinity}")
             }
@@ -71,8 +72,7 @@ fun Game(
 
         if (isPlayerDead) {
             DeathScreen(
-                onRetry = { gameViewModel.restartGame() },
-                onQuit = { gameViewModel.exitToMenu() })
+                onRetry = { gameViewModel.restartGame() })
         }
         if (isShovelUsed) {
             HoleView(modifier, onClickListener = { gameViewModel.dropCardInHole(latestCard) })

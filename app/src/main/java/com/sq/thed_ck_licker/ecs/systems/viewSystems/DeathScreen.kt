@@ -32,12 +32,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.rememberNavController
+import com.sq.thed_ck_licker.helpers.navigation.Screen
 
 
 @Composable
 fun DeathScreen(
     onRetry: () -> Unit,
-    onQuit: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var visibility by remember { mutableFloatStateOf(0f) }
@@ -113,7 +114,7 @@ fun DeathScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedButton(
-                onClick = onQuit,
+                onClick = {  },
                 modifier = Modifier.fillMaxWidth(0.6f)
             ) {
                 Text("Quit to Menu")
