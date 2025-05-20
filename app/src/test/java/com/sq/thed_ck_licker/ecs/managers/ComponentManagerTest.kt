@@ -26,4 +26,23 @@ class ComponentManagerTest {
         assert(componentFromEntity.getScore() == 100){"Score should be 100 but was ${componentFromEntity.getScore()}"}
     }
 
+
+    @Test
+    fun `Copy Entity with Score Component`() {
+        val entityId = EntityManager.createNewEntity()
+        val component = ScoreComponent(100)
+        entityId add component
+
+        val componentManager = ComponentManager.componentManager
+        val copiedEntity = componentManager.copy(entityId)
+
+        val originalComponent = entityId get ScoreComponent::class
+        originalComponent.setScore(201)
+
+        val copiedComponent = copiedEntity get ScoreComponent::class
+
+        assert(copiedComponent.getScore() == 100) {"Score for the copied entity should be 100 but was ${copiedComponent.getScore()}"}
+        assert(originalComponent != copiedComponent) {"Original and copied components should not be the same after the change."}
+    }
+
 }

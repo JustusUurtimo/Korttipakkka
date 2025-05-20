@@ -3,6 +3,8 @@ package com.sq.thed_ck_licker.ecs.managers
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import com.sq.thed_ck_licker.ecs.components.CardTag
+import com.sq.thed_ck_licker.ecs.components.HealthComponent
+import com.sq.thed_ck_licker.ecs.components.ScoreComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlin.reflect.KClass
@@ -98,6 +100,31 @@ class ComponentManager {
 
     fun clear() {
         components.clear()
+    }
+
+
+    fun copy(entity: EntityId): EntityId {
+        val entityCopy = EntityManager.createNewEntity()
+        for (component in getAllComponentsOfEntity(entity)) {
+            val copiedComponent = deepCopyComponent(component)
+            if (copiedComponent == null) continue
+            entityCopy add copiedComponent
+        }
+
+        return entityCopy
+    }
+
+    fun deepCopyComponent(component: Any): Any? {
+        return when (component) {
+            is HealthComponent -> HealthComponent(
+                component.getHealth(),
+                component.getMaxHealth()
+            )
+
+            is ScoreComponent -> ScoreComponent(component.getScore())
+//            is MultiplierComponent -> MultiplierComponent(component.multiplier)
+            else -> null
+        }
     }
 }
 
