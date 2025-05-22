@@ -1,6 +1,5 @@
 package com.sq.thed_ck_licker.ecs.components
 
-import android.R.attr.targetId
 import android.util.Log
 import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.MutableIntState
@@ -43,8 +42,7 @@ data class HealthComponent(
         this.maxHealth.floatValue += amount
     }
 fun add(amount: Float, targetId: Int = 0) {
-        var logging = "this is going to be modified $this"
-        println("this is going to be modified ${this}")
+        var logging = "This is going to be modified $this"
         if ((this.health.floatValue + amount) > this.maxHealth.floatValue) {
             this.health.floatValue = this.maxHealth.floatValue
         } else {
