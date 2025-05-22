@@ -18,14 +18,9 @@ class MultiplierSystem @Inject constructor(private val componentManager: Compone
         entityHolder.put(entityId, componentManager.copy(entityId))
     }
 
-    fun multiplyEntityAgainstOldItself(entityId: EntityId) {
-        var old = entityHolder.get(entityId) ?: componentManager.copy(entityId)
-        multiplyEntityValues(old, entityId)
-    }
-    fun multiplyEntityAgainstOldItself2(entityId: EntityId) {
-        var old = entityHolder.get(entityId) ?: componentManager.copy(entityId)
+    fun multiplyEntityAgainstOldItself(entityId: EntityId) =
         multiplyEntityValues(entityHolder.get(entityId) ?: componentManager.copy(entityId), entityId)
-    }
+
 
     fun multiplyEntityValues(oldEntityId: EntityId, targetEntityId: EntityId) {
         if (oldEntityId == targetEntityId) return
