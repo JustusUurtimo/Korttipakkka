@@ -44,15 +44,15 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         val multiplierCards = cardCreationSystem.addTempMultiplierTestCards(2)
 
         return emptyList<Int>() +
-                playerHealingCards +
-                playerDamageCards +
-                defaultCards +
-                deactivationCards +
-                trapCards +
-                scoreGainerCards +
-                beerGogglesCards +
-                maxHpCards +
-                merchantCards +
+//                playerHealingCards +
+//                playerDamageCards +
+//                defaultCards +
+//                deactivationCards +
+//                trapCards +
+//                scoreGainerCards +
+//                beerGogglesCards +
+//                maxHpCards +
+//                merchantCards +
                 basicScoreCards +
                 multiplierCards +
                 emptyList<Int>()

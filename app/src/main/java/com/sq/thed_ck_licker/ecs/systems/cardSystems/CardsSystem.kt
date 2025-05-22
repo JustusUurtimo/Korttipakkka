@@ -43,13 +43,15 @@ class CardsSystem @Inject constructor(private val multiSystem: MultiplierSystem)
         latestCard: MutableIntState,
         playerCardCount: MutableIntState
     ) {
-//        val oldPlayer = ComponentManager.componentManager.copy(getPlayerID())
+        Log.v("CardsSystem", "Card activation started")
+        val oldPlayer = ComponentManager.componentManager.copy(getPlayerID())
         onTurnStartEffectStackSystem()
         activateCard(latestCard, playerCardCount)
-//        multiSystem.multiplyEntityValues(oldEntityId = oldPlayer, targetEntityId = getPlayerID())
-        multiSystem.multiplyEntityAgainstOldItself(getPlayerID())
-        multiSystem.addEntity(getPlayerID())
+//        multiSystem.multiplyEntityAgainstOldItself(getPlayerID())
+//        multiSystem.addEntity(getPlayerID())
         onDeathSystem()
+        multiSystem.multiplyEntityValues(oldEntityId = oldPlayer, targetEntityId = getPlayerID())
+        Log.v("CardsSystem", "Card activation finished")
     }
 
     private fun activateCard(latestCard: MutableIntState, playerCardCount: MutableIntState) {
