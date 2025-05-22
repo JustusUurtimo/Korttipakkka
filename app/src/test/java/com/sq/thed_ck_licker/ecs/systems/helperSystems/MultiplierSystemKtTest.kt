@@ -12,8 +12,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class MultiplierSystemKtTest {
-    lateinit var multiSystem: MultiplierSystem
     lateinit var componentManager: ComponentManager
+    lateinit var multiSystem: MultiplierSystem
 
     @BeforeEach
     fun setUp() {

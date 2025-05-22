@@ -9,7 +9,7 @@ import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
-import com.sq.thed_ck_licker.ecs.managers.ComponentManager
+import com.sq.thed_ck_licker.ecs.managers.ComponentManager.Companion.componentManager
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.managers.GameEvent
 import com.sq.thed_ck_licker.ecs.managers.GameEvents
@@ -20,11 +20,15 @@ import com.sq.thed_ck_licker.ecs.systems.helperSystems.MultiplierSystem
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.discardSystem
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.onDeathSystem
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.onTurnStartEffectStackSystem
+import com.sq.thed_ck_licker.helpers.HelperSystemModule
 import com.sq.thed_ck_licker.helpers.getRandomElement
 import javax.inject.Inject
 import kotlin.math.min
 
-class CardsSystem @Inject constructor(private val multiSystem: MultiplierSystem) {
+class CardsSystem @Inject constructor(private var multiSystem: MultiplierSystem) {
+    init {
+        multiSystem = HelperSystemModule.provideMultiplierSystem(componentManager)
+    }
 
     fun pullRandomCardFromEntityDeck(entityId: Int): Int {
         val drawDeckComponent = (entityId get DrawDeckComponent::class)
@@ -43,15 +47,13 @@ class CardsSystem @Inject constructor(private val multiSystem: MultiplierSystem)
         latestCard: MutableIntState,
         playerCardCount: MutableIntState
     ) {
-        Log.v("CardsSystem", "Card activation started")
-        val oldPlayer = ComponentManager.componentManager.copy(getPlayerID())
+        Log.v("CardsSystem", "Card activation started. Turn started.")
         onTurnStartEffectStackSystem()
         activateCard(latestCard, playerCardCount)
-//        multiSystem.multiplyEntityAgainstOldItself(getPlayerID())
-//        multiSystem.addEntity(getPlayerID())
+        multiSystem.multiplyEntityAgainstOldItself(getPlayerID())
+        multiSystem.addEntity(getPlayerID())
         onDeathSystem()
-        multiSystem.multiplyEntityValues(oldEntityId = oldPlayer, targetEntityId = getPlayerID())
-        Log.v("CardsSystem", "Card activation finished")
+        Log.v("CardsSystem", "Card activation finished. Turn finished.")
     }
 
     private fun activateCard(latestCard: MutableIntState, playerCardCount: MutableIntState) {
