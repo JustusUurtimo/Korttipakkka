@@ -1,6 +1,6 @@
 package com.sq.thed_ck_licker.ecs.components
 
-import android.R.attr.targetId
+import android.util.Log
 import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.mutableFloatStateOf
@@ -41,17 +41,16 @@ data class HealthComponent(
     fun increaseMaxHealth(amount: Float) {
         this.maxHealth.floatValue += amount
     }
-
-    fun add(amount: Float, targetId: Int = 0) {
-        println("this is going to be modified ${this}")
+fun add(amount: Float, targetId: Int = 0) {
+        var logging = "This is going to be modified $this"
         if ((this.health.floatValue + amount) > this.maxHealth.floatValue) {
             this.health.floatValue = this.maxHealth.floatValue
         } else {
             this.health.floatValue += amount
         }
-        println("and the end result is ${this}")
+        logging += "and the end result is $this"
+        Log.i("HealthComponent", logging)
 
-        //Death Check
         if (targetId == getPlayerID() && this.health.floatValue <= 0) {
             GameEvents.tryEmit(GameEvent.PlayerDied)
         }
