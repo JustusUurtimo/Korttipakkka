@@ -12,25 +12,33 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
+import com.sq.thed_ck_licker.ecs.managers.EntityManager
+import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.CardDeck
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.DeathScreen
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.HoleView
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.MerchantHandView
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.PlayerHandView
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.PullCardButton
+import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.isHurryModeEnabled
 import com.sq.thed_ck_licker.player.HealthBar
 import com.sq.thed_ck_licker.player.ScoreDisplay
 import com.sq.thed_ck_licker.viewModels.GameViewModel
 import com.sq.thed_ck_licker.viewModels.MerchantViewModel
 import com.sq.thed_ck_licker.viewModels.PlayerViewModel
+import kotlinx.coroutines.delay
 
 @Composable
 fun Game(
@@ -51,6 +59,8 @@ fun Game(
     val playerState by playerViewModel.playerState.collectAsState()
     val merchantHand by merchantViewModel.merchantHand.collectAsState()
     val merchantState by merchantViewModel.merchantState.collectAsState()
+
+    PeriodicDamageEffectPoC()
 
     Column(modifier.fillMaxWidth()) {
         HealthBar(playerState.health, playerState.maxHealth, modifier.padding(innerPadding))
@@ -105,6 +115,18 @@ fun Game(
                 }
 
             }
+        }
+    }
+}
+
+@Composable
+private fun PeriodicDamageEffectPoC() {
+    var checked2 by remember { isHurryModeEnabled }
+    LaunchedEffect(checked2) {
+        while (checked2) {
+            delay(1000)
+            val player = EntityManager.getPlayerID()
+            (player get HealthComponent::class).damage(1f, player)
         }
     }
 }

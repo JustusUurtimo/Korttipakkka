@@ -1,8 +1,5 @@
-package com.sq.thed_ck_licker.ecs.components.misc
-
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.mutableIntStateOf
-
 
 data class MerchantComponent(
     private var merchantId: MutableIntState,
@@ -48,7 +45,6 @@ data class EntityMemoryComponent(private var affinity: MutableIntState) {
         this.affinity.intValue += amount
     }
 }
-
 
 
 
