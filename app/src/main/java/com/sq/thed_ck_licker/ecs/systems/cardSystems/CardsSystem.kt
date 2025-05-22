@@ -161,7 +161,7 @@ class CardsSystem @Inject constructor() {
 
         limitedMultiEntity add EffectComponent(
             onTurnStart = { targetId: Int ->
-                selfHp.heal(-1f)
+                selfHp.damage(1f, limitedMultiEntity)
             },
             onDeath = { targetId: Int ->
                 val targetMultiComp = targetId get MultiplierComponent::class
