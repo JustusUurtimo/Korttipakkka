@@ -166,7 +166,7 @@ class CardsSystem @Inject constructor(private var multiSystem: MultiplierSystem)
         }
 
         limitedMultiEntity add EffectComponent(
-            onTurnStart = { targetId: Int ->
+            onTurnStart = { _: Int ->
                 selfHp.damage(1f, limitedMultiEntity)
             },
             onDeath = { targetId: Int ->
