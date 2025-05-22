@@ -1,12 +1,13 @@
 package com.sq.thed_ck_licker.ecs.components
 
+import android.R.attr.targetId
 import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
-import com.sq.thed_ck_licker.ecs.managers.GameEvents
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.managers.GameEvent
+import com.sq.thed_ck_licker.ecs.managers.GameEvents
 
 
 data class HealthComponent(
@@ -41,22 +42,23 @@ data class HealthComponent(
         this.maxHealth.floatValue += amount
     }
 
-    fun heal(healAmount: Float) {
+    fun add(amount: Float, targetId: Int = 0) {
         println("this is going to be modified ${this}")
-        if ((this.health.floatValue + healAmount) > this.maxHealth.floatValue) {
+        if ((this.health.floatValue + amount) > this.maxHealth.floatValue) {
             this.health.floatValue = this.maxHealth.floatValue
         } else {
-            this.health.floatValue += healAmount
+            this.health.floatValue += amount
         }
         println("and the end result is ${this}")
-    }
 
-    fun damage(damageAmount: Float, targetId: Int) {
-        this.health.floatValue -= damageAmount
+        //Death Check
         if (targetId == getPlayerID() && this.health.floatValue <= 0) {
             GameEvents.tryEmit(GameEvent.PlayerDied)
         }
     }
+
+    fun heal(amount: Float) = add(amount)
+    fun damage(amount: Float, targetId: Int) = add(-amount, targetId)
 }
 
 data class ScoreComponent(private var score: MutableIntState) {
