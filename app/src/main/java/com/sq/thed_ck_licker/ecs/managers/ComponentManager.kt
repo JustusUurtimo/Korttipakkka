@@ -161,7 +161,7 @@ infix fun EntityId.difference(entity: EntityId): EntityId {
 
 
     for (component in entity1Components) {
-        var secondComponent: Any? = null
+        var secondComponent: Any
         try {
             secondComponent = entity get component::class
         } catch (_: Exception) {
@@ -172,12 +172,10 @@ infix fun EntityId.difference(entity: EntityId): EntityId {
                 secondComponent as HealthComponent
                 if (component.getHealth() - secondComponent.getHealth() == 0f &&
                     component.getMaxHealth() - secondComponent.getMaxHealth() == 0f
-//                    && component.multiplier - secondComponent.multiplier == 0f
                 ) continue
                 HealthComponent(
                     component.getHealth() - secondComponent.getHealth(),
                     component.getMaxHealth() - secondComponent.getMaxHealth(),
-//                    component.multiplier - secondComponent.multiplier + 1f
                 )
             }
 
