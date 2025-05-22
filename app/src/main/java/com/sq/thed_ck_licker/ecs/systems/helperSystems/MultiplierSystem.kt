@@ -12,6 +12,17 @@ import com.sq.thed_ck_licker.ecs.managers.get
 import javax.inject.Inject
 
 class MultiplierSystem @Inject constructor(private val componentManager: ComponentManager) {
+    val entityHolder = HashMap<EntityId, EntityId>()
+
+    fun addEntity(entityId: EntityId) {
+        entityHolder.put(entityId, componentManager.copy(entityId))
+    }
+
+    fun multiplyEntityAgainstOldItself(entityId: EntityId) {
+        var old = entityHolder.get(entityId) ?: componentManager.copy(entityId)
+        multiplyEntityValues(old, entityId)
+    }
+
     fun multiplyEntityValues(oldEntityId: EntityId, targetEntityId: EntityId) {
         if (oldEntityId == targetEntityId) return
 
@@ -51,7 +62,7 @@ class MultiplierSystem @Inject constructor(private val componentManager: Compone
                 }
             }
             Log.v(
-                "Multiplication system", "Multiplier gave you just: $diffi of something"
+                "Multiplication system", "Multiplier gave you just $diffi of something"
             )
         }
     }
