@@ -2,9 +2,7 @@ package com.sq.thed_ck_licker.ecs.components.misc
 
 import android.util.Log
 import androidx.compose.runtime.MutableFloatState
-import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.managers.GameEvent
 import com.sq.thed_ck_licker.ecs.managers.GameEvents
@@ -57,25 +55,11 @@ data class HealthComponent(
 
     fun heal(amount: Float) = add(amount)
     fun damage(amount: Float, targetId: Int) = add(-amount, targetId)
-}
 
-data class ScoreComponent(private var score: MutableIntState) {
-    constructor(score: Int = 0) : this(mutableIntStateOf(score))
-
-    fun addScore(score: Int) {
-        this.score.intValue += score
+    fun combineHealthComponents(other: HealthComponent): HealthComponent {
+        return HealthComponent(
+            this.getHealth() + other.getHealth(),
+            this.getMaxHealth() + other.getMaxHealth()
+        )
     }
-
-    fun reduceScore(score: Int) {
-        this.score.intValue -= score
-    }
-
-    fun getScore(): Int {
-        return this.score.intValue
-    }
-
-    fun setScore(score: Int) {
-        this.score.intValue = score
-    }
-
 }
