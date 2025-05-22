@@ -22,11 +22,11 @@ fun SettingsScreen(modifier: Modifier) {
 
 }
 
-val checked = mutableStateOf(true)
+val isHurryModeEnabled = mutableStateOf(true)
 
 @Composable
 fun HurryCheckbox() {
-    var checked2 by remember { checked }
+    var checked2 by remember { isHurryModeEnabled }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,

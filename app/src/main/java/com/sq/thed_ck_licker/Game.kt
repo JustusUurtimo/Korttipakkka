@@ -32,7 +32,7 @@ import com.sq.thed_ck_licker.ecs.systems.viewSystems.HoleView
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.MerchantHandView
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.PlayerHandView
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.PullCardButton
-import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.checked
+import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.isHurryModeEnabled
 import com.sq.thed_ck_licker.player.HealthBar
 import com.sq.thed_ck_licker.player.ScoreDisplay
 import com.sq.thed_ck_licker.viewModels.GameViewModel
@@ -121,12 +121,12 @@ fun Game(
 
 @Composable
 private fun PeriodicDamageEffectPoC() {
-    var checked2 by remember { checked }
+    var checked2 by remember { isHurryModeEnabled }
     LaunchedEffect(checked2) {
         while (checked2) {
             delay(1000)
             val player = EntityManager.getPlayerID()
-            (player get HealthComponent::class).heal(-1f)
+            (player get HealthComponent::class).damage(1f, player)
         }
     }
 }

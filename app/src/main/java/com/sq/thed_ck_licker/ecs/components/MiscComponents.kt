@@ -1,5 +1,6 @@
 package com.sq.thed_ck_licker.ecs.components
 
+import android.util.Log
 import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.mutableFloatStateOf
@@ -42,13 +43,14 @@ data class HealthComponent(
     }
 
     fun heal(healAmount: Float) {
-        println("this is going to be modified ${this}")
+        var logging = "this is going to be modified $this"
         if ((this.health.floatValue + healAmount) > this.maxHealth.floatValue) {
             this.health.floatValue = this.maxHealth.floatValue
         } else {
             this.health.floatValue += healAmount
         }
-        println("and the end result is ${this}")
+        logging += "and the end result is $this"
+        Log.i("HealthComponent", logging)
     }
 
     fun damage(damageAmount: Float, targetId: Int) {
