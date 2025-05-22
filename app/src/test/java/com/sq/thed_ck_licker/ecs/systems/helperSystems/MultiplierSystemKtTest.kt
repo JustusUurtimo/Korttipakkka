@@ -7,9 +7,20 @@ import com.sq.thed_ck_licker.ecs.managers.ComponentManager
 import com.sq.thed_ck_licker.ecs.managers.EntityManager
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.get
+import com.sq.thed_ck_licker.helpers.HelperSystemModule
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class MultiplierSystemKtTest {
+    lateinit var multiSystem: MultiplierSystem
+    lateinit var componentManager: ComponentManager
+
+    @BeforeEach
+    fun setUp() {
+        componentManager = ComponentManager.componentManager
+        multiSystem = HelperSystemModule.provideMultiplierSystem(componentManager)
+    }
+
     @Test
     fun `Apply Generic Multiplier Component To Score Component`() {
         val entityId = EntityManager.createNewEntity()
@@ -18,7 +29,7 @@ class MultiplierSystemKtTest {
         val scoreA = 100
         entityId add ScoreComponent(scoreA)
 
-        val componentManager = ComponentManager.componentManager
+        val componentManager = componentManager
         val oldEntity = componentManager.copy(entityId)
 
         (entityId get ScoreComponent::class).setScore((entityId get ScoreComponent::class).getScore() + scoreA)
@@ -27,7 +38,7 @@ class MultiplierSystemKtTest {
         val scoreSum = scoreA + scoreA
         assert(scoreComponent.getScore() == scoreSum) { "Score should be $scoreSum, but was ${scoreComponent.getScore()}" }
 
-        multiplyEntityValues(oldEntity, entityId)
+        multiSystem.multiplyEntityValues(oldEntity, entityId)
 
         scoreComponent = (entityId get ScoreComponent::class)
         val correctScore = scoreA + (scoreA.toFloat() * multiplier).toInt()
@@ -51,7 +62,7 @@ class MultiplierSystemKtTest {
         val healthSum = startingHealth + startingHealth
         assert(entityHealth.getHealth() == healthSum) { "Starting health should be $healthSum, but was ${entityHealth.getHealth()}" }
 
-        multiplyEntityValues(oldEntity, entityId)
+        multiSystem.multiplyEntityValues(oldEntity, entityId)
 
         entityHealth = (entityId get HealthComponent::class)
         val correctScore = startingHealth + (startingHealth.toFloat() * multiplier)

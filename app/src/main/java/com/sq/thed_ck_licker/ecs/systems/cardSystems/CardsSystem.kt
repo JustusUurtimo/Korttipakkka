@@ -16,15 +16,15 @@ import com.sq.thed_ck_licker.ecs.managers.GameEvents
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.generateEntity
 import com.sq.thed_ck_licker.ecs.managers.get
+import com.sq.thed_ck_licker.ecs.systems.helperSystems.MultiplierSystem
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.discardSystem
-import com.sq.thed_ck_licker.ecs.systems.helperSystems.multiplyEntityValues
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.onDeathSystem
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.onTurnStartEffectStackSystem
 import com.sq.thed_ck_licker.helpers.getRandomElement
 import javax.inject.Inject
 import kotlin.math.min
 
-class CardsSystem @Inject constructor() {
+class CardsSystem @Inject constructor(private val multiSystem: MultiplierSystem) {
 
     fun pullRandomCardFromEntityDeck(entityId: Int): Int {
         val drawDeckComponent = (entityId get DrawDeckComponent::class)
@@ -47,7 +47,7 @@ class CardsSystem @Inject constructor() {
         onTurnStartEffectStackSystem()
         activateCard(latestCard, playerCardCount)
         onDeathSystem()
-        multiplyEntityValues(oldEntityId = oldPlayer, targetEntityId = getPlayerID())
+        multiSystem.multiplyEntityValues(oldEntityId = oldPlayer, targetEntityId = getPlayerID())
     }
 
     private fun activateCard(latestCard: MutableIntState, playerCardCount: MutableIntState) {

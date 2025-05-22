@@ -9,48 +9,50 @@ import com.sq.thed_ck_licker.ecs.managers.EntityId
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.difference
 import com.sq.thed_ck_licker.ecs.managers.get
+import javax.inject.Inject
 
-fun multiplyEntityValues(oldEntityId: EntityId, targetEntityId: EntityId) {
-    if (oldEntityId == targetEntityId) return
+class MultiplierSystem @Inject constructor(private val componentManager: ComponentManager) {
+    fun multiplyEntityValues(oldEntityId: EntityId, targetEntityId: EntityId) {
+        if (oldEntityId == targetEntityId) return
 
-    val difference = targetEntityId difference oldEntityId
-    val diffComponents = ComponentManager.componentManager.getAllComponentsOfEntity(difference)
+        val difference = targetEntityId difference oldEntityId
+        val diffComponents = componentManager.getAllComponentsOfEntity(difference)
 
-    val multiplier = (targetEntityId get MultiplierComponent::class).multiplier - 1
+        val multiplier = (targetEntityId get MultiplierComponent::class).multiplier - 1
+        for (component in diffComponents) {
+            var diffi: Number = 0
+            when (component) {
+                //            is MultiplierComponent -> {
+                //                component.multiplier = multiplier
+                //            }
 
-    for (component in diffComponents) {
-//        println("Component1 of type ${component::class.simpleName} added")
-//        println("Component1: $component")
-        when (component) {
-//            is MultiplierComponent -> {
-//                component.multiplier = multiplier
-//            }
+                is HealthComponent -> {
+                    component.setHealth(component.getHealth() * multiplier)
+                    diffi = component.getHealth()
+                    targetEntityId add (targetEntityId get HealthComponent::class).combineHealthComponents(
+                        component
+                    )
+                }
 
-            is HealthComponent -> {
-                component.setHealth(component.getHealth() * multiplier)
-                targetEntityId add (targetEntityId get HealthComponent::class).combineHealthComponents(component)
-//                targetEntityId add component
+                is ScoreComponent -> {
+                    component.setScore((component.getScore() * multiplier).toInt())
+                    diffi = component.getScore()
+                    targetEntityId add (targetEntityId get ScoreComponent::class).combineScoreComponents(
+                        component
+                    )
+                }
+
+                else -> {
+                    Log.i(
+                        "Multiplication system",
+                        "Component of type ${component::class.simpleName} not supported"
+                    )
+                    continue
+                }
             }
-
-            is ScoreComponent -> {
-                component.setScore((component.getScore() * multiplier).toInt())
-               targetEntityId add (targetEntityId get ScoreComponent::class).combineScoreComponents(component)
-            }
-
-            else -> {
-                Log.i(
-                    "Multiplication system",
-                    "Component of type ${component::class.simpleName} not supported"
-                )
-                continue
-            }
+            Log.v(
+                "Multiplication system", "Multiplier gave you just: $diffi of something"
+            )
         }
-//        println("Component of type ${component::class.simpleName} added")
-//        println("Component: $component")
-//        println("score ${(targetEntityId get HealthComponent::class).getHealth()}")
-//        targetEntityId add component
-
-
     }
-
 }

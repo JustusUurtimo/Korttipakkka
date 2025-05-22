@@ -17,8 +17,8 @@ object CardSystemModule {
 
     @Provides
     @Singleton
-    fun provideCardsSystem(): CardsSystem {
-        return CardsSystem()
+    fun provideCardsSystem(componentManager: ComponentManager): CardsSystem {
+        return CardsSystem(multiSystem = HelperSystemModule.provideMultiplierSystem(componentManager))
     }
 
     @Provides
