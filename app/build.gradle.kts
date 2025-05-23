@@ -121,4 +121,5 @@ dependencies {
 //    testImplementation("junit:junit:4.13.2") == testImplementation(libs.junit)
     testImplementation(libs.junit)
     testImplementation("org.junit.vintage:junit-vintage-engine:5.7.2")
+    testImplementation(kotlin("test"))
 }

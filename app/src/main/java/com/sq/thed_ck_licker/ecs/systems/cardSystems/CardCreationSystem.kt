@@ -3,10 +3,8 @@ package com.sq.thed_ck_licker.ecs.systems.cardSystems
 import com.sq.thed_ck_licker.R
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.CardTag
-import com.sq.thed_ck_licker.ecs.components.HealthComponent
-import com.sq.thed_ck_licker.ecs.components.IdentificationComponent
-import com.sq.thed_ck_licker.ecs.components.MerchantComponent
-import com.sq.thed_ck_licker.ecs.components.ScoreComponent
+import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
+import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityId
 import com.sq.thed_ck_licker.ecs.managers.GameEvent
 import com.sq.thed_ck_licker.ecs.managers.GameEvents
@@ -15,6 +13,7 @@ import com.sq.thed_ck_licker.ecs.managers.MerchantEvents
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.helpers.MyRandom
 import jakarta.inject.Inject
+import kotlin.math.abs
 
 class CardCreationSystem @Inject constructor(
     private val cardsSystem: CardsSystem,
@@ -97,11 +96,12 @@ class CardCreationSystem @Inject constructor(
     }
 
     fun addMaxHpTrapCards(amount: Int = 5): List<EntityId> {
+        val cardHealthAmount = 100f
         val onActivation = { targetId: Int, cardEntity: Int ->
             val targetHp = targetId get HealthComponent::class
             if (MyRandom.getRandomInt() <= 10) {
-                (cardEntity get HealthComponent::class).damage(99999f, cardEntity)
-                val damageAmount = targetHp.getHealth().div(2)
+                (cardEntity get HealthComponent::class).damage(cardHealthAmount, cardEntity)
+                val damageAmount = abs(targetHp.getHealth().div(2))
                 targetHp.damage(damageAmount, targetId)
             } else {
                 targetHp.increaseMaxHealth(10f)
@@ -109,7 +109,7 @@ class CardCreationSystem @Inject constructor(
         }
 
         return cardBuilder.buildCards {
-            cardHealth = 99999f
+            cardHealth = cardHealthAmount
             cardAmount = amount
             description = "Gain 10 max health on play, might explode"
             name = "Max HP Trap Card"
@@ -222,4 +222,19 @@ class CardCreationSystem @Inject constructor(
             onCardPlay = onActivation
         }
     }
+
+    fun addTempMultiplierTestCards(amount: Int = 1): List<EntityId> {
+        val onActivation = { targetId: Int, _: Int ->
+            cardsSystem.addTemporaryMultiplierTo(targetId)
+        }
+
+        return cardBuilder.buildCards {
+            cardHealth = 1f
+            cardAmount = amount
+            description = "Inject steroids and make more every time you do any thing."
+            name = "Steroids"
+            onCardPlay = onActivation
+        }
+    }
+
 }

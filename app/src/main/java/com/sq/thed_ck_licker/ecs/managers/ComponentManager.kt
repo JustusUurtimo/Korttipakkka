@@ -1,8 +1,12 @@
 package com.sq.thed_ck_licker.ecs.managers
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import com.sq.thed_ck_licker.ecs.components.CardTag
+import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
+import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
+import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlin.reflect.KClass
@@ -99,6 +103,34 @@ class ComponentManager {
     fun clear() {
         components.clear()
     }
+
+
+    fun copy(entity: EntityId): EntityId {
+        val entityCopy = EntityManager.createNewEntity()
+        for (component in getAllComponentsOfEntity(entity)) {
+            val copiedComponent = deepCopyComponent(component)
+            if (copiedComponent == null) continue
+            entityCopy add copiedComponent
+        }
+
+        return entityCopy
+    }
+
+    fun deepCopyComponent(component: Any): Any? {
+        return when (component) {
+            is HealthComponent -> HealthComponent(
+                component.getHealth(),
+                component.getMaxHealth()
+            )
+
+            is ScoreComponent -> ScoreComponent(component.getScore())
+            is MultiplierComponent -> MultiplierComponent(component.multiplier)
+            else -> {
+                Log.w("ComponentManager", "Unknown component type: ${component.javaClass.name}, it was not copied.")
+                return null
+            }
+        }
+    }
 }
 
 /**
@@ -119,4 +151,54 @@ infix fun <T : Any> EntityId.get(componentClass: KClass<T>): T {
  */
 inline fun <reified T> List<Any>.hasComponent(): Boolean {
     return any { it is T }
+}
+
+
+infix fun EntityId.difference(entity: EntityId): EntityId {
+    val result = EntityManager.createNewEntity()
+    val entity1Components = ComponentManager.componentManager.getAllComponentsOfEntity(this)
+
+
+
+    for (component in entity1Components) {
+        var secondComponent: Any
+        try {
+            secondComponent = entity get component::class
+        } catch (_: Exception) {
+            continue
+        }
+        result add when (component) {
+            is HealthComponent -> {
+                secondComponent as HealthComponent
+                if (component.getHealth() - secondComponent.getHealth() == 0f &&
+                    component.getMaxHealth() - secondComponent.getMaxHealth() == 0f
+                ) continue
+                HealthComponent(
+                    component.getHealth() - secondComponent.getHealth(),
+                    component.getMaxHealth() - secondComponent.getMaxHealth(),
+                )
+            }
+
+            is ScoreComponent -> {
+                secondComponent as ScoreComponent
+                if (component.getScore() - secondComponent.getScore() == 0) continue
+                ScoreComponent(component.getScore() - secondComponent.getScore())
+            }
+
+            is MultiplierComponent -> {
+
+                secondComponent as MultiplierComponent
+                if (component.multiplier - secondComponent.multiplier == 0f) continue
+                MultiplierComponent(component.multiplier - secondComponent.multiplier)
+            }
+
+            else -> {
+                Log.i(
+                    "Entity Difference",
+                    "One of the entities did not have this component: ${component::class.simpleName}"
+                )
+            }
+        }
+    }
+    return result
 }

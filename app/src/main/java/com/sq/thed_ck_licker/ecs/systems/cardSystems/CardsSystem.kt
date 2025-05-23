@@ -6,22 +6,29 @@ import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
-import com.sq.thed_ck_licker.ecs.components.HealthComponent
-import com.sq.thed_ck_licker.ecs.components.ScoreComponent
+import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
+import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
+import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
+import com.sq.thed_ck_licker.ecs.managers.ComponentManager.Companion.componentManager
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.managers.GameEvent
 import com.sq.thed_ck_licker.ecs.managers.GameEvents
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.generateEntity
 import com.sq.thed_ck_licker.ecs.managers.get
+import com.sq.thed_ck_licker.ecs.systems.helperSystems.MultiplierSystem
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.discardSystem
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.onDeathSystem
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.onTurnStartEffectStackSystem
+import com.sq.thed_ck_licker.helpers.HelperSystemModule
 import com.sq.thed_ck_licker.helpers.getRandomElement
 import javax.inject.Inject
 import kotlin.math.min
 
-class CardsSystem @Inject constructor() {
+class CardsSystem @Inject constructor(private var multiSystem: MultiplierSystem) {
+    init {
+        multiSystem = HelperSystemModule.provideMultiplierSystem(componentManager)
+    }
 
     fun pullRandomCardFromEntityDeck(entityId: Int): Int {
         val drawDeckComponent = (entityId get DrawDeckComponent::class)
@@ -40,9 +47,13 @@ class CardsSystem @Inject constructor() {
         latestCard: MutableIntState,
         playerCardCount: MutableIntState
     ) {
+        Log.v("CardsSystem", "Card activation started. Turn started.")
         onTurnStartEffectStackSystem()
         activateCard(latestCard, playerCardCount)
+        multiSystem.multiplyEntityAgainstOldItself(getPlayerID())
+        multiSystem.addEntity(getPlayerID())
         onDeathSystem()
+        Log.v("CardsSystem", "Card activation finished. Turn finished.")
     }
 
     private fun activateCard(latestCard: MutableIntState, playerCardCount: MutableIntState) {
@@ -134,6 +145,34 @@ class CardsSystem @Inject constructor() {
 
         val targetEffectStackComp = (targetEntityId get EffectStackComponent::class)
         targetEffectStackComp addEntity (limitedHealEntity)
+    }
+
+    fun addTemporaryMultiplierTo(
+        targetEntityId: Int,
+        health: Float = 10f,
+        multiplier: Float = 2.8f
+    ) {
+        val limitedMultiEntity = generateEntity()
+        val selfHp = HealthComponent(health)
+        limitedMultiEntity add selfHp
+        limitedMultiEntity add ActivationCounterComponent()
+
+
+        try {
+            val targetMultiComp = targetEntityId get MultiplierComponent::class
+            targetMultiComp.timesMultiplier(multiplier)
+        }catch (_: IllegalStateException){
+            Log.e("CardsSystem", "Target entity has no multiplier component")
+        }
+
+        limitedMultiEntity add EffectComponent(
+            onTurnStart = { _: Int ->
+                selfHp.damage(1f, limitedMultiEntity)
+            },
+            onDeath = { targetId: Int ->
+                val targetMultiComp = targetId get MultiplierComponent::class
+                targetMultiComp.removeMultiplier(multiplier)
+            })
     }
 
 }
