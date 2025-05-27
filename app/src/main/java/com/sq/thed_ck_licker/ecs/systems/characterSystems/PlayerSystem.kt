@@ -79,16 +79,26 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         (getPlayerID() get DrawDeckComponent::class).removeCard(cardId)
     }
 
+    fun getLatestCard(): Int {
+        return (getPlayerID() get DrawDeckComponent::class).getLatestCard()
+    }
+
+    fun setLatestCard(cardId: Int) {
+        (getPlayerID() get DrawDeckComponent::class).setLatestCard(cardId)
+    }
+
     fun playerUpdates(): Flow<PlayerState> {
         return combine(
             snapshotFlow { getPlayerHealth() },
             snapshotFlow { getPlayerMaxHealth() },
-            snapshotFlow { getPlayerScore() }
-        ) { health, maxHealth, score ->
+            snapshotFlow { getPlayerScore() },
+            snapshotFlow { getLatestCard() }
+        ) { health, maxHealth, score, latestCard ->
             PlayerState(
                 health = health,
                 maxHealth = maxHealth,
-                score = score
+                score = score,
+                latestCard = latestCard
             )
         }
     }

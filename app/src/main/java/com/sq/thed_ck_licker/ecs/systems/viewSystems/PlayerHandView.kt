@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 fun PlayerHandView(
     playerCardCount: MutableIntState,
     modifier: Modifier,
-    latestCard: MutableIntState,
+    latestCard: Int,
     activateCard: () -> Unit,
 ) {
     BadgedBox(
@@ -39,6 +39,6 @@ fun PlayerHandView(
         // TODO: There might be some modifier that "just rounds the corners"
         //  And then it could be just passed via modifier passing or something
 
-        CardView(latestCard.intValue, activateCard, modifier)
+        CardView(latestCard, activateCard, modifier)
     }
 }

@@ -11,12 +11,13 @@ import com.sq.thed_ck_licker.ecs.managers.GameEvents
 import com.sq.thed_ck_licker.ecs.managers.MerchantEvent
 import com.sq.thed_ck_licker.ecs.managers.MerchantEvents
 import com.sq.thed_ck_licker.ecs.managers.get
+import com.sq.thed_ck_licker.ecs.systems.helperSystems.CardCreationHelperSystems
 import com.sq.thed_ck_licker.helpers.MyRandom
 import jakarta.inject.Inject
 import kotlin.math.abs
 
 class CardCreationSystem @Inject constructor(
-    private val cardsSystem: CardsSystem,
+    private val cardCreationHelperSystems: CardCreationHelperSystems,
     private val cardBuilder: CardBuilderSystem
 ) {
 
@@ -195,7 +196,7 @@ class CardCreationSystem @Inject constructor(
     fun addScoreGainerTestCards(amount: Int = 1): List<EntityId> {
         val pointsPerCard = 3
         val onActivation = { playerId: Int, _: Int ->
-            cardsSystem.addPassiveScoreGainerToEntity(playerId, pointsPerCard)
+            cardCreationHelperSystems.addPassiveScoreGainerToEntity(playerId, pointsPerCard)
         }
 
         return cardBuilder.buildCards {
@@ -211,7 +212,7 @@ class CardCreationSystem @Inject constructor(
 
     fun addBeerGogglesTestCards(amount: Int = 1): List<EntityId> {
         val onActivation = { playerId: Int, _: Int ->
-            cardsSystem.addLimitedSupplyAutoHealToEntity(playerId, 150f)
+            cardCreationHelperSystems.addLimitedSupplyAutoHealToEntity(playerId, 150f)
         }
 
         return cardBuilder.buildCards {
@@ -225,7 +226,7 @@ class CardCreationSystem @Inject constructor(
 
     fun addTempMultiplierTestCards(amount: Int = 1): List<EntityId> {
         val onActivation = { targetId: Int, _: Int ->
-            cardsSystem.addTemporaryMultiplierTo(targetId)
+            cardCreationHelperSystems.addTemporaryMultiplierTo(targetId)
         }
 
         return cardBuilder.buildCards {

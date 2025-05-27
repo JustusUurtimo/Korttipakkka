@@ -5,6 +5,8 @@ import com.sq.thed_ck_licker.ecs.systems.CardPullingSystem
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem
+import com.sq.thed_ck_licker.ecs.systems.characterSystems.PlayerSystem
+import com.sq.thed_ck_licker.ecs.systems.helperSystems.CardCreationHelperSystems
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,17 +19,20 @@ object CardSystemModule {
 
     @Provides
     @Singleton
-    fun provideCardsSystem(componentManager: ComponentManager): CardsSystem {
-        return CardsSystem(multiSystem = HelperSystemModule.provideMultiplierSystem(componentManager))
+    fun provideCardsSystem(componentManager: ComponentManager, playerSystem: PlayerSystem): CardsSystem {
+        return CardsSystem(
+            multiSystem = HelperSystemModule.provideMultiplierSystem(componentManager),
+            playerSystem = playerSystem
+        )
     }
 
     @Provides
     @Singleton
     fun provideCardCreationSystem(
-        cardsSystem: CardsSystem,
+        cardCreationHelperSystems: CardCreationHelperSystems,
         cardBuilder: CardBuilderSystem
     ): CardCreationSystem {
-        return CardCreationSystem(cardsSystem, cardBuilder)
+        return CardCreationSystem(cardCreationHelperSystems, cardBuilder)
     }
 
     @Provides
@@ -38,8 +43,8 @@ object CardSystemModule {
 
     @Provides
     @Singleton
-    fun provideCardPullSystem(cardsSystem: CardsSystem): CardPullingSystem {
-        return CardPullingSystem(cardsSystem)
+    fun provideCardPullSystem(cardsSystem: CardsSystem, playerSystem: PlayerSystem): CardPullingSystem {
+        return CardPullingSystem(cardsSystem, playerSystem)
     }
 
 }

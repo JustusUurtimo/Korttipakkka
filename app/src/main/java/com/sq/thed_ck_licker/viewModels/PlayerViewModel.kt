@@ -24,7 +24,8 @@ class PlayerViewModel @Inject constructor(
         PlayerState(
             health = playerSystem.getPlayerHealth(),
             maxHealth = playerSystem.getPlayerMaxHealth(),
-            score = playerSystem.getPlayerScore()
+            score = playerSystem.getPlayerScore(),
+            latestCard = playerSystem.getLatestCard()
         )
     )
     val playerState: StateFlow<PlayerState> get() = _playerState
@@ -37,11 +38,11 @@ class PlayerViewModel @Inject constructor(
         }
     }
 
-    fun onPullNewCard(latestCard: MutableIntState) {
+    fun onPullNewCard(latestCard: Int) {
         cardPullingSystem.pullNewCard(latestCard)
     }
 
-    fun onActivateCard(latestCard: MutableIntState, cardCount: MutableIntState) {
+    fun onActivateCard(latestCard: Int, cardCount: MutableIntState) {
         cardsSystem.cardActivation(latestCard, cardCount)
     }
 }

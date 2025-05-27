@@ -9,7 +9,7 @@ import com.sq.thed_ck_licker.ecs.managers.GameEvents
 
 data class HealthComponent(
     private var health: MutableFloatState,
-    private val maxHealth: MutableFloatState
+    private var maxHealth: MutableFloatState
 ) {
     /**
      * This can be used in cases where you want thing to be not on full hp at the start
