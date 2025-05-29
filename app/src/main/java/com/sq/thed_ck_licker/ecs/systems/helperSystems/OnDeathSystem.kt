@@ -9,6 +9,8 @@ import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.managers.ComponentManager
 import com.sq.thed_ck_licker.ecs.managers.EntityId
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
+import com.sq.thed_ck_licker.ecs.managers.GameEvent
+import com.sq.thed_ck_licker.ecs.managers.GameEvents
 import com.sq.thed_ck_licker.ecs.managers.get
 
 fun onDeathSystem(componentManager: ComponentManager = ComponentManager.componentManager) {
@@ -25,13 +27,15 @@ private fun healthDeath(componentManager: ComponentManager): List<EntityId> {
         ?: return emptyList()
     val deaths = mutableListOf<EntityId>()
     for (entity in dying) {
-        if (entity.key == getPlayerID()) continue
         val health = (entity.value as HealthComponent).getHealth()
         if (health <= 0) {
-            deaths.add(deathHappening(entity, componentManager))
-            println("Death happened, such shame")
-            println("Entity #${entity.key} is dead now")
-
+            if (entity.key == getPlayerID()) {
+                GameEvents.tryEmit(GameEvent.PlayerDied)
+            } else {
+                deaths.add(deathHappening(entity, componentManager))
+                println("Death happened, such shame")
+                println("Entity #${entity.key} is dead now")
+            }
         }
     }
     return deaths

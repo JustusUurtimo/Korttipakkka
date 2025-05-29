@@ -41,7 +41,7 @@ data class HealthComponent(
     fun increaseMaxHealth(amount: Float) {
         this.maxHealth.floatValue += amount
     }
-    fun add(amount: Float, targetId: Int = 0) {
+    fun add(amount: Float) {
         var logging = "This is going to be modified $this"
         if ((this.health.floatValue + amount) > this.maxHealth.floatValue) {
             this.health.floatValue = this.maxHealth.floatValue
@@ -50,14 +50,10 @@ data class HealthComponent(
         }
         logging += "and the end result is $this"
         Log.i("HealthComponent", logging)
-
-        if (targetId == getPlayerID() && this.health.floatValue <= 0) {
-            GameEvents.tryEmit(GameEvent.PlayerDied)
-        }
     }
 
     fun heal(amount: Float) = add(amount)
-    fun damage(amount: Float, targetId: Int) = add(-amount, targetId)
+    fun damage(amount: Float) = add(-amount)
 
     fun combineHealthComponents(other: HealthComponent): HealthComponent {
         return HealthComponent(

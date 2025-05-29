@@ -26,6 +26,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityManager
 import com.sq.thed_ck_licker.ecs.managers.get
+import com.sq.thed_ck_licker.ecs.systems.helperSystems.onDeathSystem
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.CardDeck
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.DeathScreen
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.HoleView
@@ -124,9 +125,13 @@ private fun PeriodicDamageEffectPoC() {
     var checked2 by remember { isHurryModeEnabled }
     LaunchedEffect(checked2) {
         while (checked2) {
-            delay(1000)
+            delay(100)
             val player = EntityManager.getPlayerID()
-            (player get HealthComponent::class).damage(1f, player)
+            val playerHealth = (player get HealthComponent::class)
+            playerHealth.damage(1f)
+            if (playerHealth.getHealth() <= 0) {
+                onDeathSystem()
+            }
         }
     }
 }
