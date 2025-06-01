@@ -1,4 +1,4 @@
-package com.sq.thed_ck_licker
+package com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,7 +30,6 @@ import com.sq.thed_ck_licker.ecs.systems.viewSystems.DeathScreen
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.HoleView
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.PlayerHandView
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.PullCardButton
-import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.isHurryModeEnabled
 import com.sq.thed_ck_licker.player.HealthBar
 import com.sq.thed_ck_licker.player.ScoreDisplay
 import com.sq.thed_ck_licker.viewModels.GameViewModel

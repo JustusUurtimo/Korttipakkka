@@ -1,6 +1,5 @@
 package com.sq.thed_ck_licker.viewModels
 
-import androidx.compose.runtime.MutableIntState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sq.thed_ck_licker.ecs.managers.MerchantEvent
@@ -59,8 +58,8 @@ class MerchantViewModel @Inject constructor(
         }
     }
 
-    fun onChooseMerchantCard(latestCard: MutableIntState, newCard: Int, activeMerchant: Int) {
-        merchantSystem.chooseMerchantCard(latestCard, newCard, activeMerchant)
+    fun onChooseMerchantCard(newCard: Int, activeMerchant: Int) {
+        merchantSystem.chooseMerchantCard(newCard, activeMerchant)
         _merchantHand.value = emptyList()
     }
 
