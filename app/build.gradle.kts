@@ -118,4 +118,15 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.junit.vintage.engine)
     testImplementation(kotlin("test"))
+
+    // For Robolectric tests.
+    testImplementation(libs.hilt.android.testing)
+    // ...with Kotlin.
+    kspTest(libs.hilt.android.compiler)
+
+
+    // For instrumented tests.
+    androidTestImplementation(libs.hilt.android.testing)
+    // ...with Kotlin.
+    kspAndroidTest(libs.hilt.android.compiler)
 }
