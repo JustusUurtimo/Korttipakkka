@@ -1,5 +1,6 @@
 package com.sq.thed_ck_licker.ecs.systems.cardSystems
 
+import android.util.Log
 import com.sq.thed_ck_licker.R
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.CardTag
@@ -10,6 +11,7 @@ import com.sq.thed_ck_licker.ecs.managers.GameEvent
 import com.sq.thed_ck_licker.ecs.managers.GameEvents
 import com.sq.thed_ck_licker.ecs.managers.MerchantEvent
 import com.sq.thed_ck_licker.ecs.managers.MerchantEvents
+import com.sq.thed_ck_licker.ecs.managers.TickingMethodsManager
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.helpers.MyRandom
 import jakarta.inject.Inject
@@ -235,6 +237,32 @@ class CardCreationSystem @Inject constructor(
             name = "Steroids"
             onCardPlay = onActivation
         }
+    }
+
+
+    fun addTimeBoundTestCards(amount: Int = 1): List<EntityId> {
+        val selfCounter =
+            ActivationCounterComponent() // This spells problems... i need to make tests for it
+        val onActivation = { targetId: Int, _: Int ->
+            val scoreComponent = targetId get ScoreComponent::class
+            Log.i("Time Bound Activation","Activation number: ${selfCounter.getActivations()}")
+            if (selfCounter.getActivations() == 3) {
+                scoreComponent.addScore(10000)
+                Log.i("Time Bound Activation","Score is ${scoreComponent.getScore()}")
+            }
+        }
+        var cards =
+            cardBuilder.buildCards {
+                cardHealth = 300f
+                cardAmount = amount
+                description =
+                    "If you manage to activate this card 3 times you will gain 10000 points"
+                name = "Time Bound Card"
+                onCardPlay = onActivation
+            }
+        cards = cardBuilder.addCompToManyCards(TickingMethodsManager.healthTicker(1f), cards)
+        cards = cardBuilder.addCompToManyCards(selfCounter, cards)
+        return cards
     }
 
 }

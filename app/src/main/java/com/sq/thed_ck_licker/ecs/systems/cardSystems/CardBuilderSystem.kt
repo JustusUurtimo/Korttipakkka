@@ -49,6 +49,10 @@ class CardBuilderSystem @Inject constructor(private val componentManager: Compon
         val builder = CardBuilderSystem(componentManager)
         builder.init()
         return builder.initCards()
+    }
 
+    fun addCompToManyCards(comp: Any, list: List<Int>): List<Int> {
+        list.forEach { it add comp }
+        return list
     }
 }

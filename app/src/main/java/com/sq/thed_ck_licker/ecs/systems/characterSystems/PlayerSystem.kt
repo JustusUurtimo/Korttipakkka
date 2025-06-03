@@ -7,15 +7,18 @@ import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
+import com.sq.thed_ck_licker.ecs.components.misc.TickComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getRegularMerchantID
+import com.sq.thed_ck_licker.ecs.managers.TickingMethodsManager
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.states.PlayerState
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem
-import javax.inject.Inject
+import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.areRealTimeThingsEnabled
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import javax.inject.Inject
 
 
 class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreationSystem) {
@@ -27,6 +30,9 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         getPlayerID() add EffectStackComponent()
         getPlayerID() add DiscardDeckComponent(mutableListOf<Int>())
         getPlayerID() add MultiplierComponent()
+        if (areRealTimeThingsEnabled.value) {
+            getPlayerID() add TickComponent(tickAction = TickingMethodsManager.healthTicker())
+        }
     }
 
     private fun initPlayerDeck(): List<Int> {
@@ -42,19 +48,21 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         val merchantCards = cardCreationSystem.addMerchantCards(5, getRegularMerchantID())
         val basicScoreCards = cardCreationSystem.addBasicScoreCards(2)
         val multiplierCards = cardCreationSystem.addTempMultiplierTestCards(2)
+        val timeBoundCards = cardCreationSystem.addTimeBoundTestCards(2)
 
         return emptyList<Int>() +
-                playerHealingCards +
-                playerDamageCards +
-                defaultCards +
-                deactivationCards +
-                trapCards +
-                scoreGainerCards +
-                beerGogglesCards +
-                maxHpCards +
-                merchantCards +
-                basicScoreCards +
-                multiplierCards +
+//                playerHealingCards +
+//                playerDamageCards +
+//                defaultCards +
+//                deactivationCards +
+//                trapCards +
+//                scoreGainerCards +
+//                beerGogglesCards +
+//                maxHpCards +
+//                merchantCards +
+//                basicScoreCards +
+//                multiplierCards +
+                timeBoundCards +
                 emptyList<Int>()
     }
 
