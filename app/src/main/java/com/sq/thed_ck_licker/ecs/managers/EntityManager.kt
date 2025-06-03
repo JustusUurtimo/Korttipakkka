@@ -17,10 +17,12 @@ object EntityManager {
 
 
     fun createNewEntity(): EntityId {
+        val nextID2 = nextID
         nextID++
-        Log.i("EntityManager", "New entity created with ID: $nextID")
-        return nextID - 1
+        Log.i("EntityManager", "New entity created with ID: $nextID2")
+        return nextID2
     }
+
 }
 
 fun generateEntity() = EntityManager.createNewEntity()
