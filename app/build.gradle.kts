@@ -24,8 +24,6 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        defaultPublishConfig("debug")
     }
 
     buildTypes {
@@ -39,7 +37,6 @@ android {
         }
         debug {
             isMinifyEnabled = false
-            isTestCoverageEnabled = true
             buildConfigField("boolean", "DEBUG", "true")
             buildConfigField("boolean", "IS_DEBUG", "true")
             resValue("bool", "IS_DEBUG", true.toString())
@@ -47,7 +44,6 @@ android {
         create("super_debug") {
             isDebuggable = true
             isJniDebuggable = true
-            isRenderscriptDebuggable = true
             signingConfig = signingConfigs.getByName("debug")
             multiDexEnabled = false
             matchingFallbacks += listOf("debug")
@@ -111,15 +107,15 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
 
     // (Required) Writing and executing Unit Tests on the JUnit Platform
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.2")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.2")
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
 
     // (Optional) If you need "Parameterized Tests"
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.7.2")
+    testImplementation(libs.junit.jupiter.params)
 
     // (Optional) If you also have JUnit 4-based tests
 //    testImplementation("junit:junit:4.13.2") == testImplementation(libs.junit)
     testImplementation(libs.junit)
-    testImplementation("org.junit.vintage:junit-vintage-engine:5.7.2")
+    testImplementation(libs.junit.vintage.engine)
     testImplementation(kotlin("test"))
 }
