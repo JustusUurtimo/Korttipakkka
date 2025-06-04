@@ -24,13 +24,4 @@ class TickingSystem {
             }
         }
     }
-
-    fun proofOfConcept(){
-        val player = EntityManager.getPlayerID()
-        val playerHealth = (player get HealthComponent::class)
-        playerHealth.damage(1f)
-        if (playerHealth.getHealth() <= 0) {
-            onDeathSystem()
-        }
-    }
 }
