@@ -126,6 +126,13 @@ class ComponentManager {
 
             is ScoreComponent -> ScoreComponent(component.getScore())
             is MultiplierComponent -> MultiplierComponent(component.multiplier)
+            is EffectComponent -> EffectComponent(
+                onDeath = component.onDeath,
+                onSpawn = component.onSpawn,
+                onTurnStart = component.onTurnStart,
+                onPlay = component.onPlay,
+                onDeactivate = component.onDeactivate
+            )
             else -> {
                 Log.w("ComponentManager", "Unknown component type: ${component.javaClass.name}, it was not copied.")
                 return null

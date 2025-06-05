@@ -66,6 +66,29 @@ class ComponentManagerTest {
 
 
     @Test
+    fun `Copy Entity with Effect Component`() {
+        val entityId = EntityManager.createNewEntity()
+        var counter = 0
+        val onPlay: (Int, Int) -> Unit = { _, _ -> counter++ }
+        val component = EffectComponent(onPlay = onPlay)
+        entityId add component
+
+        val componentManager = ComponentManager.componentManager
+        val copiedEntity = componentManager.copy(entityId)
+
+        val originalComponent = entityId get EffectComponent::class
+        originalComponent.onPlay.invoke(0, 0)
+
+        val copiedComponent = copiedEntity get EffectComponent::class
+        repeat(4) {
+            copiedComponent.onPlay.invoke(0, 0)
+        }
+
+        assert(counter == 5) { "Counter should be 5 but was $counter" }
+        assert(originalComponent == copiedComponent) { "Original and copied components should be the same after the change." }
+    }
+
+    @Test
     fun `Get the difference between Health Components`() {
         val entityId = EntityManager.createNewEntity()
         val healthA = 100f
