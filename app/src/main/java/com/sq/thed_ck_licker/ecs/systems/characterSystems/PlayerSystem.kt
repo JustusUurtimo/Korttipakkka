@@ -13,9 +13,9 @@ import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.states.PlayerState
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import javax.inject.Inject
 
 
 class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreationSystem) {
@@ -42,6 +42,7 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         val merchantCards = cardCreationSystem.addMerchantCards(5, getRegularMerchantID())
         val basicScoreCards = cardCreationSystem.addBasicScoreCards(2)
         val multiplierCards = cardCreationSystem.addTempMultiplierTestCards(2)
+        val corruptionCards = cardCreationSystem.addShuffleTestCards(2)
 
         return emptyList<Int>() +
                 playerHealingCards +
@@ -55,6 +56,7 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
                 merchantCards +
                 basicScoreCards +
                 multiplierCards +
+                corruptionCards +
                 emptyList<Int>()
     }
 
