@@ -204,34 +204,7 @@ infix fun EntityId.difference(entity: EntityId): EntityId {
                 // This one is kind a meh
                 // It does work but since there is no much point taking method - method as they can be arbitrary.
                 // So this is actually sum of them
-                secondComponent as EffectComponent
-                val onPlay :  (Int, Int) -> Unit = { asd, asd2 ->
-                    component.onPlay.invoke(asd, asd2)
-                    secondComponent.onPlay.invoke(asd, asd2)
-                }
-                val onDeath: (Int) -> Unit = {
-                    component.onDeath.invoke(it)
-                    secondComponent.onDeath.invoke(it)
-                }
-                val onSpawn: (Int) -> Unit = {
-                    component.onSpawn.invoke(it)
-                    secondComponent.onSpawn.invoke(it)
-                }
-                val onTurnStart: (Int) -> Unit = {
-                    component.onTurnStart.invoke(it)
-                    secondComponent.onTurnStart.invoke(it)
-                }
-                val onDeactivate: (Int, Int) -> Unit = { asd, asd2 ->
-                    component.onDeactivate.invoke(asd, asd2)
-                    secondComponent.onDeactivate.invoke(asd, asd2)
-                }
-                EffectComponent(
-                    onPlay = onPlay,
-                    onDeath = onDeath,
-                    onSpawn = onSpawn,
-                    onTurnStart = onTurnStart,
-                    onDeactivate = onDeactivate
-                )
+                component.combineEffectComponents(secondComponent as EffectComponent)
             }
 
             else -> {
