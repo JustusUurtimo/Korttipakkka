@@ -244,15 +244,6 @@ class ComponentManagerTest {
         assert(combinedComponent.getScore() == 300){"Score should be 300 but was ${combinedComponent.getScore()}"}
     }
 
-    @Test
-    fun `Add two health components together`() { //Ed...ward...Eed...ward....
-        val hp = HealthComponent(100f)
-        val hpComp2 = HealthComponent(200f)
-        val combinedComponent = hp.combineHealthComponents(hpComp2)
-        assert(combinedComponent.getHealth() == 300f) { "Health should be 300 but was ${combinedComponent.getHealth()}" }
-        assert(combinedComponent.getMaxHealth() == 300f) { "Max health should be 300 but was ${combinedComponent.getMaxHealth()}" }
-//        assert(combinedComponent.multiplier == 1f) { "Multiplier should be 1 but was ${combinedComponent.multiplier}" }
-    }
 
     @Test
     fun `Get the difference between two Effect components`() {

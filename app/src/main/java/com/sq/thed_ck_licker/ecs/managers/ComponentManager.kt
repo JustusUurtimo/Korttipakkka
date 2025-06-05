@@ -166,8 +166,6 @@ infix fun EntityId.difference(entity: EntityId): EntityId {
     val result = EntityManager.createNewEntity()
     val entity1Components = ComponentManager.componentManager.getAllComponentsOfEntity(this)
 
-
-
     for (component in entity1Components) {
         var secondComponent: Any
         try {
@@ -194,16 +192,17 @@ infix fun EntityId.difference(entity: EntityId): EntityId {
             }
 
             is MultiplierComponent -> {
-
                 secondComponent as MultiplierComponent
                 if (component.multiplier - secondComponent.multiplier == 0f) continue
                 MultiplierComponent(component.multiplier - secondComponent.multiplier)
             }
 
             is EffectComponent -> {
-                // This one is kind a meh
-                // It does work but since there is no much point taking method - method as they can be arbitrary.
-                // So this is actually sum of them
+                /* This one is kind a meh
+                *  It does work but since there is no much point taking method - method as they can be arbitrary.
+                *  So this is actually sum of them.
+                *  In some sense in our context, both of effects are the actual difference, so in that sense sum is same as difference.
+                */
                 component.combineEffectComponents(secondComponent as EffectComponent)
             }
 
