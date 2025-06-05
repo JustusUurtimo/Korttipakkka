@@ -1,5 +1,6 @@
 package com.sq.thed_ck_licker.ecs.managers
 
+import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
@@ -228,6 +229,36 @@ class ComponentManagerTest {
         assert(combinedComponent.getHealth() == 300f) { "Health should be 300 but was ${combinedComponent.getHealth()}" }
         assert(combinedComponent.getMaxHealth() == 300f) { "Max health should be 300 but was ${combinedComponent.getMaxHealth()}" }
 //        assert(combinedComponent.multiplier == 1f) { "Multiplier should be 1 but was ${combinedComponent.multiplier}" }
+    }
+
+    @Test
+    fun `Get the difference between two Effect components`() {
+        var counter = 0
+        val onCardPlay: (Int, Int) -> Unit = { _, _ -> counter++ }
+        val effComp = EffectComponent(
+            onPlay = onCardPlay,
+        )
+
+        effComp.onPlay.invoke(0, 0)
+        assert(counter == 1) { "Counter should be 1 but was $counter" }
+
+        val onCardPlay2: (Int, Int) -> Unit = { _, _ -> counter += 100 }
+        val effComp2 = EffectComponent(
+            onPlay = onCardPlay2
+        )
+        effComp2.onPlay.invoke(0, 0)
+        assert(counter == 101) { "Counter should be 101 but was $counter" }
+
+        val eka = EntityManager.createNewEntity()
+        eka add effComp
+
+        val eka2 = EntityManager.createNewEntity()
+        eka2 add effComp2
+
+        val diff = eka difference eka2
+        val diffEff = diff get EffectComponent::class
+        diffEff.onPlay.invoke(0, 0)
+        assert(counter == 202) { "Counter should be 202 but was $counter" }
     }
 
 }

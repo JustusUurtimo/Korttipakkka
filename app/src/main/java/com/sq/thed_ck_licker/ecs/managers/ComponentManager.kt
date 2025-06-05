@@ -4,10 +4,11 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import com.sq.thed_ck_licker.ecs.components.CardTag
-import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
+import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
-import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent
+import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
+import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlin.reflect.KClass
 
@@ -190,6 +191,40 @@ infix fun EntityId.difference(entity: EntityId): EntityId {
                 secondComponent as MultiplierComponent
                 if (component.multiplier - secondComponent.multiplier == 0f) continue
                 MultiplierComponent(component.multiplier - secondComponent.multiplier)
+            }
+
+            is EffectComponent -> {
+                // This one is kind a meh
+                // It does work but since there is no much point taking method - method as they can be arbitrary.
+                // So this is actually sum of them
+                secondComponent as EffectComponent
+                val onPlay :  (Int, Int) -> Unit = { asd, asd2 ->
+                    component.onPlay.invoke(asd, asd2)
+                    secondComponent.onPlay.invoke(asd, asd2)
+                }
+                val onDeath: (Int) -> Unit = {
+                    component.onDeath.invoke(it)
+                    secondComponent.onDeath.invoke(it)
+                }
+                val onSpawn: (Int) -> Unit = {
+                    component.onSpawn.invoke(it)
+                    secondComponent.onSpawn.invoke(it)
+                }
+                val onTurnStart: (Int) -> Unit = {
+                    component.onTurnStart.invoke(it)
+                    secondComponent.onTurnStart.invoke(it)
+                }
+                val onDeactivate: (Int, Int) -> Unit = { asd, asd2 ->
+                    component.onDeactivate.invoke(asd, asd2)
+                    secondComponent.onDeactivate.invoke(asd, asd2)
+                }
+                EffectComponent(
+                    onPlay = onPlay,
+                    onDeath = onDeath,
+                    onSpawn = onSpawn,
+                    onTurnStart = onTurnStart,
+                    onDeactivate = onDeactivate
+                )
             }
 
             else -> {
