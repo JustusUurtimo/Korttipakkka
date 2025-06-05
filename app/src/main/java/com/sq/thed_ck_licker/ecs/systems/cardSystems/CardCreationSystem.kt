@@ -1,5 +1,6 @@
 package com.sq.thed_ck_licker.ecs.systems.cardSystems
 
+import android.util.Log
 import com.sq.thed_ck_licker.R
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.CardTag
@@ -257,9 +258,9 @@ class CardCreationSystem @Inject constructor(
                     .removeAt(random.nextInt(playerDeck.getDrawCardDeck().size))
             }
             val effect = card get EffectComponent::class
-            println("Effect: $effect")
+            Log.i("Shuffle on activation", "Effect: $effect")
             val second = effect.shuffleToNew()
-            println("Second: $second")
+            Log.i("Shuffle on activation", "Second: $second")
             card add second
             playerDeck.getDrawCardDeck().add(card)
         }
@@ -275,9 +276,9 @@ class CardCreationSystem @Inject constructor(
                     .removeAt(random.nextInt(playerDiscardDeck.getDiscardDeck().size))
             }
             val effect = card get EffectComponent::class
-            println("Effect: $effect")
+            Log.i("Shuffle on deactivation", "Effect: $effect")
             val second = effect.shuffleToNew()
-            println("Second: $second")
+            Log.i("Shuffle on deactivation", "Second: $second")
             card add second
             playerDiscardDeck.getDiscardDeck().add(card)
         }
