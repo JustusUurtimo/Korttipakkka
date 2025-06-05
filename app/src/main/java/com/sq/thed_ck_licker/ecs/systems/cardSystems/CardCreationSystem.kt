@@ -1,6 +1,5 @@
 package com.sq.thed_ck_licker.ecs.systems.cardSystems
 
-import android.util.Log
 import com.sq.thed_ck_licker.R
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.CardTag
@@ -12,7 +11,6 @@ import com.sq.thed_ck_licker.ecs.managers.GameEvents
 import com.sq.thed_ck_licker.ecs.managers.MerchantEvent
 import com.sq.thed_ck_licker.ecs.managers.MerchantEvents
 import com.sq.thed_ck_licker.ecs.managers.get
-import com.sq.thed_ck_licker.ecs.systems.helperSystems.onDeathSystem
 import com.sq.thed_ck_licker.helpers.MyRandom
 import jakarta.inject.Inject
 import kotlin.math.abs
@@ -240,52 +238,8 @@ class CardCreationSystem @Inject constructor(
     }
 
 
-    fun addTimeBoundTestCards1(numberOfCards: Int = 1, amountOfDamage: Float = 1f): List<EntityId> {
-        val selfCounter =
-            ActivationCounterComponent() // This spells problems... i need to make tests for it
-        val selfHp = HealthComponent(300f)
-        val onActivation = { targetId: Int, _: Int ->
-            val scoreComponent = targetId get ScoreComponent::class
-            Log.i("Time Bound Activation","Activation number: ${selfCounter.getActivations()}")
-            if (selfCounter.getActivations() == 3) {
-                scoreComponent.addScore(10000)
-                Log.i("Time Bound Activation","Score is ${scoreComponent.getScore()}")
-                selfHp.damage(300f)
-            }
-        }
-
-        val onTick = { target: Int ->
-            println("Should I be ticking?")
-            if (selfCounter.getActivations() > 0) {
-                val targetHealth = target get HealthComponent::class
-                println("Ticking")
-                println("Health is ${targetHealth.getHealth()}")
-                println("Target is $target")
-                targetHealth.damage(amountOfDamage)
-                if (targetHealth.getHealth() <= 0) {
-                    onDeathSystem()
-                }
-            }
-        }
-        var cards =
-            cardBuilder.buildCards {
-                cardHealth = 300f
-                cardAmount = numberOfCards
-                description =
-                    "If you manage to activate this card 3 times you will gain 10000 points"
-                name = "Time Bound Card"
-                onCardPlay = onActivation
-            }
-        cards = cardBuilder.addCompToManyCards(selfCounter, cards)
-        cards = cardBuilder.addCompToManyCards(selfHp, cards)
-        cards = cardBuilder.addCompToManyCards(onTick, cards)
-        return cards
-    }
-
-
-    fun addTimeBoundTestCards(numberOfCards: Int = 1, amountOfDamage: Float = 1f): List<EntityId> {
-        println("lohi")
-        return cardBuilder.addTimeBoundTestCards2(numberOfCards, amountOfDamage)
+    fun addTimeBoundTestCards(numberOfCards: Int = 1): List<EntityId> {
+        return cardBuilder.createTimeBoundCards(numberOfCards)
     }
 
 }

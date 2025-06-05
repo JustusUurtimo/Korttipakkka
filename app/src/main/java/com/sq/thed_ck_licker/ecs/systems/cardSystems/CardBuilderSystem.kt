@@ -57,29 +57,20 @@ class CardBuilderSystem @Inject constructor(private val componentManager: Compon
         return builder.initCards()
     }
 
-    fun addCompToManyCards(comp: Any, list: List<Int>): List<Int> {
-        list.forEach { it add comp }
-        return list
-    }
 
-    fun addTimeBoundTestCards2(numberOfCards: Int = 1, amountOfDamage: Float = 1f): List<EntityId> {
+    fun createTimeBoundCards(numberOfCards: Int = 1): List<EntityId> {
         val cards = mutableListOf<EntityId>()
-        println("kissa")
+        val hp = 33f
         repeat(numberOfCards) {
-            println("wad?")
-            val entityrrr: EntityId = EntityManager.createNewEntity()
+            val timeBoundCardId: EntityId = EntityManager.createNewEntity()
             val selfCounter =
-                ActivationCounterComponent() // This spells problems... i need to make tests for it
-            val selfHp = HealthComponent(300f)
+                ActivationCounterComponent()
+            val selfHp = HealthComponent(hp)
 
             val onTick = { target: Int ->
-                println("Should I be ticking?")
                 if (selfCounter.getActivations() > 0) {
                     val targetHealth = target get HealthComponent::class
-                    println("Ticking")
-                    println("Health is ${targetHealth.getHealth()}")
-                    println("Target is $target")
-                    targetHealth.damage(amountOfDamage)
+                    targetHealth.damage(1f)
                     if (targetHealth.getHealth() <= 0) {
                         onDeathSystem()
                     }
@@ -89,29 +80,29 @@ class CardBuilderSystem @Inject constructor(private val componentManager: Compon
             val onActivation = { targetId: Int, _: Int ->
                 val scoreComponent = targetId get ScoreComponent::class
                 Log.i("Time Bound Activation", "Activation number: ${selfCounter.getActivations()}")
-                if (selfCounter.getActivations() == 3) {
+                if (selfCounter.getActivations() == 2) {
                     scoreComponent.addScore(10000)
                     Log.i("Time Bound Activation", "Score is ${scoreComponent.getScore()}")
-                    selfHp.damage(300f)
+                    selfHp.damage(hp)
                 }
 
-                if (selfCounter.getActivations() == 1) {
-                    entityrrr add TickComponent(
+                if (selfCounter.getActivations() == 0) {
+                    timeBoundCardId add TickComponent(
                         currentAmount = 0,
-                        tickThreshold = 100,
+                        tickThreshold = 1000,
                         tickAction = onTick
                     )
                 }
             }
 
 
-            entityrrr add selfCounter
-            entityrrr add ImageComponent(cardImage)
-            entityrrr add EffectComponent(onPlay = onActivation)
-            entityrrr add DescriptionComponent("If you manage to activate this card 3 times you will gain 10000 points")
-            entityrrr add IdentificationComponent("Time Bound Card", null)
-            entityrrr add selfHp
-            cards.add(entityrrr)
+            timeBoundCardId add selfCounter
+            timeBoundCardId add ImageComponent(cardImage)
+            timeBoundCardId add EffectComponent(onPlay = onActivation)
+            timeBoundCardId add DescriptionComponent("If you manage to activate this card 3 times you will gain 10000 points")
+            timeBoundCardId add IdentificationComponent("Time Bound Card", null)
+            timeBoundCardId add selfHp
+            cards.add(timeBoundCardId)
         }
         return cards
     }

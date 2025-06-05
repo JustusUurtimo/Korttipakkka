@@ -10,11 +10,11 @@ import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.components.misc.TickComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getRegularMerchantID
-import com.sq.thed_ck_licker.ecs.managers.TickingMethodsManager
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.states.PlayerState
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem
+import com.sq.thed_ck_licker.ecs.systems.helperSystems.onDeathSystem
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.areRealTimeThingsEnabled
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -24,14 +24,14 @@ import javax.inject.Inject
 class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreationSystem) {
 
     fun initPlayer() {
-        getPlayerID() add HealthComponent(100f)
+        getPlayerID() add HealthComponent(10000f)
         getPlayerID() add ScoreComponent()
         getPlayerID() add DrawDeckComponent(initPlayerDeck() as MutableList<Int>)
         getPlayerID() add EffectStackComponent()
         getPlayerID() add DiscardDeckComponent(mutableListOf<Int>())
         getPlayerID() add MultiplierComponent()
         if (areRealTimeThingsEnabled.value) {
-            getPlayerID() add TickComponent(tickAction = TickingMethodsManager.healthTicker())
+            getPlayerID() add TickComponent(tickAction = healthTicker())
         }
     }
 
@@ -51,17 +51,17 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         val timeBoundCards = cardCreationSystem.addTimeBoundTestCards(1)
 
         return emptyList<Int>() +
-//                playerHealingCards +
-//                playerDamageCards +
+                playerHealingCards +
+                playerDamageCards +
                 defaultCards +
-//                deactivationCards +
-//                trapCards +
-//                scoreGainerCards +
-//                beerGogglesCards +
-//                maxHpCards +
-//                merchantCards +
-//                basicScoreCards +
-//                multiplierCards +
+                deactivationCards +
+                trapCards +
+                scoreGainerCards +
+                beerGogglesCards +
+                maxHpCards +
+                merchantCards +
+                basicScoreCards +
+                multiplierCards +
                 timeBoundCards +
                 emptyList<Int>()
     }
@@ -99,5 +99,17 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
                 score = score
             )
         }
+    }
+
+    //This probably has some more sensible place than here.
+    private fun healthTicker(amountOfDamage: Float = 1f): (Int) -> Unit {
+        val theAction = { target: Int ->
+            val targetHealth = target get HealthComponent::class
+            targetHealth.damage(amountOfDamage)
+            if (targetHealth.getHealth() <= 0) {
+                onDeathSystem()
+            }
+        }
+        return theAction
     }
 }
