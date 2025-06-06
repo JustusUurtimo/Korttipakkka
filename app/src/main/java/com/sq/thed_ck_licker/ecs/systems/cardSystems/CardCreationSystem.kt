@@ -237,4 +237,9 @@ class CardCreationSystem @Inject constructor(
         }
     }
 
+
+    fun addTimeBoundTestCards(numberOfCards: Int = 1): List<EntityId> {
+        return cardBuilder.createTimeBoundCards(numberOfCards)
+    }
+
 }
