@@ -32,6 +32,7 @@ import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.are
 import com.sq.thed_ck_licker.player.HealthBar
 import com.sq.thed_ck_licker.player.ScoreDisplay
 import com.sq.thed_ck_licker.viewModels.GameViewModel
+import com.sq.thed_ck_licker.viewModels.MerchantViewModel
 import com.sq.thed_ck_licker.viewModels.PlayerViewModel
 import kotlinx.coroutines.delay
 

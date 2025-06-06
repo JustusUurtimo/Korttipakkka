@@ -13,12 +13,15 @@ import com.sq.thed_ck_licker.ecs.managers.MerchantEvents
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.CardCreationHelperSystems
 import com.sq.thed_ck_licker.helpers.MyRandom
+import com.sq.thed_ck_licker.helpers.navigation.GameNavigator
+import com.sq.thed_ck_licker.helpers.navigation.Screen
 import jakarta.inject.Inject
 import kotlin.math.abs
 
 class CardCreationSystem @Inject constructor(
     private val cardCreationHelperSystems: CardCreationHelperSystems,
-    private val cardBuilder: CardBuilderSystem
+    private val cardBuilder: CardBuilderSystem,
+    private val gameNavigator: GameNavigator
 ) {
 
     fun addShovelCards(amount: Int): List<EntityId> {
@@ -83,6 +86,7 @@ class CardCreationSystem @Inject constructor(
     fun addMerchantCards(amount: Int, merchantId: Int): List<EntityId> {
         val openMerchant = { _: Int, cardEntity: Int ->
             println("Opening merchant shop")
+            gameNavigator.navigateTo(Screen.MerchantShop.route)
             MerchantEvents.tryEmit(MerchantEvent.MerchantShopOpened(merchantId, cardEntity))
         }
 

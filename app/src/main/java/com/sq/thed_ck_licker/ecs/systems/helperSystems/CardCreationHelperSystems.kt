@@ -45,7 +45,7 @@ class CardCreationHelperSystems @Inject constructor() {
             if (targetHp < targetMaxHp / 2) {
                 val amountToHeal = (targetMaxHp * 0.8f) - targetHp
                 val amountOfHealingProvided = min(selfHp.getHealth(), amountToHeal)
-                selfHp.damage(amountOfHealingProvided, limitedHealEntity)
+                selfHp.damage(amountOfHealingProvided)
                 targetHealthComponent.heal(amountOfHealingProvided)
             }
             println("My name is Beer Goggles")
@@ -76,7 +76,7 @@ class CardCreationHelperSystems @Inject constructor() {
 
         limitedMultiEntity add EffectComponent(
             onTurnStart = { _: Int ->
-                selfHp.damage(1f, limitedMultiEntity)
+                selfHp.damage(1f)
             },
             onDeath = { targetId: Int ->
                 val targetMultiComp = targetId get MultiplierComponent::class

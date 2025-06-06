@@ -7,8 +7,6 @@ import com.sq.thed_ck_licker.ecs.managers.MerchantEvents
 import com.sq.thed_ck_licker.ecs.states.MerchantState
 import com.sq.thed_ck_licker.ecs.systems.characterSystems.MerchantSystem
 import com.sq.thed_ck_licker.ecs.systems.characterSystems.PlayerSystem
-import com.sq.thed_ck_licker.helpers.navigation.GameNavigator
-import com.sq.thed_ck_licker.helpers.navigation.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,7 +17,6 @@ import javax.inject.Inject
 class MerchantViewModel @Inject constructor(
     private val merchantSystem: MerchantSystem,
     private val playerSystem: PlayerSystem,
-    private val gameNavigator: GameNavigator
 ) : ViewModel() {
 
     private val _activeMerchantId = MutableStateFlow<Int>(-1)
@@ -46,15 +43,11 @@ class MerchantViewModel @Inject constructor(
         }
         viewModelScope.launch {
             MerchantEvents.eventStream.collect { event ->
-                println("Merchant event received: $event")
                 when (event) {
                     is MerchantEvent.MerchantShopOpened -> {
                         // Handle merchant shop opened
-                        println("SHOP OPENED2")
                         _activeMerchantId.value = event.merchantId
                         _merchantSummonCard.value = event.cardEntity
-                        println("SHOP OPENED")
-                        gameNavigator.navigateTo(Screen.MerchantShop.route)
                     }
                     is MerchantEvent.MerchantShopClosed -> {
                         // Handle merchant shop closed

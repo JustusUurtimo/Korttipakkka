@@ -12,6 +12,7 @@ class GameNavigator @Inject constructor() {
 
     fun navigateTo(route: String) {
         println("NAVIGATING TO $route")
+        println("NavController: $navController")
         navController?.navigate(route)
     }
 }

@@ -7,6 +7,7 @@ import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem
 import com.sq.thed_ck_licker.ecs.systems.characterSystems.PlayerSystem
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.CardCreationHelperSystems
+import com.sq.thed_ck_licker.helpers.navigation.GameNavigator
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,9 +31,10 @@ object CardSystemModule {
     @Singleton
     fun provideCardCreationSystem(
         cardCreationHelperSystems: CardCreationHelperSystems,
-        cardBuilder: CardBuilderSystem
+        cardBuilder: CardBuilderSystem,
+        gameNavigator: GameNavigator
     ): CardCreationSystem {
-        return CardCreationSystem(cardCreationHelperSystems, cardBuilder)
+        return CardCreationSystem(cardCreationHelperSystems, cardBuilder, gameNavigator)
     }
 
     @Provides

@@ -12,13 +12,13 @@ import com.sq.thed_ck_licker.viewModels.MerchantViewModel
 @Composable
 fun MerchantScreen(
     modifier: Modifier,
-    merchantViewModel: MerchantViewModel = hiltViewModel()
+    merchantViewModel: MerchantViewModel
 ) {
     val activeMerchant by merchantViewModel.activeMerchantId.collectAsState()
     val merchantSummonCard by merchantViewModel.merchantSummonCard.collectAsState()
     val merchantHand by merchantViewModel.merchantHand.collectAsState()
     val merchantState by merchantViewModel.merchantState.collectAsState()
-
+    println("##########################################")
     MerchantHandView(
         modifier,
         merchantHand,

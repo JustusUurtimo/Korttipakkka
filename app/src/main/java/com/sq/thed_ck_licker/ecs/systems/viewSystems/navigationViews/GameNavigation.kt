@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.util.packInts
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -24,6 +25,7 @@ import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.Set
 import com.sq.thed_ck_licker.helpers.navigation.GameNavigator
 import com.sq.thed_ck_licker.helpers.navigation.Screen
 import com.sq.thed_ck_licker.viewModels.GameViewModel
+import com.sq.thed_ck_licker.viewModels.MerchantViewModel
 
 @Composable
 fun GameNavigation(
@@ -91,7 +93,10 @@ fun GameNavigation(
             exitTransition = {
                 slideOutHorizontally { width -> -width }
             })
-        { MerchantScreen(modifier = modifier) }
+        {
+            val viewModel: MerchantViewModel = hiltViewModel()
+            MerchantScreen(modifier = modifier, viewModel)
+        }
 
 
     }
