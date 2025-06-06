@@ -42,7 +42,9 @@ object MerchantEvents {
     val eventStream = _eventStream.asSharedFlow()
 
     fun tryEmit(event: MerchantEvent) {
-        _eventStream.tryEmit(event)
+        println("Merchant event emitted: $event")
+        val success = _eventStream.tryEmit(event)
+        println("Merchant event emitted: $success")
     }
 
     suspend fun emit(event: MerchantEvent) {

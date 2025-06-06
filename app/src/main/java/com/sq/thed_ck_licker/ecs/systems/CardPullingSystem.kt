@@ -51,7 +51,6 @@ class CardPullingSystem @Inject constructor(
         }
 
         putDiscardToDeckAndShuffle()
-        MerchantEvents.tryEmit(MerchantEvent.MerchantShopClosed)
         playerSystem.setLatestCard(cardsSystem.pullRandomCardFromEntityDeck(getPlayerID()))
     }
 

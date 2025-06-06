@@ -9,7 +9,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
@@ -21,31 +21,30 @@ import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.Hig
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.MainMenuScreen
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.MerchantScreen
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.SettingsScreen
+import com.sq.thed_ck_licker.helpers.navigation.GameNavigator
 import com.sq.thed_ck_licker.helpers.navigation.Screen
 import com.sq.thed_ck_licker.viewModels.GameViewModel
 
 @Composable
 fun GameNavigation(
     innerPadding: PaddingValues,
+    gameNavigator: GameNavigator,
     gameViewModel: GameViewModel = hiltViewModel(),
 ) {
     val navController = rememberNavController()
     val modifier = Modifier
 
-    val navigationDispatcher = remember(navController) {
-        object : NavigationDispatcher {
-            override fun navigateTo(route: String) {
-                navController.navigate(route)
-            }
-        }
+    LaunchedEffect(gameNavigator) {
+        gameNavigator.setupWithNavController(navController)
     }
 
     NavHost(navController = navController, startDestination = Screen.MainMenu.route) {
-        composable(Screen.MainMenu.route) {
+
+        composable(route = Screen.MainMenu.route) {
             MainMenuScreen(
-                onSettingsClick = { navController.navigate(Screen.Settings.route) },
-                onGameClick = { navController.navigate(Screen.Game.route) },
-                onHighScoresClick = { navController.navigate(Screen.HighScores.route) }
+                onSettingsClick = { gameNavigator.navigateTo(Screen.Settings.route) },
+                onGameClick = { gameNavigator.navigateTo(Screen.Game.route) },
+                onHighScoresClick = { gameNavigator.navigateTo(Screen.HighScores.route) }
             )
         }
 

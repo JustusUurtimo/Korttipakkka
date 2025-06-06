@@ -42,19 +42,20 @@ class CardsSystem @Inject constructor(
     }
 
     fun cardActivation(
-        latestCard: Int,
         playerCardCount: MutableIntState
     ) {
         Log.v("CardsSystem", "Card activation started. Turn started.")
         onTurnStartEffectStackSystem()
-        activateCard(latestCard, playerCardCount)
+        activateCard(playerCardCount)
         multiSystem.multiplyEntityAgainstOldItself(getPlayerID())
         multiSystem.addEntity(getPlayerID())
         onDeathSystem()
         Log.v("CardsSystem", "Card activation finished. Turn finished.")
     }
 
-    private fun activateCard(latestCard: Int, playerCardCount: MutableIntState) {
+    private fun activateCard(playerCardCount: MutableIntState) {
+        val latestCard = playerSystem.getLatestCard()
+
         playerCardCount.intValue += 1
         var latestCardHp: HealthComponent? = null
 

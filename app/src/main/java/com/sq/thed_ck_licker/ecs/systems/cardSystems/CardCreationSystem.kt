@@ -82,6 +82,7 @@ class CardCreationSystem @Inject constructor(
 
     fun addMerchantCards(amount: Int, merchantId: Int): List<EntityId> {
         val openMerchant = { _: Int, cardEntity: Int ->
+            println("Opening merchant shop")
             MerchantEvents.tryEmit(MerchantEvent.MerchantShopOpened(merchantId, cardEntity))
         }
 

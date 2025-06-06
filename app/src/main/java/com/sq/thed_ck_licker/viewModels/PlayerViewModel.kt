@@ -42,7 +42,7 @@ class PlayerViewModel @Inject constructor(
         cardPullingSystem.pullNewCard(latestCard)
     }
 
-    fun onActivateCard(latestCard: Int, cardCount: MutableIntState) {
-        cardsSystem.cardActivation(latestCard, cardCount)
+    fun onActivateCard(cardCount: MutableIntState) {
+        cardsSystem.cardActivation(cardCount)
     }
 }

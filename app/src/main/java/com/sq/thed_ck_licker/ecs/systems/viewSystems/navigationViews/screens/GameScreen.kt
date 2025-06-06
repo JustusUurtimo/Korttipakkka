@@ -42,7 +42,7 @@ fun Game(
     innerPadding: PaddingValues,
     gameViewModel: GameViewModel = hiltViewModel(),
     playerViewModel: PlayerViewModel = hiltViewModel(),
-    ) {
+) {
     val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues()
     val playerCardCount = rememberSaveable { mutableIntStateOf(0) }
     val isPlayerDead by gameViewModel.isPlayerDead.collectAsState()
@@ -59,7 +59,9 @@ fun Game(
                 onRetry = { gameViewModel.restartGame() })
         }
         if (isShovelUsed) {
-            HoleView(modifier, onClickListener = { gameViewModel.dropCardInHole(playerState.latestCard) })
+            HoleView(
+                modifier,
+                onClickListener = { gameViewModel.dropCardInHole(playerState.latestCard) })
         }
 
         Box(modifier.fillMaxSize()) {
@@ -75,7 +77,6 @@ fun Game(
                             playerState.latestCard,
                             activateCard = {
                                 playerViewModel.onActivateCard(
-                                    playerState.latestCard,
                                     playerCardCount
                                 )
                             }
