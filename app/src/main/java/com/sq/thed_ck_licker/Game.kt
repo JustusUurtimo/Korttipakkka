@@ -23,17 +23,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
-import com.sq.thed_ck_licker.ecs.managers.EntityManager
-import com.sq.thed_ck_licker.ecs.managers.get
-import com.sq.thed_ck_licker.ecs.systems.helperSystems.onDeathSystem
+import com.sq.thed_ck_licker.ecs.systems.helperSystems.TickingSystem
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.CardDeck
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.DeathScreen
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.HoleView
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.MerchantHandView
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.PlayerHandView
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.PullCardButton
-import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.isHurryModeEnabled
+import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.areRealTimeThingsEnabled
 import com.sq.thed_ck_licker.player.HealthBar
 import com.sq.thed_ck_licker.player.ScoreDisplay
 import com.sq.thed_ck_licker.viewModels.GameViewModel
@@ -61,7 +58,7 @@ fun Game(
     val merchantHand by merchantViewModel.merchantHand.collectAsState()
     val merchantState by merchantViewModel.merchantState.collectAsState()
 
-    PeriodicDamageEffectPoC()
+    RealtimeEffects()
 
     Column(modifier.fillMaxWidth()) {
         HealthBar(playerState.health, playerState.maxHealth, modifier.padding(innerPadding))
@@ -121,17 +118,14 @@ fun Game(
 }
 
 @Composable
-private fun PeriodicDamageEffectPoC() {
-    var checked2 by remember { isHurryModeEnabled }
-    LaunchedEffect(checked2) {
-        while (checked2) {
-            delay(100)
-            val player = EntityManager.getPlayerID()
-            val playerHealth = (player get HealthComponent::class)
-            playerHealth.damage(1f)
-            if (playerHealth.getHealth() <= 0) {
-                onDeathSystem()
-            }
+private fun RealtimeEffects() {
+    var realTimeTickingEnabled by remember { areRealTimeThingsEnabled }
+    val tickSystem = TickingSystem()
+    val tickSize = 100
+    LaunchedEffect(realTimeTickingEnabled) {
+        while (realTimeTickingEnabled) {
+            delay(tickSize.toLong())
+            tickSystem.tick(tickSize)
         }
     }
 }
