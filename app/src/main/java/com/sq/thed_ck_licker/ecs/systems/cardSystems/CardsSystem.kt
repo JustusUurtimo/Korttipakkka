@@ -81,7 +81,7 @@ class CardsSystem @Inject constructor(
         }
 
         latestCardHp?.apply {
-            damage(1f, latestCard)
+            damage(1f)
             Log.i(
                 "CardsSystem",
                 "Health is now ${latestCardHp.getHealth()}"
@@ -103,4 +103,5 @@ class CardsSystem @Inject constructor(
         discardSystem(ownerId = getPlayerID(), cardId = latestCard)
         playerSystem.setLatestCard(-1)
     }
+
 }

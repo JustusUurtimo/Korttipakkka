@@ -1,5 +1,6 @@
 package com.sq.thed_ck_licker.ecs.systems.helperSystems
 
+import android.util.Log
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DurationComponent
@@ -9,7 +10,10 @@ import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.managers.ComponentManager
 import com.sq.thed_ck_licker.ecs.managers.EntityId
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
+import com.sq.thed_ck_licker.ecs.managers.GameEvent
+import com.sq.thed_ck_licker.ecs.managers.GameEvents
 import com.sq.thed_ck_licker.ecs.managers.get
+import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.areRealTimeThingsEnabled
 
 fun onDeathSystem(componentManager: ComponentManager = ComponentManager.componentManager) {
     val deaths = mutableListOf<EntityId>()
@@ -25,13 +29,18 @@ private fun healthDeath(componentManager: ComponentManager): List<EntityId> {
         ?: return emptyList()
     val deaths = mutableListOf<EntityId>()
     for (entity in dying) {
-        if (entity.key == getPlayerID()) continue
         val health = (entity.value as HealthComponent).getHealth()
         if (health <= 0) {
-            deaths.add(deathHappening(entity, componentManager))
-            println("Death happened, such shame")
-            println("Entity #${entity.key} is dead now")
-
+            if (entity.key == getPlayerID()) {
+                GameEvents.tryEmit(GameEvent.PlayerDied)
+                areRealTimeThingsEnabled.value = false
+            } else {
+                deaths.add(deathHappening(entity, componentManager))
+                Log.i(
+                    "Health Death",
+                    "Death happened, such shame\nEntity #${entity.key} is dead now "
+                )
+            }
         }
     }
     return deaths
@@ -60,7 +69,7 @@ private fun deathHappening(
         //  Gotta think this one for a moment, maybe some targetComponent or something.
         (entity.key get EffectComponent::class).onDeath.invoke(getPlayerID())
     } catch (_: IllegalStateException) {
-        println("No cool death for you, mate. ${entity.key} ")
+        Log.i("Death Happening","No cool death for you, mate. ${entity.key} ")
     }
     componentManager.removeEntity(entity.key)
     return entity.key

@@ -1,46 +1,56 @@
 package com.sq.thed_ck_licker.ecs.systems.characterSystems
-/*
+
 import androidx.compose.runtime.mutableIntStateOf
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
-import com.sq.thed_ck_licker.ecs.components.size
+import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
+import com.sq.thed_ck_licker.ecs.managers.ComponentManager
+import com.sq.thed_ck_licker.ecs.managers.EntityId
 import com.sq.thed_ck_licker.ecs.managers.EntityManager
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.CardPullingSystem
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem
-import org.junit.jupiter.api.BeforeEach
-import org.junit.Rule
+import com.sq.thed_ck_licker.ecs.systems.helperSystems.MultiplierSystem
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import javax.inject.Inject
 import kotlin.properties.Delegates
-
 
 class PlayerSystemTest {
 
-    @Inject
-    lateinit var playerSystem: PlayerSystem
+    var playerSystem: PlayerSystem by Delegates.notNull()
+    var cardPullingSystem: CardPullingSystem by Delegates.notNull()
 
-    @Inject
-    lateinit var cardPullingSystem: CardPullingSystem
+    var cardsSystem: CardsSystem by Delegates.notNull()
 
-    @Inject
-    lateinit var cardsSystem: CardsSystem
+    var cardCreationSystem: CardCreationSystem by Delegates.notNull()
 
-    @Inject
-    lateinit var cardCreationSystem: CardCreationSystem
-
-    var playerId by Delegates.notNull<Int>()
+    var playerId: EntityId = 0
     val cardCount = mutableIntStateOf(0)
+
 
     @BeforeEach
     fun setUp() {
-        val testComponent = DaggerTestComponent.create()
-        testComponent.inject(this)
-        // Initialize PlayerSystem manually for unit tests
+        cardsSystem = CardsSystem(
+            multiSystem = MultiplierSystem(
+                componentManager = ComponentManager.componentManager
+            )
+        )
+        cardCreationSystem = CardCreationSystem(
+            cardsSystem = cardsSystem,
+            cardBuilder = CardBuilderSystem(
+                componentManager = ComponentManager.componentManager
+            )
+        )
+
+        cardPullingSystem = CardPullingSystem(
+            cardsSystem = cardsSystem
+        )
+
         playerSystem = PlayerSystem(cardCreationSystem)
         playerId = EntityManager.getPlayerID()
     }
@@ -49,14 +59,15 @@ class PlayerSystemTest {
     fun `player has draw deck`() {
         playerSystem.initPlayer()
         val drawDeck = assertDoesNotThrow { playerId get DrawDeckComponent::class }
-        assertNotNull(drawDeck)
+        assertNotNull(drawDeck) { "Player has no draw deck" }
+
     }
 
     @Test
     fun `player has discard deck`() {
         playerSystem.initPlayer()
         val discardDeck = assertDoesNotThrow { playerId get DiscardDeckComponent::class }
-        assertNotNull(discardDeck)
+        assertNotNull(discardDeck) { "Player has no discard deck" }
     }
 
     @Test
@@ -67,7 +78,9 @@ class PlayerSystemTest {
 
         cardPullingSystem.pullNewCard(mutableIntStateOf(-1))
 
-        assert(drawDeck.size() == 0)
+        assert(
+            drawDeck.getDrawCardDeck().isEmpty()
+        ) { "Draw deck is not empty, instead was: ${drawDeck.getDrawCardDeck()}" }
     }
 
     @Test
@@ -80,9 +93,12 @@ class PlayerSystemTest {
         cardPullingSystem.pullNewCard(card)
         cardsSystem.cardActivation(card, cardCount)
 
-        assert((playerId get DrawDeckComponent::class).size() == 1)
-        assert((playerId get DiscardDeckComponent::class).size() == 1)
-        assert(card.intValue == -1)
+        val draw = playerId get DrawDeckComponent::class
+        val discard = playerId get DiscardDeckComponent::class
+
+        assert(draw.getDrawCardDeck().size == 1) { "Draw deck does not ha ve only one card, but has $draw" }
+        assert(discard.getDiscardDeck().size == 1) { "Discard deck does not have only one card, but has $discard" }
+        assert(card.intValue == -1) { "Hand card was not removed, but is ${card.intValue}" }
     }
 
     @Test
@@ -90,15 +106,21 @@ class PlayerSystemTest {
         val cards = cardCreationSystem.addBasicScoreCards(2) as MutableList<Int>
         playerId add DrawDeckComponent(mutableListOf())
         playerId add DiscardDeckComponent(cards)
+        playerId add MultiplierComponent()
 
         val card = mutableIntStateOf(-1)
+        repeat(2) {
+            cardPullingSystem.pullNewCard(card)
+            cardsSystem.cardActivation(card, cardCount)
+        }
         cardPullingSystem.pullNewCard(card)
 
         val drawDeck = playerId get DrawDeckComponent::class
         val discardDeck = playerId get DiscardDeckComponent::class
 
-        assert(drawDeck.size() == 2) // All cards moved to draw deck
-        assert(discardDeck.size() == 0) // Discard deck is empty
+        assert(drawDeck.getDrawCardDeck().size == 1) { "Cards were not returned to draw deck, draw deck contains $drawDeck" }
+        assert(
+            discardDeck.getDiscardDeck().isEmpty()
+        ) { "Discard deck is not empty, discard deck contains $discardDeck" }
     }
 }
-*/
