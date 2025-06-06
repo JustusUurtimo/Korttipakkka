@@ -247,7 +247,7 @@ class CardCreationSystem @Inject constructor(
     fun addShuffleTestCards(amount: Int = 1): List<EntityId> {
         val playerId = EntityManager.getPlayerID()
 
-        val onActivation: (Int, Int) -> Unit = { targetId: Int, _: Int ->
+        val onActivation: (Int, Int) -> Unit = { _: Int, _: Int ->
             val playerDeck = playerId get DrawDeckComponent::class
             val playerDiscardDeck = playerId get DiscardDeckComponent::class
             val card = if (playerDeck.getDrawCardDeck().isEmpty()) {
@@ -265,7 +265,7 @@ class CardCreationSystem @Inject constructor(
             playerDeck.getDrawCardDeck().add(card)
         }
 
-        val onDeactivation: (Int, Int) -> Unit = { targetId: Int, _: Int ->
+        val onDeactivation: (Int, Int) -> Unit = { _: Int, _: Int ->
             val playerDeck = playerId get DrawDeckComponent::class
             val playerDiscardDeck = playerId get DiscardDeckComponent::class
             val card = if (playerDiscardDeck.getDiscardDeck().isEmpty()) {
