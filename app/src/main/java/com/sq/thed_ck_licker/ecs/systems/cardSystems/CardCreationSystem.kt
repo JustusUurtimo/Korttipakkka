@@ -291,7 +291,7 @@ class CardCreationSystem @Inject constructor(
             onCardPlay = onActivation
             onCardDeactivate = onDeactivation
         }
-
+    }
     fun addTimeBoundTestCards(numberOfCards: Int = 1): List<EntityId> {
         return cardBuilder.createTimeBoundCards(numberOfCards)
     }
