@@ -1,17 +1,24 @@
 package com.sq.thed_ck_licker.ecs.systems.cardSystems
 
+import android.util.Log
 import com.sq.thed_ck_licker.R
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.CardTag
+import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
+import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
+import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityId
+import com.sq.thed_ck_licker.ecs.managers.EntityManager
 import com.sq.thed_ck_licker.ecs.managers.GameEvent
 import com.sq.thed_ck_licker.ecs.managers.GameEvents
 import com.sq.thed_ck_licker.ecs.managers.MerchantEvent
 import com.sq.thed_ck_licker.ecs.managers.MerchantEvents
+import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.helpers.MyRandom
+import com.sq.thed_ck_licker.helpers.MyRandom.random
 import jakarta.inject.Inject
 import kotlin.math.abs
 
@@ -236,10 +243,56 @@ class CardCreationSystem @Inject constructor(
             onCardPlay = onActivation
         }
     }
+    fun addShuffleTestCards(amount: Int = 1): List<EntityId> {
+        val playerId = EntityManager.getPlayerID()
 
+        val onActivation: (Int, Int) -> Unit = { _: Int, _: Int ->
+            val playerDeck = playerId get DrawDeckComponent::class
+            val playerDiscardDeck = playerId get DiscardDeckComponent::class
+            val card = if (playerDeck.getDrawCardDeck().isEmpty()) {
+                playerDiscardDeck.getDiscardDeck()
+                    .removeAt(random.nextInt(playerDiscardDeck.getDiscardDeck().size))
+            } else {
+                playerDeck.getDrawCardDeck()
+                    .removeAt(random.nextInt(playerDeck.getDrawCardDeck().size))
+            }
+            val effect = card get EffectComponent::class
+            Log.i("Shuffle on activation", "Effect: $effect")
+            val second = effect.shuffleToNew()
+            Log.i("Shuffle on activation", "Second: $second")
+            card add second
+            playerDeck.getDrawCardDeck().add(card)
+        }
 
+        val onDeactivation: (Int, Int) -> Unit = { _: Int, _: Int ->
+            val playerDeck = playerId get DrawDeckComponent::class
+            val playerDiscardDeck = playerId get DiscardDeckComponent::class
+            val card = if (playerDiscardDeck.getDiscardDeck().isEmpty()) {
+                playerDeck.getDrawCardDeck()
+                    .removeAt(random.nextInt(playerDeck.getDrawCardDeck().size))
+            } else {
+                playerDiscardDeck.getDiscardDeck()
+                    .removeAt(random.nextInt(playerDiscardDeck.getDiscardDeck().size))
+            }
+            val effect = card get EffectComponent::class
+            Log.i("Shuffle on deactivation", "Effect: $effect")
+            val second = effect.shuffleToNew()
+            Log.i("Shuffle on deactivation", "Second: $second")
+            card add second
+            playerDiscardDeck.getDiscardDeck().add(card)
+        }
+
+        return cardBuilder.buildCards {
+            cardHealth = 20f
+            cardAmount = amount
+            description =
+                "On Activation corrupt up to 1 card(s) in discard, On Deactivation corrupt up to 1 card(s) in draw deck"
+            name = "Corrupt cards"
+            onCardPlay = onActivation
+            onCardDeactivate = onDeactivation
+        }
+    }
     fun addTimeBoundTestCards(numberOfCards: Int = 1): List<EntityId> {
         return cardBuilder.createTimeBoundCards(numberOfCards)
     }
-
 }
