@@ -31,8 +31,8 @@ class CardBuilderSystem @Inject constructor(private val componentManager: Compon
     var description: String = ""
     var name: String = ""
     var tags: List<CardTag> = listOf(CardTag.CARD)
-    var onCardPlay: (Int, Int) -> Unit = { _, _ -> }
-    var onCardDeactivate: (Int, Int) -> Unit = { _, _ -> }
+    var onCardPlay: (Int) -> Unit = { _ -> }
+    var onCardDeactivate: (Int) -> Unit = { _ -> }
 
     private fun initCards(): List<Int> {
         val cardIds: MutableList<Int> = mutableListOf()
@@ -77,7 +77,7 @@ class CardBuilderSystem @Inject constructor(private val componentManager: Compon
                 }
             }
 
-            val onActivation = { targetId: Int, _: Int ->
+            val onActivation = { targetId: Int ->
                 val scoreComponent = targetId get ScoreComponent::class
                 Log.i("Time Bound Activation", "Activation number: ${selfCounter.getActivations()}")
                 if (selfCounter.getActivations() == 2) {
