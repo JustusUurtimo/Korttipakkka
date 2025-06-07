@@ -16,9 +16,9 @@ data class EffectComponent(
     val onDeactivate: (Int, Int) -> Unit = { _, _ -> },
 ) {
     fun combineEffectComponents(other: EffectComponent): EffectComponent {
-        val onPlay: (Int, Int) -> Unit = { asd, asd2 ->
-            this.onPlay.invoke(asd, asd2)
-            other.onPlay.invoke(asd, asd2)
+        val onPlay: (Int, Int) -> Unit = { targetId, latestCard ->
+            this.onPlay.invoke(targetId, latestCard)
+            other.onPlay.invoke(targetId, latestCard)
         }
         val onDeath: (Int) -> Unit = {
             this.onDeath.invoke(it)
@@ -32,9 +32,9 @@ data class EffectComponent(
             this.onTurnStart.invoke(it)
             other.onTurnStart.invoke(it)
         }
-        val onDeactivate: (Int, Int) -> Unit = { asd, asd2 ->
-            this.onDeactivate.invoke(asd, asd2)
-            other.onDeactivate.invoke(asd, asd2)
+        val onDeactivate: (Int, Int) -> Unit = { targetId, latestCard ->
+            this.onDeactivate.invoke(targetId, latestCard)
+            other.onDeactivate.invoke(targetId, latestCard)
         }
         return EffectComponent(
             onPlay = onPlay,
