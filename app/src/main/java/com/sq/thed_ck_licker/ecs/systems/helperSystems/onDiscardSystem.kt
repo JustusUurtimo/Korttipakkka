@@ -1,10 +1,10 @@
 package com.sq.thed_ck_licker.ecs.systems.helperSystems
 
 import android.util.Log
-import com.sq.thed_ck_licker.ecs.managers.ComponentManager
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
+import com.sq.thed_ck_licker.ecs.managers.ComponentManager
 import com.sq.thed_ck_licker.ecs.managers.get
 
 fun onDiscardSystem(componentManager: ComponentManager = ComponentManager.componentManager) {
@@ -15,7 +15,7 @@ fun onDiscardSystem(componentManager: ComponentManager = ComponentManager.compon
         val effectStack = effectTarget.value as EffectStackComponent
         for (effectEntity in effectStack.getEffectEntities()) {
             val effect = effectEntity get EffectComponent::class
-            effect.onDeactivate(effectTarget.key, effectEntity)
+//            effect.onDeactivate(effectTarget.key, effectEntity)
         }
     }
 }
@@ -26,7 +26,7 @@ fun discardSystem(
 ) {
     try {
         val cardEffects = cardId get EffectComponent::class
-        cardEffects.onDeactivate(ownerId, cardId)
+        cardEffects.onDeactivate(ownerId)
     } catch (_: IllegalStateException) {
         Log.i("discardSystem", "No deactivation effect found for card $cardId")
     }

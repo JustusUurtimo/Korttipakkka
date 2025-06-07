@@ -12,13 +12,13 @@ data class EffectComponent(
     val onDeath: (Int) -> Unit = {},
     val onSpawn: (Int) -> Unit = {},
     val onTurnStart: (Int) -> Unit = {},
-    val onPlay: (Int, Int) -> Unit = { _, _ -> },
-    val onDeactivate: (Int, Int) -> Unit = { _, _ -> },
+    val onPlay: (Int) -> Unit = { _ -> },
+    val onDeactivate: (Int) -> Unit = { _ -> },
 ) {
     fun combineEffectComponents(other: EffectComponent): EffectComponent {
-        val onPlay: (Int, Int) -> Unit = { targetId, latestCard ->
-            this.onPlay.invoke(targetId, latestCard)
-            other.onPlay.invoke(targetId, latestCard)
+        val onPlay: (Int) -> Unit = { targetId ->
+            this.onPlay.invoke(targetId)
+            other.onPlay.invoke(targetId)
         }
         val onDeath: (Int) -> Unit = {
             this.onDeath.invoke(it)
@@ -32,9 +32,9 @@ data class EffectComponent(
             this.onTurnStart.invoke(it)
             other.onTurnStart.invoke(it)
         }
-        val onDeactivate: (Int, Int) -> Unit = { targetId, latestCard ->
-            this.onDeactivate.invoke(targetId, latestCard)
-            other.onDeactivate.invoke(targetId, latestCard)
+        val onDeactivate: (Int) -> Unit = { targetId ->
+            this.onDeactivate.invoke(targetId)
+            other.onDeactivate.invoke(targetId)
         }
         return EffectComponent(
             onPlay = onPlay,
@@ -46,22 +46,19 @@ data class EffectComponent(
     }
 
     fun shuffleToNew(): EffectComponent {
-        val ekat = mutableListOf<(Int) -> Unit>()
-        ekat.add(onDeath)
-        ekat.add(onSpawn)
-        ekat.add(onTurnStart)
-
-        // TODO: This is way more fun when these two can be combined into one.
-        val tokat = mutableListOf<(Int, Int) -> Unit>()
-        tokat.add(onPlay)
-        tokat.add(onDeactivate)
+        val effectHandlers = mutableListOf<(Int) -> Unit>()
+        effectHandlers.add(onDeath)
+        effectHandlers.add(onSpawn)
+        effectHandlers.add(onTurnStart)
+        effectHandlers.add(onPlay)
+        effectHandlers.add(onDeactivate)
 
         return EffectComponent(
-            onDeath = ekat.removeAt(random.nextInt(ekat.size)),
-            onSpawn = ekat.removeAt(random.nextInt(ekat.size)),
-            onTurnStart = ekat.removeAt(random.nextInt(ekat.size)),
-            onPlay = tokat.removeAt(random.nextInt(tokat.size)),
-            onDeactivate = tokat.removeAt(random.nextInt(tokat.size))
+            onDeath = effectHandlers.removeAt(random.nextInt(effectHandlers.size)),
+            onSpawn = effectHandlers.removeAt(random.nextInt(effectHandlers.size)),
+            onTurnStart = effectHandlers.removeAt(random.nextInt(effectHandlers.size)),
+            onPlay = effectHandlers.removeAt(random.nextInt(effectHandlers.size)),
+            onDeactivate = effectHandlers.removeAt(random.nextInt(effectHandlers.size))
         )
     }
 }

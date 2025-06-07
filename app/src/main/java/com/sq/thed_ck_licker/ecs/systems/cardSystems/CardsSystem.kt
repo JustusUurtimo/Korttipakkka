@@ -8,6 +8,7 @@ import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
+import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.ComponentManager.Companion.componentManager
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
@@ -59,6 +60,9 @@ class CardsSystem @Inject constructor(private var multiSystem: MultiplierSystem)
     private fun activateCard(latestCard: MutableIntState, playerCardCount: MutableIntState) {
         playerCardCount.intValue += 1
         val latestCardId = latestCard.intValue
+        val latestCardComponent = (getPlayerID() get LatestCardComponent::class)
+        latestCardComponent.latestCard = latestCardId
+
         var latestCardHp: HealthComponent? = null
 
         try {
@@ -73,7 +77,7 @@ class CardsSystem @Inject constructor(private var multiSystem: MultiplierSystem)
 
 
         try {
-            (latestCardId get EffectComponent::class).onPlay.invoke(getPlayerID(), latestCardId)
+            (latestCardId get EffectComponent::class).onPlay.invoke(getPlayerID())
         } catch (_: IllegalStateException) {
             Log.i(
                 "CardsSystem",
