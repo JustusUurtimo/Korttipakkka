@@ -1,5 +1,6 @@
 package com.sq.thed_ck_licker.ecs.managers
 
+import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
@@ -63,6 +64,29 @@ class ComponentManagerTest {
         assert(originalComponent != copiedComponent) {"Original and copied components should not be the same after the change."}
     }
 
+
+    @Test
+    fun `Copy Entity with Effect Component`() {
+        val entityId = EntityManager.createNewEntity()
+        var counter = 0
+        val onPlay: (Int, Int) -> Unit = { _, _ -> counter++ }
+        val component = EffectComponent(onPlay = onPlay)
+        entityId add component
+
+        val componentManager = ComponentManager.componentManager
+        val copiedEntity = componentManager.copy(entityId)
+
+        val originalComponent = entityId get EffectComponent::class
+        originalComponent.onPlay.invoke(0, 0)
+
+        val copiedComponent = copiedEntity get EffectComponent::class
+        repeat(4) {
+            copiedComponent.onPlay.invoke(0, 0)
+        }
+
+        assert(counter == 5) { "Counter should be 5 but was $counter" }
+        assert(originalComponent == copiedComponent) { "Original and copied components should be the same after the change." }
+    }
 
     @Test
     fun `Get the difference between Health Components`() {
@@ -220,14 +244,35 @@ class ComponentManagerTest {
         assert(combinedComponent.getScore() == 300){"Score should be 300 but was ${combinedComponent.getScore()}"}
     }
 
+
     @Test
-    fun `Add two health components together`() { //Ed...ward...Eed...ward....
-        val hp = HealthComponent(100f)
-        val hpComp2 = HealthComponent(200f)
-        val combinedComponent = hp.combineHealthComponents(hpComp2)
-        assert(combinedComponent.getHealth() == 300f) { "Health should be 300 but was ${combinedComponent.getHealth()}" }
-        assert(combinedComponent.getMaxHealth() == 300f) { "Max health should be 300 but was ${combinedComponent.getMaxHealth()}" }
-//        assert(combinedComponent.multiplier == 1f) { "Multiplier should be 1 but was ${combinedComponent.multiplier}" }
+    fun `Get the difference between two Effect components`() {
+        var counter = 0
+        val onCardPlay: (Int, Int) -> Unit = { _, _ -> counter++ }
+        val effComp = EffectComponent(
+            onPlay = onCardPlay,
+        )
+
+        effComp.onPlay.invoke(0, 0)
+        assert(counter == 1) { "Counter should be 1 but was $counter" }
+
+        val onCardPlay2: (Int, Int) -> Unit = { _, _ -> counter += 100 }
+        val effComp2 = EffectComponent(
+            onPlay = onCardPlay2
+        )
+        effComp2.onPlay.invoke(0, 0)
+        assert(counter == 101) { "Counter should be 101 but was $counter" }
+
+        val eka = EntityManager.createNewEntity()
+        eka add effComp
+
+        val eka2 = EntityManager.createNewEntity()
+        eka2 add effComp2
+
+        val diff = eka difference eka2
+        val diffEff = diff get EffectComponent::class
+        diffEff.onPlay.invoke(0, 0)
+        assert(counter == 202) { "Counter should be 202 but was $counter" }
     }
 
 }
