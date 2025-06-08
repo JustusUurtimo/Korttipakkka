@@ -3,12 +3,8 @@ package com.sq.thed_ck_licker.ecs.components
 import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.runtime.MutableIntState
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import com.sq.thed_ck_licker.R
-import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
-import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 
 
 enum class CardTag { CARD, MERCHANT }
@@ -19,39 +15,6 @@ data class ImageComponent(@DrawableRes private val cardImage: Int = R.drawable.p
         return this.cardImage
     }
 }
-
-data class DescriptionComponent(private var description: MutableState<String>) {
-    constructor(desc: String = "") : this(mutableStateOf(desc))
-
-    fun addScore(scoreC: ScoreComponent) {
-        description.value += "Get ${scoreC.getScore()} points"
-    }
-
-    fun addHealth(healthC: HealthComponent) {
-        val health = healthC.getHealth()
-        val maxHealth = healthC.getMaxHealth()
-        if (health > 0) {
-            description.value += "Heal for $health points"
-        } else if (health < 0) {
-            description.value += "Lose $health health"
-        }
-
-        if (maxHealth > 0) {
-            description.value += "Gain $maxHealth max health"
-        } else if (maxHealth < 0) {
-            description.value += "Lose $maxHealth max health"
-        }
-    }
-
-    fun getDescription(): String {
-        return this.description.value
-    }
-
-    fun setDescription(desc: String) {
-        this.description.value = desc
-    }
-}
-
 
 data class IdentificationComponent(private val name: String = "Placeholder", private val characterId: Int?) {
     fun getName(): String {

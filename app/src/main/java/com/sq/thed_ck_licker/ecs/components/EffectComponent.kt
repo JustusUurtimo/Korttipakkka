@@ -1,6 +1,8 @@
 package com.sq.thed_ck_licker.ecs.components
 
+import com.sq.thed_ck_licker.helpers.DescribedEffect
 import com.sq.thed_ck_licker.helpers.MyRandom.random
+import com.sq.thed_ck_licker.helpers.combine
 
 /**
  * Used to make more complex activations
@@ -9,44 +11,24 @@ import com.sq.thed_ck_licker.helpers.MyRandom.random
  * And maaaagic
  */
 data class EffectComponent(
-    val onDeath: (Int) -> Unit = {},
-    val onSpawn: (Int) -> Unit = {},
-    val onTurnStart: (Int) -> Unit = {},
-    val onPlay: (Int) -> Unit = { _ -> },
-    val onDeactivate: (Int) -> Unit = { _ -> },
+    val onDeath: DescribedEffect = DescribedEffect({}, { "" }),
+    val onSpawn: DescribedEffect = DescribedEffect({}, { "" }),
+    val onTurnStart: DescribedEffect = DescribedEffect({}, { "" }),
+    val onPlay: DescribedEffect = DescribedEffect({}, { "" }),
+    val onDeactivate: DescribedEffect = DescribedEffect({}, { "" }),
 ) {
     fun combineEffectComponents(other: EffectComponent): EffectComponent {
-        val onPlay: (Int) -> Unit = { targetId ->
-            this.onPlay.invoke(targetId)
-            other.onPlay.invoke(targetId)
-        }
-        val onDeath: (Int) -> Unit = {
-            this.onDeath.invoke(it)
-            other.onDeath.invoke(it)
-        }
-        val onSpawn: (Int) -> Unit = {
-            this.onSpawn.invoke(it)
-            other.onSpawn.invoke(it)
-        }
-        val onTurnStart: (Int) -> Unit = {
-            this.onTurnStart.invoke(it)
-            other.onTurnStart.invoke(it)
-        }
-        val onDeactivate: (Int) -> Unit = { targetId ->
-            this.onDeactivate.invoke(targetId)
-            other.onDeactivate.invoke(targetId)
-        }
         return EffectComponent(
-            onPlay = onPlay,
-            onDeath = onDeath,
-            onSpawn = onSpawn,
-            onTurnStart = onTurnStart,
-            onDeactivate = onDeactivate
+            onPlay = this.onPlay.combine(other.onPlay),
+            onDeath = this.onDeath.combine(other.onDeath),
+            onSpawn = this.onSpawn.combine(other.onSpawn),
+            onTurnStart = this.onTurnStart.combine(other.onTurnStart),
+            onDeactivate = this.onDeactivate.combine(other.onDeactivate)
         )
     }
 
     fun shuffleToNew(): EffectComponent {
-        val effectHandlers = mutableListOf<(Int) -> Unit>()
+        val effectHandlers = mutableListOf<DescribedEffect>()
         effectHandlers.add(onDeath)
         effectHandlers.add(onSpawn)
         effectHandlers.add(onTurnStart)
@@ -60,6 +42,33 @@ data class EffectComponent(
             onPlay = effectHandlers.removeAt(random.nextInt(effectHandlers.size)),
             onDeactivate = effectHandlers.removeAt(random.nextInt(effectHandlers.size))
         )
+    }
+
+
+    fun describeTriggers(): List<String> {
+        val lines = mutableListOf<String>()
+
+        fun handle(label: String, effect: DescribedEffect?) {
+            val text = effect?.describe()?.trim().orEmpty()
+            if (text.isNotBlank()) {
+                lines.add("$label: $text")
+            }
+        }
+
+        handle("On Death", onDeath)
+        handle("On Spawn", onSpawn)
+        handle("On Turn Start", onTurnStart)
+        handle("On Play", onPlay)
+        handle("On Deactivate", onDeactivate)
+
+        return lines
+    }
+
+    override fun toString(): String {
+        return this.describeTriggers().joinToString("\n")
+    }
+     fun toString2(): String {
+        return "EffectComponent: \n ${this.describeTriggers().joinToString("\n ")}"
     }
 }
 

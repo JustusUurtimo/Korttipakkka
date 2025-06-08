@@ -13,8 +13,8 @@ fun onTurnStartEffectStackSystem(componentManager: ComponentManager = ComponentM
     for (effectTarget in targetsWithEffectStack) {
         val effectStack = effectTarget.value as EffectStackComponent
         for (effectEntity in effectStack.getEffectEntities()) {
-            val effect = effectEntity get EffectComponent::class
-            effect.onTurnStart(effectTarget.key)
+            val effect = (effectEntity get EffectComponent::class).onTurnStart.action
+            effect(effectTarget.key)
             Log.i("onTurnStartEffectStackSystem", "Activating $effect on ${effectTarget.key}")
         }
         Log.i("onTurnStartEffectStackSystem", "Effect stack size: ${effectStack.getEffectEntities().size}")

@@ -25,8 +25,9 @@ fun discardSystem(
     cardId: Int
 ) {
     try {
-        val cardEffects = cardId get EffectComponent::class
-        cardEffects.onDeactivate(ownerId)
+            (cardId get EffectComponent::class).onDeactivate.action(ownerId)
+//        val cardEffects =
+//        cardEffects.onDeactivate(ownerId)
     } catch (_: IllegalStateException) {
         Log.i("discardSystem", "No deactivation effect found for card $cardId")
     }

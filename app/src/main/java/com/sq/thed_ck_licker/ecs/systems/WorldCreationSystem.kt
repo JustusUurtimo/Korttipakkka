@@ -19,13 +19,13 @@ class WorldCreationSystem @Inject constructor(
     }
 
     fun createWorld() {
-        descriptionSystem.updateAllDescriptions()
+//        descriptionSystem.updateAllDescriptions()
     }
 
     private fun initWorld() {
         playerSystem.initPlayer()
         merchantSystem.initRegularMerchant()
-        descriptionSystem.updateAllDescriptions()
+//        descriptionSystem.updateAllDescriptions()
     }
 
 }

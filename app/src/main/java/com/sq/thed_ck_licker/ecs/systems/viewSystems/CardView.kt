@@ -15,16 +15,17 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import com.sq.thed_ck_licker.ecs.components.DescriptionComponent
-import com.sq.thed_ck_licker.ecs.components.ImageComponent
+import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.IdentificationComponent
+import com.sq.thed_ck_licker.ecs.components.ImageComponent
 import com.sq.thed_ck_licker.ecs.managers.get
+import com.sq.thed_ck_licker.helpers.displayInfo
 
 @Composable
 fun CardView(entityId: Int = 1, activateCard: () -> Unit, modifier: Modifier) {
     val image = (entityId get ImageComponent::class).getImage()
     val name = (entityId get IdentificationComponent::class).getName()
-    val description = (entityId get DescriptionComponent::class).getDescription()
+    val description = (entityId get EffectComponent::class).toString()
 
     Card(
         modifier = modifier
@@ -51,6 +52,7 @@ fun CardView(entityId: Int = 1, activateCard: () -> Unit, modifier: Modifier) {
                         .background(color = Color.Cyan)
                         .fillMaxWidth()
                 )
+                displayInfo(description)
                 Text(
                     text = description,
                     softWrap = true,

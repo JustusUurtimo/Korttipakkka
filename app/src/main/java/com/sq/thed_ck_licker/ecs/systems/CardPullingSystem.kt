@@ -19,7 +19,7 @@ class CardPullingSystem @Inject constructor(private val cardsSystem: CardsSystem
     ) {
 
         try {
-            (latestCard.intValue get EffectComponent::class).onDeactivate.invoke(getPlayerID())
+            (latestCard.intValue get EffectComponent::class).onDeactivate.action.invoke(getPlayerID())
         } catch (_: IllegalStateException) {
             Log.i(
                 "pullNewCardSystem",
