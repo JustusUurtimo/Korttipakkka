@@ -21,3 +21,5 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           projectBaseDir: /home/runner/work/Korttipakkka/Korttipakkka/
+          sonar.projectKey: 'JustusUurtimo_Korttipakkka'
+          sonar.organization: 'korttipakka'
