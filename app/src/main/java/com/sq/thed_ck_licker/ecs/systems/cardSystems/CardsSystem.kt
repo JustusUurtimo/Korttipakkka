@@ -6,9 +6,6 @@ import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
-import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
-import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
-import com.sq.thed_ck_licker.ecs.managers.ComponentManager.Companion.componentManager
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.managers.GameEvent
 import com.sq.thed_ck_licker.ecs.managers.GameEvents
@@ -18,8 +15,6 @@ import com.sq.thed_ck_licker.ecs.systems.helperSystems.MultiplierSystem
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.discardSystem
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.onDeathSystem
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.onTurnStartEffectStackSystem
-import com.sq.thed_ck_licker.helpers.DescribedEffect
-import com.sq.thed_ck_licker.helpers.HelperSystemModule
 import com.sq.thed_ck_licker.helpers.getRandomElement
 import javax.inject.Inject
 
@@ -27,9 +22,6 @@ class CardsSystem @Inject constructor(
     private var multiSystem: MultiplierSystem,
     private val playerSystem: PlayerSystem
 ) {
-    init {
-        multiSystem = HelperSystemModule.provideMultiplierSystem(componentManager)
-    }
 
     fun pullRandomCardFromEntityDeck(entityId: Int): Int {
         val drawDeckComponent = (entityId get DrawDeckComponent::class)
