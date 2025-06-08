@@ -16,7 +16,6 @@ buildscript{
     }
 
     dependencies {
-
         classpath(libs.android.junit5)
     }
 

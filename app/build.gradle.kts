@@ -1,3 +1,5 @@
+import com.android.build.api.dsl.TestCoverage
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -9,6 +11,8 @@ plugins {
     id("com.google.dagger.hilt.android")
     id("com.google.devtools.ksp")
     id("org.sonarqube")
+
+//    id("org.jetbrains.kotlinx.kover") version "0.9.1"
 }
 var isDebug by extra(true)
 
@@ -28,7 +32,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -63,7 +67,11 @@ android {
     }
     testOptions {
         unitTests.all {
-            it.useJUnitPlatform()
+            it.useJUnitPlatform {
+//                fun TestCoverage.() {
+//
+//                }
+            }
         }
 //        unitTests.returnDefaultValues = true
         unitTests.isReturnDefaultValues = true
@@ -76,6 +84,54 @@ sonar {
         property("sonar.projectKey", "JustusUurtimo_Korttipakkka")
         property("sonar.organization", "korttipakka")
         property("sonar.host.url", "https://sonarcloud.io")
+        property(
+            "sonar.coverage.jacoco.xmlReportPaths",
+            // Corrected path based on your finding:
+            "${layout.buildDirectory.get()}/reports/kover/reportDebug.xml"
+        )
+    }
+}
+
+kover {
+    currentProject{
+        createVariant("customaaaa") {
+            add("debug")
+        }
+    }
+
+    reports {
+        // filters for all report types of all build variants
+        filters {
+            excludes {
+                androidGeneratedClasses()
+            }
+        }
+
+        variant("release") {
+//            html{
+////                onCheck = false
+//            }
+//            xml{
+////                onCheck = false
+//            }
+            // verification only for 'release' build variant
+            verify {
+                rule {
+                    minBound(50)
+                }
+            }
+
+            // filters for all report types only for 'release' build variant
+            filters {
+                excludes {
+                    androidGeneratedClasses()
+                    classes(
+                        // excludes debug classes
+                        "*.DebugUtil"
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -129,4 +185,12 @@ dependencies {
     androidTestImplementation(libs.hilt.android.testing)
     // ...with Kotlin.
     kspAndroidTest(libs.hilt.android.compiler)
+
+    testImplementation("org.pitest:pitest-maven:1.19.5")
+    testImplementation("com.arcmutate:base:1.4.2")
+    testImplementation("com.arcmutate:pitest-kotlin-plugin:1.4.3")
+    testImplementation("org.pitest:pitest-junit5-plugin:1.2.3")
+    // https://mvnrepository.com/artifact/com.arcmutate/arcmutate-android-parent
+    testImplementation("com.arcmutate:arcmutate-android-parent:0.0.5")
+    testImplementation("com.arcmutate:pitest-git-plugin:2.2.3")
 }
