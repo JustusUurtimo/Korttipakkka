@@ -22,10 +22,7 @@ class CardPullingSystem @Inject constructor(
     ) {
 
         try {
-            (latestCard get EffectComponent::class).onDeactivate.invoke(
-                getPlayerID(),
-                latestCard
-            )
+            (latestCard get EffectComponent::class).onDeactivate.action.invoke(getPlayerID())
         } catch (_: IllegalStateException) {
             Log.i(
                 "pullNewCardSystem",
@@ -43,7 +40,6 @@ class CardPullingSystem @Inject constructor(
                         "Yeah yeah, we get it, you are so cool there was no actCounter component"
             )
         }
-        //    onDiscardSystem()
 
         val drawDeck2 = (getPlayerID() get DrawDeckComponent::class).getDrawCardDeck()
         if (latestCard > 0) {

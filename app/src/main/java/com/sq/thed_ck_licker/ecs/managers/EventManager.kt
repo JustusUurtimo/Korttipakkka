@@ -4,7 +4,6 @@ import com.sq.thed_ck_licker.helpers.navigation.Screen
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
-//todo we can expand this later to include events like onGamePaused etc.
 
 
 sealed class GameEvent {

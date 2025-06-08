@@ -10,10 +10,7 @@ import javax.inject.Inject
 
 
 data class DrawDeckComponent @Inject constructor(
-    private val drawCardDeck: MutableList<Int>,
-    private var latestCard: MutableIntState = mutableIntStateOf(
-        -1
-    )
+    private val drawCardDeck: MutableList<Int>
 ) {
     fun getSize(): Int {
         return this.drawCardDeck.size
@@ -29,14 +26,6 @@ data class DrawDeckComponent @Inject constructor(
 
     fun removeCard(cardId: Int) {
         this.drawCardDeck.remove(cardId)
-    }
-
-    fun getLatestCard(): Int {
-        return this.latestCard.intValue
-    }
-
-    fun setLatestCard(cardId: Int) {
-        this.latestCard.intValue = cardId
     }
 }
 

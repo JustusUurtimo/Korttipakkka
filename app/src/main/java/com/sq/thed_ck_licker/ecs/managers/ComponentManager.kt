@@ -73,12 +73,6 @@ class ComponentManager {
         }
     }
 
-    /* TODO: There is argument for having two lists,
-     *  one from the component view and one from the entity view
-     *  When made correctly and as private things that the Component manager controls,
-     *  it will be really easy to uphold both of them.
-     *  Thou it might also be premature optimization.
-     */
     fun getAllComponentsOfEntity(entityId: Int): List<Any> {
         val result = ArrayList<Any>()
         for (componentMap in components.values) {
