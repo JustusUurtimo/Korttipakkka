@@ -32,7 +32,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -135,6 +135,8 @@ kover {
     }
 }
 
+
+
 dependencies {
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
@@ -183,4 +185,12 @@ dependencies {
     androidTestImplementation(libs.hilt.android.testing)
     // ...with Kotlin.
     kspAndroidTest(libs.hilt.android.compiler)
+
+    testImplementation("org.pitest:pitest-maven:1.19.5")
+    testImplementation("com.arcmutate:base:1.4.2")
+    testImplementation("com.arcmutate:pitest-kotlin-plugin:1.4.3")
+    testImplementation("org.pitest:pitest-junit5-plugin:1.2.3")
+    // https://mvnrepository.com/artifact/com.arcmutate/arcmutate-android-parent
+    testImplementation("com.arcmutate:arcmutate-android-parent:0.0.5")
+    testImplementation("com.arcmutate:pitest-git-plugin:2.2.3")
 }
