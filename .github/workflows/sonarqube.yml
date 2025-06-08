@@ -1,4 +1,4 @@
-name: My Test Monorepo Project
+name: Sonarqube Test Quality Analysis
 on:
   push:
     branches:
