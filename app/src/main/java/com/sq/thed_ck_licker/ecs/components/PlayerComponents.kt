@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 
 data class DrawDeckComponent @Inject constructor(
-    private val drawCardDeck: MutableList<Int>
+    private val drawCardDeck: MutableList<Int>,
 ) {
     fun getSize(): Int {
         return this.drawCardDeck.size

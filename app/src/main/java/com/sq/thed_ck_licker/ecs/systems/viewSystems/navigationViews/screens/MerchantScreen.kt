@@ -31,7 +31,6 @@ fun MerchantScreen(
     merchantViewModel: MerchantViewModel,
     gameNavigator: GameNavigator
 ) {
-    val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues()
     val activeMerchant by merchantViewModel.activeMerchantId.collectAsState()
     val merchantSummonCard by merchantViewModel.merchantSummonCard.collectAsState()
     val merchantHand by merchantViewModel.merchantHand.collectAsState()
@@ -74,7 +73,7 @@ fun MerchantScreen(
                     .padding(16.dp)
                     .align(Alignment.CenterHorizontally),
                 onClick = { gameNavigator.navigateTo(Screen.Game.route) }
-            ) { Text("Go back to game") }
+            ) { Text("Leave shop") }
         }
 
     }

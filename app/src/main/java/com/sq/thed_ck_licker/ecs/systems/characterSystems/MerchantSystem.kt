@@ -1,6 +1,6 @@
 package com.sq.thed_ck_licker.ecs.systems.characterSystems
 
-import EntityMemoryComponent
+import com.sq.thed_ck_licker.ecs.components.misc.EntityMemoryComponent
 import androidx.compose.runtime.snapshotFlow
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
