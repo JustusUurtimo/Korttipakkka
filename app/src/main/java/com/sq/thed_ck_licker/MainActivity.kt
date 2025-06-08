@@ -1,9 +1,6 @@
 package com.sq.thed_ck_licker
 
-import android.os.Build
 import android.os.Bundle
-import android.view.View
-import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -14,6 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.sq.thed_ck_licker.ecs.systems.WorldCreationSystem
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.GameNavigation
+import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.Game
+import com.sq.thed_ck_licker.helpers.navigation.GameNavigator
 import com.sq.thed_ck_licker.ui.theme.TheD_ck_LickerTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -21,14 +20,17 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @Inject lateinit var worldCreationSystem: WorldCreationSystem
+    @Inject lateinit var gameNavigator: GameNavigator
+
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         worldCreationSystem.createWorld()
         enableEdgeToEdge()
         setContent {
             TheD_ck_LickerTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    GameNavigation(innerPadding)
+                    GameNavigation(innerPadding, gameNavigator)
                 }
             }
         }

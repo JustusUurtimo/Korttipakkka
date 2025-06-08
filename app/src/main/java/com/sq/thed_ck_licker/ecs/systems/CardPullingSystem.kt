@@ -1,7 +1,6 @@
 package com.sq.thed_ck_licker.ecs.systems
 
 import android.util.Log
-import androidx.compose.runtime.MutableIntState
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
@@ -11,15 +10,19 @@ import com.sq.thed_ck_licker.ecs.managers.MerchantEvent
 import com.sq.thed_ck_licker.ecs.managers.MerchantEvents
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem
+import com.sq.thed_ck_licker.ecs.systems.characterSystems.PlayerSystem
 import javax.inject.Inject
 
-class CardPullingSystem @Inject constructor(private val cardsSystem: CardsSystem) {
+class CardPullingSystem @Inject constructor(
+    private val cardsSystem: CardsSystem,
+    private val playerSystem: PlayerSystem
+) {
     fun pullNewCard(
-        latestCard: MutableIntState,
+        latestCard: Int,
     ) {
 
         try {
-            (latestCard.intValue get EffectComponent::class).onDeactivate.action.invoke(getPlayerID())
+            (latestCard get EffectComponent::class).onDeactivate.action.invoke(getPlayerID())
         } catch (_: IllegalStateException) {
             Log.i(
                 "pullNewCardSystem",
@@ -29,7 +32,7 @@ class CardPullingSystem @Inject constructor(private val cardsSystem: CardsSystem
         }
 
         try {
-            (latestCard.intValue get ActivationCounterComponent::class).deactivate()
+            (latestCard get ActivationCounterComponent::class).deactivate()
         } catch (_: IllegalStateException) {
             Log.i(
                 "pullNewCardSystem",
@@ -39,13 +42,12 @@ class CardPullingSystem @Inject constructor(private val cardsSystem: CardsSystem
         }
 
         val drawDeck2 = (getPlayerID() get DrawDeckComponent::class).getDrawCardDeck()
-        if (latestCard.intValue > 0) {
-            drawDeck2.add(latestCard.intValue)
+        if (latestCard > 0) {
+            drawDeck2.add(latestCard)
         }
 
         putDiscardToDeckAndShuffle()
-        MerchantEvents.tryEmit(MerchantEvent.MerchantShopClosed)
-        latestCard.intValue = cardsSystem.pullRandomCardFromEntityDeck(getPlayerID())
+        playerSystem.setLatestCard(cardsSystem.pullRandomCardFromEntityDeck(getPlayerID()))
     }
 
 }

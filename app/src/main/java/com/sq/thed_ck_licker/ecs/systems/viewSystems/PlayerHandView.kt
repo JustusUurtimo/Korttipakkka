@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 fun PlayerHandView(
     playerCardCount: MutableIntState,
     modifier: Modifier,
-    latestCard: MutableIntState,
+    latestCard: Int,
     activateCard: () -> Unit,
 ) {
     BadgedBox(
@@ -36,6 +36,6 @@ fun PlayerHandView(
 
 
         ) {
-        CardView(latestCard.intValue, activateCard, modifier)
+        CardView(latestCard, activateCard, modifier)
     }
 }
