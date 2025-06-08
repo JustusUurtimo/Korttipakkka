@@ -20,4 +20,4 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
-          projectBaseDir: Korttipakkka/
+          projectBaseDir: /home/runner/work/Korttipakkka/Korttipakkka/Korttipakkka
