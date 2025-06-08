@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
+import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
 import com.sq.thed_ck_licker.ecs.managers.ComponentManager
 import com.sq.thed_ck_licker.ecs.managers.EntityId
 import com.sq.thed_ck_licker.ecs.managers.EntityManager
@@ -107,6 +108,7 @@ class PlayerSystemTest {
         playerId add DrawDeckComponent(mutableListOf())
         playerId add DiscardDeckComponent(cards)
         playerId add MultiplierComponent()
+        playerId add LatestCardComponent(-1)
 
         val card = mutableIntStateOf(-1)
         repeat(2) {
