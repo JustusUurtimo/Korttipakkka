@@ -1,3 +1,5 @@
+import com.android.build.api.dsl.TestCoverage
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -9,6 +11,8 @@ plugins {
     id("com.google.dagger.hilt.android")
     id("com.google.devtools.ksp")
     id("org.sonarqube")
+
+//    id("org.jetbrains.kotlinx.kover") version "0.9.1"
 }
 var isDebug by extra(true)
 
@@ -63,7 +67,11 @@ android {
     }
     testOptions {
         unitTests.all {
-            it.useJUnitPlatform()
+            it.useJUnitPlatform {
+//                fun TestCoverage.() {
+//
+//                }
+            }
         }
 //        unitTests.returnDefaultValues = true
         unitTests.isReturnDefaultValues = true
@@ -79,7 +87,48 @@ sonar {
     }
 }
 
+kover {
+    currentProject{
+        createVariant("customaaaa") {
+            add("debug")
+        }
+    }
 
+    reports {
+        // filters for all report types of all build variants
+        filters {
+            excludes {
+                androidGeneratedClasses()
+            }
+        }
+
+        variant("release") {
+//            html{
+////                onCheck = false
+//            }
+//            xml{
+////                onCheck = false
+//            }
+            // verification only for 'release' build variant
+            verify {
+                rule {
+                    minBound(50)
+                }
+            }
+
+            // filters for all report types only for 'release' build variant
+            filters {
+                excludes {
+                    androidGeneratedClasses()
+                    classes(
+                        // excludes debug classes
+                        "*.DebugUtil"
+                    )
+                }
+            }
+        }
+    }
+}
 
 dependencies {
     implementation(libs.androidx.runtime.livedata)
