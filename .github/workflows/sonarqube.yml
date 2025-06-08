@@ -1,12 +1,10 @@
 name: Sonarqube Test Quality Analysis
 on:
   push:
-    branches:
-      - main
-    paths:
-      - 'lambdas/test/**'
+    branches: [ "main" ]
   pull_request:
     types: [opened, synchronize, reopened]
+    branches: [ "main" ]
 jobs:
   sonarqubeScan1:
     name: SonarQubeScan1
