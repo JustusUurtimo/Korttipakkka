@@ -2,17 +2,22 @@ package com.sq.thed_ck_licker.helpers.navigation
 
 import androidx.navigation.NavController
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class GameNavigator @Inject constructor() {
-    private var navController: NavController? = null
+    private var _navController: NavController? = null
 
-    fun setupWithNavController(navController: NavController) {
-        this.navController = navController
+    private val navController: NavController
+        get() = _navController ?: throw IllegalStateException("NavController not set")
+
+    fun setNavController(controller: NavController) {
+        if (_navController == null) {
+            _navController = controller
+        }
     }
 
     fun navigateTo(route: String) {
-        println("NAVIGATING TO $route")
-        println("NavController: $navController")
-        navController?.navigate(route)
+        navController.navigate(route)
     }
 }

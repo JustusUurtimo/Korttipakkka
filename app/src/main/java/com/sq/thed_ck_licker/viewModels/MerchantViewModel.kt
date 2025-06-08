@@ -61,6 +61,7 @@ class MerchantViewModel @Inject constructor(
     fun onChooseMerchantCard(newCard: Int, activeMerchant: Int) {
         merchantSystem.chooseMerchantCard(newCard, activeMerchant)
         _merchantHand.value = emptyList()
+
     }
 
     fun onOpenShop(merchantId: Int) {

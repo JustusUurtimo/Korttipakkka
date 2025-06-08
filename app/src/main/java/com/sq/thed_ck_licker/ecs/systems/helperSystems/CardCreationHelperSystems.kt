@@ -10,7 +10,7 @@ import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.generateEntity
 import com.sq.thed_ck_licker.ecs.managers.get
-import jakarta.inject.Inject
+import javax.inject.Inject
 import kotlin.math.min
 
 class CardCreationHelperSystems @Inject constructor() {

@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.util.packInts
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -36,8 +35,8 @@ fun GameNavigation(
     val navController = rememberNavController()
     val modifier = Modifier
 
-    LaunchedEffect(gameNavigator) {
-        gameNavigator.setupWithNavController(navController)
+    LaunchedEffect(Unit) {
+        gameNavigator.setNavController(navController)
     }
 
     NavHost(navController = navController, startDestination = Screen.MainMenu.route) {
@@ -86,16 +85,10 @@ fun GameNavigation(
             })
         { DeathScreen(onRetry = { gameViewModel.restartGame() }) }
 
-        composable(route = Screen.MerchantShop.route,
-            enterTransition = {
-                slideInHorizontally { width -> width }
-            },
-            exitTransition = {
-                slideOutHorizontally { width -> -width }
-            })
+        composable(route = Screen.MerchantShop.route)
         {
             val viewModel: MerchantViewModel = hiltViewModel()
-            MerchantScreen(modifier = modifier, viewModel)
+            MerchantScreen(modifier = modifier, viewModel, gameNavigator)
         }
 
 
