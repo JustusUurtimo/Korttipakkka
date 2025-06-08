@@ -37,7 +37,6 @@ class CardPullingSystem @Inject constructor(private val cardsSystem: CardsSystem
                         "Yeah yeah, we get it, you are so cool there was no actCounter component"
             )
         }
-        //    onDiscardSystem()
 
         val drawDeck2 = (getPlayerID() get DrawDeckComponent::class).getDrawCardDeck()
         if (latestCard.intValue > 0) {

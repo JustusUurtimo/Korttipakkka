@@ -67,8 +67,5 @@ data class EffectComponent(
     override fun toString(): String {
         return this.describeTriggers().joinToString("\n")
     }
-     fun toString2(): String {
-        return "EffectComponent: \n ${this.describeTriggers().joinToString("\n ")}"
-    }
 }
 

@@ -17,6 +17,7 @@ import com.sq.thed_ck_licker.ecs.states.PlayerState
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.onDeathSystem
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.areRealTimeThingsEnabled
+import com.sq.thed_ck_licker.helpers.DescribedEffect
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
@@ -107,7 +108,7 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
     }
 
     //This probably has some more sensible place than here.
-    private fun healthTicker(amountOfDamage: Float = 1f): (Int) -> Unit {
+    private fun healthTicker(amountOfDamage: Float = 1f): DescribedEffect {
         val theAction = { target: Int ->
             val targetHealth = target get HealthComponent::class
             targetHealth.damage(amountOfDamage)
@@ -115,6 +116,7 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
                 onDeathSystem()
             }
         }
-        return theAction
+        val describedEffect = DescribedEffect(theAction) { "Take damage on each trigger" }
+        return describedEffect
     }
 }

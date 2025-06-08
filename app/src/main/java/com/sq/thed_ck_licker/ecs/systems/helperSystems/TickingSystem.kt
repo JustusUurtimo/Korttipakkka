@@ -15,7 +15,7 @@ class TickingSystem {
             val tickComp = entry.value as TickComponent
             tickComp.currentAmount += value
             while (tickComp.currentAmount >= tickComp.tickThreshold) {
-                tickComp.tickAction.invoke(entry.key)
+                tickComp.tickAction.action.invoke(entry.key)
                 tickComp.currentAmount -= tickComp.tickThreshold
             }
         }

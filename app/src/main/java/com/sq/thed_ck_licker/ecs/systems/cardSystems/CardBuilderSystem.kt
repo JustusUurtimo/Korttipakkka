@@ -77,6 +77,9 @@ class CardBuilderSystem @Inject constructor(private val componentManager: Compon
                 }
             }
 
+            val onTickEffect =
+                DescribedEffect(onTick) { "Takes damage" }
+
 
             val onActivation = { targetId: Int ->
                 val scoreComponent = targetId get ScoreComponent::class
@@ -91,17 +94,17 @@ class CardBuilderSystem @Inject constructor(private val componentManager: Compon
                     timeBoundCardId add TickComponent(
                         currentAmount = 0,
                         tickThreshold = 1000,
-                        tickAction = onTick
+                        tickAction = onTickEffect
                     )
                 }
             }
-            val describedEffect =
+            val onActivationEffect =
                 DescribedEffect(onActivation) { "If you manage to activate this cards effect $times times, you will gain $points points" }
 
 
             timeBoundCardId add selfCounter
             timeBoundCardId add ImageComponent(cardImage)
-            timeBoundCardId add EffectComponent(onPlay = describedEffect)
+            timeBoundCardId add EffectComponent(onPlay = onActivationEffect)
             timeBoundCardId add IdentificationComponent("Time Bound Card", null)
             timeBoundCardId add selfHp
             cards.add(timeBoundCardId)
