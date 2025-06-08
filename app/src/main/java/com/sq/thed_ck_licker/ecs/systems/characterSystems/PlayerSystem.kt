@@ -48,8 +48,9 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         val merchantCards = cardCreationSystem.addMerchantCards(5, getRegularMerchantID())
         val basicScoreCards = cardCreationSystem.addBasicScoreCards(2)
         val multiplierCards = cardCreationSystem.addTempMultiplierTestCards(2)
+        val corruptionCards = cardCreationSystem.addShuffleTestCards(2)
         val timeBoundCards = cardCreationSystem.addTimeBoundTestCards(1)
-
+        
         return emptyList<Int>() +
                 playerHealingCards +
                 playerDamageCards +
@@ -62,6 +63,7 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
                 merchantCards +
                 basicScoreCards +
                 multiplierCards +
+                corruptionCards +
                 timeBoundCards +
                 emptyList<Int>()
     }
