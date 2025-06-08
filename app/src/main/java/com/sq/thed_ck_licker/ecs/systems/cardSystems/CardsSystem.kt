@@ -8,6 +8,7 @@ import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
+import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.ComponentManager.Companion.componentManager
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
@@ -20,6 +21,7 @@ import com.sq.thed_ck_licker.ecs.systems.helperSystems.MultiplierSystem
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.discardSystem
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.onDeathSystem
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.onTurnStartEffectStackSystem
+import com.sq.thed_ck_licker.helpers.DescribedEffect
 import com.sq.thed_ck_licker.helpers.HelperSystemModule
 import com.sq.thed_ck_licker.helpers.getRandomElement
 import javax.inject.Inject
@@ -59,6 +61,9 @@ class CardsSystem @Inject constructor(private var multiSystem: MultiplierSystem)
     private fun activateCard(latestCard: MutableIntState, playerCardCount: MutableIntState) {
         playerCardCount.intValue += 1
         val latestCardId = latestCard.intValue
+        val latestCardComponent = (getPlayerID() get LatestCardComponent::class)
+        latestCardComponent.latestCard = latestCardId
+
         var latestCardHp: HealthComponent? = null
 
         try {
@@ -73,7 +78,7 @@ class CardsSystem @Inject constructor(private var multiSystem: MultiplierSystem)
 
 
         try {
-            (latestCardId get EffectComponent::class).onPlay.invoke(getPlayerID(), latestCardId)
+            (latestCardId get EffectComponent::class).onPlay.action.invoke(getPlayerID())
         } catch (_: IllegalStateException) {
             Log.i(
                 "CardsSystem",
@@ -109,14 +114,16 @@ class CardsSystem @Inject constructor(private var multiSystem: MultiplierSystem)
     fun addPassiveScoreGainerToEntity(targetId: Int, pointsPerCard: Int = 3) {
 
         val gainerEntity = generateEntity()
-        val gainerActCounterComp = ActivationCounterComponent()
+        val activationCounter = ActivationCounterComponent()
         val activateAction = { id: Int ->
             val targetScoreComp = id get ScoreComponent::class
-            gainerActCounterComp.activate()
+            activationCounter.activate()
             targetScoreComp.addScore(pointsPerCard)
         }
-        gainerEntity add gainerActCounterComp
-        gainerEntity add EffectComponent(onTurnStart = activateAction)
+        val activationEffect =
+            DescribedEffect(activateAction) { "Gain $pointsPerCard points per card played" }
+        gainerEntity add activationCounter
+        gainerEntity add EffectComponent(onTurnStart = activationEffect)
 
         val targetEffectStackComp = (targetId get EffectStackComponent::class)
         targetEffectStackComp addEntity (gainerEntity)  // I think i have gone mad from the power
@@ -129,19 +136,28 @@ class CardsSystem @Inject constructor(private var multiSystem: MultiplierSystem)
         val selfActCounter = ActivationCounterComponent()
         limitedHealEntity add selfActCounter
 
-        limitedHealEntity add EffectComponent(onTurnStart = { id: Int ->
+        val healThreshold = 0.5f
+        var healedAmount = 0f
+        val onTurnStart: (Int) -> Unit = { id: Int ->
             val targetHealthComponent = id get HealthComponent::class
             val targetMaxHp = targetHealthComponent.getMaxHealth()
             val targetHp = targetHealthComponent.getHealth()
-            if (targetHp < targetMaxHp / 2) {
+            if (targetHp < targetMaxHp * healThreshold) {
                 val amountToHeal = (targetMaxHp * 0.8f) - targetHp
                 val amountOfHealingProvided = min(selfHp.getHealth(), amountToHeal)
+                healedAmount = amountOfHealingProvided
                 selfHp.damage(amountOfHealingProvided)
                 targetHealthComponent.heal(amountOfHealingProvided)
             }
-            println("My name is Beer Goggles")
-            println("I am now at ${selfHp.getHealth()} health \nand have been activated ${selfActCounter.getActivations()} times")
-        })
+            Log.i("CardsSystem", "My name is Beer Goggles")
+            Log.i(
+                "CardsSystem",
+                "I am now at ${selfHp.getHealth()} health \nand have been activated ${selfActCounter.getActivations()} times"
+            )
+        }
+        val activationEffect =
+            DescribedEffect(onTurnStart) { "If you are under ${healThreshold * 100}% health, heal $healedAmount" }
+        limitedHealEntity add EffectComponent(onTurnStart = activationEffect)
 
         val targetEffectStackComp = (targetEntityId get EffectStackComponent::class)
         targetEffectStackComp addEntity (limitedHealEntity)
@@ -164,15 +180,22 @@ class CardsSystem @Inject constructor(private var multiSystem: MultiplierSystem)
         }catch (_: IllegalStateException){
             Log.e("CardsSystem", "Target entity has no multiplier component")
         }
+        val damage = 1f
+        val onTurnStart = { _: Int -> selfHp.damage(damage) }
+        val activationEffect =
+            DescribedEffect(onTurnStart) { "Take $damage damage" }
 
+        val onDeath = { targetId: Int ->
+            val targetMultiComp = targetId get MultiplierComponent::class
+            targetMultiComp.removeMultiplier(multiplier)
+        }
+
+        val onDeathEffect =
+            DescribedEffect(onDeath) { "Removes the $multiplier multiplier" }
         limitedMultiEntity add EffectComponent(
-            onTurnStart = { _: Int ->
-                selfHp.damage(1f)
-            },
-            onDeath = { targetId: Int ->
-                val targetMultiComp = targetId get MultiplierComponent::class
-                targetMultiComp.removeMultiplier(multiplier)
-            })
+            onTurnStart = activationEffect,
+            onDeath = onDeathEffect
+        )
     }
 
 }

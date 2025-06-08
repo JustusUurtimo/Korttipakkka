@@ -6,6 +6,7 @@ import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
+import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.components.misc.TickComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
@@ -16,6 +17,7 @@ import com.sq.thed_ck_licker.ecs.states.PlayerState
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.onDeathSystem
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.areRealTimeThingsEnabled
+import com.sq.thed_ck_licker.helpers.DescribedEffect
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
@@ -24,12 +26,14 @@ import javax.inject.Inject
 class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreationSystem) {
 
     fun initPlayer() {
-        getPlayerID() add HealthComponent(10000f)
+        getPlayerID() add HealthComponent(100f)
         getPlayerID() add ScoreComponent()
         getPlayerID() add DrawDeckComponent(initPlayerDeck() as MutableList<Int>)
         getPlayerID() add EffectStackComponent()
         getPlayerID() add DiscardDeckComponent(mutableListOf<Int>())
         getPlayerID() add MultiplierComponent()
+        getPlayerID() add LatestCardComponent(-100)
+
         if (areRealTimeThingsEnabled.value) {
             getPlayerID() add TickComponent(tickAction = healthTicker())
         }
@@ -104,7 +108,7 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
     }
 
     //This probably has some more sensible place than here.
-    private fun healthTicker(amountOfDamage: Float = 1f): (Int) -> Unit {
+    private fun healthTicker(amountOfDamage: Float = 1f): DescribedEffect {
         val theAction = { target: Int ->
             val targetHealth = target get HealthComponent::class
             targetHealth.damage(amountOfDamage)
@@ -112,6 +116,7 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
                 onDeathSystem()
             }
         }
-        return theAction
+        val describedEffect = DescribedEffect(theAction) { "Take damage on each trigger" }
+        return describedEffect
     }
 }
