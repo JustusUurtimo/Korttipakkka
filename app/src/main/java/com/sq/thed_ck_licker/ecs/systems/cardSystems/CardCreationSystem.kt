@@ -1,6 +1,5 @@
 package com.sq.thed_ck_licker.ecs.systems.cardSystems
 
-import android.R.attr.description
 import android.util.Log
 import com.sq.thed_ck_licker.R
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
@@ -35,7 +34,7 @@ class CardCreationSystem @Inject constructor(
         val onActivation: (Int) -> Unit = { _ ->
             GameEvents.tryEmit(GameEvent.ShovelUsed)
         }
-        val describedEffect = DescribedEffect(onActivation) { "This card digs a hole" }
+        val describedEffect = DescribedEffect(onActivation) { "Dig a hole" }
         return cardBuilder.buildCards {
             cardHealth = 10f
             cardAmount = amount
@@ -64,7 +63,7 @@ class CardCreationSystem @Inject constructor(
         val onActivation = { playerId: Int ->
             (playerId get HealthComponent::class).heal(healAmount)
         }
-        val describedEffect = DescribedEffect(onActivation) { "This card heals you ($healAmount)" }
+        val describedEffect = DescribedEffect(onActivation) { "Heal ($healAmount)" }
         return cardBuilder.buildCards {
             cardAmount = amount
             cardImage = R.drawable.heal_10
@@ -78,7 +77,7 @@ class CardCreationSystem @Inject constructor(
         val onActivation = { targetId: Int ->
             (targetId get HealthComponent::class).damage(damageAmount)
         }
-        val describedEffect = DescribedEffect(onActivation) { "This card deals damage to you ($damageAmount)" }
+        val describedEffect = DescribedEffect(onActivation) { "Take damage ($damageAmount)" }
         return cardBuilder.buildCards {
             cardAmount = amount
             cardImage = R.drawable.damage_6
@@ -92,7 +91,7 @@ class CardCreationSystem @Inject constructor(
             val cardEntity = (getPlayerID() get LatestCardComponent::class).latestCard
             MerchantEvents.tryEmit(MerchantEvent.MerchantShopOpened(merchantId, cardEntity))
         }
-        val describedEffect = DescribedEffect(openMerchant) { "Activate to access shop" }
+        val describedEffect = DescribedEffect(openMerchant) { "Gain access to a shop" }
         return cardBuilder.buildCards {
             cardAmount = amount
             name = "Merchant #$merchantId"

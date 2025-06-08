@@ -56,19 +56,19 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         val timeBoundCards = cardCreationSystem.addTimeBoundTestCards(1)
         
         return emptyList<Int>() +
-                playerHealingCards +
-                playerDamageCards +
+//                playerHealingCards +
+//                playerDamageCards +
                 defaultCards +
-                deactivationCards +
-                trapCards +
-                scoreGainerCards +
-                beerGogglesCards +
-                maxHpCards +
-                merchantCards +
-                basicScoreCards +
-                multiplierCards +
+//                deactivationCards +
+//                trapCards +
+//                scoreGainerCards +
+//                beerGogglesCards +
+//                maxHpCards +
+//                merchantCards +
+//                basicScoreCards +
+//                multiplierCards +
                 corruptionCards +
-                timeBoundCards +
+//                timeBoundCards +
                 emptyList<Int>()
     }
 
