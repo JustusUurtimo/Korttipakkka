@@ -5,32 +5,23 @@ import androidx.compose.runtime.MutableIntState
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
-import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
-import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
-import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
-import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
-import com.sq.thed_ck_licker.ecs.managers.ComponentManager.Companion.componentManager
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.managers.GameEvent
 import com.sq.thed_ck_licker.ecs.managers.GameEvents
-import com.sq.thed_ck_licker.ecs.managers.add
-import com.sq.thed_ck_licker.ecs.managers.generateEntity
 import com.sq.thed_ck_licker.ecs.managers.get
+import com.sq.thed_ck_licker.ecs.systems.characterSystems.PlayerSystem
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.MultiplierSystem
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.discardSystem
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.onDeathSystem
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.onTurnStartEffectStackSystem
-import com.sq.thed_ck_licker.helpers.DescribedEffect
-import com.sq.thed_ck_licker.helpers.HelperSystemModule
 import com.sq.thed_ck_licker.helpers.getRandomElement
 import javax.inject.Inject
-import kotlin.math.min
 
-class CardsSystem @Inject constructor(private var multiSystem: MultiplierSystem) {
-    init {
-        multiSystem = HelperSystemModule.provideMultiplierSystem(componentManager)
-    }
+class CardsSystem @Inject constructor(
+    private var multiSystem: MultiplierSystem,
+    private val playerSystem: PlayerSystem
+) {
 
     fun pullRandomCardFromEntityDeck(entityId: Int): Int {
         val drawDeckComponent = (entityId get DrawDeckComponent::class)
@@ -46,28 +37,25 @@ class CardsSystem @Inject constructor(private var multiSystem: MultiplierSystem)
     }
 
     fun cardActivation(
-        latestCard: MutableIntState,
         playerCardCount: MutableIntState
     ) {
         Log.v("CardsSystem", "Card activation started. Turn started.")
         onTurnStartEffectStackSystem()
-        activateCard(latestCard, playerCardCount)
+        activateCard(playerCardCount)
         multiSystem.multiplyEntityAgainstOldItself(getPlayerID())
         multiSystem.addEntity(getPlayerID())
         onDeathSystem()
         Log.v("CardsSystem", "Card activation finished. Turn finished.")
     }
 
-    private fun activateCard(latestCard: MutableIntState, playerCardCount: MutableIntState) {
-        playerCardCount.intValue += 1
-        val latestCardId = latestCard.intValue
-        val latestCardComponent = (getPlayerID() get LatestCardComponent::class)
-        latestCardComponent.latestCard = latestCardId
+    private fun activateCard(playerCardCount: MutableIntState) {
+        val latestCard = playerSystem.getLatestCard()
 
+        playerCardCount.intValue += 1
         var latestCardHp: HealthComponent? = null
 
         try {
-            latestCardHp = (latestCardId get HealthComponent::class)
+            latestCardHp = (latestCard get HealthComponent::class)
         } catch (_: IllegalStateException) {
             Log.i(
                 "CardsSystem",
@@ -78,7 +66,7 @@ class CardsSystem @Inject constructor(private var multiSystem: MultiplierSystem)
 
 
         try {
-            (latestCardId get EffectComponent::class).onPlay.action.invoke(getPlayerID())
+            (latestCard get EffectComponent::class).onPlay.action.invoke(getPlayerID())
         } catch (_: IllegalStateException) {
             Log.i(
                 "CardsSystem",
@@ -94,12 +82,12 @@ class CardsSystem @Inject constructor(private var multiSystem: MultiplierSystem)
                 "Health is now ${latestCardHp.getHealth()}"
             )
             if (latestCardHp.getHealth() <= 0) {
-                latestCard.intValue = -1
+                playerSystem.setLatestCard(-1)
             }
         } ?: Log.i("CardsSystem", "No health component found for activation")
 
         try {
-            (latestCardId get ActivationCounterComponent::class).activate()
+            (latestCard get ActivationCounterComponent::class).activate()
         } catch (_: IllegalStateException) {
             Log.i(
                 "CardsSystem",
@@ -107,95 +95,8 @@ class CardsSystem @Inject constructor(private var multiSystem: MultiplierSystem)
                         "Yeah yeah, we get it, you are so cool there was no actCounter component"
             )
         }
-        discardSystem(ownerId = getPlayerID(), cardId = latestCardId)
-        latestCard.intValue = -1
-    }
-
-    fun addPassiveScoreGainerToEntity(targetId: Int, pointsPerCard: Int = 3) {
-
-        val gainerEntity = generateEntity()
-        val activationCounter = ActivationCounterComponent()
-        val activateAction = { id: Int ->
-            val targetScoreComp = id get ScoreComponent::class
-            activationCounter.activate()
-            targetScoreComp.addScore(pointsPerCard)
-        }
-        val activationEffect =
-            DescribedEffect(activateAction) { "Gain $pointsPerCard points per card played" }
-        gainerEntity add activationCounter
-        gainerEntity add EffectComponent(onTurnStart = activationEffect)
-
-        val targetEffectStackComp = (targetId get EffectStackComponent::class)
-        targetEffectStackComp addEntity (gainerEntity)  // I think i have gone mad from the power
-    }
-
-    fun addLimitedSupplyAutoHealToEntity(targetEntityId: Int, health: Float) {
-        val limitedHealEntity = generateEntity()
-        val selfHp = HealthComponent(health)
-        limitedHealEntity add selfHp
-        val selfActCounter = ActivationCounterComponent()
-        limitedHealEntity add selfActCounter
-
-        val healThreshold = 0.5f
-        var healedAmount = 0f
-        val onTurnStart: (Int) -> Unit = { id: Int ->
-            val targetHealthComponent = id get HealthComponent::class
-            val targetMaxHp = targetHealthComponent.getMaxHealth()
-            val targetHp = targetHealthComponent.getHealth()
-            if (targetHp < targetMaxHp * healThreshold) {
-                val amountToHeal = (targetMaxHp * 0.8f) - targetHp
-                val amountOfHealingProvided = min(selfHp.getHealth(), amountToHeal)
-                healedAmount = amountOfHealingProvided
-                selfHp.damage(amountOfHealingProvided)
-                targetHealthComponent.heal(amountOfHealingProvided)
-            }
-            Log.i("CardsSystem", "My name is Beer Goggles")
-            Log.i(
-                "CardsSystem",
-                "I am now at ${selfHp.getHealth()} health \nand have been activated ${selfActCounter.getActivations()} times"
-            )
-        }
-        val activationEffect =
-            DescribedEffect(onTurnStart) { "If you are under ${healThreshold * 100}% health, heal $healedAmount" }
-        limitedHealEntity add EffectComponent(onTurnStart = activationEffect)
-
-        val targetEffectStackComp = (targetEntityId get EffectStackComponent::class)
-        targetEffectStackComp addEntity (limitedHealEntity)
-    }
-
-    fun addTemporaryMultiplierTo(
-        targetEntityId: Int,
-        health: Float = 10f,
-        multiplier: Float = 2.8f
-    ) {
-        val limitedMultiEntity = generateEntity()
-        val selfHp = HealthComponent(health)
-        limitedMultiEntity add selfHp
-        limitedMultiEntity add ActivationCounterComponent()
-
-
-        try {
-            val targetMultiComp = targetEntityId get MultiplierComponent::class
-            targetMultiComp.timesMultiplier(multiplier)
-        }catch (_: IllegalStateException){
-            Log.e("CardsSystem", "Target entity has no multiplier component")
-        }
-        val damage = 1f
-        val onTurnStart = { _: Int -> selfHp.damage(damage) }
-        val activationEffect =
-            DescribedEffect(onTurnStart) { "Take $damage damage" }
-
-        val onDeath = { targetId: Int ->
-            val targetMultiComp = targetId get MultiplierComponent::class
-            targetMultiComp.removeMultiplier(multiplier)
-        }
-
-        val onDeathEffect =
-            DescribedEffect(onDeath) { "Removes the $multiplier multiplier" }
-        limitedMultiEntity add EffectComponent(
-            onTurnStart = activationEffect,
-            onDeath = onDeathEffect
-        )
+        discardSystem(ownerId = getPlayerID(), cardId = latestCard)
+        playerSystem.setLatestCard(-1)
     }
 
 }

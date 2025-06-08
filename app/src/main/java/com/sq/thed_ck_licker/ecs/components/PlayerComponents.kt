@@ -1,13 +1,17 @@
 package com.sq.thed_ck_licker.ecs.components
 
 import android.util.Log
+import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.mutableIntStateOf
 import com.sq.thed_ck_licker.ecs.managers.ComponentManager
 import com.sq.thed_ck_licker.ecs.managers.EntityId
 import com.sq.thed_ck_licker.ecs.managers.hasComponent
 import javax.inject.Inject
 
 
-data class DrawDeckComponent @Inject constructor(private val drawCardDeck: MutableList<Int> ) {
+data class DrawDeckComponent @Inject constructor(
+    private val drawCardDeck: MutableList<Int>,
+) {
     fun getSize(): Int {
         return this.drawCardDeck.size
     }
@@ -15,17 +19,18 @@ data class DrawDeckComponent @Inject constructor(private val drawCardDeck: Mutab
     fun getDrawCardDeck(): MutableList<Int> {
         return this.drawCardDeck
     }
+
     fun removeCards(cards: List<Int>) {
         this.drawCardDeck.removeAll(cards)
     }
+
     fun removeCard(cardId: Int) {
         this.drawCardDeck.remove(cardId)
     }
 }
 
 
-
-data class DiscardDeckComponent @Inject constructor (private val discardDeck: MutableList<Int>) {
+data class DiscardDeckComponent @Inject constructor(private val discardDeck: MutableList<Int>) {
     fun getSize(): Int {
         return this.discardDeck.size
     }
@@ -37,6 +42,7 @@ data class DiscardDeckComponent @Inject constructor (private val discardDeck: Mu
     fun removeCards(cards: List<Int>) {
         this.discardDeck.removeAll(cards)
     }
+
     fun addCard(cardId: Int) {
         this.discardDeck.add(cardId)
     }
@@ -46,6 +52,7 @@ data class EffectStackComponent(private val effectEntities: MutableList<EntityId
     fun getEffectEntities(): List<EntityId> {
         return this.effectEntities
     }
+
     fun removeEntities(entities: List<EntityId>) {
         this.effectEntities.removeAll(entities)
     }

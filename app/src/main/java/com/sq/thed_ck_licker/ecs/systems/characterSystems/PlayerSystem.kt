@@ -32,7 +32,7 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         getPlayerID() add EffectStackComponent()
         getPlayerID() add DiscardDeckComponent(mutableListOf<Int>())
         getPlayerID() add MultiplierComponent()
-        getPlayerID() add LatestCardComponent(-100)
+        getPlayerID() add LatestCardComponent()
 
         if (areRealTimeThingsEnabled.value) {
             getPlayerID() add TickComponent(tickAction = healthTicker())
@@ -93,16 +93,26 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         (getPlayerID() get DrawDeckComponent::class).removeCard(cardId)
     }
 
+    fun getLatestCard(): Int {
+        return (getPlayerID() get LatestCardComponent::class).getLatestCard()
+    }
+
+    fun setLatestCard(cardId: Int) {
+        (getPlayerID() get LatestCardComponent::class).setLatestCard(cardId)
+    }
+
     fun playerUpdates(): Flow<PlayerState> {
         return combine(
             snapshotFlow { getPlayerHealth() },
             snapshotFlow { getPlayerMaxHealth() },
-            snapshotFlow { getPlayerScore() }
-        ) { health, maxHealth, score ->
+            snapshotFlow { getPlayerScore() },
+            snapshotFlow { getLatestCard() }
+        ) { health, maxHealth, score, latestCard ->
             PlayerState(
                 health = health,
                 maxHealth = maxHealth,
-                score = score
+                score = score,
+                latestCard = latestCard
             )
         }
     }

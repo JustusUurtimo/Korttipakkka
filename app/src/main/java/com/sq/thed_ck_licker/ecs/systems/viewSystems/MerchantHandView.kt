@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,36 +32,31 @@ fun MerchantHandView(
 
     Box(
         modifier = modifier
-            .height(225.dp)
-            .background(
-                color = Color.Magenta
-            ),
+            .height(250.dp)
+            .background(Color.Magenta)
     ) {
-        Row(
-            modifier = modifier
-                .fillMaxWidth()
-                .height(170.dp)
-                .background(Color.Magenta)
-        ) {
-            for (card in merchantHand) {
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(8.dp)
-                ) {
-                    CardView(
-                        card,
-                        { chooseMerchantCard(card) },
-                        Modifier.fillMaxSize()
-                    )
+        Column(modifier = modifier
+            .padding(16.dp)
+            .wrapContentSize(Alignment.Center)) {
+            Row {
+                for (card in merchantHand) {
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(8.dp)
+                    ) {
+                        CardView(
+                            card,
+                            { chooseMerchantCard(card) },
+                            modifier.height(150.dp)
+                        )
+                    }
                 }
             }
-
+            Button(
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                onClick = onReRollShop
+            ) { Text("Re-roll shop") }
         }
-        Button(
-            modifier = modifier
-                .align(Alignment.BottomCenter),
-            onClick = onReRollShop
-        ) { Text("Re-roll shop") }
     }
 }

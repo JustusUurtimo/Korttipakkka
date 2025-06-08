@@ -1,6 +1,5 @@
 package com.sq.thed_ck_licker.ecs.systems
 
-import androidx.compose.runtime.MutableIntState
 import com.sq.thed_ck_licker.ecs.components.IdentificationComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent
 import com.sq.thed_ck_licker.ecs.managers.get
@@ -14,10 +13,9 @@ class PitSystem @Inject constructor(
     private val merchantSystem: MerchantSystem,
     private val cardPullingSystem: CardPullingSystem,
 ) {
-    fun dropCardInHole(latestCard: MutableIntState) {
-        if (latestCard.intValue == -1) return
-        val latestCardId = latestCard.intValue
-        val tagsComponent = latestCardId get TagsComponent::class
+    fun dropCardInHole(latestCard: Int) {
+        if (latestCard == -1) return
+        val tagsComponent = latestCard get TagsComponent::class
 
         if (tagsComponent.cardIsMerchant()) {
             handleMerchantCard(latestCard)
@@ -27,10 +25,9 @@ class PitSystem @Inject constructor(
     }
 
     // Helper Methods
-    private fun handleMerchantCard(latestCard: MutableIntState) {
-        val cardId = latestCard.intValue
+    private fun handleMerchantCard(latestCard: Int) {
         if (MyRandom.getRandomInt() <= 3) {
-            val merchantId: Int? = (cardId get IdentificationComponent::class).getCharacterId()
+            val merchantId: Int? = (latestCard get IdentificationComponent::class).getCharacterId()
             merchantId?.let {
                 merchantSystem.updateMerchantAffinity(-500, it)
             }
@@ -40,10 +37,9 @@ class PitSystem @Inject constructor(
         }
     }
 
-    private fun handleCardDrop(latestCard: MutableIntState, bonusScore: Int) {
-        val cardId = latestCard.intValue
-        playerSystem.removeCardFromDrawDeck(cardId)
-        latestCard.intValue = -1
+    private fun handleCardDrop(latestCard: Int, bonusScore: Int) {
+        playerSystem.removeCardFromDrawDeck(latestCard)
+        playerSystem.setLatestCard(-1)
         playerSystem.updateScore(bonusScore)
     }
 }

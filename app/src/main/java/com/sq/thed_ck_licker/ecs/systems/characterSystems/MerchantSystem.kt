@@ -1,7 +1,6 @@
 package com.sq.thed_ck_licker.ecs.systems.characterSystems
 
-import EntityMemoryComponent
-import androidx.compose.runtime.MutableIntState
+import com.sq.thed_ck_licker.ecs.components.misc.EntityMemoryComponent
 import androidx.compose.runtime.snapshotFlow
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
@@ -62,7 +61,7 @@ class MerchantSystem @Inject constructor(
         (merchantCardId get ActivationCounterComponent::class).activate()
     }
 
-    fun chooseMerchantCard(latestCard: MutableIntState, newCard: Int, activeMerchant: Int) {
+    fun chooseMerchantCard(newCard: Int, activeMerchant: Int) {
         val merchantAffinity : Int = (activeMerchant get(EntityMemoryComponent::class)).getAffinity()
         when {
             (merchantAffinity >= 500) -> {playerSystem.updateScore(-50)}
@@ -70,7 +69,7 @@ class MerchantSystem @Inject constructor(
             else -> {playerSystem.updateScore(-100)}
         }
         updateMerchantAffinity(10, activeMerchant)
-        latestCard.intValue = newCard
+        playerSystem.setLatestCard(newCard)
         MerchantEvents.tryEmit(MerchantEvent.MerchantShopClosed)
     }
 
