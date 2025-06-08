@@ -210,7 +210,7 @@ class CardCreationSystem @Inject constructor(
         val onActivation = { playerId: Int ->
             cardsSystem.addPassiveScoreGainerToEntity(playerId, pointsPerCard)
         }
-        val activationEffect = DescribedEffect(onActivation) { "Gain Score gainer\n Every time you play card you gain $pointsPerCard points" }// TODO: fix this
+        val activationEffect = DescribedEffect(onActivation) { "Gain Score gainer\n Every time you play card you gain $pointsPerCard points" }
         return cardBuilder.buildCards {
             cardHealth = 1f
             scoreAmount = pointsPerCard
@@ -221,10 +221,11 @@ class CardCreationSystem @Inject constructor(
     }
 
     fun addBeerGogglesTestCards(amount: Int = 1): List<EntityId> {
+        val healLimit = 150f
         val onActivation = { playerId: Int ->
-            cardsSystem.addLimitedSupplyAutoHealToEntity(playerId, 150f)
+            cardsSystem.addLimitedSupplyAutoHealToEntity(playerId, healLimit)
         }
-        val activationEffect = DescribedEffect(onActivation) { "Equip Beer Goggles that will heal you bit (???)" }// TODO: fix this
+        val activationEffect = DescribedEffect(onActivation) { "Equip Beer Goggles that will heal you bit (up to $healLimit health points)" }
         return cardBuilder.buildCards {
             cardHealth = 1f
             cardAmount = amount
@@ -234,10 +235,14 @@ class CardCreationSystem @Inject constructor(
     }
 
     fun addTempMultiplierTestCards(amount: Int = 1): List<EntityId> {
+        val multiplier = 2.8f
         val onActivation = { targetId: Int ->
-            cardsSystem.addTemporaryMultiplierTo(targetId)
+            cardsSystem.addTemporaryMultiplierTo(
+                targetEntityId = targetId,
+                multiplier = multiplier
+            )
         }
-        val activationEffect = DescribedEffect(onActivation) { "Inject steroids and make more every time you do any thing (???)" }// TODO: fix this
+        val activationEffect = DescribedEffect(onActivation) { "Inject steroids and make more every time you do any thing ($multiplier times)" }
         return cardBuilder.buildCards {
             cardHealth = 1f
             cardAmount = amount
@@ -283,8 +288,9 @@ class CardCreationSystem @Inject constructor(
             card add second
             playerDiscardDeck.getDiscardDeck().add(card)
         }
-        val activationEffect = DescribedEffect(onActivation) { "Corrupt up to 1 card(s) in discard" }// TODO: fix this
-        val deactivationEffect = DescribedEffect(onDeactivation) { "Corrupt up to 1 card(s) in draw deck (???)" }// TODO: fix this
+        val activationEffect = DescribedEffect(onActivation) { "Corrupt 1 card(s) in discard" }
+        val deactivationEffect =
+            DescribedEffect(onDeactivation) { "Corrupt 1 card(s) in draw deck" }
         return cardBuilder.buildCards {
             cardHealth = 20f
             cardAmount = amount

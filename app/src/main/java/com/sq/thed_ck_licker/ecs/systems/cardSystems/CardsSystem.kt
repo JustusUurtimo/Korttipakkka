@@ -114,15 +114,15 @@ class CardsSystem @Inject constructor(private var multiSystem: MultiplierSystem)
     fun addPassiveScoreGainerToEntity(targetId: Int, pointsPerCard: Int = 3) {
 
         val gainerEntity = generateEntity()
-        val gainerActCounterComp = ActivationCounterComponent()
+        val activationCounter = ActivationCounterComponent()
         val activateAction = { id: Int ->
             val targetScoreComp = id get ScoreComponent::class
-            gainerActCounterComp.activate()
+            activationCounter.activate()
             targetScoreComp.addScore(pointsPerCard)
         }
         val activationEffect =
-            DescribedEffect(activateAction) { "Gain $pointsPerCard points per card played" }// TODO: fix this
-        gainerEntity add gainerActCounterComp
+            DescribedEffect(activateAction) { "Gain $pointsPerCard points per card played" }
+        gainerEntity add activationCounter
         gainerEntity add EffectComponent(onTurnStart = activationEffect)
 
         val targetEffectStackComp = (targetId get EffectStackComponent::class)
@@ -136,21 +136,27 @@ class CardsSystem @Inject constructor(private var multiSystem: MultiplierSystem)
         val selfActCounter = ActivationCounterComponent()
         limitedHealEntity add selfActCounter
 
-        val onTurnStart = { id: Int ->
+        val healThreshold = 0.5f
+        var healedAmount = 0f
+        val onTurnStart: (Int) -> Unit = { id: Int ->
             val targetHealthComponent = id get HealthComponent::class
             val targetMaxHp = targetHealthComponent.getMaxHealth()
             val targetHp = targetHealthComponent.getHealth()
-            if (targetHp < targetMaxHp / 2) {
+            if (targetHp < targetMaxHp * healThreshold) {
                 val amountToHeal = (targetMaxHp * 0.8f) - targetHp
                 val amountOfHealingProvided = min(selfHp.getHealth(), amountToHeal)
+                healedAmount = amountOfHealingProvided
                 selfHp.damage(amountOfHealingProvided)
                 targetHealthComponent.heal(amountOfHealingProvided)
             }
-            println("My name is Beer Goggles")
-            println("I am now at ${selfHp.getHealth()} health \nand have been activated ${selfActCounter.getActivations()} times")
+            Log.i("CardsSystem", "My name is Beer Goggles")
+            Log.i(
+                "CardsSystem",
+                "I am now at ${selfHp.getHealth()} health \nand have been activated ${selfActCounter.getActivations()} times"
+            )
         }
         val activationEffect =
-            DescribedEffect(onTurnStart) { "If you are under 80% health, heal ???" }// TODO: fix this
+            DescribedEffect(onTurnStart) { "If you are under ${healThreshold * 100}% health, heal $healedAmount" }
         limitedHealEntity add EffectComponent(onTurnStart = activationEffect)
 
         val targetEffectStackComp = (targetEntityId get EffectStackComponent::class)
@@ -177,7 +183,7 @@ class CardsSystem @Inject constructor(private var multiSystem: MultiplierSystem)
         val damage = 1f
         val onTurnStart = { _: Int -> selfHp.damage(damage) }
         val activationEffect =
-            DescribedEffect(onTurnStart) { "Take $damage damage" }// TODO: fix this
+            DescribedEffect(onTurnStart) { "Take $damage damage" }
 
         val onDeath = { targetId: Int ->
             val targetMultiComp = targetId get MultiplierComponent::class
@@ -185,7 +191,7 @@ class CardsSystem @Inject constructor(private var multiSystem: MultiplierSystem)
         }
 
         val onDeathEffect =
-            DescribedEffect(onDeath) { "Remove $multiplier multiplier" }// TODO: fix this
+            DescribedEffect(onDeath) { "Removes the $multiplier multiplier" }
         limitedMultiEntity add EffectComponent(
             onTurnStart = activationEffect,
             onDeath = onDeathEffect

@@ -42,7 +42,7 @@ data class TagsComponent(private val tags: List<CardTag> = emptyList()) {
  * Used to keep track of how many times a card has been activated
  *
  *
- * TODO: Think long and hard if there is way or need for this to be event, observer or subscribe style thing.
+ *  Think long and hard if there is way or need for this to be event, observer or subscribe style thing.
  *  I mean it would be nice and make sense that this gets hooked up into things.
  *  That could allow us to not farm this to every thing and risk duplicate counting.
  */

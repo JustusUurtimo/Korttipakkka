@@ -26,7 +26,7 @@ import javax.inject.Inject
 class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreationSystem) {
 
     fun initPlayer() {
-        getPlayerID() add HealthComponent(10000f)
+        getPlayerID() add HealthComponent(100f)
         getPlayerID() add ScoreComponent()
         getPlayerID() add DrawDeckComponent(initPlayerDeck() as MutableList<Int>)
         getPlayerID() add EffectStackComponent()
@@ -56,19 +56,19 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         val timeBoundCards = cardCreationSystem.addTimeBoundTestCards(1)
         
         return emptyList<Int>() +
-//                playerHealingCards +
-//                playerDamageCards +
+                playerHealingCards +
+                playerDamageCards +
                 defaultCards +
-//                deactivationCards +
-//                trapCards +
-//                scoreGainerCards +
-//                beerGogglesCards +
-//                maxHpCards +
-//                merchantCards +
-//                basicScoreCards +
-//                multiplierCards +
+                deactivationCards +
+                trapCards +
+                scoreGainerCards +
+                beerGogglesCards +
+                maxHpCards +
+                merchantCards +
+                basicScoreCards +
+                multiplierCards +
                 corruptionCards +
-//                timeBoundCards +
+                timeBoundCards +
                 emptyList<Int>()
     }
 

@@ -27,8 +27,6 @@ fun CardDeck(
     navigationBarPadding: PaddingValues,
     pullNewCard: () -> Unit
 ) {
-    // TODO: This probably should only be the deck, and as always the positioning should be relative, not absolute
-
     Box(
         modifier = Modifier
             .fillMaxSize()
