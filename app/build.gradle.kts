@@ -84,6 +84,11 @@ sonar {
         property("sonar.projectKey", "JustusUurtimo_Korttipakkka")
         property("sonar.organization", "korttipakka")
         property("sonar.host.url", "https://sonarcloud.io")
+        property(
+            "sonar.coverage.jacoco.xmlReportPaths",
+            // Corrected path based on your finding:
+            "${layout.buildDirectory.get()}/reports/kover/reportDebug.xml"
+        )
     }
 }
 
