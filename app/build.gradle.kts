@@ -1,4 +1,6 @@
 import com.android.build.api.dsl.TestCoverage
+import org.gradle.kotlin.dsl.main
+import org.gradle.kotlin.dsl.test
 
 plugins {
     alias(libs.plugins.android.application)
@@ -13,6 +15,8 @@ plugins {
     id("org.sonarqube")
 
 //    id("org.jetbrains.kotlinx.kover") version "0.9.1"
+
+    id("pl.droidsonroids.pitest")
 }
 var isDebug by extra(true)
 
@@ -135,6 +139,20 @@ kover {
     }
 }
 
+
+pitest{
+    targetClasses.set(setOf("${project.group}.*")) //by default "${project.group}.*"
+    pitestVersion.set("1.19.5") //not needed when a default PIT version should be used
+    threads.set(4)
+    outputFormats.set(setOf("XML", "HTML"))
+    timestampedReports.set(false)
+    useClasspathFile.set(true)     //useful with bigger projects on Windows
+    fileExtensionsToFilter.addAll("xml", "orbit")
+    jvmArgs.set(listOf("-Xmx1024m"))
+    useClasspathFile.set(true) //useful with bigger projects on Windows
+    fileExtensionsToFilter.addAll("xml", "orbit")
+    verbose = true
+}
 
 
 dependencies {

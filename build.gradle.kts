@@ -18,6 +18,8 @@ buildscript{
     dependencies {
         classpath(libs.android.junit5)
         classpath("org.bouncycastle:bcutil-jdk18on:1.78.1")
+
+        classpath("pl.droidsonroids.gradle:gradle-pitest-plugin:0.2.21")
     }
 
 }
