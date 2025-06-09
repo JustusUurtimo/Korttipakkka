@@ -24,15 +24,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.TickingSystem
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.CardDeck
-import com.sq.thed_ck_licker.ecs.systems.viewSystems.DeathScreen
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.HoleView
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.PlayerHandView
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.PullCardButton
-import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.areRealTimeThingsEnabled
 import com.sq.thed_ck_licker.player.HealthBar
 import com.sq.thed_ck_licker.player.ScoreDisplay
 import com.sq.thed_ck_licker.viewModels.GameViewModel
-import com.sq.thed_ck_licker.viewModels.MerchantViewModel
 import com.sq.thed_ck_licker.viewModels.PlayerViewModel
 import kotlinx.coroutines.delay
 
@@ -45,7 +42,6 @@ fun Game(
 ) {
     val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues()
     val playerCardCount = rememberSaveable { mutableIntStateOf(0) }
-    val isPlayerDead by gameViewModel.isPlayerDead.collectAsState()
     val isShovelUsed by gameViewModel.isShovelUsed.collectAsState()
     val playerState by playerViewModel.playerState.collectAsState()
 
@@ -54,10 +50,7 @@ fun Game(
     Column(modifier.fillMaxWidth()) {
         HealthBar(playerState.health, playerState.maxHealth, modifier.padding(innerPadding))
         ScoreDisplay(playerState.score)
-        if (isPlayerDead) {
-            DeathScreen(
-                onRetry = { gameViewModel.restartGame() })
-        }
+
         if (isShovelUsed) {
             HoleView(
                 modifier,

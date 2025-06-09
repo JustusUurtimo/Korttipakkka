@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
-        worldCreationSystem.createWorld()
+        worldCreationSystem.destroyWorld()
         enableEdgeToEdge()
         setContent {
             TheD_ck_LickerTheme {

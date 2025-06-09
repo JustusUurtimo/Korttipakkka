@@ -20,4 +20,21 @@ class GameNavigator @Inject constructor() {
     fun navigateTo(route: String) {
         navController.navigate(route)
     }
+
+    fun navigateBack() {
+        navController.popBackStack()
+    }
+
+    fun leaveGame() {
+
+        navController.navigate(Screen.MainMenu.route) {
+            popUpTo(0) { inclusive = true }
+        }
+    }
+
+    fun restartGame() {
+        navController.navigate(Screen.Game.route) {
+            popUpTo(0) { inclusive = true }
+        }
+    }
 }
