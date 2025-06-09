@@ -140,9 +140,32 @@ kover {
     }
 }
 
+//tasks.named("pitestSuper_debug") {
+//    dependsOn("compileSuper_debugKotlin")
+//}
+//tasks.named("pitest") {
+//    dependsOn("compileSuper_debugKotlin")
+//}
+
+tasks.matching { it.name.startsWith("pitest") }.configureEach {
+    dependsOn(
+        tasks.matching { t -> t.name.startsWith("compile") && t.name.endsWith("Kotlin") }
+    )
+}
+
+
 
 pitest{
-    targetClasses.set(setOf("${project.group}.*")) //by default "${project.group}.*"
+    // Match the main class you want to mutate
+    targetClasses.set(
+        setOf("com.sq.thed_ck_licker.*")
+    )
+
+    // Ensure PIT finds your test class
+    targetTests.set(
+        setOf("com.sq.thed_ck_licker.*")
+    )
+//    targetClasses.set(setOf("${project.group}.*")) //by default "${project.group}.*"
     pitestVersion.set("1.19.5") //not needed when a default PIT version should be used
     threads.set(4)
     outputFormats.set(setOf("XML", "HTML"))
