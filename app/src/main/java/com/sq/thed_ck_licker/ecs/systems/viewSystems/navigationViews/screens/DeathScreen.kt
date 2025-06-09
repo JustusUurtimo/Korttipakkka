@@ -1,9 +1,8 @@
-package com.sq.thed_ck_licker.ecs.systems.viewSystems
+package com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
@@ -23,6 +22,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
@@ -32,15 +32,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.rememberNavController
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.sq.thed_ck_licker.helpers.navigation.GameNavigator
 import com.sq.thed_ck_licker.helpers.navigation.Screen
+import com.sq.thed_ck_licker.viewModels.PlayerViewModel
 
 
 @Composable
 fun DeathScreen(
     onRetry: () -> Unit,
-    modifier: Modifier = Modifier
+    onLeaveGame: () -> Unit,
+    modifier: Modifier = Modifier,
+    playerViewModel: PlayerViewModel = hiltViewModel(),
 ) {
+    val playerState by playerViewModel.playerState.collectAsState()
+
     var visibility by remember { mutableFloatStateOf(0f) }
     LaunchedEffect(Unit) {
         visibility = 1f
@@ -104,6 +110,10 @@ fun DeathScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
+            Text(text = "SCORE: ${playerState.score}")
+
+            Spacer(modifier = Modifier.height(24.dp))
+
             Button(
                 onClick = onRetry,
                 modifier = Modifier.fillMaxWidth(0.6f)
@@ -114,7 +124,7 @@ fun DeathScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedButton(
-                onClick = {  },
+                onClick = onLeaveGame ,
                 modifier = Modifier.fillMaxWidth(0.6f)
             ) {
                 Text("Quit to Menu")

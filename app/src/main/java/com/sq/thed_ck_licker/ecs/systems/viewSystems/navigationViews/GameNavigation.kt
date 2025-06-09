@@ -15,7 +15,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.sq.thed_ck_licker.ecs.systems.viewSystems.DeathScreen
+import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.DeathScreen
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.Game
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.HighScoresScreen
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.MainMenuScreen
@@ -83,7 +83,11 @@ fun GameNavigation(
             exitTransition = {
                 slideOutHorizontally { width -> -width }
             })
-        { DeathScreen(onRetry = { gameViewModel.restartGame() }) }
+        { DeathScreen(
+            onRetry = { gameViewModel.restartGame() },
+            onLeaveGame = { gameViewModel.leaveGame() },
+            modifier = modifier
+        ) }
 
         composable(route = Screen.MerchantShop.route)
         {
