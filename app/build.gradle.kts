@@ -1,8 +1,3 @@
-import com.android.build.api.dsl.TestCoverage
-import com.android.build.gradle.internal.tasks.factory.dependsOn
-import org.gradle.kotlin.dsl.main
-import org.gradle.kotlin.dsl.test
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -15,7 +10,6 @@ plugins {
     id("com.google.devtools.ksp")
     id("org.sonarqube")
 
-//    id("org.jetbrains.kotlinx.kover") version "0.9.1"
 
     id("pl.droidsonroids.pitest")
 }
@@ -73,12 +67,8 @@ android {
     testOptions {
         unitTests.all {
             it.useJUnitPlatform {
-//                fun TestCoverage.() {
-//
-//                }
             }
         }
-//        unitTests.returnDefaultValues = true
         unitTests.isReturnDefaultValues = true
 
     }
@@ -113,12 +103,6 @@ kover {
         }
 
         variant("release") {
-//            html{
-////                onCheck = false
-//            }
-//            xml{
-////                onCheck = false
-//            }
             // verification only for 'release' build variant
             verify {
                 rule {
@@ -140,42 +124,37 @@ kover {
     }
 }
 
-//tasks.named("pitestSuper_debug") {
-//    dependsOn("compileSuper_debugKotlin")
-//}
-//tasks.named("pitest") {
-//    dependsOn("compileSuper_debugKotlin")
-//}
-
 tasks.matching { it.name.startsWith("pitest") }.configureEach {
     dependsOn(
         tasks.matching { t -> t.name.startsWith("compile") && t.name.endsWith("Kotlin") }
     )
 }
 
-
-
 pitest{
-    // Match the main class you want to mutate
+//    targetClasses.set(
+//        setOf("com.sq.thed_ck_licker.ecs.*")
+//    )
+//    targetTests.set(
+//        setOf("com.sq.thed_ck_licker.ecs.*")
+//    )
+
     targetClasses.set(
         setOf("com.sq.thed_ck_licker.*")
     )
-
-    // Ensure PIT finds your test class
     targetTests.set(
         setOf("com.sq.thed_ck_licker.*")
     )
-//    targetClasses.set(setOf("${project.group}.*")) //by default "${project.group}.*"
-    pitestVersion.set("1.19.5") //not needed when a default PIT version should be used
+    pitestVersion.set("1.19.5")
     threads.set(4)
     outputFormats.set(setOf("XML", "HTML"))
     timestampedReports.set(false)
-    useClasspathFile.set(true)     //useful with bigger projects on Windows
+    useClasspathFile.set(true)
     fileExtensionsToFilter.addAll("xml", "orbit")
     jvmArgs.set(listOf("-Xmx1024m"))
-    useClasspathFile.set(true) //useful with bigger projects on Windows
+    useClasspathFile.set(true)
     fileExtensionsToFilter.addAll("xml", "orbit")
     verbose = true
+//    pitest("com.arcmutate:pitest-kotlin-plugin:1.4.3")
 }
 
 
@@ -228,11 +207,17 @@ dependencies {
     // ...with Kotlin.
     kspAndroidTest(libs.hilt.android.compiler)
 
-    testImplementation("org.pitest:pitest-maven:1.19.5")
-    testImplementation("com.arcmutate:base:1.4.2")
-    testImplementation("com.arcmutate:pitest-kotlin-plugin:1.4.3")
-    testImplementation("org.pitest:pitest-junit5-plugin:1.2.3")
-    // https://mvnrepository.com/artifact/com.arcmutate/arcmutate-android-parent
-    testImplementation("com.arcmutate:arcmutate-android-parent:0.0.5")
-    testImplementation("com.arcmutate:pitest-git-plugin:2.2.3")
+//    testImplementation("org.pitest:pitest-maven:1.19.5")
+//    testImplementation("com.arcmutate:base:1.4.2")
+//    testImplementation("com.arcmutate:pitest-kotlin-plugin:1.4.3")
+//    testImplementation("org.pitest:pitest-junit5-plugin:1.2.3")
+//    // https://mvnrepository.com/artifact/com.arcmutate/arcmutate-android-parent
+//    testImplementation("com.arcmutate:arcmutate-android-parent:0.0.5")
+//    testImplementation("com.arcmutate:pitest-git-plugin:2.2.3")
+
+    implementation("com.arcmutate:base:1.4.2")
+    implementation("com.arcmutate:pitest-kotlin-plugin:1.4.3")
+    implementation("org.pitest:pitest-junit5-plugin:1.2.3")
+    implementation("com.arcmutate:arcmutate-android-parent:0.0.5")
+    implementation("com.arcmutate:pitest-git-plugin:2.2.3")
 }
