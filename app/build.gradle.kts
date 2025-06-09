@@ -1,4 +1,5 @@
 import com.android.build.api.dsl.TestCoverage
+import com.android.build.gradle.internal.tasks.factory.dependsOn
 import org.gradle.kotlin.dsl.main
 import org.gradle.kotlin.dsl.test
 
