@@ -17,6 +17,7 @@ buildscript{
 
     dependencies {
         classpath(libs.android.junit5)
+        classpath("org.bouncycastle:bcutil-jdk18on:1.78.1")
     }
 
 }
