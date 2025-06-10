@@ -154,7 +154,6 @@ pitest{
     useClasspathFile.set(true)
     fileExtensionsToFilter.addAll("xml", "orbit")
     verbose = true
-//    pitest("com.arcmutate:pitest-kotlin-plugin:1.4.3")
 }
 
 
@@ -207,17 +206,4 @@ dependencies {
     // ...with Kotlin.
     kspAndroidTest(libs.hilt.android.compiler)
 
-//    testImplementation("org.pitest:pitest-maven:1.19.5")
-//    testImplementation("com.arcmutate:base:1.4.2")
-//    testImplementation("com.arcmutate:pitest-kotlin-plugin:1.4.3")
-//    testImplementation("org.pitest:pitest-junit5-plugin:1.2.3")
-//    // https://mvnrepository.com/artifact/com.arcmutate/arcmutate-android-parent
-//    testImplementation("com.arcmutate:arcmutate-android-parent:0.0.5")
-//    testImplementation("com.arcmutate:pitest-git-plugin:2.2.3")
-
-    implementation("com.arcmutate:base:1.4.2")
-    implementation("com.arcmutate:pitest-kotlin-plugin:1.4.3")
-    implementation("org.pitest:pitest-junit5-plugin:1.2.3")
-    implementation("com.arcmutate:arcmutate-android-parent:0.0.5")
-    implementation("com.arcmutate:pitest-git-plugin:2.2.3")
 }
