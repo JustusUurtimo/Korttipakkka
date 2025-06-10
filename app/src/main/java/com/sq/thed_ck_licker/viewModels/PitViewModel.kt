@@ -10,6 +10,14 @@ class PitViewModel @Inject constructor(
     private val pitSystem: PitSystem,
 ) : ViewModel() {
 
+    fun buyShovel() {
+        pitSystem.buyShovel()
+    }
+
+    fun getPitCards(): List<Int> {
+        return pitSystem.getPitCards()
+    }
+
     fun dropCardInPit(chosenCard: Int) {
         pitSystem.dropCardInPit(chosenCard)
     }

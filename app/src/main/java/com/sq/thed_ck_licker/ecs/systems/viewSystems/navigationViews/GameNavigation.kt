@@ -98,8 +98,7 @@ fun GameNavigation(
 
         composable(route = Screen.Pit.route)
         {
-            PitScreen(
-                modifier
+            PitScreen(modifier, gameNavigator)
         }
 
 

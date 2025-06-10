@@ -35,24 +35,13 @@ fun MerchantHandView(
             .height(250.dp)
             .background(Color.Magenta)
     ) {
-        Column(modifier = modifier
-            .padding(16.dp)
-            .wrapContentSize(Alignment.Center)) {
-            Row {
-                for (card in merchantHand) {
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(8.dp)
-                    ) {
-                        CardView(
-                            card,
-                            { chooseMerchantCard(card) },
-                            modifier.height(150.dp)
-                        )
-                    }
-                }
-            }
+        Column(
+            modifier = modifier
+                .padding(16.dp)
+                .wrapContentSize(Alignment.Center)
+        )
+        {
+            CardRow(merchantHand, { chooseMerchantCard(it) }, modifier)
             Button(
                 modifier = Modifier.align(Alignment.CenterHorizontally),
                 onClick = onReRollShop

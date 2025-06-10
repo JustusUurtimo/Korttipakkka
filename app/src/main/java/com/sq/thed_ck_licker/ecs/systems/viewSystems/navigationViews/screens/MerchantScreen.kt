@@ -32,7 +32,7 @@ fun MerchantScreen(
 
     fun chooseMerchantCard(newCard: Int) {
         merchantViewModel.onChooseMerchantCard(newCard, activeMerchant)
-        gameNavigator.navigateTo(Screen.Game.route)
+        gameNavigator.navigateBack()
     }
 
     Box(

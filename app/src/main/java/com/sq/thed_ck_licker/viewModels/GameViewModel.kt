@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sq.thed_ck_licker.ecs.managers.GameEvent
 import com.sq.thed_ck_licker.ecs.managers.GameEvents
-import com.sq.thed_ck_licker.ecs.systems.PitSystem
 import com.sq.thed_ck_licker.ecs.systems.WorldCreationSystem
 import com.sq.thed_ck_licker.helpers.navigation.GameNavigator
 import com.sq.thed_ck_licker.helpers.navigation.Screen
@@ -15,7 +14,6 @@ import javax.inject.Inject
 @HiltViewModel
 class GameViewModel @Inject constructor(
     private val worldCreationSystem: WorldCreationSystem,
-    private val pitSystem: PitSystem,
     private val gameNavigator: GameNavigator
 ) : ViewModel() {
 
@@ -33,10 +31,6 @@ class GameViewModel @Inject constructor(
     fun restartGame() {
         worldCreationSystem.destroyWorld()
         gameNavigator.restartGame()
-    }
-
-    fun dropCardInPit(latestCard: Int) {
-        pitSystem.dropCardInPit(latestCard)
     }
 
     fun leaveGame() {

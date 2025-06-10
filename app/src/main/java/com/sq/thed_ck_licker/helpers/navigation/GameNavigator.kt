@@ -18,11 +18,15 @@ class GameNavigator @Inject constructor() {
     }
 
     fun navigateTo(route: String) {
-        navController.navigate(route)
+        navController.navigate(route) {
+            launchSingleTop = true
+        }
     }
 
     fun navigateBack() {
-        navController.popBackStack()
+        println("backstack: ${navController.currentBackStackEntry}")
+        println("Navigating back ${navController.currentBackStackEntry?.destination?.route}")
+        navController.navigateUp()
     }
 
     fun leaveGame() {
