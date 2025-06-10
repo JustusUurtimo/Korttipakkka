@@ -153,7 +153,7 @@ pitest{
     jvmArgs.set(listOf("-Xmx1024m"))
     useClasspathFile.set(true)
     fileExtensionsToFilter.addAll("xml", "orbit")
-    verbose = true
+    verbose = false
 }
 
 
