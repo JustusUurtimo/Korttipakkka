@@ -20,6 +20,7 @@ import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.Gam
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.HighScoresScreen
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.MainMenuScreen
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.MerchantScreen
+import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.PitScreen
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.SettingsScreen
 import com.sq.thed_ck_licker.helpers.navigation.GameNavigator
 import com.sq.thed_ck_licker.helpers.navigation.Screen
@@ -93,6 +94,12 @@ fun GameNavigation(
         {
             val viewModel: MerchantViewModel = hiltViewModel()
             MerchantScreen(modifier = modifier, viewModel, gameNavigator)
+        }
+
+        composable(route = Screen.Pit.route)
+        {
+            PitScreen(
+                modifier
         }
 
 

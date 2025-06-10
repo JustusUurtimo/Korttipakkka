@@ -38,7 +38,7 @@ class CardCreationSystem @Inject constructor(
         val onActivation: (Int) -> Unit = { _ ->
             GameEvents.tryEmit(GameEvent.ShovelUsed)
         }
-        val describedEffect = DescribedEffect(onActivation) { "Dig a hole" }
+        val describedEffect = DescribedEffect(onActivation) { "Open the fiery pit of doom!" }
         return cardBuilder.buildCards {
             cardHealth = 10f
             cardAmount = amount

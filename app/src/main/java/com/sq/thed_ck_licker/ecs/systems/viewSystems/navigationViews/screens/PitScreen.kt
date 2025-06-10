@@ -1,4 +1,4 @@
-package com.sq.thed_ck_licker.ecs.systems.viewSystems
+package com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,12 +16,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.sq.thed_ck_licker.R
+import com.sq.thed_ck_licker.viewModels.PitViewModel
 
 @Composable
-fun HoleView(modifier: Modifier, onClickListener: () -> Unit) {
+fun PitScreen(modifier: Modifier, pitViewModel: PitViewModel = hiltViewModel()) {
+
+
+
     Box(
-        modifier = Modifier
+        modifier = modifier
             .width(100.dp)
             .height(100.dp)
             .background(color = Color.Magenta)
@@ -32,20 +37,20 @@ fun HoleView(modifier: Modifier, onClickListener: () -> Unit) {
             .clickable { onClickListener() }
     ) {
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .align(BiasAlignment(0f, 0.7f))
                 .fillMaxWidth()
         ) {
             Text(
-                text = "hole",
-                modifier = Modifier
+                text = "Pit",
+                modifier = modifier
                     .background(color = Color.Cyan)
                     .fillMaxWidth()
             )
             Text(
-                text = "Drop card in hole",
+                text = "Drop card in the pit",
                 softWrap = true,
-                modifier = Modifier
+                modifier = modifier
                     .background(color = Color.Yellow)
                     .fillMaxWidth()
             )

@@ -13,7 +13,7 @@ class PitSystem @Inject constructor(
     private val merchantSystem: MerchantSystem,
     private val cardPullingSystem: CardPullingSystem,
 ) {
-    fun dropCardInHole(latestCard: Int) {
+    fun dropCardInPit(latestCard: Int) {
         if (latestCard == -1) return
         val tagsComponent = latestCard get TagsComponent::class
 
