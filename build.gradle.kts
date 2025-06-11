@@ -18,8 +18,20 @@ buildscript{
     dependencies {
         classpath(libs.android.junit5)
         classpath("org.bouncycastle:bcutil-jdk18on:1.78.1")
+
+        classpath("pl.droidsonroids.gradle:gradle-pitest-plugin:0.2.21")
     }
 
+}
+subprojects {
+    apply(plugin = "pl.droidsonroids.pitest")
+
+    buildscript {
+        dependencies.add("pitest", "com.arcmutate:pitest-kotlin-plugin:1.4.3")
+        dependencies.add("pitest", "com.arcmutate:android:0.0.5")
+        dependencies.add("pitest", "com.arcmutate:base:1.4.2")
+        dependencies.add("pitest", "com.arcmutate:pitest-git-plugin:2.2.3")
+    }
 }
 
 sonar {
