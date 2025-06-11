@@ -1,5 +1,7 @@
 package com.sq.thed_ck_licker.ecs.systems
 
+import android.util.Log
+import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.IdentificationComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent
 import com.sq.thed_ck_licker.ecs.managers.get
@@ -16,6 +18,13 @@ class PitSystem @Inject constructor(
     fun dropCardInHole(latestCard: Int) {
         if (latestCard == -1) return
         val tagsComponent = latestCard get TagsComponent::class
+
+        try {
+            (latestCard get EffectComponent::class).onSpecial.action(latestCard)
+        } catch (_: Exception){
+            Log.i("PitSystem","Nothing special happened... or did?")
+            Log.i("PitSystem","No. nothing happened cuz they don't have cool effect")
+        }
 
         if (tagsComponent.cardIsMerchant()) {
             handleMerchantCard(latestCard)
