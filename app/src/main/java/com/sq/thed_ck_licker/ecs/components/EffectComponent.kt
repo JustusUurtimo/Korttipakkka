@@ -36,6 +36,11 @@ data class EffectComponent(
      *  When player chooses not to activate the card, it will trigger this.
      */
     val onDeactivate: DescribedEffect = DescribedEffect({}, { "" }),
+    /**
+     *  There is no normal way of triggering this.
+     *  This should be used for things like on being buried in to the pit.
+     */
+    val onSpecial: DescribedEffect = DescribedEffect({}, { "" })
 ) {
     fun combineEffectComponents(other: EffectComponent): EffectComponent {
         return EffectComponent(
@@ -43,7 +48,8 @@ data class EffectComponent(
             onDeath = this.onDeath.combine(other.onDeath),
             onSpawn = this.onSpawn.combine(other.onSpawn),
             onTurnStart = this.onTurnStart.combine(other.onTurnStart),
-            onDeactivate = this.onDeactivate.combine(other.onDeactivate)
+            onDeactivate = this.onDeactivate.combine(other.onDeactivate),
+            onSpecial = this.onSpecial.combine(other.onSpecial)
         )
     }
 
@@ -54,6 +60,9 @@ data class EffectComponent(
         effectHandlers.add(onTurnStart)
         effectHandlers.add(onPlay)
         effectHandlers.add(onDeactivate)
+        if (onSpecial != DescribedEffect.EMPTY) {
+            effectHandlers.add(onSpecial)
+        }
 
         return EffectComponent(
             onDeath = effectHandlers.removeAt(random.nextInt(effectHandlers.size)),
@@ -68,8 +77,8 @@ data class EffectComponent(
     fun describeTriggers(targetId: Int = getPlayerID()): List<String> {
         val lines = mutableListOf<String>()
 
-        fun handle(label: String, effect: DescribedEffect?) {
-            val text = effect?.describe(targetId)?.trim().orEmpty()
+        fun handle(label: String, effect: DescribedEffect) {
+            val text = effect.describe(targetId).trim()
             if (text.isNotBlank()) {
                 lines.add("$label: $text")
             }
@@ -80,6 +89,7 @@ data class EffectComponent(
         handle("On Turn Start", onTurnStart)
         handle("On Play", onPlay)
         handle("On Deactivate", onDeactivate)
+        handle("On Special", onSpecial)
 
         return lines
     }
