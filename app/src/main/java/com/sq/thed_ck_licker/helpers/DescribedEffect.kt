@@ -1,5 +1,7 @@
 package com.sq.thed_ck_licker.helpers
 
+import com.sq.thed_ck_licker.ecs.managers.EntityId
+
 /**
  * @param action is same as our old effect (Int) -> Unit thing, so you can use it as you want
  *
@@ -14,6 +16,16 @@ data class DescribedEffect(
 ){
     companion object{
         val EMPTY = DescribedEffect({},{""})
+    }
+
+    /**
+     * This is fun but might be bit naughty...
+     * This allow syntax like onPlay(10)
+     * And it will trigger the action and return the description
+     */
+    operator fun invoke(targetId: EntityId): String {
+        action(targetId)
+        return describe(targetId)
     }
 }
 
