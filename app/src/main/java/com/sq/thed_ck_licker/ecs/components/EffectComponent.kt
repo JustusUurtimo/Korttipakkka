@@ -12,10 +12,29 @@ import com.sq.thed_ck_licker.helpers.combine
  * And maaaagic
  */
 data class EffectComponent(
+    /**
+     * When something dies, it will trigger this at the end of everything.
+     */
     val onDeath: DescribedEffect = DescribedEffect({}, { "" }),
+    /**
+     *  Huh, not actually used currently...
+     *  TODO: Remove? or make useful somewhere
+     */
     val onSpawn: DescribedEffect = DescribedEffect({}, { "" }),
+    /**
+     *  When the turn starts, it will trigger this.
+     *  This happens as the first thing, even before player card.
+     *  TODO: Currently only happens for things inside effect stack.
+     */
     val onTurnStart: DescribedEffect = DescribedEffect({}, { "" }),
+    /**
+     *  When the card is played, it will trigger this.
+     *  Nice and simple when player activates thing, it will trigger this.
+     */
     val onPlay: DescribedEffect = DescribedEffect({}, { "" }),
+    /**
+     *  When player chooses not to activate the card, it will trigger this.
+     */
     val onDeactivate: DescribedEffect = DescribedEffect({}, { "" }),
 ) {
     fun combineEffectComponents(other: EffectComponent): EffectComponent {
