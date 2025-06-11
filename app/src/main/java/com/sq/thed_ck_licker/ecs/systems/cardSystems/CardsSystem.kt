@@ -42,8 +42,13 @@ class CardsSystem @Inject constructor(
         Log.v("CardsSystem", "Card activation started. Turn started.")
         onTurnStartEffectStackSystem()
         activateCard(playerCardCount)
+        try {
         multiSystem.multiplyEntityAgainstOldItself(getPlayerID())
         multiSystem.addEntity(getPlayerID())
+        } catch (e: IllegalStateException) {
+            Log.i("CardsSystem", "No multiplier component found for activation")
+            Log.i("CardsSystem", e.message.toString())
+        }
         onDeathSystem()
         Log.v("CardsSystem", "Card activation finished. Turn finished.")
     }
