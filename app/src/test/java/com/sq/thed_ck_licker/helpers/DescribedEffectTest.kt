@@ -4,15 +4,6 @@ import org.junit.jupiter.api.Test
 
 class DescribedEffectTest {
 
-
-    @Test
-    fun getDescribe() {
-    }
-
-    @Test
-    fun `Are they empty`() {
-    }
-
     @Test
     fun `Combine two empty effects stay is identity empty effect`() {
         val describedEffect1 = DescribedEffect.EMPTY
@@ -45,7 +36,25 @@ class DescribedEffectTest {
         val combinedEffect2 = describedEffect2.combine(describedEffect1)
         assert(combinedEffect2.action == describedEffect1.action) { "Combination of one empty and one non empty effects should have the same identity action as the one" }
         assert(combinedEffect2.describe == describedEffect1.describe) { "Combination of one empty and one non empty effects should have the same identity describe as the one" }
+    }
 
+
+    @Test
+    fun `Combine two same effects has the effect twice`() {
+        var counter = 0
+        val describedEffect = DescribedEffect(
+            action = { counter += it },
+            describe = { "moi $it" }
+        )
+
+        val combinedEffect = describedEffect.combine(describedEffect)
+        assert(combinedEffect.action != DescribedEffect.EMPTY.action){"After combination should not be empty action"}
+        assert(combinedEffect.describe != DescribedEffect.EMPTY.describe){"After combination should not be empty describe"}
+
+        combinedEffect.action(10)
+        assert(counter == 20) { "Counter should be 20, but was $counter, action not working" }
+        val text = combinedEffect.describe(1)
+        assert(text == "moi 1\nmoi 1"){"Text should have been 'moi 1\nmoi 1' but was $text, describe not working"}
     }
 
 }

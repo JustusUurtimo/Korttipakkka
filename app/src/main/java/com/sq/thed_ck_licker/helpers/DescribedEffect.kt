@@ -30,9 +30,7 @@ fun DescribedEffect.combine(other: DescribedEffect): DescribedEffect {
     return DescribedEffect(
         action = { id -> this.action(id); other.action(id) },
         describe = {id ->
-            listOf(this.describe(id), other.describe(id))
-                .filter { it.isNotBlank() }
-                .joinToString(". ")
+            "${this.describe(id)}\n${other.describe(id)}"
         }
     )
 }
