@@ -187,23 +187,39 @@ class CardCreationSystem @Inject constructor(
     }
 
     fun addTrapTestCards(amount: Int = 1): List<EntityId> {
-        val deactivationMulti = 3
+        val deactivationMulti = 30
         val damageAmountMulti = 5
         val onDeactivation = { targetId: Int ->
             val cardEntity = (targetId get LatestCardComponent::class).getLatestCard()
             val target = targetId get ScoreComponent::class
             val activationComponent = (cardEntity get ActivationCounterComponent::class)
-            target.reduceScore((activationComponent.getDeactivations() * deactivationMulti))
+            target.reduceScore(((1 + activationComponent.getDeactivations()) * deactivationMulti))
         }
+        val deactivationEffect =
+            DescribedEffect(onDeactivation) { targetId: Int ->
+                val cardEntity = (targetId get LatestCardComponent::class).getLatestCard()
+                val activationComponent = (cardEntity get ActivationCounterComponent::class)
+                val amount = ((1 + activationComponent.getDeactivations()) * deactivationMulti)
+                "Lose Score based on deactivations ($amount score)"
+            }
+
         val onActivation = { targetId: Int ->
             val cardEntity = (targetId get LatestCardComponent::class).getLatestCard()
             val target = targetId get HealthComponent::class
             val activationComponent = cardEntity get ActivationCounterComponent::class
-            val damageAmount = (activationComponent.getActivations() * damageAmountMulti).toFloat()
+            val damageAmount =
+                ((1 + activationComponent.getActivations()) * damageAmountMulti).toFloat()
             target.damage(damageAmount)
         }
-        val activationEffect = DescribedEffect(onActivation) { "you lose health (???)" }// TODO: fix this
-        val deactivationEffect = DescribedEffect(onDeactivation) { "you lose score (???)" }// TODO: fix this
+        val activationEffect =
+            DescribedEffect(onActivation) { targetId: Int ->
+                val cardEntity = (targetId get LatestCardComponent::class).getLatestCard()
+                val activationComponent = cardEntity get ActivationCounterComponent::class
+                val damageAmount =
+                    ((1 + activationComponent.getActivations()) * damageAmountMulti).toFloat()
+                "Lose health based on activations ($damageAmount health)"
+            }
+
         return cardBuilder.buildCards {
             scoreAmount = 1
             cardAmount = amount

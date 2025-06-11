@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
+import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.ComponentManager
 import com.sq.thed_ck_licker.ecs.managers.EntityId
 import com.sq.thed_ck_licker.ecs.managers.EntityManager
@@ -41,13 +42,28 @@ class CardCreationSystemTest {
     }
 
     @Test
-    fun addTrapTestCards() {
+    fun `Activate trap card`() {
         val trapCard = cardCreationSystem.addTrapTestCards(1).first()
         owner add LatestCardComponent(mutableIntStateOf(trapCard))
-        owner add HealthComponent()
+        owner add HealthComponent(10f)
         val desc = (trapCard get EffectComponent::class).onPlay(owner)
-        println("desc: $desc")
 
+        assert((owner get HealthComponent::class).getHealth() == 5f) { "Health should be 5, but was ${owner get HealthComponent::class}" }
+        val realDesc = "Lose health based on activations (5.0 health)"
+        assert(desc == realDesc) { "Description should be '$realDesc', but was '$desc'" }
+    }
+
+    @Test
+    fun `Deactivate trap card`() {
+        val trapCard = cardCreationSystem.addTrapTestCards(1).first()
+        owner add LatestCardComponent(mutableIntStateOf(trapCard))
+        val  scoreComponent = ScoreComponent(100)
+        owner add scoreComponent
+        val desc = (trapCard get EffectComponent::class).onDeactivate(owner)
+        println(scoreComponent.getScore())
+        assert((owner get ScoreComponent::class).getScore() == 70) { "Score should be 70, but was ${owner get ScoreComponent::class}" }
+        val realDesc = "Lose Score based on deactivations (30 score)"
+        assert(desc == realDesc) { "Description should be \n'$realDesc', but was \n'$desc'" }
     }
 
     @Test
