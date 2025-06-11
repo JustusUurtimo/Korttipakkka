@@ -122,7 +122,7 @@ class ComponentManager {
             is MultiplierComponent -> MultiplierComponent(component.multiplier)
             is EffectComponent -> EffectComponent(
                 onDeath = component.onDeath,
-                onSpawn = component.onSpawn,
+                onDrawn = component.onDrawn,
                 onTurnStart = component.onTurnStart,
                 onPlay = component.onPlay,
                 onDeactivate = component.onDeactivate

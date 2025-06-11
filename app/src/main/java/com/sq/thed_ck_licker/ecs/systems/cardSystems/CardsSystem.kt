@@ -26,14 +26,18 @@ class CardsSystem @Inject constructor(
     fun pullRandomCardFromEntityDeck(entityId: Int): Int {
         val drawDeckComponent = (entityId get DrawDeckComponent::class)
         val deck = drawDeckComponent.getDrawCardDeck()
+
         if (deck.isEmpty()) {
             GameEvents.tryEmit(GameEvent.PlayerDied)
             return -1
-        } else {
-            val theCard = deck.getRandomElement()
-            drawDeckComponent.removeCard(theCard)
-            return theCard
         }
+
+        val theCard = deck.getRandomElement()
+        drawDeckComponent.removeCard(theCard)
+        val effects = (theCard get EffectComponent::class)
+        effects.onDrawn(entityId)
+        return theCard
+
     }
 
     fun cardActivation(

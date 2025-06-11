@@ -17,10 +17,11 @@ data class EffectComponent(
      */
     val onDeath: DescribedEffect = DescribedEffect.EMPTY,
     /**
-     *  Huh, not actually used currently...
-     *  TODO: Remove? or make useful somewhere
+     * Used when the card is drawn.
+     * This really really easy to trigger multiple times in succession.
+     * So the effects should be kind a mild.
      */
-    val onSpawn: DescribedEffect = DescribedEffect.EMPTY,
+    val onDrawn: DescribedEffect = DescribedEffect.EMPTY,
     /**
      *  When the turn starts, it will trigger this.
      *  This happens as the first thing, even before player card.
@@ -46,7 +47,7 @@ data class EffectComponent(
         return EffectComponent(
             onPlay = this.onPlay.combine(other.onPlay),
             onDeath = this.onDeath.combine(other.onDeath),
-            onSpawn = this.onSpawn.combine(other.onSpawn),
+            onDrawn = this.onDrawn.combine(other.onDrawn),
             onTurnStart = this.onTurnStart.combine(other.onTurnStart),
             onDeactivate = this.onDeactivate.combine(other.onDeactivate),
             onSpecial = this.onSpecial.combine(other.onSpecial)
@@ -56,7 +57,7 @@ data class EffectComponent(
     fun shuffleToNew(): EffectComponent {
         val effectHandlers = mutableListOf<DescribedEffect>()
         effectHandlers.add(onDeath)
-        effectHandlers.add(onSpawn)
+        effectHandlers.add(onDrawn)
         effectHandlers.add(onTurnStart)
         effectHandlers.add(onPlay)
         effectHandlers.add(onDeactivate)
@@ -64,7 +65,7 @@ data class EffectComponent(
         effectHandlers.shuffle(random)
         return EffectComponent(
             onDeath = effectHandlers.removeAt(0),
-            onSpawn = effectHandlers.removeAt(0),
+            onDrawn = effectHandlers.removeAt(0),
             onTurnStart = effectHandlers.removeAt(0),
             onPlay = effectHandlers.removeAt(0),
             onDeactivate = effectHandlers.removeAt(0),
@@ -84,7 +85,7 @@ data class EffectComponent(
         }
 
         handle("On Death", onDeath)
-        handle("On Spawn", onSpawn)
+        handle("On Spawn", onDrawn)
         handle("On Turn Start", onTurnStart)
         handle("On Play", onPlay)
         handle("On Deactivate", onDeactivate)
