@@ -60,16 +60,15 @@ data class EffectComponent(
         effectHandlers.add(onTurnStart)
         effectHandlers.add(onPlay)
         effectHandlers.add(onDeactivate)
-        if (onSpecial != DescribedEffect.EMPTY) {
-            effectHandlers.add(onSpecial)
-        }
-
+        effectHandlers.add(onSpecial)
+        effectHandlers.shuffle(random)
         return EffectComponent(
-            onDeath = effectHandlers.removeAt(random.nextInt(effectHandlers.size)),
-            onSpawn = effectHandlers.removeAt(random.nextInt(effectHandlers.size)),
-            onTurnStart = effectHandlers.removeAt(random.nextInt(effectHandlers.size)),
-            onPlay = effectHandlers.removeAt(random.nextInt(effectHandlers.size)),
-            onDeactivate = effectHandlers.removeAt(random.nextInt(effectHandlers.size))
+            onDeath = effectHandlers.removeAt(0),
+            onSpawn = effectHandlers.removeAt(0),
+            onTurnStart = effectHandlers.removeAt(0),
+            onPlay = effectHandlers.removeAt(0),
+            onDeactivate = effectHandlers.removeAt(0),
+            onSpecial = effectHandlers.removeAt(0)
         )
     }
 
