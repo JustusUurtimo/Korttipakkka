@@ -32,6 +32,16 @@ class CardCreationSystemTest {
 
     @Test
     fun addBreakingDefaultCards() {
+        val breakingCard = cardCreationSystem.addBreakingDefaultCards(1).first()
+        owner add LatestCardComponent(mutableIntStateOf(breakingCard))
+        val scoreComponent = ScoreComponent(100)
+        owner add scoreComponent
+
+        val desc = (breakingCard get EffectComponent::class).onPlay(owner)
+
+        assert(scoreComponent.getScore() == 200) { "Score should be 200, but was ${scoreComponent.getScore()}" }
+        val realDesc = "Gain 100 points"
+        assert(desc == realDesc) { "Description should be \n'$realDesc', but was \n'$desc'" }
     }
 
     @Test

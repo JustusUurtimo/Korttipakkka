@@ -133,12 +133,16 @@ class CardCreationSystem @Inject constructor(
 
     fun addBreakingDefaultCards(amount: Int = 7): List<EntityId> {
         val scoreIt = { targetId: Int ->
-            val cardEntity = (getPlayerID() get LatestCardComponent::class).getLatestCard()
+            val cardEntity = (targetId get LatestCardComponent::class).getLatestCard()
             val target = targetId get ScoreComponent::class
             val omaScore = cardEntity get ScoreComponent::class
             target.addScore(omaScore.getScore())
         }
-        val describedEffect = DescribedEffect(scoreIt) { "Gain some points (???)" } // TODO: fix this
+        val describedEffect = DescribedEffect(scoreIt) { targetId: Int ->
+            val cardEntity = (targetId get LatestCardComponent::class).getLatestCard()
+            val omaScore = cardEntity get ScoreComponent::class
+            "Gain ${omaScore.getScore()} points"
+        }
         return cardBuilder.buildCards {
             cardHealth = 10f
             scoreAmount = 100
