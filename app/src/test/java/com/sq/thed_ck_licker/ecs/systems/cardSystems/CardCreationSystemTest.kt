@@ -1,6 +1,7 @@
 package com.sq.thed_ck_licker.ecs.systems.cardSystems
 
 import androidx.compose.runtime.mutableIntStateOf
+import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
@@ -60,10 +61,30 @@ class CardCreationSystemTest {
         val  scoreComponent = ScoreComponent(100)
         owner add scoreComponent
         val desc = (trapCard get EffectComponent::class).onDeactivate(owner)
-        println(scoreComponent.getScore())
-        assert((owner get ScoreComponent::class).getScore() == 70) { "Score should be 70, but was ${owner get ScoreComponent::class}" }
+        assert(scoreComponent.getScore() == 70) { "Score should be 70, but was ${owner get ScoreComponent::class}" }
         val realDesc = "Lose Score based on deactivations (30 score)"
         assert(desc == realDesc) { "Description should be \n'$realDesc', but was \n'$desc'" }
+    }
+
+
+    @Test
+    fun `Activate and deactivate trap card multiple times`() {
+        val trapCard = cardCreationSystem.addTrapTestCards(1).first()
+        owner add LatestCardComponent(mutableIntStateOf(trapCard))
+        val hpComponent = HealthComponent(300f)
+        owner add hpComponent
+        val scoreComponent = ScoreComponent(2000)
+        owner add scoreComponent
+
+        repeat(10) {
+            (trapCard get EffectComponent::class).onDeactivate(owner)
+            (trapCard get ActivationCounterComponent::class).deactivate()
+            (trapCard get EffectComponent::class).onPlay(owner)
+            (trapCard get ActivationCounterComponent::class).activate()
+        }
+
+        assert(hpComponent.getHealth() == 25f) { "Health should be 25, but was ${hpComponent.getHealth()}" }
+        assert(scoreComponent.getScore() == 350) { "Score should be 350, but was ${scoreComponent.getScore()}" }
     }
 
     @Test
