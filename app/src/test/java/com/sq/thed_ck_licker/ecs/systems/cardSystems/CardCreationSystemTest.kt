@@ -1,13 +1,25 @@
 package com.sq.thed_ck_licker.ecs.systems.cardSystems
 
+import com.sq.thed_ck_licker.ecs.managers.ComponentManager
+import com.sq.thed_ck_licker.ecs.managers.EntityManager
+import com.sq.thed_ck_licker.ecs.systems.helperSystems.CardCreationHelperSystems_Factory
+import com.sq.thed_ck_licker.helpers.navigation.GameNavigator_Factory
+import dagger.internal.DaggerGenerated
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import javax.inject.Inject
+import kotlin.properties.Delegates
 
 class CardCreationSystemTest {
+    var cardCreationSystem by Delegates.notNull<CardCreationSystem>()
     @BeforeEach
     fun setUp() {
-        TODO("Not yet implemented")
+        cardCreationSystem = CardCreationSystem(
+            cardCreationHelperSystems = CardCreationHelperSystems_Factory.newInstance(),
+            cardBuilder = CardBuilderSystem_Factory.newInstance(ComponentManager.componentManager),
+            gameNavigator = GameNavigator_Factory.newInstance()
+        )
     }
 
     @Test
@@ -24,6 +36,11 @@ class CardCreationSystemTest {
 
     @Test
     fun addTrapTestCards() {
+        val trapCard = cardCreationSystem.addTrapTestCards(1)
+        println("Trap card: $trapCard")
+
+        val owner = EntityManager.createNewEntity()
+
     }
 
     @Test
