@@ -187,18 +187,19 @@ class CardCreationSystem @Inject constructor(
     }
 
     fun addTrapTestCards(amount: Int = 1): List<EntityId> {
-
+        val deactivationMulti = 3
+        val damageAmountMulti = 5
         val onDeactivation = { targetId: Int ->
             val cardEntity = (getPlayerID() get LatestCardComponent::class).getLatestCard()
             val target = targetId get ScoreComponent::class
             val activationComponent = (cardEntity get ActivationCounterComponent::class)
-            target.reduceScore((activationComponent.getDeactivations() * 3))
+            target.reduceScore((activationComponent.getDeactivations() * deactivationMulti))
         }
         val onActivation = { targetId: Int ->
             val cardEntity = (getPlayerID() get LatestCardComponent::class).getLatestCard()
             val target = targetId get HealthComponent::class
             val activationComponent = cardEntity get ActivationCounterComponent::class
-            val damageAmount = (activationComponent.getActivations() * 5).toFloat()
+            val damageAmount = (activationComponent.getActivations() * damageAmountMulti).toFloat()
             target.damage(damageAmount)
         }
         val activationEffect = DescribedEffect(onActivation) { "you lose health (???)" }// TODO: fix this
