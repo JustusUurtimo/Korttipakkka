@@ -15,32 +15,32 @@ data class EffectComponent(
     /**
      * When something dies, it will trigger this at the end of everything.
      */
-    val onDeath: DescribedEffect = DescribedEffect({}, { "" }),
+    val onDeath: DescribedEffect = DescribedEffect.EMPTY,
     /**
      *  Huh, not actually used currently...
      *  TODO: Remove? or make useful somewhere
      */
-    val onSpawn: DescribedEffect = DescribedEffect({}, { "" }),
+    val onSpawn: DescribedEffect = DescribedEffect.EMPTY,
     /**
      *  When the turn starts, it will trigger this.
      *  This happens as the first thing, even before player card.
      *  TODO: Currently only happens for things inside effect stack.
      */
-    val onTurnStart: DescribedEffect = DescribedEffect({}, { "" }),
+    val onTurnStart: DescribedEffect = DescribedEffect.EMPTY,
     /**
      *  When the card is played, it will trigger this.
      *  Nice and simple when player activates thing, it will trigger this.
      */
-    val onPlay: DescribedEffect = DescribedEffect({}, { "" }),
+    val onPlay: DescribedEffect = DescribedEffect.EMPTY,
     /**
      *  When player chooses not to activate the card, it will trigger this.
      */
-    val onDeactivate: DescribedEffect = DescribedEffect({}, { "" }),
+    val onDeactivate: DescribedEffect = DescribedEffect.EMPTY,
     /**
      *  There is no normal way of triggering this.
      *  This should be used for things like on being buried in to the pit.
      */
-    val onSpecial: DescribedEffect = DescribedEffect({}, { "" })
+    val onSpecial: DescribedEffect = DescribedEffect.EMPTY
 ) {
     fun combineEffectComponents(other: EffectComponent): EffectComponent {
         return EffectComponent(

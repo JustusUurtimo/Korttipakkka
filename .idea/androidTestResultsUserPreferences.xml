@@ -22,6 +22,7 @@
               <option name="preferredColumnWidths">
                 <map>
                   <entry key="Duration" value="90" />
+                  <entry key="Oma_API_31" value="120" />
                   <entry key="Tests" value="360" />
                   <entry key="samsung SM-S921B" value="120" />
                 </map>
