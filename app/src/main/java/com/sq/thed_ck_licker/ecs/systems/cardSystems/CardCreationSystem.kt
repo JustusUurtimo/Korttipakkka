@@ -190,13 +190,13 @@ class CardCreationSystem @Inject constructor(
         val deactivationMulti = 3
         val damageAmountMulti = 5
         val onDeactivation = { targetId: Int ->
-            val cardEntity = (getPlayerID() get LatestCardComponent::class).getLatestCard()
+            val cardEntity = (targetId get LatestCardComponent::class).getLatestCard()
             val target = targetId get ScoreComponent::class
             val activationComponent = (cardEntity get ActivationCounterComponent::class)
             target.reduceScore((activationComponent.getDeactivations() * deactivationMulti))
         }
         val onActivation = { targetId: Int ->
-            val cardEntity = (getPlayerID() get LatestCardComponent::class).getLatestCard()
+            val cardEntity = (targetId get LatestCardComponent::class).getLatestCard()
             val target = targetId get HealthComponent::class
             val activationComponent = cardEntity get ActivationCounterComponent::class
             val damageAmount = (activationComponent.getActivations() * damageAmountMulti).toFloat()
