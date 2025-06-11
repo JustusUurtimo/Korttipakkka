@@ -1,5 +1,6 @@
 package com.sq.thed_ck_licker.ecs.components
 
+import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.helpers.DescribedEffect
 import com.sq.thed_ck_licker.helpers.MyRandom.random
 import com.sq.thed_ck_licker.helpers.combine
@@ -45,11 +46,11 @@ data class EffectComponent(
     }
 
 
-    fun describeTriggers(): List<String> {
+    fun describeTriggers(targetId: Int = getPlayerID()): List<String> {
         val lines = mutableListOf<String>()
 
         fun handle(label: String, effect: DescribedEffect?) {
-            val text = effect?.describe()?.trim().orEmpty()
+            val text = effect?.describe(targetId)?.trim().orEmpty()
             if (text.isNotBlank()) {
                 lines.add("$label: $text")
             }

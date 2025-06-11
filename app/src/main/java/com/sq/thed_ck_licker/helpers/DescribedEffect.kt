@@ -10,7 +10,7 @@ package com.sq.thed_ck_licker.helpers
  */
 data class DescribedEffect(
     val action: (Int) -> Unit,
-    val describe: () -> String
+    val describe: (Int) -> String
 ){
     companion object{
         val EMPTY = DescribedEffect({},{""})
@@ -19,15 +19,18 @@ data class DescribedEffect(
 
 
 fun DescribedEffect.combine(other: DescribedEffect): DescribedEffect {
-    val eka = this == DescribedEffect.EMPTY
-    val toka  = other == DescribedEffect.EMPTY
+    val isThisEmpty = this == DescribedEffect.EMPTY
+    val isOtherEmpty  = other == DescribedEffect.EMPTY
 
-    if (eka && toka) return DescribedEffect.EMPTY
+    if (isThisEmpty && isOtherEmpty) return DescribedEffect.EMPTY
+
+    if (isThisEmpty) return other
+    if (isOtherEmpty) return this
 
     return DescribedEffect(
         action = { id -> this.action(id); other.action(id) },
-        describe = {
-            listOf(this.describe(), other.describe())
+        describe = {id ->
+            listOf(this.describe(id), other.describe(id))
                 .filter { it.isNotBlank() }
                 .joinToString(". ")
         }
