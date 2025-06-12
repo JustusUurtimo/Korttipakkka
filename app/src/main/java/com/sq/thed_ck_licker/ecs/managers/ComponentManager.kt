@@ -156,6 +156,15 @@ inline fun <reified T> List<Any>.hasComponent(): Boolean {
 }
 
 
+
+fun List<EntityId>.applyComponentToAll(component: Any): List<EntityId> {
+    this.forEach { entity ->
+        entity add component
+    }
+    return this
+}
+
+
 infix fun EntityId.difference(entity: EntityId): EntityId {
     val result = EntityManager.createNewEntity()
     val entity1Components = ComponentManager.componentManager.getAllComponentsOfEntity(this)

@@ -8,6 +8,7 @@ import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.ComponentManager
+import com.sq.thed_ck_licker.ecs.managers.EntityId
 import com.sq.thed_ck_licker.ecs.managers.EntityManager
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.get
@@ -196,5 +197,43 @@ class CardsSystemTest {
             onTurnStart = describedOnTurnStart,
             onSpecial = describedOnSpecial
         )
+    }
+
+
+    @Test
+    fun `First play multiplier card, then play point cards from players deck`() {
+        val latest = LatestCardComponent(-1)
+        playerId add latest
+        val discardDeckComponent = DiscardDeckComponent()
+        playerId add discardDeckComponent
+        val score1 = ScoreComponent()
+        playerId add score1
+        playerId add MultiplierComponent()
+
+        val deck = mutableListOf<EntityId>()
+        val pointCards = cardCreationSystem.addBreakingDefaultCards(5)
+        deck.addAll(pointCards)
+
+        val multiCard = cardCreationSystem.addTempMultiplierTestCards(1).first()
+        multiSystem.addHistoryComponentOfItself(playerId)
+        latest.setLatestCard(multiCard)
+        cardManager.cardActivation(cardCount)
+        discardDeckComponent.removeCards(listOf(multiCard))
+
+       repeat(20) {
+           if (deck.isEmpty()) {
+                val hold = discardDeckComponent.getDiscardDeck()
+                deck.addAll(hold)
+                discardDeckComponent.removeCards(hold)
+            }
+            val next = deck.first()
+            deck.removeFirst()
+            latest.setLatestCard(next)
+            cardManager.cardActivation(cardCount)
+        }
+
+        val score = playerId get ScoreComponent::class
+        val endScore = 3800
+        assert(score.getScore() == endScore) { "Score should be $endScore but was ${score.getScore()}" }
     }
 }
