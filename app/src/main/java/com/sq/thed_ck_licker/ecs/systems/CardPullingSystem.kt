@@ -22,13 +22,13 @@ class CardPullingSystem @Inject constructor(
         try {
             (latestCard get EffectComponent::class).onDeactivate.action(ownerId)
         } catch (_: IllegalStateException) {
-            Log.i("pullNewCardSystem", "No effect component found for pullNewCardSystem")
+            Log.i("pullNewCardSystem", "No effect component found for $ownerId")
         }
 
         try {
             (latestCard get ActivationCounterComponent::class).deactivate()
         } catch (_: IllegalStateException) {
-            Log.i("pullNewCardSystem", "No actCounter component found for pullNewCardSystem ")
+            Log.i("pullNewCardSystem", "No actCounter component found for $ownerId")
         }
 
         val drawDeck2 = (ownerId get DrawDeckComponent::class).getDrawCardDeck()
