@@ -1,5 +1,6 @@
 package com.sq.thed_ck_licker.helpers.navigation
 
+import android.util.Log
 import android.annotation.SuppressLint
 import androidx.navigation.NavController
 import javax.inject.Inject
