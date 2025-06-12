@@ -3,6 +3,9 @@ package com.sq.thed_ck_licker.viewModels
 import androidx.compose.runtime.MutableIntState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
+import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
+import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.states.PlayerState
 import com.sq.thed_ck_licker.ecs.systems.CardPullingSystem
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem
@@ -25,7 +28,7 @@ class PlayerViewModel @Inject constructor(
             health = playerSystem.getPlayerHealth(),
             maxHealth = playerSystem.getPlayerMaxHealth(),
             score = playerSystem.getPlayerScore(),
-            latestCard = playerSystem.getLatestCard()
+            latestCard = (getPlayerID() get LatestCardComponent::class).getLatestCard()
         )
     )
     val playerState: StateFlow<PlayerState> get() = _playerState
@@ -42,7 +45,7 @@ class PlayerViewModel @Inject constructor(
         cardPullingSystem.pullNewCard(latestCard)
     }
 
-    fun onActivateCard(cardCount: MutableIntState) {
-        cardsSystem.cardActivation(cardCount)
+    fun onActivateCard(ownerId: Int = getPlayerID()) {
+        cardsSystem.cardActivation(ownerId)
     }
 }

@@ -7,10 +7,13 @@ import com.sq.thed_ck_licker.ecs.components.CardTag
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
+import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
+import com.sq.thed_ck_licker.ecs.components.TargetComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityId
+import com.sq.thed_ck_licker.ecs.managers.EntityManager
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.managers.GameEvent
 import com.sq.thed_ck_licker.ecs.managers.GameEvents
@@ -279,6 +282,59 @@ class CardCreationSystem @Inject constructor(
             onCardPlay = activationEffect
         }
     }
+
+    fun addTempMultiplierTestCards2(amount: Int = 1): List<EntityId> {
+        val multiplier = 2.8f
+        val onActivation = { targetId: Int ->
+            val multiEntity = EntityManager.createNewEntity()
+            val healthComponent = HealthComponent(5f)
+            multiEntity add healthComponent
+            multiEntity add TargetComponent(getPlayerID())
+
+            fun buildEffectComponent(healthComponent: HealthComponent): EffectComponent {
+                val onSpecial = { targetId: Int ->
+                    var targetMulti =
+                        try {
+                            targetId get MultiplierComponent::class
+                        } catch (_: Exception) {
+                            MultiplierComponent()
+                        }
+//                    println("My target is: $targetId")
+                    targetMulti.timesMultiplier(6f)
+                    targetId add targetMulti
+                }
+                val describedOnSpecial = DescribedEffect(onSpecial) { "Add 6x multiplier" }
+
+
+                val onTurnStart = { _: Int -> healthComponent.damage(1f) }
+                val describedOnTurnStart = DescribedEffect(onTurnStart) { "Take 1 damage" }
+                val onDeath = { targetId: Int ->
+                    var targetMulti = targetId get MultiplierComponent::class
+                    targetMulti.removeMultiplier(6f)
+                }
+                val describedOnDeath = DescribedEffect(onDeath) { "Remove 6x multiplier" }
+
+                return EffectComponent(
+                    onDeath = describedOnDeath,
+                    onTurnStart = describedOnTurnStart,
+                    onSpecial = describedOnSpecial
+                )
+            }
+
+            val effects = buildEffectComponent(healthComponent)
+            multiEntity add effects
+            effects.onSpecial.action(targetId)
+        }
+        val activationEffect =
+            DescribedEffect(onActivation) { "Inject steroids and make more every time you do any thing ($multiplier times)" }
+        return cardBuilder.buildCards {
+            cardHealth = 1f
+            cardAmount = amount
+            name = "Steroids"
+            onCardPlay = activationEffect
+        }
+    }
+
     fun addShuffleTestCards(amount: Int = 1): List<EntityId> {
         val playerId = getPlayerID()
 
@@ -328,7 +384,10 @@ class CardCreationSystem @Inject constructor(
             onCardDeactivate = deactivationEffect
         }
     }
+
     fun addTimeBoundTestCards(numberOfCards: Int = 1): List<EntityId> {
         return cardBuilder.createTimeBoundCards(numberOfCards)
     }
+
+
 }

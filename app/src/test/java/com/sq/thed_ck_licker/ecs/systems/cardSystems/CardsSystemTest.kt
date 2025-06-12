@@ -28,8 +28,7 @@ class CardsSystemTest {
     var cardCreationHelperSystems by Delegates.notNull<CardCreationHelperSystems>()
     var cardCreationSystem by Delegates.notNull<CardCreationSystem>()
     var cardManager by Delegates.notNull<CardsSystem>()
-    val playerId = EntityManager.getPlayerID()
-    val cardCount = mutableIntStateOf(0)
+    var owner by Delegates.notNull<EntityId>()
 
     @BeforeEach
     fun setUp() {
@@ -42,7 +41,7 @@ class CardsSystemTest {
         )
         val playerSystem = PlayerSystem_Factory.newInstance(cardCreationSystem)
         cardManager = CardsSystem_Factory.newInstance(multiSystem, playerSystem)
-        cardCount.intValue = 1
+        owner = EntityManager.createNewEntity()
     }
 
     @Test
@@ -52,34 +51,34 @@ class CardsSystemTest {
     @Test
     fun `Activate players point card`() {
         val latest = LatestCardComponent(-1)
-        playerId add latest
-        playerId add DiscardDeckComponent()
-        playerId add ScoreComponent()
+        owner add latest
+        owner add DiscardDeckComponent()
+        owner add ScoreComponent()
         val card = cardCreationSystem.addBreakingDefaultCards(1).first()
         latest.setLatestCard(card)
-        cardManager.cardActivation(cardCount)
+        cardManager.cardActivation(owner)
 
-        val score = playerId get ScoreComponent::class
+        val score = owner get ScoreComponent::class
         assert(score.getScore() == 100) { "Score was not modified by the card" }
     }
 
     @Test
     fun `Activate players point card 11 times`() {
         val latest = LatestCardComponent(-1)
-        playerId add latest
+        owner add latest
         val discardDeckComponent = DiscardDeckComponent()
-        playerId add discardDeckComponent
-        playerId add ScoreComponent()
+        owner add discardDeckComponent
+        owner add ScoreComponent()
         val card = cardCreationSystem.addBreakingDefaultCards(1).first()
 
         repeat(11) {
             latest.setLatestCard(card)
-            cardManager.cardActivation(cardCount)
+            cardManager.cardActivation(owner)
             val cardFromDiscard = discardDeckComponent.getDiscardDeck().first()
             discardDeckComponent.removeCards(listOf(cardFromDiscard))
         }
 
-        val score = playerId get ScoreComponent::class
+        val score = owner get ScoreComponent::class
         val endScore = 1000
         assert(score.getScore() == endScore) { "Score should be $endScore but was ${score.getScore()}" }
         assert(latest.getLatestCard() == -1) { "Latest card should be -1 but was ${latest.getLatestCard()}" }
@@ -89,21 +88,21 @@ class CardsSystemTest {
     @Test
     fun `Activate players point card 7 times with multiplier`() {
         val latest = LatestCardComponent(-1)
-        playerId add latest
+        owner add latest
         val discardDeckComponent = DiscardDeckComponent()
-        playerId add discardDeckComponent
-        playerId add ScoreComponent()
-        playerId add MultiplierComponent(2f)
+        owner add discardDeckComponent
+        owner add ScoreComponent()
+        owner add MultiplierComponent(2f)
         val card = cardCreationSystem.addBreakingDefaultCards(1).first()
-        multiSystem.addHistoryComponentOfItself(playerId)
+        multiSystem.addHistoryComponentOfItself(owner)
         repeat(7) {
             latest.setLatestCard(card)
-            cardManager.cardActivation(cardCount)
+            cardManager.cardActivation(owner)
             val cardFromDiscard = discardDeckComponent.getDiscardDeck().first()
             discardDeckComponent.removeCards(listOf(cardFromDiscard))
         }
 
-        val score = playerId get ScoreComponent::class
+        val score = owner get ScoreComponent::class
         val endScore = 1400
         assert(score.getScore() == endScore) { "Score should be $endScore but was ${score.getScore()}" }
     }
@@ -112,28 +111,28 @@ class CardsSystemTest {
     @Test
     fun `Activate players point card 7 times with temp multiplier`() {
         val latest = LatestCardComponent(-1)
-        playerId add latest
+        owner add latest
         val discardDeckComponent = DiscardDeckComponent()
-        playerId add discardDeckComponent
-        playerId add ScoreComponent()
-        playerId add MultiplierComponent()
+        owner add discardDeckComponent
+        owner add ScoreComponent()
+        owner add MultiplierComponent()
 
         cardCreationHelperSystems.addTemporaryMultiplierTo(
-            targetEntityId = playerId,
+            targetEntityId = owner,
             health = 5f,
             multiplier = 6f
         )
 
         val card = cardCreationSystem.addBreakingDefaultCards(1).first()
-        multiSystem.addHistoryComponentOfItself(playerId)
+        multiSystem.addHistoryComponentOfItself(owner)
         repeat(7) {
             latest.setLatestCard(card)
-            cardManager.cardActivation(cardCount)
+            cardManager.cardActivation(owner)
             val cardFromDiscard = discardDeckComponent.getDiscardDeck().first()
             discardDeckComponent.removeCards(listOf(cardFromDiscard))
         }
 
-        val score = playerId get ScoreComponent::class
+        val score = owner get ScoreComponent::class
         val endScore = 3200
         assert(score.getScore() == endScore) { "Score should be $endScore but was ${score.getScore()}" }
     }
@@ -142,11 +141,11 @@ class CardsSystemTest {
     @Test
     fun `Activate players point card 7 times with new temp multiplier`() {
         val latest = LatestCardComponent(-1)
-        playerId add latest
+        owner add latest
         val discardDeckComponent = DiscardDeckComponent()
-        playerId add discardDeckComponent
-        playerId add ScoreComponent()
-        playerId add MultiplierComponent()
+        owner add discardDeckComponent
+        owner add ScoreComponent()
+        owner add MultiplierComponent()
 
 
         val multiEntity = EntityManager.createNewEntity()
@@ -154,18 +153,18 @@ class CardsSystemTest {
         multiEntity add healthComponent
         val effects = buildEffectComponent(healthComponent)
         multiEntity add effects
-        effects.onSpecial(playerId)
+        effects.onSpecial(owner)
 
         val card = cardCreationSystem.addBreakingDefaultCards(1).first()
-        multiSystem.addHistoryComponentOfItself(playerId)
+        multiSystem.addHistoryComponentOfItself(owner)
         repeat(7) {
             latest.setLatestCard(card)
-            cardManager.cardActivation(cardCount)
+            cardManager.cardActivation(owner)
             val cardFromDiscard = discardDeckComponent.getDiscardDeck().first()
             discardDeckComponent.removeCards(listOf(cardFromDiscard))
         }
 
-        val score = playerId get ScoreComponent::class
+        val score = owner get ScoreComponent::class
         val endScore = 3200
         assert(score.getScore() == endScore) { "Score should be $endScore but was ${score.getScore()}" }
     }
@@ -203,21 +202,21 @@ class CardsSystemTest {
     @Test
     fun `First play multiplier card, then play point cards from players deck`() {
         val latest = LatestCardComponent(-1)
-        playerId add latest
+        owner add latest
         val discardDeckComponent = DiscardDeckComponent()
-        playerId add discardDeckComponent
+        owner add discardDeckComponent
         val score1 = ScoreComponent()
-        playerId add score1
-        playerId add MultiplierComponent()
+        owner add score1
+        owner add MultiplierComponent()
 
         val deck = mutableListOf<EntityId>()
         val pointCards = cardCreationSystem.addBreakingDefaultCards(5)
         deck.addAll(pointCards)
 
         val multiCard = cardCreationSystem.addTempMultiplierTestCards(1).first()
-        multiSystem.addHistoryComponentOfItself(playerId)
+        multiSystem.addHistoryComponentOfItself(owner)
         latest.setLatestCard(multiCard)
-        cardManager.cardActivation(cardCount)
+        cardManager.cardActivation(owner)
         discardDeckComponent.removeCards(listOf(multiCard))
 
        repeat(20) {
@@ -229,10 +228,10 @@ class CardsSystemTest {
             val next = deck.first()
             deck.removeFirst()
             latest.setLatestCard(next)
-            cardManager.cardActivation(cardCount)
+            cardManager.cardActivation(owner)
         }
 
-        val score = playerId get ScoreComponent::class
+        val score = owner get ScoreComponent::class
         val endScore = 3800
         assert(score.getScore() == endScore) { "Score should be $endScore but was ${score.getScore()}" }
     }

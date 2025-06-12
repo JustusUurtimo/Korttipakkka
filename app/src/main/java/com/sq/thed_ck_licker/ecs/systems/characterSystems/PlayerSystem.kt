@@ -4,11 +4,13 @@ import androidx.compose.runtime.snapshotFlow
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
+import com.sq.thed_ck_licker.ecs.components.HistoryComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.components.misc.TickComponent
+import com.sq.thed_ck_licker.ecs.managers.ComponentManager
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getRegularMerchantID
 import com.sq.thed_ck_licker.ecs.managers.add
@@ -37,6 +39,8 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         if (areRealTimeThingsEnabled.value) {
             getPlayerID() add TickComponent(tickAction = healthTicker())
         }
+
+        getPlayerID() add HistoryComponent(ComponentManager.componentManager.copy(getPlayerID()))
     }
 
     private fun initPlayerDeck(): List<Int> {
@@ -54,7 +58,8 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         val multiplierCards = cardCreationSystem.addTempMultiplierTestCards(2)
         val corruptionCards = cardCreationSystem.addShuffleTestCards(2)
         val timeBoundCards = cardCreationSystem.addTimeBoundTestCards(1)
-        
+        val multiplierCards2 = cardCreationSystem.addTempMultiplierTestCards2(1)
+
         return emptyList<Int>() +
                 playerHealingCards +
                 playerDamageCards +
@@ -69,6 +74,7 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
                 multiplierCards +
                 corruptionCards +
                 timeBoundCards +
+                multiplierCards2 +
                 emptyList<Int>()
     }
 

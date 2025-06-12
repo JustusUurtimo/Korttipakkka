@@ -22,6 +22,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
+import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
+import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.TickingSystem
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.CardDeck
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.HoleView
@@ -41,7 +44,7 @@ fun Game(
     playerViewModel: PlayerViewModel = hiltViewModel(),
 ) {
     val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues()
-    val playerCardCount = rememberSaveable { mutableIntStateOf(0) }
+    val playerCardCount = rememberSaveable { (getPlayerID() get LatestCardComponent::class).getCardCounter() }
     val isShovelUsed by gameViewModel.isShovelUsed.collectAsState()
     val playerState by playerViewModel.playerState.collectAsState()
 
@@ -69,9 +72,7 @@ fun Game(
                             modifier,
                             playerState.latestCard,
                             activateCard = {
-                                playerViewModel.onActivateCard(
-                                    playerCardCount
-                                )
+                                playerViewModel.onActivateCard(getPlayerID())
                             }
                         )
                     }

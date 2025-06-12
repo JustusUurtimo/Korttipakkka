@@ -5,7 +5,9 @@ import androidx.compose.runtime.MutableIntState
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
+import com.sq.thed_ck_licker.ecs.components.TargetComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
+import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.managers.GameEvent
 import com.sq.thed_ck_licker.ecs.managers.GameEvents
@@ -42,28 +44,25 @@ class CardsSystem @Inject constructor(
     }
 
     fun cardActivation(
-        playerCardCount: MutableIntState
+        ownerId: Int = getPlayerID()
     ) {
         Log.v("CardsSystem", "Card activation started. Turn started.")
         onTurnStart()
         onTurnStartEffectStackSystem()
-        activateCard(playerCardCount)
-        try {
-        multiSystem.multiplyEntityAgainstOldItself(getPlayerID())
-        multiSystem.addHistoryComponentOfItself(getPlayerID())
-        } catch (e: IllegalStateException) {
-            Log.i("CardsSystem", "No multiplier component found for activation")
-            Log.i("CardsSystem", e.message.toString())
-        }
+        activateCard(ownerId)
+        multiSystem.multiplyEntityAgainstOldItself(ownerId)
+        multiSystem.addHistoryComponentOfItself(ownerId)
         onDeathSystem()
         Log.v("CardsSystem", "Card activation finished. Turn finished.")
     }
 
-    private fun activateCard(playerCardCount: MutableIntState) {
-        val latestCard = playerSystem.getLatestCard()
+    private fun activateCard(ownerId: Int) {
+        val ownerInfo = (ownerId get LatestCardComponent::class)
+        val latestCard = ownerInfo.getLatestCard()
         if (latestCard == -1) return
 
-        playerCardCount.intValue += 1
+//        playerCardCount.intValue += 1
+        ownerInfo.increaseCardCounter()
         var latestCardHp: HealthComponent? = null
 
         try {
@@ -75,10 +74,15 @@ class CardsSystem @Inject constructor(
                         "Yeah yeah, we get it, you are so cool there was no health component"
             )
         }
+        var target = try {
+            (latestCard get TargetComponent::class).target
+        } catch (_: Exception) {
+            getPlayerID()
+        }
 
 
         try {
-            (latestCard get EffectComponent::class).onPlay.action.invoke(getPlayerID())
+            (latestCard get EffectComponent::class).onPlay.action(target)
         } catch (_: IllegalStateException) {
             Log.i(
                 "CardsSystem",
@@ -94,7 +98,7 @@ class CardsSystem @Inject constructor(
                 "Health is now ${latestCardHp.getHealth()}"
             )
             if (latestCardHp.getHealth() <= 0) {
-                playerSystem.setLatestCard(-1)
+               ownerInfo.setLatestCard(-1)
             }
         } ?: Log.i("CardsSystem", "No health component found for activation")
 
@@ -107,8 +111,8 @@ class CardsSystem @Inject constructor(
                         "Yeah yeah, we get it, you are so cool there was no actCounter component"
             )
         }
-        discardSystem(ownerId = getPlayerID(), cardId = latestCard)
-        playerSystem.setLatestCard(-1)
+        discardSystem(ownerId = ownerId, cardId = latestCard)
+        ownerInfo.setLatestCard(-1)
     }
 
 }
