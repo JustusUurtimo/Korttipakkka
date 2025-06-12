@@ -6,7 +6,6 @@ import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
-import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.managers.GameEvent
 import com.sq.thed_ck_licker.ecs.managers.GameEvents
@@ -49,7 +48,7 @@ class CardsSystem @Inject constructor(
         activateCard(playerCardCount)
         try {
         multiSystem.multiplyEntityAgainstOldItself(getPlayerID())
-        multiSystem.addEntity(getPlayerID())
+        multiSystem.addHistoryComponentOfItself(getPlayerID())
         } catch (e: IllegalStateException) {
             Log.i("CardsSystem", "No multiplier component found for activation")
             Log.i("CardsSystem", e.message.toString())
