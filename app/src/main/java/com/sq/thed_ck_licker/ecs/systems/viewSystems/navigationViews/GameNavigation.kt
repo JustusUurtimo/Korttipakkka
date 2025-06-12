@@ -26,6 +26,7 @@ import com.sq.thed_ck_licker.helpers.navigation.GameNavigator
 import com.sq.thed_ck_licker.helpers.navigation.Screen
 import com.sq.thed_ck_licker.viewModels.GameViewModel
 import com.sq.thed_ck_licker.viewModels.MerchantViewModel
+import com.sq.thed_ck_licker.viewModels.PitViewModel
 
 @Composable
 fun GameNavigation(
@@ -84,11 +85,13 @@ fun GameNavigation(
             exitTransition = {
                 slideOutHorizontally { width -> -width }
             })
-        { DeathScreen(
-            onRetry = { gameViewModel.restartGame() },
-            onLeaveGame = { gameViewModel.leaveGame() },
-            modifier = modifier
-        ) }
+        {
+            DeathScreen(
+                onRetry = { gameViewModel.restartGame() },
+                onLeaveGame = { gameViewModel.leaveGame() },
+                modifier = modifier
+            )
+        }
 
         composable(route = Screen.MerchantShop.route)
         {
@@ -98,7 +101,8 @@ fun GameNavigation(
 
         composable(route = Screen.Pit.route)
         {
-            PitScreen(modifier, gameNavigator)
+            val pitViewModel: PitViewModel = hiltViewModel()
+            PitScreen(modifier, gameNavigator, pitViewModel)
         }
 
 

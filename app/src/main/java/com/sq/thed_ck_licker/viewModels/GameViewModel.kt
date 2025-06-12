@@ -20,6 +20,7 @@ class GameViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             GameEvents.eventStream.collect { event ->
+                println(" ################ Received event: $event")
                 when (event) {
                     is GameEvent.PlayerDied -> gameNavigator.navigateTo(Screen.DeathScreen.route)
                     is GameEvent.ShovelUsed -> gameNavigator.navigateTo(Screen.Pit.route)

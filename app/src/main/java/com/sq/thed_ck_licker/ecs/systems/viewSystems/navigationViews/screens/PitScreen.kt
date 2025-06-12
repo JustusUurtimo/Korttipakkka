@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
@@ -32,10 +34,14 @@ import com.sq.thed_ck_licker.viewModels.PitViewModel
 fun PitScreen(
     modifier: Modifier,
     gameNavigator: GameNavigator,
-    pitViewModel: PitViewModel = hiltViewModel()
+    pitViewModel: PitViewModel
 ) {
+    val pitCards by pitViewModel.pitCardSelection.collectAsState()
 
-    val pitCards = pitViewModel.getPitCards()
+    if (pitCards.isEmpty()) {
+        pitViewModel.getPitCards()
+    }
+
     fun dropCardInPit(card: Int) {
         pitViewModel.dropCardInPit(card)
         gameNavigator.navigateBack()
@@ -45,6 +51,8 @@ fun PitScreen(
         pitViewModel.buyShovel()
         gameNavigator.navigateBack()
     }
+
+    println("pitcards: ${pitCards}")
 
     Box(
         modifier = modifier

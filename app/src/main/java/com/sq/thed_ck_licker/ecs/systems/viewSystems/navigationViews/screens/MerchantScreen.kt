@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.MerchantHandView
 import com.sq.thed_ck_licker.helpers.navigation.GameNavigator
-import com.sq.thed_ck_licker.helpers.navigation.Screen
 import com.sq.thed_ck_licker.viewModels.MerchantViewModel
 
 @Composable
