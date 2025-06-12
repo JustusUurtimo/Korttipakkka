@@ -20,11 +20,13 @@ import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.Gam
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.HighScoresScreen
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.MainMenuScreen
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.MerchantScreen
+import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.PitScreen
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.SettingsScreen
 import com.sq.thed_ck_licker.helpers.navigation.GameNavigator
 import com.sq.thed_ck_licker.helpers.navigation.Screen
 import com.sq.thed_ck_licker.viewModels.GameViewModel
 import com.sq.thed_ck_licker.viewModels.MerchantViewModel
+import com.sq.thed_ck_licker.viewModels.PitViewModel
 
 @Composable
 fun GameNavigation(
@@ -83,16 +85,24 @@ fun GameNavigation(
             exitTransition = {
                 slideOutHorizontally { width -> -width }
             })
-        { DeathScreen(
-            onRetry = { gameViewModel.restartGame() },
-            onLeaveGame = { gameViewModel.leaveGame() },
-            modifier = modifier
-        ) }
+        {
+            DeathScreen(
+                onRetry = { gameViewModel.restartGame() },
+                onLeaveGame = { gameViewModel.leaveGame() },
+                modifier = modifier
+            )
+        }
 
         composable(route = Screen.MerchantShop.route)
         {
             val viewModel: MerchantViewModel = hiltViewModel()
             MerchantScreen(modifier = modifier, viewModel, gameNavigator)
+        }
+
+        composable(route = Screen.Pit.route)
+        {
+            val pitViewModel: PitViewModel = hiltViewModel()
+            PitScreen(modifier, gameNavigator, pitViewModel)
         }
 
 

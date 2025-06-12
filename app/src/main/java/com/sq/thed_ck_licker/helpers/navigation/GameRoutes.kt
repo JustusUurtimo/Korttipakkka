@@ -7,5 +7,6 @@ sealed class Screen(val route: String) {
     object HighScores : Screen("high_scores")
     object DeathScreen : Screen("death_screen")
     object MerchantShop : Screen("merchant_shop")
+    object Pit : Screen("pit")
 
 }

@@ -70,7 +70,6 @@ class MerchantSystem @Inject constructor(
         }
         updateMerchantAffinity(10, activeMerchant)
         playerSystem.setLatestCard(newCard)
-        MerchantEvents.tryEmit(MerchantEvent.MerchantShopClosed)
     }
 
     fun updateMerchantAffinity(amount: Int, merchantId: Int) {

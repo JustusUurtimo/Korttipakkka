@@ -49,10 +49,6 @@ class MerchantViewModel @Inject constructor(
                         _activeMerchantId.value = event.merchantId
                         _merchantSummonCard.value = event.cardEntity
                     }
-                    is MerchantEvent.MerchantShopClosed -> {
-                        // Handle merchant shop closed
-                        _activeMerchantId.value = -1
-                    }
                 }
             }
         }
