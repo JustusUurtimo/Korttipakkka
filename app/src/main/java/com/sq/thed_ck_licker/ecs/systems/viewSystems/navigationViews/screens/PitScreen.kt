@@ -52,8 +52,6 @@ fun PitScreen(
         gameNavigator.navigateBack()
     }
 
-    println("pitcards: ${pitCards}")
-
     Box(
         modifier = modifier
             .fillMaxSize()
