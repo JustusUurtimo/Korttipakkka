@@ -1,13 +1,13 @@
 package com.sq.thed_ck_licker.ecs.systems.cardSystems
 
 import android.util.Log
-import androidx.compose.runtime.MutableIntState
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.TargetComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
+import com.sq.thed_ck_licker.ecs.managers.EntityId
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.managers.GameEvent
 import com.sq.thed_ck_licker.ecs.managers.GameEvents
@@ -38,13 +38,14 @@ class CardsSystem @Inject constructor(
         val theCard = deck.getRandomElement()
         drawDeckComponent.removeCard(theCard)
         val effects = (theCard get EffectComponent::class)
-        effects.onDrawn(entityId)
+        effects.onDrawn.action(entityId)
+        onDeathSystem()
         return theCard
 
     }
 
     fun cardActivation(
-        ownerId: Int = getPlayerID()
+        ownerId: Int
     ) {
         Log.v("CardsSystem", "Card activation started. Turn started.")
         onTurnStart()
@@ -56,12 +57,11 @@ class CardsSystem @Inject constructor(
         Log.v("CardsSystem", "Card activation finished. Turn finished.")
     }
 
-    private fun activateCard(ownerId: Int) {
+    private fun activateCard(ownerId: EntityId) {
         val ownerInfo = (ownerId get LatestCardComponent::class)
         val latestCard = ownerInfo.getLatestCard()
         if (latestCard == -1) return
 
-//        playerCardCount.intValue += 1
         ownerInfo.increaseCardCounter()
         var latestCardHp: HealthComponent? = null
 
@@ -77,7 +77,7 @@ class CardsSystem @Inject constructor(
         var target = try {
             (latestCard get TargetComponent::class).target
         } catch (_: Exception) {
-            getPlayerID()
+            ownerId
         }
 
 

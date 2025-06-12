@@ -61,7 +61,7 @@ fun Game(
         }
 
         Box(modifier.fillMaxSize()) {
-            CardDeck(navigationBarPadding) { playerViewModel.onPullNewCard(playerState.latestCard) }
+            CardDeck(navigationBarPadding) { playerViewModel.onPullNewCard(getPlayerID()) }
             Box(modifier.align(Alignment.BottomCenter)) {
 
                 Column(modifier.padding(35.dp, 0.dp, 0.dp, 0.dp)) {
@@ -79,7 +79,7 @@ fun Game(
                     PullCardButton(
                         navigationBarPadding,
                         modifier.offset((-15).dp),
-                        pullNewCard = { playerViewModel.onPullNewCard(playerState.latestCard) }
+                        pullNewCard = { playerViewModel.onPullNewCard(getPlayerID()) }
                     )
                 }
 

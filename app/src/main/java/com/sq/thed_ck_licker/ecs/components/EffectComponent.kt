@@ -85,7 +85,7 @@ data class EffectComponent(
         }
 
         handle("On Death", onDeath)
-        handle("On Spawn", onDrawn)
+        handle("On Drawn", onDrawn)
         handle("On Turn Start", onTurnStart)
         handle("On Play", onPlay)
         handle("On Deactivate", onDeactivate)

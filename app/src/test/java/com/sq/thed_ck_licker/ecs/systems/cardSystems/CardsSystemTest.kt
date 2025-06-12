@@ -1,10 +1,10 @@
 package com.sq.thed_ck_licker.ecs.systems.cardSystems
 
-import androidx.compose.runtime.mutableIntStateOf
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.HistoryComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
+import com.sq.thed_ck_licker.ecs.components.TargetComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
@@ -18,6 +18,7 @@ import com.sq.thed_ck_licker.ecs.systems.helperSystems.CardCreationHelperSystems
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.CardCreationHelperSystems_Factory
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.MultiplierSystem
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.MultiplierSystem_Factory
+import com.sq.thed_ck_licker.ecs.systems.helperSystems.onDeathSystem
 import com.sq.thed_ck_licker.helpers.DescribedEffect
 import com.sq.thed_ck_licker.helpers.navigation.GameNavigator_Factory
 import org.junit.jupiter.api.BeforeEach
@@ -50,12 +51,14 @@ class CardsSystemTest {
     }
 
     @Test
-    fun `Activate players point card`() {
+    fun `Activate entity's point card`() {
         val latest = LatestCardComponent(-1)
         owner add latest
         owner add DiscardDeckComponent()
         owner add ScoreComponent()
         owner add HistoryComponent(owner)
+        owner add MultiplierComponent()
+        multiSystem.addHistoryComponentOfItself(owner)
         val card = cardCreationSystem.addBreakingDefaultCards(1).first()
         latest.setLatestCard(card)
         cardManager.cardActivation(owner)
@@ -73,6 +76,7 @@ class CardsSystemTest {
         owner add ScoreComponent()
         owner add HistoryComponent(owner)
         owner add MultiplierComponent()
+        multiSystem.addHistoryComponentOfItself(owner)
         val card = cardCreationSystem.addBreakingDefaultCards(1).first()
 
         repeat(11) {
@@ -114,7 +118,7 @@ class CardsSystemTest {
 
     @Test
     fun `Activate players point card 7 times with temp multiplier`() {
-        val latest = LatestCardComponent(-1)
+        val latest = LatestCardComponent()
         owner add latest
         val discardDeckComponent = DiscardDeckComponent()
         owner add discardDeckComponent
@@ -157,6 +161,7 @@ class CardsSystemTest {
         multiEntity add healthComponent
         val effects = buildEffectComponent(healthComponent)
         multiEntity add effects
+        multiEntity add TargetComponent(owner)
         effects.onSpecial(owner)
 
         val card = cardCreationSystem.addBreakingDefaultCards(1).first()

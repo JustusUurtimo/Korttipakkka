@@ -1,9 +1,14 @@
 package com.sq.thed_ck_licker.ecs.systems
 
 import android.util.Log
+import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.IdentificationComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent
+import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
+import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
+import com.sq.thed_ck_licker.ecs.managers.EntityId
+import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.characterSystems.MerchantSystem
 import com.sq.thed_ck_licker.ecs.systems.characterSystems.PlayerSystem
@@ -15,7 +20,7 @@ class PitSystem @Inject constructor(
     private val merchantSystem: MerchantSystem,
     private val cardPullingSystem: CardPullingSystem,
 ) {
-    fun dropCardInHole(latestCard: Int) {
+    fun dropCardInHole(latestCard: Int, ownerId: EntityId = getPlayerID()) {
         if (latestCard == -1) return
         val tagsComponent = latestCard get TagsComponent::class
 
@@ -29,26 +34,33 @@ class PitSystem @Inject constructor(
         if (tagsComponent.cardIsMerchant()) {
             handleMerchantCard(latestCard)
         } else {
-            handleCardDrop(latestCard, bonusScore = 200)
+            handleCardDrop(ownerId = ownerId, bonusScore = 200)
         }
     }
 
     // Helper Methods
-    private fun handleMerchantCard(latestCard: Int) {
+    private fun handleMerchantCard(ownerId: EntityId = getPlayerID()) {
+        val ownerInfo = (ownerId get LatestCardComponent::class)
+        val latestCard = ownerInfo.getLatestCard()
+
         if (MyRandom.getRandomInt() <= 3) {
             val merchantId: Int? = (latestCard get IdentificationComponent::class).getCharacterId()
             merchantId?.let {
                 merchantSystem.updateMerchantAffinity(-500, it)
             }
-            cardPullingSystem.pullNewCard(latestCard)
+            cardPullingSystem.pullNewCard(ownerId)
         } else {
-            handleCardDrop(latestCard, bonusScore = 500)
+            handleCardDrop(bonusScore = 500, ownerId = ownerId)
         }
     }
 
-    private fun handleCardDrop(latestCard: Int, bonusScore: Int) {
-        playerSystem.removeCardFromDrawDeck(latestCard)
-        playerSystem.setLatestCard(-1)
-        playerSystem.updateScore(bonusScore)
+    private fun handleCardDrop(bonusScore: Int, ownerId: EntityId = getPlayerID()) {
+        val ownerInfo = (ownerId get LatestCardComponent::class)
+        val latestCard = ownerInfo.getLatestCard()
+        val deck = (ownerId get DrawDeckComponent::class).getDrawCardDeck()
+        deck.remove(latestCard)
+        ownerInfo.setLatestCard(-1)
+        val score = ownerId get ScoreComponent::class
+        score.addScore(bonusScore)
     }
 }

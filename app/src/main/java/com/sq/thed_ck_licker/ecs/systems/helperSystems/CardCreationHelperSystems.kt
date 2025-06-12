@@ -85,21 +85,24 @@ class CardCreationHelperSystems @Inject constructor() {
             targetMultiComp.timesMultiplier(multiplier)
         } catch (_: IllegalStateException) {
             Log.e("CardsSystem", "Target entity has no multiplier component")
+            return
         }
         val damage = 1f
-        val onTurnStart = { _: Int -> selfHp.damage(damage) }
-        val activationEffect =
+
+        val onTurnStart = { _: Int ->
+            selfHp.damage(damage)
+        }
+        val turnStartEffect =
             DescribedEffect(onTurnStart) { "Take $damage damage" }
 
-        val onDeath = { targetId: Int ->
-            val targetMultiComp = targetId get MultiplierComponent::class
+        val onDeath = { _: Int ->
+            val targetMultiComp = targetEntityId get MultiplierComponent::class
             targetMultiComp.removeMultiplier(multiplier)
         }
-
         val onDeathEffect =
             DescribedEffect(onDeath) { "Removes the $multiplier multiplier" }
         limitedMultiEntity add EffectComponent(
-            onTurnStart = activationEffect,
+            onTurnStart = turnStartEffect,
             onDeath = onDeathEffect
         )
 
