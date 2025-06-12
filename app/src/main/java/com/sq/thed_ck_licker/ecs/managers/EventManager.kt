@@ -12,7 +12,6 @@ sealed class GameEvent {
 
 sealed class MerchantEvent {
     data class MerchantShopOpened(val merchantId: Int, val cardEntity: Int) : MerchantEvent()
-    object MerchantShopClosed : MerchantEvent()
 }
 
 

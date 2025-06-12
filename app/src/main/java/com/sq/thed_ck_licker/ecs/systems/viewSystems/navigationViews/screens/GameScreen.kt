@@ -14,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -27,12 +26,10 @@ import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.TickingSystem
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.CardDeck
-import com.sq.thed_ck_licker.ecs.systems.viewSystems.HoleView
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.PlayerHandView
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.PullCardButton
 import com.sq.thed_ck_licker.player.HealthBar
 import com.sq.thed_ck_licker.player.ScoreDisplay
-import com.sq.thed_ck_licker.viewModels.GameViewModel
 import com.sq.thed_ck_licker.viewModels.PlayerViewModel
 import kotlinx.coroutines.delay
 
@@ -40,12 +37,10 @@ import kotlinx.coroutines.delay
 fun Game(
     modifier: Modifier = Modifier,
     innerPadding: PaddingValues,
-    gameViewModel: GameViewModel = hiltViewModel(),
     playerViewModel: PlayerViewModel = hiltViewModel(),
 ) {
     val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues()
     val playerCardCount = rememberSaveable { (getPlayerID() get LatestCardComponent::class).getCardCounter() }
-    val isShovelUsed by gameViewModel.isShovelUsed.collectAsState()
     val playerState by playerViewModel.playerState.collectAsState()
 
     RealtimeEffects()
@@ -53,12 +48,6 @@ fun Game(
     Column(modifier.fillMaxWidth()) {
         HealthBar(playerState.health, playerState.maxHealth, modifier.padding(innerPadding))
         ScoreDisplay(playerState.score)
-
-        if (isShovelUsed) {
-            HoleView(
-                modifier,
-                onClickListener = { gameViewModel.dropCardInHole(playerState.latestCard) })
-        }
 
         Box(modifier.fillMaxSize()) {
             CardDeck(navigationBarPadding) { playerViewModel.onPullNewCard(getPlayerID()) }

@@ -10,6 +10,7 @@ import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityId
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.managers.get
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem
 import com.sq.thed_ck_licker.ecs.systems.characterSystems.MerchantSystem
 import com.sq.thed_ck_licker.ecs.systems.characterSystems.PlayerSystem
 import com.sq.thed_ck_licker.helpers.MyRandom
@@ -19,8 +20,19 @@ class PitSystem @Inject constructor(
     private val playerSystem: PlayerSystem,
     private val merchantSystem: MerchantSystem,
     private val cardPullingSystem: CardPullingSystem,
+    private val cardsSystem: CardsSystem
 ) {
     fun dropCardInHole(latestCard: Int, ownerId: EntityId = getPlayerID()) {
+
+    fun buyShovel() {
+        playerSystem.updateScore(-500)
+    }
+
+    fun getPitCards(): List<Int> {
+        return List(3) { cardsSystem.pullRandomCardFromEntityDeck(getPlayerID()) }
+    }
+
+    fun dropCardInPit(latestCard: Int) {
         if (latestCard == -1) return
         val tagsComponent = latestCard get TagsComponent::class
 
@@ -48,7 +60,7 @@ class PitSystem @Inject constructor(
             merchantId?.let {
                 merchantSystem.updateMerchantAffinity(-500, it)
             }
-            cardPullingSystem.pullNewCard(ownerId)
+//            cardPullingSystem.pullNewCard(ownerId)
         } else {
             handleCardDrop(bonusScore = 500, ownerId = ownerId)
         }
@@ -59,7 +71,7 @@ class PitSystem @Inject constructor(
         val latestCard = ownerInfo.getLatestCard()
         val deck = (ownerId get DrawDeckComponent::class).getDrawCardDeck()
         deck.remove(latestCard)
-        ownerInfo.setLatestCard(-1)
+//        ownerInfo.setLatestCard(-1)
         val score = ownerId get ScoreComponent::class
         score.addScore(bonusScore)
     }

@@ -34,7 +34,8 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun TheD_ck_LickerTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    //darkTheme: Boolean = isSystemInDarkTheme(),
+    darkTheme: Boolean = false, // Disable dark theme for now
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit

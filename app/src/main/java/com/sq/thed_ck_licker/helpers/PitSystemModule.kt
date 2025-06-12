@@ -2,6 +2,7 @@ package com.sq.thed_ck_licker.helpers
 
 import com.sq.thed_ck_licker.ecs.systems.CardPullingSystem
 import com.sq.thed_ck_licker.ecs.systems.PitSystem
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem
 import com.sq.thed_ck_licker.ecs.systems.characterSystems.MerchantSystem
 import com.sq.thed_ck_licker.ecs.systems.characterSystems.PlayerSystem
 import dagger.Module
@@ -19,8 +20,8 @@ object PitSystemModule {
     fun providePitSystem(
         playerSystem: PlayerSystem,
         merchantSystem: MerchantSystem,
-        cardPullingSystem: CardPullingSystem
+        cardsSystem: CardsSystem
     ): PitSystem {
-        return PitSystem(playerSystem, merchantSystem, cardPullingSystem)
+        return PitSystem(playerSystem, merchantSystem, cardsSystem)
     }
 }
