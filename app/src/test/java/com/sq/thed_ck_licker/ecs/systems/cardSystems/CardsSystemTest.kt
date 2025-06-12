@@ -2,7 +2,9 @@ package com.sq.thed_ck_licker.ecs.systems.cardSystems
 
 import androidx.compose.runtime.mutableIntStateOf
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
+import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
+import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.ComponentManager
@@ -14,6 +16,7 @@ import com.sq.thed_ck_licker.ecs.systems.helperSystems.CardCreationHelperSystems
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.CardCreationHelperSystems_Factory
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.MultiplierSystem
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.MultiplierSystem_Factory
+import com.sq.thed_ck_licker.helpers.DescribedEffect
 import com.sq.thed_ck_licker.helpers.navigation.GameNavigator_Factory
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -104,4 +107,94 @@ class CardsSystemTest {
         assert(score.getScore() == endScore) { "Score should be $endScore but was ${score.getScore()}" }
     }
 
+
+    @Test
+    fun `Activate players point card 7 times with temp multiplier`() {
+        val latest = LatestCardComponent(-1)
+        playerId add latest
+        val discardDeckComponent = DiscardDeckComponent()
+        playerId add discardDeckComponent
+        playerId add ScoreComponent()
+        playerId add MultiplierComponent()
+
+        cardCreationHelperSystems.addTemporaryMultiplierTo(
+            targetEntityId = playerId,
+            health = 5f,
+            multiplier = 6f
+        )
+
+        val card = cardCreationSystem.addBreakingDefaultCards(1).first()
+        multiSystem.addHistoryComponentOfItself(playerId)
+        repeat(7) {
+            latest.setLatestCard(card)
+            cardManager.cardActivation(cardCount)
+            val cardFromDiscard = discardDeckComponent.getDiscardDeck().first()
+            discardDeckComponent.removeCards(listOf(cardFromDiscard))
+        }
+
+        val score = playerId get ScoreComponent::class
+        val endScore = 3200
+        assert(score.getScore() == endScore) { "Score should be $endScore but was ${score.getScore()}" }
+    }
+
+
+    @Test
+    fun `Activate players point card 7 times with new temp multiplier`() {
+        val latest = LatestCardComponent(-1)
+        playerId add latest
+        val discardDeckComponent = DiscardDeckComponent()
+        playerId add discardDeckComponent
+        playerId add ScoreComponent()
+        playerId add MultiplierComponent()
+
+
+        val multiEntity = EntityManager.createNewEntity()
+        val healthComponent = HealthComponent(5f)
+        multiEntity add healthComponent
+        val effects = buildEffectComponent(healthComponent)
+        multiEntity add effects
+        effects.onSpecial(playerId)
+
+        val card = cardCreationSystem.addBreakingDefaultCards(1).first()
+        multiSystem.addHistoryComponentOfItself(playerId)
+        repeat(7) {
+            latest.setLatestCard(card)
+            cardManager.cardActivation(cardCount)
+            val cardFromDiscard = discardDeckComponent.getDiscardDeck().first()
+            discardDeckComponent.removeCards(listOf(cardFromDiscard))
+        }
+
+        val score = playerId get ScoreComponent::class
+        val endScore = 3200
+        assert(score.getScore() == endScore) { "Score should be $endScore but was ${score.getScore()}" }
+    }
+
+    fun buildEffectComponent(healthComponent: HealthComponent): EffectComponent {
+        val onSpecial = { targetId: Int ->
+            var targetMulti =
+                try {
+                    targetId get MultiplierComponent::class
+                } catch (_: Exception) {
+                    MultiplierComponent()
+                }
+            targetMulti.timesMultiplier(6f)
+            targetId add targetMulti
+        }
+        val describedOnSpecial = DescribedEffect(onSpecial) { "Add 6x multiplier" }
+
+
+        val onTurnStart = { _: Int -> healthComponent.damage(1f) }
+        val describedOnTurnStart = DescribedEffect(onTurnStart) { "Take 1 damage" }
+        val onDeath = { targetId: Int ->
+            var targetMulti = targetId get MultiplierComponent::class
+            targetMulti.removeMultiplier(6f)
+        }
+        val describedOnDeath = DescribedEffect(onDeath) { "Remove 6x multiplier" }
+
+        return EffectComponent(
+            onDeath = describedOnDeath,
+            onTurnStart = describedOnTurnStart,
+            onSpecial = describedOnSpecial
+        )
+    }
 }

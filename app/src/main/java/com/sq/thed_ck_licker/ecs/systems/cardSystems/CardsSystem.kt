@@ -14,6 +14,7 @@ import com.sq.thed_ck_licker.ecs.systems.characterSystems.PlayerSystem
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.MultiplierSystem
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.discardSystem
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.onDeathSystem
+import com.sq.thed_ck_licker.ecs.systems.helperSystems.onTurnStart
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.onTurnStartEffectStackSystem
 import com.sq.thed_ck_licker.helpers.getRandomElement
 import javax.inject.Inject
@@ -44,6 +45,7 @@ class CardsSystem @Inject constructor(
         playerCardCount: MutableIntState
     ) {
         Log.v("CardsSystem", "Card activation started. Turn started.")
+        onTurnStart()
         onTurnStartEffectStackSystem()
         activateCard(playerCardCount)
         try {
