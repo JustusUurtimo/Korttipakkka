@@ -25,18 +25,17 @@ class GameNavigator @Inject constructor() {
     }
 
     fun navigateBack() {
-        println("Navigating back ${navController.currentBackStackEntry?.destination?.route}")
         navController.navigateUp()
     }
 
     //for navigation debugging
     @SuppressLint("RestrictedApi")
     private fun printBackstack(navController: NavController) {
-        println("==== BACKSTACK ====")
+        Log.i("==== BACKSTACK ====")
         navController.currentBackStack.value.forEach { entry ->
-            println("Route: ${entry.destination.route}")
-            println("Arguments: ${entry.arguments}")
-            println("------------------")
+            Log.i("Route: ${entry.destination.route}")
+            Log.i("Arguments: ${entry.arguments}")
+            Log.i("‐-------------------------")
         }
     }
 
