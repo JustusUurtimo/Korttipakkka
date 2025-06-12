@@ -30,7 +30,7 @@ data class DrawDeckComponent @Inject constructor(
 }
 
 
-data class DiscardDeckComponent @Inject constructor(private val discardDeck: MutableList<Int>) {
+data class DiscardDeckComponent @Inject constructor(private val discardDeck: MutableList<Int> = mutableListOf<Int>()) {
     fun getSize(): Int {
         return this.discardDeck.size
     }
