@@ -1,5 +1,3 @@
-import com.android.build.api.dsl.TestCoverage
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -12,7 +10,8 @@ plugins {
     id("com.google.devtools.ksp")
     id("org.sonarqube")
 
-//    id("org.jetbrains.kotlinx.kover") version "0.9.1"
+
+    id("pl.droidsonroids.pitest")
 }
 var isDebug by extra(true)
 
@@ -68,12 +67,8 @@ android {
     testOptions {
         unitTests.all {
             it.useJUnitPlatform {
-//                fun TestCoverage.() {
-//
-//                }
             }
         }
-//        unitTests.returnDefaultValues = true
         unitTests.isReturnDefaultValues = true
 
     }
@@ -108,12 +103,6 @@ kover {
         }
 
         variant("release") {
-//            html{
-////                onCheck = false
-//            }
-//            xml{
-////                onCheck = false
-//            }
             // verification only for 'release' build variant
             verify {
                 rule {
@@ -135,6 +124,37 @@ kover {
     }
 }
 
+tasks.matching { it.name.startsWith("pitest") }.configureEach {
+    dependsOn(
+        tasks.matching { t -> t.name.startsWith("compile") && t.name.endsWith("Kotlin") }
+    )
+}
+
+pitest{
+//    targetClasses.set(
+//        setOf("com.sq.thed_ck_licker.ecs.*")
+//    )
+//    targetTests.set(
+//        setOf("com.sq.thed_ck_licker.ecs.*")
+//    )
+
+    targetClasses.set(
+        setOf("com.sq.thed_ck_licker.*")
+    )
+    targetTests.set(
+        setOf("com.sq.thed_ck_licker.*")
+    )
+    pitestVersion.set("1.19.5")
+    threads.set(4)
+    outputFormats.set(setOf("XML", "HTML"))
+    timestampedReports.set(false)
+    useClasspathFile.set(true)
+    fileExtensionsToFilter.addAll("xml", "orbit")
+    jvmArgs.set(listOf("-Xmx1024m"))
+    useClasspathFile.set(true)
+    fileExtensionsToFilter.addAll("xml", "orbit")
+    verbose = false
+}
 
 
 dependencies {
@@ -186,11 +206,4 @@ dependencies {
     // ...with Kotlin.
     kspAndroidTest(libs.hilt.android.compiler)
 
-    testImplementation("org.pitest:pitest-maven:1.19.5")
-    testImplementation("com.arcmutate:base:1.4.2")
-    testImplementation("com.arcmutate:pitest-kotlin-plugin:1.4.3")
-    testImplementation("org.pitest:pitest-junit5-plugin:1.2.3")
-    // https://mvnrepository.com/artifact/com.arcmutate/arcmutate-android-parent
-    testImplementation("com.arcmutate:arcmutate-android-parent:0.0.5")
-    testImplementation("com.arcmutate:pitest-git-plugin:2.2.3")
 }
