@@ -20,8 +20,9 @@ class CardCreationHelperSystems @Inject constructor() {
 
         val gainerEntity = generateEntity()
         val activationCounter = ActivationCounterComponent()
-        val activateAction = { id: Int ->
-            val targetScoreComp = id get ScoreComponent::class
+        val activateAction = { targetId: Int ->
+            println("My target is $targetId")
+            val targetScoreComp = targetId get ScoreComponent::class
             activationCounter.activate()
             targetScoreComp.addScore(pointsPerCard)
         }

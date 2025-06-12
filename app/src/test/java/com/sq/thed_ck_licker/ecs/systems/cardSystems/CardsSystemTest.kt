@@ -3,6 +3,7 @@ package com.sq.thed_ck_licker.ecs.systems.cardSystems
 import androidx.compose.runtime.mutableIntStateOf
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
+import com.sq.thed_ck_licker.ecs.components.HistoryComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
@@ -54,6 +55,7 @@ class CardsSystemTest {
         owner add latest
         owner add DiscardDeckComponent()
         owner add ScoreComponent()
+        owner add HistoryComponent(owner)
         val card = cardCreationSystem.addBreakingDefaultCards(1).first()
         latest.setLatestCard(card)
         cardManager.cardActivation(owner)
@@ -69,6 +71,8 @@ class CardsSystemTest {
         val discardDeckComponent = DiscardDeckComponent()
         owner add discardDeckComponent
         owner add ScoreComponent()
+        owner add HistoryComponent(owner)
+        owner add MultiplierComponent()
         val card = cardCreationSystem.addBreakingDefaultCards(1).first()
 
         repeat(11) {

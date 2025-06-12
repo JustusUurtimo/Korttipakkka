@@ -3,6 +3,7 @@ package com.sq.thed_ck_licker.ecs.systems.characterSystems
 import androidx.compose.runtime.mutableIntStateOf
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
+import com.sq.thed_ck_licker.ecs.components.HistoryComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
 import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
 import com.sq.thed_ck_licker.ecs.managers.ComponentManager
@@ -32,8 +33,7 @@ class PlayerSystemTest {
     var cardsSystem: CardsSystem by Delegates.notNull()
 
 
-    var playerId: EntityId = 0
-    val cardCount = mutableIntStateOf(0)
+    var ownerId: EntityId = 0
 
     var cardCreationSystem by Delegates.notNull<CardCreationSystem>()
 
@@ -54,13 +54,13 @@ class PlayerSystemTest {
         cardPullingSystem = CardPullingSystem(
             cardsSystem = cardsSystem, playerSystem = playerSystem
         )
-        playerId = EntityManager.getPlayerID()
+        ownerId = EntityManager.getPlayerID()
     }
 
     @Test
     fun `player has draw deck`() {
         playerSystem.initPlayer()
-        val drawDeck = assertDoesNotThrow { playerId get DrawDeckComponent::class }
+        val drawDeck = assertDoesNotThrow { ownerId get DrawDeckComponent::class }
         assertNotNull(drawDeck) { "Player has no draw deck" }
 
     }
@@ -68,7 +68,7 @@ class PlayerSystemTest {
     @Test
     fun `player has discard deck`() {
         playerSystem.initPlayer()
-        val discardDeck = assertDoesNotThrow { playerId get DiscardDeckComponent::class }
+        val discardDeck = assertDoesNotThrow { ownerId get DiscardDeckComponent::class }
         assertNotNull(discardDeck) { "Player has no discard deck" }
     }
 
@@ -76,9 +76,12 @@ class PlayerSystemTest {
     fun `draw removes the card from the draw deck`() {
         val cards = cardCreationSystem.addBasicScoreCards(1) as MutableList<Int>
         val drawDeck = DrawDeckComponent(cards)
-        playerId add drawDeck
+        ownerId add drawDeck
+        val latest = LatestCardComponent()
+        ownerId add latest
+        ownerId add DiscardDeckComponent()
 
-        cardPullingSystem.pullNewCard(0)
+        cardPullingSystem.pullNewCard(ownerId)
 
         assert(
             drawDeck.getDrawCardDeck().isEmpty()
@@ -88,40 +91,43 @@ class PlayerSystemTest {
     @Test
     fun `on activation card goes to discard deck`() {
         val cards = cardCreationSystem.addBasicScoreCards(2) as MutableList<Int>
-        playerId add DrawDeckComponent(cards)
-        playerId add DiscardDeckComponent(mutableListOf())
+        ownerId add DrawDeckComponent(cards)
+        ownerId add DiscardDeckComponent(mutableListOf())
+        val latest = LatestCardComponent()
+        ownerId add latest
+        ownerId add HistoryComponent(ownerId)
 
-        val latest = LatestCardComponent(-1)
-        playerId add latest
-        cardPullingSystem.pullNewCard(latest.getLatestCard())
-        cardsSystem.cardActivation(cardCount)
+        cardPullingSystem.pullNewCard(ownerId)
+        cardsSystem.cardActivation(ownerId)
 
-        val draw = playerId get DrawDeckComponent::class
-        val discard = playerId get DiscardDeckComponent::class
+        val draw = ownerId get DrawDeckComponent::class
+        val discard = ownerId get DiscardDeckComponent::class
 
         assert(draw.getDrawCardDeck().size == 1) { "Draw deck does not ha ve only one card, but has $draw" }
         assert(discard.getDiscardDeck().size == 1) { "Discard deck does not have only one card, but has $discard" }
-        assert((playerId get LatestCardComponent::class).getLatestCard() == -1) { "Hand card was not removed, but is ${latest.getLatestCard()}" }
+        assert((ownerId get LatestCardComponent::class).getLatestCard() == -1) { "Hand card was not removed, but is ${latest.getLatestCard()}" }
     }
 
     @Test
     fun `on empty draw, shuffle discard to draw deck`() {
         val cards = cardCreationSystem.addBasicScoreCards(2) as MutableList<Int>
-        playerId add DrawDeckComponent(mutableListOf())
-        playerId add DiscardDeckComponent(cards)
-        playerId add MultiplierComponent()
-        val latest = LatestCardComponent(-1)
-        playerId add latest
+        ownerId add DrawDeckComponent(mutableListOf())
+        ownerId add DiscardDeckComponent(cards)
+        ownerId add MultiplierComponent()
+        val latest = LatestCardComponent()
+        ownerId add latest
+
+        ownerId add HistoryComponent(ownerId)
 
         repeat(2) {
-            playerId add latest
-            cardPullingSystem.pullNewCard(latest.getLatestCard())
-            cardsSystem.cardActivation(cardCount)
+            ownerId add latest
+            cardPullingSystem.pullNewCard(ownerId)
+            cardsSystem.cardActivation(ownerId)
         }
-        cardPullingSystem.pullNewCard(latest.getLatestCard())
+        cardPullingSystem.pullNewCard(ownerId)
 
-        val drawDeck = playerId get DrawDeckComponent::class
-        val discardDeck = playerId get DiscardDeckComponent::class
+        val drawDeck = ownerId get DrawDeckComponent::class
+        val discardDeck = ownerId get DiscardDeckComponent::class
 
         assert(drawDeck.getDrawCardDeck().size == 1) { "Cards were not returned to draw deck, draw deck contains $drawDeck" }
         assert(
