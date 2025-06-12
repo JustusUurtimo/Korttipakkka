@@ -28,7 +28,7 @@ class ComponentManager {
 
     fun <T : Any> getComponent(entity: Int, componentClass: KClass<T>): T {
         val componentMap = components[componentClass]
-            ?: throw IllegalStateException("No components of type ${componentClass.simpleName} found")
+            ?: throw IllegalStateException("No components of type ${componentClass.simpleName} found for entity $entity")
 
         val component = componentMap[entity]
             ?: throw IllegalStateException("Component of type ${componentClass.simpleName} not found for entity $entity")
