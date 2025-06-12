@@ -8,6 +8,7 @@ import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
+import com.sq.thed_ck_licker.ecs.components.TagsComponent
 import com.sq.thed_ck_licker.ecs.components.TargetComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
@@ -299,7 +300,6 @@ class CardCreationSystem @Inject constructor(
                         } catch (_: Exception) {
                             MultiplierComponent()
                         }
-//                    println("My target is: $targetId")
                     targetMulti.timesMultiplier(6f)
                     targetId add targetMulti
                 }
@@ -330,17 +330,16 @@ class CardCreationSystem @Inject constructor(
         return cardBuilder.buildCards {
             cardHealth = 1f
             cardAmount = amount
-            name = "Steroids"
+            name = "Roids #2"
             onCardPlay = activationEffect
         }
     }
 
-    fun addShuffleTestCards(amount: Int = 1): List<EntityId> {
-        val playerId = getPlayerID()
+    fun addShuffleTestCards(amount: Int = 5): List<EntityId> {
 
-        val onActivation: (Int) -> Unit = { _: Int ->
-            val playerDeck = playerId get DrawDeckComponent::class
-            val playerDiscardDeck = playerId get DiscardDeckComponent::class
+        val onActivation: (Int) -> Unit = { ownerId: Int ->
+            val playerDeck = ownerId get DrawDeckComponent::class
+            val playerDiscardDeck = ownerId get DiscardDeckComponent::class
             val card = if (playerDeck.getDrawCardDeck().isEmpty()) {
                 playerDiscardDeck.getDiscardDeck()
                     .removeAt(random.nextInt(playerDiscardDeck.getDiscardDeck().size))
@@ -353,12 +352,14 @@ class CardCreationSystem @Inject constructor(
             val second = effect.shuffleToNew()
             Log.i("Shuffle on activation", "Second: $second")
             card add second
+            (card get TagsComponent::class).addTag(CardTag.CORRUPTED)
             playerDeck.getDrawCardDeck().add(card)
         }
+        val activationEffect = DescribedEffect(onActivation) { "Corrupt 1 card(s) in discard" }
 
-        val onDeactivation: (Int) -> Unit = { _: Int ->
-            val playerDeck = playerId get DrawDeckComponent::class
-            val playerDiscardDeck = playerId get DiscardDeckComponent::class
+        val onDeactivation: (Int) -> Unit = { ownerId: Int ->
+            val playerDeck = ownerId get DrawDeckComponent::class
+            val playerDiscardDeck = ownerId get DiscardDeckComponent::class
             val card = if (playerDiscardDeck.getDiscardDeck().isEmpty()) {
                 playerDeck.getDrawCardDeck()
                     .removeAt(random.nextInt(playerDeck.getDrawCardDeck().size))
@@ -371,9 +372,9 @@ class CardCreationSystem @Inject constructor(
             val second = effect.shuffleToNew()
             Log.i("Shuffle on deactivation", "Second: $second")
             card add second
+            (card get TagsComponent::class).addTag(CardTag.CORRUPTED)
             playerDiscardDeck.getDiscardDeck().add(card)
         }
-        val activationEffect = DescribedEffect(onActivation) { "Corrupt 1 card(s) in discard" }
         val deactivationEffect =
             DescribedEffect(onDeactivation) { "Corrupt 1 card(s) in draw deck" }
         return cardBuilder.buildCards {
