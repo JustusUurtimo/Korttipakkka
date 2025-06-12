@@ -31,11 +31,11 @@ class GameNavigator @Inject constructor() {
     //for navigation debugging
     @SuppressLint("RestrictedApi")
     private fun printBackstack(navController: NavController) {
-        Log.i("==== BACKSTACK ====")
+        Log.i("BackStackDebug","==== BACKSTACK ====")
         navController.currentBackStack.value.forEach { entry ->
-            Log.i("Route: ${entry.destination.route}")
-            Log.i("Arguments: ${entry.arguments}")
-            Log.i("‐-------------------------")
+            Log.i("BackStackDebug","Route: ${entry.destination.route}")
+            Log.i("BackStackDebug","Arguments: ${entry.arguments}")
+            Log.i("BackStackDebug","‐-------------------------")
         }
     }
 
