@@ -8,7 +8,6 @@ import com.sq.thed_ck_licker.ecs.components.TargetComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityId
-import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.managers.GameEvent
 import com.sq.thed_ck_licker.ecs.managers.GameEvents
 import com.sq.thed_ck_licker.ecs.managers.get
@@ -68,11 +67,7 @@ class CardsSystem @Inject constructor(
         try {
             latestCardHp = (latestCard get HealthComponent::class)
         } catch (_: IllegalStateException) {
-            Log.i(
-                "CardsSystem",
-                "No health component found for activation \n" +
-                        "Yeah yeah, we get it, you are so cool there was no health component"
-            )
+            Log.i("CardsSystem", "No health component found for $latestCard in activateCard")
         }
         var target = try {
             (latestCard get TargetComponent::class).target
@@ -84,32 +79,21 @@ class CardsSystem @Inject constructor(
         try {
             (latestCard get EffectComponent::class).onPlay.action(target)
         } catch (_: IllegalStateException) {
-            Log.i(
-                "CardsSystem",
-                "No effect component found for activation \n" +
-                        "Yeah yeah, we get it, you are so cool there was no effect component"
-            )
+            Log.i("CardsSystem", "No effect component found for $latestCard in activateCard")
         }
 
         latestCardHp?.apply {
             damage(1f)
-            Log.i(
-                "CardsSystem",
-                "Health is now ${latestCardHp.getHealth()}"
-            )
+            Log.i("CardsSystem", "Health is now ${latestCardHp.getHealth()}")
             if (latestCardHp.getHealth() <= 0) {
                ownerInfo.setLatestCard(-1)
             }
-        } ?: Log.i("CardsSystem", "No health component found for activation")
+        } ?: Log.i("CardsSystem", "No health component found for $latestCard in activateCard")
 
         try {
             (latestCard get ActivationCounterComponent::class).activate()
         } catch (_: IllegalStateException) {
-            Log.i(
-                "CardsSystem",
-                "No actCounter component found for activation \n" +
-                        "Yeah yeah, we get it, you are so cool there was no actCounter component"
-            )
+            Log.i("CardsSystem", "No actCounter component found for $latestCard in activateCard")
         }
         discardSystem(ownerId = ownerId, cardId = latestCard)
         ownerInfo.setLatestCard(-1)

@@ -1,9 +1,9 @@
 package com.sq.thed_ck_licker.viewModels
 
-import androidx.compose.runtime.MutableIntState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
+import com.sq.thed_ck_licker.ecs.managers.EntityId
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.states.PlayerState
@@ -11,10 +11,10 @@ import com.sq.thed_ck_licker.ecs.systems.CardPullingSystem
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem
 import com.sq.thed_ck_licker.ecs.systems.characterSystems.PlayerSystem
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class PlayerViewModel @Inject constructor(
@@ -41,11 +41,11 @@ class PlayerViewModel @Inject constructor(
         }
     }
 
-    fun onPullNewCard(latestCard: Int) {
-        cardPullingSystem.pullNewCard(latestCard)
+    fun onPullNewCard(ownerId: EntityId) {
+        cardPullingSystem.pullNewCard(ownerId)
     }
 
-    fun onActivateCard(ownerId: Int = getPlayerID()) {
+    fun onActivateCard(ownerId: EntityId) {
         cardsSystem.cardActivation(ownerId)
     }
 }

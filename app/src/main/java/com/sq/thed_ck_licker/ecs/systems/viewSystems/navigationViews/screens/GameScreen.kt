@@ -28,6 +28,7 @@ import com.sq.thed_ck_licker.ecs.systems.helperSystems.TickingSystem
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.CardDeck
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.PlayerHandView
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.PullCardButton
+import com.sq.thed_ck_licker.player.AdditionalInfoDisplay
 import com.sq.thed_ck_licker.player.HealthBar
 import com.sq.thed_ck_licker.player.ScoreDisplay
 import com.sq.thed_ck_licker.viewModels.PlayerViewModel
@@ -43,11 +44,14 @@ fun Game(
     val playerCardCount = rememberSaveable { (getPlayerID() get LatestCardComponent::class).getCardCounter() }
     val playerState by playerViewModel.playerState.collectAsState()
 
+
+
     RealtimeEffects()
 
     Column(modifier.fillMaxWidth()) {
         HealthBar(playerState.health, playerState.maxHealth, modifier.padding(innerPadding))
         ScoreDisplay(playerState.score)
+        AdditionalInfoDisplay(playerState.latestCard)
 
         Box(modifier.fillMaxSize()) {
             CardDeck(navigationBarPadding) { playerViewModel.onPullNewCard(getPlayerID()) }
