@@ -27,15 +27,11 @@ class PitSystem @Inject constructor(
     }
 
     fun getPitCards(targetId: EntityId = getPlayerID()): List<Int> {
-        println("getPitCards")
         return List(3) { cardsSystem.pullRandomCardFromEntityDeck(targetId) }
     }
 
     fun dropCardInPit(latestCard: Int, ownerId: EntityId = getPlayerID()) {
-        println("inthepit")
-        println("latestCard: $latestCard")
         val latestCard = (ownerId get LatestCardComponent::class).getLatestCard()
-        println("latestCard 2: $latestCard")
         if (latestCard == -1) return
         val tagsComponent = latestCard get TagsComponent::class
 
