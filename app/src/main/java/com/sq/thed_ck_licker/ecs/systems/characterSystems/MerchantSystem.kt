@@ -40,13 +40,19 @@ class MerchantSystem @Inject constructor(
         val shuffleCards = cardCreationSystem.addShuffleTestCards(3)
         val breakingCards = cardCreationSystem.addBreakingDefaultCards(5)
 
-        return emptyList<Int>() +
+        val baseCards = emptyList<Int>() +
                 shovelCards +
                 playerHealingCards +
                 scoreGainerCards +
                 maxHpCards +
                 shuffleCards +
-                breakingCards +
+                breakingCards
+
+//        val combinedCards =
+//            cardCreationSystem.addCombiningTestCards(1, baseCards + cardCreationSystem.addHealingCards(4))
+
+        return baseCards +
+//                combinedCards +
                 emptyList<Int>()
     }
 

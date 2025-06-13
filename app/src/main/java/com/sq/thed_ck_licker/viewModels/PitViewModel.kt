@@ -21,12 +21,15 @@ class PitViewModel @Inject constructor(
     }
 
     fun getPitCards(): List<Int> {
+        println("Wadd?")
         return pitSystem.getPitCards().also {
             _pitCardSelection.value = it
         }
     }
 
     fun dropCardInPit(chosenCard: Int) {
+        println("lalalalal")
+        println("chosenCard: $chosenCard")
         pitSystem.dropCardInPit(chosenCard)
         _pitCardSelection.value = emptyList()
     }

@@ -25,7 +25,6 @@ data class EffectComponent(
     /**
      *  When the turn starts, it will trigger this.
      *  This happens as the first thing, even before player card.
-     *  TODO: Currently only happens for things inside effect stack.
      */
     val onTurnStart: DescribedEffect = DescribedEffect.EMPTY,
     /**
@@ -96,6 +95,17 @@ data class EffectComponent(
 
     override fun toString(): String {
         return this.describeTriggers().joinToString("\n")
+    }
+
+    fun getNonEmptyEffects(): List<DescribedEffect> {
+        val thing = mutableListOf<DescribedEffect>()
+        if (onDeath != DescribedEffect.EMPTY) thing.add(onDeath)
+        if (onDrawn != DescribedEffect.EMPTY) thing.add(onDrawn)
+        if (onTurnStart != DescribedEffect.EMPTY) thing.add(onTurnStart)
+        if (onPlay != DescribedEffect.EMPTY) thing.add(onPlay)
+        if (onDeactivate != DescribedEffect.EMPTY) thing.add(onDeactivate)
+        if (onSpecial != DescribedEffect.EMPTY) thing.add(onSpecial)
+        return thing
     }
 }
 

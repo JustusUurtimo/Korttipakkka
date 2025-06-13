@@ -10,6 +10,7 @@ import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem
 import com.sq.thed_ck_licker.ecs.systems.characterSystems.PlayerSystem
+import com.sq.thed_ck_licker.ecs.systems.helperSystems.onDeathSystem
 import javax.inject.Inject
 
 class CardPullingSystem @Inject constructor(
@@ -38,6 +39,10 @@ class CardPullingSystem @Inject constructor(
 
         putDiscardToDeckAndShuffle(ownerId)
         ownerInfo.setLatestCard(cardsSystem.pullRandomCardFromEntityDeck(ownerId))
+
+        val effects = (ownerInfo.getLatestCard() get EffectComponent::class)
+        effects.onDrawn.action(ownerId)
+        onDeathSystem()
     }
 
 }

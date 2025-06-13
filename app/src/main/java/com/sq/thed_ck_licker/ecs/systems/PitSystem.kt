@@ -26,11 +26,16 @@ class PitSystem @Inject constructor(
             (ownerId get ScoreComponent::class).addScore(-500)
     }
 
-    fun getPitCards(): List<Int> {
-        return List(3) { cardsSystem.pullRandomCardFromEntityDeck(getPlayerID()) }
+    fun getPitCards(targetId: EntityId = getPlayerID()): List<Int> {
+        println("getPitCards")
+        return List(3) { cardsSystem.pullRandomCardFromEntityDeck(targetId) }
     }
 
     fun dropCardInPit(latestCard: Int, ownerId: EntityId = getPlayerID()) {
+        println("inthepit")
+        println("latestCard: $latestCard")
+        val latestCard = (ownerId get LatestCardComponent::class).getLatestCard()
+        println("latestCard 2: $latestCard")
         if (latestCard == -1) return
         val tagsComponent = latestCard get TagsComponent::class
 
@@ -42,14 +47,14 @@ class PitSystem @Inject constructor(
         }
 
         if (tagsComponent.cardIsMerchant()) {
-            handleMerchantCard(latestCard)
+            handleMerchantCard(ownerId)
         } else {
             handleCardDrop(ownerId = ownerId, bonusScore = 200)
         }
     }
 
     // Helper Methods
-    private fun handleMerchantCard(ownerId: EntityId = getPlayerID()) {
+    private fun handleMerchantCard(ownerId: EntityId) {
         val ownerInfo = (ownerId get LatestCardComponent::class)
         val latestCard = ownerInfo.getLatestCard()
 

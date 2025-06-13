@@ -36,11 +36,10 @@ class CardsSystem @Inject constructor(
 
         val theCard = deck.getRandomElement()
         drawDeckComponent.removeCard(theCard)
-        val effects = (theCard get EffectComponent::class)
-        effects.onDrawn.action(entityId)
-        onDeathSystem()
+//        val effects = (theCard get EffectComponent::class)
+//        effects.onDrawn.action(entityId)
+//        onDeathSystem()
         return theCard
-
     }
 
     fun cardActivation(
