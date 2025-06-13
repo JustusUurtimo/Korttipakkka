@@ -3,11 +3,11 @@ package com.sq.thed_ck_licker.ecs.systems.cardSystems
 import android.util.Log
 import com.sq.thed_ck_licker.R
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
-import com.sq.thed_ck_licker.ecs.components.TagsComponent.CardTag
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.IdentificationComponent
 import com.sq.thed_ck_licker.ecs.components.ImageComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent
+import com.sq.thed_ck_licker.ecs.components.TagsComponent.CardTag
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.components.misc.TickComponent
@@ -107,8 +107,40 @@ class CardBuilderSystem @Inject constructor(private val componentManager: Compon
             timeBoundCardId add EffectComponent(onPlay = onActivationEffect)
             timeBoundCardId add IdentificationComponent("Time Bound Card", null)
             timeBoundCardId add selfHp
+            timeBoundCardId add TagsComponent(tags)
+            timeBoundCardId add ActivationCounterComponent()
             cards.add(timeBoundCardId)
         }
+        return cards
+    }
+
+
+    fun addBreakingDefaultCards(amount: Int = 7): List<EntityId> {
+        val cards = mutableListOf<EntityId>()
+        repeat(amount) {
+            val cardEntity = generateEntity()
+
+            val omaScore = ScoreComponent(100)
+            val scoreIt = { targetId: Int ->
+                val target = targetId get ScoreComponent::class
+                target.addScore(omaScore.getScore())
+            }
+            val describedEffect = DescribedEffect(scoreIt) { _: Int ->
+                "Gain ${omaScore.getScore()} points"
+            }
+
+            cardEntity add HealthComponent(10f)
+            cardEntity add omaScore
+            cardEntity add IdentificationComponent("Default card", null)
+            cardEntity add ImageComponent(cardImage)
+            cardEntity add EffectComponent(onPlay = describedEffect)
+            cardEntity add TagsComponent(listOf(CardTag.CARD))
+            cardEntity add TagsComponent(tags)
+            cardEntity add ActivationCounterComponent()
+
+            cards.add(cardEntity)
+        }
+
         return cards
     }
 }

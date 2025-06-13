@@ -1,12 +1,14 @@
 package com.sq.thed_ck_licker.ecs.systems.characterSystems
 
-import com.sq.thed_ck_licker.ecs.components.misc.EntityMemoryComponent
 import androidx.compose.runtime.snapshotFlow
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
+import com.sq.thed_ck_licker.ecs.components.misc.EntityMemoryComponent
+import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
+import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
+import com.sq.thed_ck_licker.ecs.managers.EntityId
+import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getRegularMerchantID
-import com.sq.thed_ck_licker.ecs.managers.MerchantEvent
-import com.sq.thed_ck_licker.ecs.managers.MerchantEvents
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.states.MerchantState
@@ -31,16 +33,20 @@ class MerchantSystem @Inject constructor(
 
     private fun initRegularMerchantDeck(): List<Int> {
 
-        val playerHealingCards = cardCreationSystem.addHealingCards(5)
+        val playerHealingCards = cardCreationSystem.addHealingCards(1)
         val scoreGainerCards = cardCreationSystem.addScoreGainerTestCards()
         val maxHpCards = cardCreationSystem.addMaxHpTrapCards()
-        val shovelCards = cardCreationSystem.addShovelCards(10)
+        val shovelCards = cardCreationSystem.addShovelCards(2)
+        val shuffleCards = cardCreationSystem.addShuffleTestCards(3)
+        val breakingCards = cardCreationSystem.addBreakingDefaultCards(5)
 
         return emptyList<Int>() +
                 shovelCards +
                 playerHealingCards +
                 scoreGainerCards +
                 maxHpCards +
+                shuffleCards +
+                breakingCards +
                 emptyList<Int>()
     }
 
@@ -61,15 +67,24 @@ class MerchantSystem @Inject constructor(
         (merchantCardId get ActivationCounterComponent::class).activate()
     }
 
-    fun chooseMerchantCard(newCard: Int, activeMerchant: Int) {
+    fun chooseMerchantCard(newCard: Int, activeMerchant: Int, ownerId: EntityId = getPlayerID()) {
         val merchantAffinity : Int = (activeMerchant get(EntityMemoryComponent::class)).getAffinity()
+        val scoreComp = (ownerId get ScoreComponent::class)
         when {
-            (merchantAffinity >= 500) -> {playerSystem.updateScore(-50)}
-            (merchantAffinity <= -100) -> {playerSystem.updateScore(-500)}
-            else -> {playerSystem.updateScore(-100)}
+            (merchantAffinity >= 500) -> {
+                scoreComp.addScore(-50)
+            }
+
+            (merchantAffinity <= -100) -> {
+                scoreComp.addScore(-500)
+            }
+
+            else -> {
+                scoreComp.addScore(-100)
+            }
         }
         updateMerchantAffinity(10, activeMerchant)
-        playerSystem.setLatestCard(newCard)
+        (ownerId get LatestCardComponent::class).setLatestCard(newCard)
     }
 
     fun updateMerchantAffinity(amount: Int, merchantId: Int) {
@@ -77,10 +92,9 @@ class MerchantSystem @Inject constructor(
     }
 
     fun getMerchantAffinity(activeMerchantId: StateFlow<Int>): Int {
-
         return try {
             (activeMerchantId.value get EntityMemoryComponent::class).getAffinity()
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             0
         }
     }
