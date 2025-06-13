@@ -5,6 +5,7 @@ import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
+import com.sq.thed_ck_licker.ecs.components.TargetComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.add
@@ -30,9 +31,7 @@ class CardCreationHelperSystems @Inject constructor() {
             DescribedEffect(activateAction) { "Gain $pointsPerCard points per card played" }
         gainerEntity add activationCounter
         gainerEntity add EffectComponent(onTurnStart = activationEffect)
-
-        val targetEffectStackComp = (targetId get EffectStackComponent::class)
-        targetEffectStackComp addEntity (gainerEntity)  // I think i have gone mad from the power
+        gainerEntity add TargetComponent(targetId)
     }
 
     fun addLimitedSupplyAutoHealToEntity(targetEntityId: Int, health: Float) {
@@ -105,6 +104,5 @@ class CardCreationHelperSystems @Inject constructor() {
             onTurnStart = turnStartEffect,
             onDeath = onDeathEffect
         )
-
     }
 }
