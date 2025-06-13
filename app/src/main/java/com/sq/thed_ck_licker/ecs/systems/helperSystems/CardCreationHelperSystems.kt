@@ -5,6 +5,7 @@ import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
+import com.sq.thed_ck_licker.ecs.components.TargetComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.add
@@ -20,8 +21,9 @@ class CardCreationHelperSystems @Inject constructor() {
 
         val gainerEntity = generateEntity()
         val activationCounter = ActivationCounterComponent()
-        val activateAction = { id: Int ->
-            val targetScoreComp = id get ScoreComponent::class
+        val activateAction = { targetId: Int ->
+            println("My target is $targetId")
+            val targetScoreComp = targetId get ScoreComponent::class
             activationCounter.activate()
             targetScoreComp.addScore(pointsPerCard)
         }
@@ -29,9 +31,7 @@ class CardCreationHelperSystems @Inject constructor() {
             DescribedEffect(activateAction) { "Gain $pointsPerCard points per card played" }
         gainerEntity add activationCounter
         gainerEntity add EffectComponent(onTurnStart = activationEffect)
-
-        val targetEffectStackComp = (targetId get EffectStackComponent::class)
-        targetEffectStackComp addEntity (gainerEntity)  // I think i have gone mad from the power
+        gainerEntity add TargetComponent(targetId)
     }
 
     fun addLimitedSupplyAutoHealToEntity(targetEntityId: Int, health: Float) {
@@ -84,23 +84,25 @@ class CardCreationHelperSystems @Inject constructor() {
             targetMultiComp.timesMultiplier(multiplier)
         } catch (_: IllegalStateException) {
             Log.e("CardsSystem", "Target entity has no multiplier component")
+            return
         }
         val damage = 1f
-        val onTurnStart = { _: Int -> selfHp.damage(damage) }
-        val activationEffect =
+
+        val onTurnStart = { _: Int ->
+            selfHp.damage(damage)
+        }
+        val turnStartEffect =
             DescribedEffect(onTurnStart) { "Take $damage damage" }
 
-        val onDeath = { targetId: Int ->
-            val targetMultiComp = targetId get MultiplierComponent::class
+        val onDeath = { _: Int ->
+            val targetMultiComp = targetEntityId get MultiplierComponent::class
             targetMultiComp.removeMultiplier(multiplier)
         }
-
         val onDeathEffect =
             DescribedEffect(onDeath) { "Removes the $multiplier multiplier" }
         limitedMultiEntity add EffectComponent(
-            onTurnStart = activationEffect,
+            onTurnStart = turnStartEffect,
             onDeath = onDeathEffect
         )
-
     }
 }

@@ -11,7 +11,7 @@ import com.sq.thed_ck_licker.helpers.HelperSystemModule
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class MultiplierSystemKtTest {
+class MultiplierSystemTest {
     lateinit var componentManager: ComponentManager
     lateinit var multiSystem: MultiplierSystem
 

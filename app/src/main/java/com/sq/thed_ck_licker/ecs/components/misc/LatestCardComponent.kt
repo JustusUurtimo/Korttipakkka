@@ -4,7 +4,9 @@ import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.mutableIntStateOf
 
 data class LatestCardComponent(
-    private var latestCard: MutableIntState = mutableIntStateOf(-1)) {
+    private val latestCard: MutableIntState = mutableIntStateOf(-1),
+    private val cardCounter: MutableIntState = mutableIntStateOf(0)) {
+    constructor(value: Int) : this(mutableIntStateOf(value))
 
     fun getLatestCard(): Int {
         return this.latestCard.intValue
@@ -12,5 +14,14 @@ data class LatestCardComponent(
 
     fun setLatestCard(cardId: Int) {
         this.latestCard.intValue = cardId
+    }
+
+    fun getCardCounter(): MutableIntState {
+        return this.cardCounter
+    }
+
+
+    fun increaseCardCounter() {
+        this.cardCounter.intValue++
     }
 }

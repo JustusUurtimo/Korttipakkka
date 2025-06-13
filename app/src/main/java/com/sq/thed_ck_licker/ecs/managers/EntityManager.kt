@@ -7,6 +7,12 @@ import android.util.Log
  */
 object EntityManager {
 
+    /**
+     * Special entity if you want to target something unkillable.
+     *  Like if you need target but your target has died or vanished.
+     */
+    const val WORLD: EntityId = 0
+
     private const val PLAYER_ID: EntityId = -1
     fun getPlayerID() = PLAYER_ID
 

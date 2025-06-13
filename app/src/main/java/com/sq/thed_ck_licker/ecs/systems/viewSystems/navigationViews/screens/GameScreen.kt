@@ -14,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -22,10 +21,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
+import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
+import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.TickingSystem
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.CardDeck
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.PlayerHandView
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.PullCardButton
+import com.sq.thed_ck_licker.player.AdditionalInfoDisplay
 import com.sq.thed_ck_licker.player.HealthBar
 import com.sq.thed_ck_licker.player.ScoreDisplay
 import com.sq.thed_ck_licker.viewModels.PlayerViewModel
@@ -38,17 +41,20 @@ fun Game(
     playerViewModel: PlayerViewModel = hiltViewModel(),
 ) {
     val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues()
-    val playerCardCount = rememberSaveable { mutableIntStateOf(0) }
+    val playerCardCount = rememberSaveable { (getPlayerID() get LatestCardComponent::class).getCardCounter() }
     val playerState by playerViewModel.playerState.collectAsState()
+
+
 
     RealtimeEffects()
 
     Column(modifier.fillMaxWidth()) {
         HealthBar(playerState.health, playerState.maxHealth, modifier.padding(innerPadding))
         ScoreDisplay(playerState.score)
+        AdditionalInfoDisplay(playerState.latestCard)
 
         Box(modifier.fillMaxSize()) {
-            CardDeck(navigationBarPadding) { playerViewModel.onPullNewCard(playerState.latestCard) }
+            CardDeck(navigationBarPadding) { playerViewModel.onPullNewCard(getPlayerID()) }
             Box(modifier.align(Alignment.BottomCenter)) {
 
                 Column(modifier.padding(35.dp, 0.dp, 0.dp, 0.dp)) {
@@ -59,16 +65,14 @@ fun Game(
                             modifier,
                             playerState.latestCard,
                             activateCard = {
-                                playerViewModel.onActivateCard(
-                                    playerCardCount
-                                )
+                                playerViewModel.onActivateCard(getPlayerID())
                             }
                         )
                     }
                     PullCardButton(
                         navigationBarPadding,
                         modifier.offset((-15).dp),
-                        pullNewCard = { playerViewModel.onPullNewCard(playerState.latestCard) }
+                        pullNewCard = { playerViewModel.onPullNewCard(getPlayerID()) }
                     )
                 }
 

@@ -1,7 +1,13 @@
 package com.sq.thed_ck_licker.ecs.systems
 
+import android.util.Log
+import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
+import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.IdentificationComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent
+import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
+import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
+import com.sq.thed_ck_licker.ecs.managers.EntityId
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem
@@ -16,39 +22,54 @@ class PitSystem @Inject constructor(
     private val cardsSystem: CardsSystem
 ) {
 
-    fun buyShovel() {
-        playerSystem.updateScore(-500)
+    fun buyShovel(ownerId: EntityId = getPlayerID()) {
+            (ownerId get ScoreComponent::class).addScore(-500)
     }
 
-    fun getPitCards(): List<Int> {
-        return List(3) { cardsSystem.pullRandomCardFromEntityDeck(getPlayerID()) }
+    fun getPitCards(targetId: EntityId = getPlayerID()): List<Int> {
+        return List(3) { cardsSystem.pullRandomCardFromEntityDeck(targetId) }
     }
 
-    fun dropCardInPit(latestCard: Int) {
+    fun dropCardInPit(latestCard: Int, ownerId: EntityId = getPlayerID()) {
+        val latestCard = (ownerId get LatestCardComponent::class).getLatestCard()
         if (latestCard == -1) return
         val tagsComponent = latestCard get TagsComponent::class
 
+        try {
+            (latestCard get EffectComponent::class).onSpecial.action(latestCard)
+        } catch (_: Exception){
+            Log.i("PitSystem","Nothing special happened... or did?")
+            Log.i("PitSystem","No. nothing happened cuz they don't have cool effect")
+        }
+
         if (tagsComponent.cardIsMerchant()) {
-            handleMerchantCard(latestCard)
+            handleMerchantCard(ownerId)
         } else {
-            handleCardDrop(latestCard, bonusScore = 200)
+            handleCardDrop(ownerId = ownerId, bonusScore = 200)
         }
     }
 
     // Helper Methods
-    private fun handleMerchantCard(latestCard: Int) {
+    private fun handleMerchantCard(ownerId: EntityId) {
+        val ownerInfo = (ownerId get LatestCardComponent::class)
+        val latestCard = ownerInfo.getLatestCard()
+
         if (MyRandom.getRandomInt() <= 3) {
             val merchantId: Int? = (latestCard get IdentificationComponent::class).getCharacterId()
             merchantId?.let {
                 merchantSystem.updateMerchantAffinity(-500, it)
             }
         } else {
-            handleCardDrop(latestCard, bonusScore = 500)
+            handleCardDrop(bonusScore = 500, ownerId = ownerId)
         }
     }
 
-    private fun handleCardDrop(latestCard: Int, bonusScore: Int) {
-        playerSystem.removeCardFromDrawDeck(latestCard)
-        playerSystem.updateScore(bonusScore)
+    private fun handleCardDrop(bonusScore: Int, ownerId: EntityId = getPlayerID()) {
+        val ownerInfo = (ownerId get LatestCardComponent::class)
+        val latestCard = ownerInfo.getLatestCard()
+        val deck = (ownerId get DrawDeckComponent::class).getDrawCardDeck()
+        deck.remove(latestCard)
+        val score = ownerId get ScoreComponent::class
+        score.addScore(bonusScore)
     }
 }
