@@ -15,10 +15,12 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun PlayerHandView(
+    isZoomed: Boolean,
     playerCardCount: MutableIntState,
     modifier: Modifier,
     latestCard: Int,
     activateCard: () -> Unit,
+    onZoomChange: (Boolean) -> Unit
 ) {
     BadgedBox(
         badge = {
@@ -36,6 +38,6 @@ fun PlayerHandView(
 
 
         ) {
-        CardView(latestCard, activateCard, modifier)
+        CardView(isZoomed, latestCard, activateCard, modifier, onZoomChange)
     }
 }

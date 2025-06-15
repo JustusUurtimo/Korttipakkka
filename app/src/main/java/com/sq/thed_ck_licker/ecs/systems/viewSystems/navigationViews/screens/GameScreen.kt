@@ -1,5 +1,8 @@
 package com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,12 +18,17 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.TickingSystem
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.CardDeck
@@ -41,13 +49,25 @@ fun Game(
     val playerCardCount = rememberSaveable { mutableIntStateOf(0) }
     val playerState by playerViewModel.playerState.collectAsState()
 
+    var isZoomed by remember { mutableStateOf(false) }
+    var touchPosition by remember { mutableStateOf(Offset.Zero) }
+
     RealtimeEffects()
 
     Column(modifier.fillMaxWidth()) {
         HealthBar(playerState.health, playerState.maxHealth, modifier.padding(innerPadding))
         ScoreDisplay(playerState.score)
 
-        Box(modifier.fillMaxSize()) {
+        Box(modifier = modifier
+            .fillMaxSize()
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onLongPress = { offset ->
+                        touchPosition = offset
+                        isZoomed = true
+                    }
+                )
+            }) {
             CardDeck(navigationBarPadding) { playerViewModel.onPullNewCard(playerState.latestCard) }
             Box(modifier.align(Alignment.BottomCenter)) {
 
@@ -55,6 +75,7 @@ fun Game(
 
                     if (playerState.latestCard != -1) {
                         PlayerHandView(
+                            isZoomed,
                             playerCardCount,
                             modifier,
                             playerState.latestCard,
@@ -62,8 +83,18 @@ fun Game(
                                 playerViewModel.onActivateCard(
                                     playerCardCount
                                 )
-                            }
+                            },
+                            onZoomChange = { isZoomed = it }
                         )
+                        if (isZoomed) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(Color.Black.copy(alpha = 0.5f))
+                                    .clickable { isZoomed = false }
+                                    .zIndex(5f)
+                            )
+                        }
                     }
                     PullCardButton(
                         navigationBarPadding,
