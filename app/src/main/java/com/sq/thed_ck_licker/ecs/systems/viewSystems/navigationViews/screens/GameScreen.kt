@@ -50,7 +50,6 @@ fun Game(
     val playerState by playerViewModel.playerState.collectAsState()
 
     var isZoomed by remember { mutableStateOf(false) }
-    var touchPosition by remember { mutableStateOf(Offset.Zero) }
 
     RealtimeEffects()
 
@@ -58,16 +57,15 @@ fun Game(
         HealthBar(playerState.health, playerState.maxHealth, modifier.padding(innerPadding))
         ScoreDisplay(playerState.score)
 
-        Box(modifier = modifier
-            .fillMaxSize()
-            .pointerInput(Unit) {
-                detectTapGestures(
-                    onLongPress = { offset ->
-                        touchPosition = offset
-                        isZoomed = true
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .pointerInput(isZoomed) {
+                    if (isZoomed) {
+                        detectTapGestures { isZoomed = false }
                     }
-                )
-            }) {
+                }
+        ) {
             CardDeck(navigationBarPadding) { playerViewModel.onPullNewCard(playerState.latestCard) }
             Box(modifier.align(Alignment.BottomCenter)) {
 
@@ -86,15 +84,6 @@ fun Game(
                             },
                             onZoomChange = { isZoomed = it }
                         )
-                        if (isZoomed) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(Color.Black.copy(alpha = 0.5f))
-                                    .clickable { isZoomed = false }
-                                    .zIndex(5f)
-                            )
-                        }
                     }
                     PullCardButton(
                         navigationBarPadding,

@@ -19,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -47,7 +48,7 @@ fun MerchantHandView(
                 .wrapContentSize(Alignment.Center)
         )
         {
-            CardRow(isZoomed, merchantHand, { chooseMerchantCard(it) }, { isZoomed = it }, modifier)
+            CardRow(cardSize = DpSize(50.dp, 100.dp), isZoomed, merchantHand, { chooseMerchantCard(it) }, { isZoomed = it }, modifier)
             Button(
                 modifier = Modifier.align(Alignment.CenterHorizontally),
                 onClick = onReRollShop

@@ -6,10 +6,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun CardRow(isZoomed: Boolean, cards: List<Int>, onCardClick: (Int) -> Unit, onZoomChange: (Boolean) -> Unit, modifier: Modifier) {
+fun CardRow(cardSize: DpSize, isZoomed: Boolean, cards: List<Int>, onCardClick: (Int) -> Unit, onZoomChange: (Boolean) -> Unit, modifier: Modifier) {
     Row {
         for (card in cards) {
             Column(
@@ -18,6 +19,7 @@ fun CardRow(isZoomed: Boolean, cards: List<Int>, onCardClick: (Int) -> Unit, onZ
                     .padding(8.dp)
             ) {
                 CardView(
+                    cardSize = cardSize,
                     isZoomed,
                     card,
                     { onCardClick(card) },

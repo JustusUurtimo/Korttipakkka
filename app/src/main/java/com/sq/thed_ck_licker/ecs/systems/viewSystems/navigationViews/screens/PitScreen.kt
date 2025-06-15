@@ -27,6 +27,7 @@ import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sq.thed_ck_licker.R
@@ -83,7 +84,7 @@ fun PitScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            CardRow(isZoomed, pitCards, { dropCardInPit(it) }, onZoomChange = { isZoomed = it }, modifier)
+            CardRow(cardSize = DpSize(50.dp, 100.dp), isZoomed, pitCards, { dropCardInPit(it) }, onZoomChange = { isZoomed = it }, modifier)
 
             Spacer(modifier = Modifier.height(24.dp))
 
