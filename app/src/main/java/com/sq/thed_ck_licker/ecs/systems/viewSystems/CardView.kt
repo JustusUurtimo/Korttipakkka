@@ -68,11 +68,10 @@ fun CardView(
     val scale = if (isZoomed) 2f else 1f
 
     val fontSize by animateFloatAsState(
-        targetValue = if (isZoomed) 12f else 10f,
+        targetValue = if (isZoomed) 6f else 10f,
         animationSpec = tween(durationMillis = 200)
     )
 
-    // Calculate center position accounting for scale
     val offset by animateIntOffsetAsState(
         targetValue = if (isZoomed) {
             with(LocalDensity.current) {
