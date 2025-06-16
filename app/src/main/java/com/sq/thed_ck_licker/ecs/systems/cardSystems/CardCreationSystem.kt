@@ -79,7 +79,7 @@ class CardCreationSystem @Inject constructor(
     }
 
     fun addDamageCards(amount: Int): List<EntityId> {
-        val damageAmount = 2000f
+        val damageAmount = 150f
         val onActivation = { targetId: Int ->
             (targetId get HealthComponent::class).damage(damageAmount)
         }
@@ -267,7 +267,7 @@ class CardCreationSystem @Inject constructor(
     }
 
     fun addTempMultiplierTestCards(amount: Int = 1): List<EntityId> {
-        val multiplier = 2.8f
+        val multiplier = 3f
         val onActivation = { targetId: Int ->
             cardCreationHelperSystems.addTemporaryMultiplierTo(
                 targetEntityId = targetId,
