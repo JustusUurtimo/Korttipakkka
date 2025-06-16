@@ -1,5 +1,6 @@
 package com.sq.thed_ck_licker.player
 
+import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
@@ -20,8 +21,10 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.sq.thed_ck_licker.viewModels.PlayerViewModel
+import com.sq.thed_ck_licker.ecs.components.EffectComponent
+import com.sq.thed_ck_licker.ecs.components.IdentificationComponent
+import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
+import com.sq.thed_ck_licker.ecs.managers.get
 
 @Composable
 fun HealthBar(
@@ -79,4 +82,28 @@ fun HealthBar(
 @Composable
 fun ScoreDisplay(score: Int) {
     Text("Score: $score steps taken")
+}
+
+/**
+ * Mainly for debugging for now as descriptions are hard to see
+ */
+@Composable
+fun AdditionalInfoDisplay(latestCard: Int) {
+    var name = "-"
+    var hp = 0f
+    var description = "Nan"
+    if (latestCard != -1) {
+        description = (latestCard get EffectComponent::class).toString()
+        name = (latestCard get IdentificationComponent::class).getName()
+
+        try {
+            hp = (latestCard get HealthComponent::class).getHealth()
+        } catch (_: Exception) {
+            Log.v("AdditionalInfoDisplay", "No health component found for $latestCard")
+        }
+    }
+    Text("Info")
+    Text("Name: $name")
+    Text("Health: ${hp.toInt()}")
+    Text("Desc: \n$description")
 }

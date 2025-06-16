@@ -43,7 +43,7 @@ class CardsSystem @Inject constructor(
         onTurnStartEffectStackSystem()
         activateCard(playerCardCount)
         multiSystem.multiplyEntityAgainstOldItself(getPlayerID())
-        multiSystem.addEntity(getPlayerID())
+        multiSystem.addHistoryComponentOfItself(getPlayerID())
         onDeathSystem()
         Log.v("CardsSystem", "Card activation finished. Turn finished.")
     }
