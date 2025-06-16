@@ -327,9 +327,9 @@ class CardCreationSystem @Inject constructor(
                 playerDiscardDeck.getDiscardDeck().add(card)
             }
         }
-        val activationEffect = DescribedEffect(onActivation) { "Corrupt 1 card(s) in discard" }
+        val activationEffect = DescribedEffect(onActivation) { "Corrupt $efficiency card(s) in discard" }
         val deactivationEffect =
-            DescribedEffect(onDeactivation) { "Corrupt 1 card(s) in draw deck" }
+            DescribedEffect(onDeactivation) { "Corrupt $efficiency card(s) in draw deck" }
         return cardBuilder.buildCards {
             cardHealth = 20f
             cardAmount = amount
