@@ -1,12 +1,10 @@
 package com.sq.thed_ck_licker.ecs.systems.characterSystems
 
-import com.sq.thed_ck_licker.ecs.components.misc.EntityMemoryComponent
 import androidx.compose.runtime.snapshotFlow
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
+import com.sq.thed_ck_licker.ecs.components.misc.EntityMemoryComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getRegularMerchantID
-import com.sq.thed_ck_licker.ecs.managers.MerchantEvent
-import com.sq.thed_ck_licker.ecs.managers.MerchantEvents
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.states.MerchantState
@@ -33,14 +31,16 @@ class MerchantSystem @Inject constructor(
 
         val playerHealingCards = cardCreationSystem.addHealingCards(5)
         val scoreGainerCards = cardCreationSystem.addScoreGainerTestCards()
-        val maxHpCards = cardCreationSystem.addMaxHpTrapCards()
-        val shovelCards = cardCreationSystem.addShovelCards(10)
+        val maxHpCards = cardCreationSystem.addMaxHpTrapCards(3)
+        val shovelCards = cardCreationSystem.addShovelCards(3)
+        val shuffleCards = cardCreationSystem.addShuffleTestCards(5, 5)
 
         return emptyList<Int>() +
                 shovelCards +
                 playerHealingCards +
                 scoreGainerCards +
                 maxHpCards +
+                shuffleCards +
                 emptyList<Int>()
     }
 

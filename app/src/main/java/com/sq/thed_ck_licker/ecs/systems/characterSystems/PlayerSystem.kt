@@ -36,7 +36,7 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         getPlayerID() add LatestCardComponent()
 
         if (areRealTimeThingsEnabled.value) {
-            getPlayerID() add TickComponent(tickAction = healthTicker())
+            getPlayerID() add TickComponent(tickAction = healthTicker(), tickThreshold = 1000)
         }
         getPlayerID() add HistoryComponent(getPlayerID())
     }
