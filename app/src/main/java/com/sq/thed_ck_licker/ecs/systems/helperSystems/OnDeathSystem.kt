@@ -3,7 +3,6 @@ package com.sq.thed_ck_licker.ecs.systems.helperSystems
 import android.util.Log
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
-import com.sq.thed_ck_licker.ecs.components.DurationComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
@@ -18,7 +17,6 @@ import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.are
 fun onDeathSystem(componentManager: ComponentManager = ComponentManager.componentManager) {
     val deaths = mutableListOf<EntityId>()
     deaths += healthDeath(componentManager)
-    deaths += durationDeath(componentManager)
 
     if (deaths.isEmpty()) return
     performCleanup(componentManager, deaths)
@@ -45,19 +43,6 @@ private fun healthDeath(componentManager: ComponentManager): List<EntityId> {
     }
     return deaths
 
-}
-
-private fun durationDeath(componentManager: ComponentManager): List<EntityId> {
-    val dying = componentManager.getEntitiesWithComponent(DurationComponent::class)
-        ?: return emptyList()
-    val deaths = mutableListOf<EntityId>()
-    for (entity in dying) {
-        val duraComp = (entity.value as DurationComponent)
-        if (duraComp.getDuration() <= 0 && duraComp.isInfinite()) {
-            deaths.add(deathHappening(entity, componentManager))
-        }
-    }
-    return deaths
 }
 
 private fun deathHappening(

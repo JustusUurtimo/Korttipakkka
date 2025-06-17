@@ -1,6 +1,7 @@
 package com.sq.thed_ck_licker.ecs.systems.helperSystems
 
 import android.util.Log
+import com.sq.thed_ck_licker.ecs.components.HistoryComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
@@ -12,17 +13,14 @@ import com.sq.thed_ck_licker.ecs.managers.get
 import javax.inject.Inject
 
 class MultiplierSystem @Inject constructor(private val componentManager: ComponentManager) {
-    val entityHolder = HashMap<EntityId, EntityId>()
-
-    fun addEntity(entityId: EntityId) {
-        entityHolder.put(entityId, componentManager.copy(entityId))
+    fun addHistoryComponentOfItself(entityId: EntityId) {
+        val copy = componentManager.copy(entityId)
+        entityId add HistoryComponent(copy)
     }
 
     fun multiplyEntityAgainstOldItself(entityId: EntityId) =
-        multiplyEntityValues(
-            entityHolder.getOrDefault(entityId, componentManager.copy(entityId)),
-            entityId
-        )
+        multiplyEntityValues((entityId get HistoryComponent::class).history, entityId)
+
 
 
     fun multiplyEntityValues(oldEntityId: EntityId, targetEntityId: EntityId) {

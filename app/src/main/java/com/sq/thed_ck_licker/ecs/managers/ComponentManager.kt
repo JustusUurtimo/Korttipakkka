@@ -3,7 +3,7 @@ package com.sq.thed_ck_licker.ecs.managers
 import android.util.Log
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.snapshots.SnapshotStateMap
-import com.sq.thed_ck_licker.ecs.components.CardTag
+import com.sq.thed_ck_licker.ecs.components.TagsComponent.CardTag
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent
@@ -28,7 +28,7 @@ class ComponentManager {
 
     fun <T : Any> getComponent(entity: Int, componentClass: KClass<T>): T {
         val componentMap = components[componentClass]
-            ?: throw IllegalStateException("No components of type ${componentClass.simpleName} found")
+            ?: throw IllegalStateException("No components of type ${componentClass.simpleName} found for entity $entity")
 
         val component = componentMap[entity]
             ?: throw IllegalStateException("Component of type ${componentClass.simpleName} not found for entity $entity")
@@ -122,7 +122,7 @@ class ComponentManager {
             is MultiplierComponent -> MultiplierComponent(component.multiplier)
             is EffectComponent -> EffectComponent(
                 onDeath = component.onDeath,
-                onSpawn = component.onSpawn,
+                onDraw = component.onDraw,
                 onTurnStart = component.onTurnStart,
                 onPlay = component.onPlay,
                 onDeactivate = component.onDeactivate
@@ -153,6 +153,15 @@ infix fun <T : Any> EntityId.get(componentClass: KClass<T>): T {
  */
 inline fun <reified T> List<Any>.hasComponent(): Boolean {
     return any { it is T }
+}
+
+
+
+fun List<EntityId>.applyComponentToAll(component: Any): List<EntityId> {
+    this.forEach { entity ->
+        entity add component
+    }
+    return this
 }
 
 
