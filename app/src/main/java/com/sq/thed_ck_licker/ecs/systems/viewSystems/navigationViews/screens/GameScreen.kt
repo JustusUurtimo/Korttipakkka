@@ -1,15 +1,15 @@
 package com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -24,11 +24,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.TickingSystem
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.CardDeck
@@ -49,7 +46,8 @@ fun Game(
     val playerCardCount = rememberSaveable { mutableIntStateOf(0) }
     val playerState by playerViewModel.playerState.collectAsState()
 
-    var isZoomed by remember { mutableStateOf(false) }
+    val zoomedCardId = rememberSaveable { mutableIntStateOf(-1) }
+    val isZoomed = zoomedCardId.intValue != -1
 
     RealtimeEffects()
 
@@ -57,45 +55,70 @@ fun Game(
         HealthBar(playerState.health, playerState.maxHealth, modifier.padding(innerPadding))
         ScoreDisplay(playerState.score)
 
-        Box(
-            modifier = modifier
-                .fillMaxSize()
-                .pointerInput(isZoomed) {
-                    if (isZoomed) {
-                        detectTapGestures { isZoomed = false }
+        Box {
+            CardDeck(
+                navigationBarPadding,
+                playerCardCount.intValue
+            ) { playerViewModel.onPullNewCard(playerState.latestCard) }
+            Box(
+                modifier = modifier
+                    .fillMaxSize()
+                    .pointerInput(isZoomed) {
+                        if (isZoomed) {
+                            detectTapGestures { zoomedCardId.intValue = -1 }
+                        }
                     }
+            ) {
+                Box(
+                    modifier
+                        .align(if (isZoomed) Alignment.Center else Alignment.BottomCenter)
+                ) {
+                    Column {
+                        if (playerState.latestCard != -1) {
+                            PlayerHandView(
+                                isZoomed,
+                                modifier,
+                                playerState.latestCard,
+                                activateCard = {
+                                    playerViewModel.onActivateCard(
+                                        playerCardCount
+                                    )
+                                },
+                                onZoomChange = { zoom ->
+                                    zoomedCardId.intValue = zoom
+                                }
+                            )
+                        }
+                        if (!isZoomed) {
+
+                            PullCardButton(
+                                navigationBarPadding,
+                                modifier,
+                                pullNewCard = { playerViewModel.onPullNewCard(playerState.latestCard) }
+                            )
+
+                        }
+                    }
+
                 }
-        ) {
-            CardDeck(navigationBarPadding) { playerViewModel.onPullNewCard(playerState.latestCard) }
-            Box(modifier.align(Alignment.BottomCenter)) {
+                if (isZoomed) {
+                    Box(
+                        modifier.align(Alignment.BottomCenter)
 
-                Column(modifier.padding(35.dp, 0.dp, 0.dp, 0.dp)) {
-
-                    if (playerState.latestCard != -1) {
-                        PlayerHandView(
-                            isZoomed,
-                            playerCardCount,
+                    ) {
+                        PullCardButton(
+                            navigationBarPadding,
                             modifier,
-                            playerState.latestCard,
-                            activateCard = {
-                                playerViewModel.onActivateCard(
-                                    playerCardCount
-                                )
-                            },
-                            onZoomChange = { isZoomed = it }
+                            pullNewCard = { playerViewModel.onPullNewCard(playerState.latestCard) }
                         )
                     }
-                    PullCardButton(
-                        navigationBarPadding,
-                        modifier.offset((-15).dp),
-                        pullNewCard = { playerViewModel.onPullNewCard(playerState.latestCard) }
-                    )
                 }
 
             }
         }
     }
 }
+
 
 @Composable
 private fun RealtimeEffects() {
