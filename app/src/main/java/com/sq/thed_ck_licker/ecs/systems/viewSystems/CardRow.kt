@@ -19,7 +19,6 @@ fun CardRow(cardSize: DpSize, zoomedCardId: MutableIntState, cards: List<Int>, o
             Column(
                 modifier = Modifier
                     .weight(2f)
-                    .padding(8.dp)
                     .zIndex(if (isThisCardZoomed) 99f else 0f)
             ) {
                 CardView(

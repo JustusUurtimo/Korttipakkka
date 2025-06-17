@@ -67,6 +67,8 @@ fun CardView(
 
     val scale = if (isZoomed) 2f else 1f
 
+    println("description: $description")
+
     val fontSize by animateFloatAsState(
         targetValue = if (isZoomed) 6f else 10f,
         animationSpec = tween(durationMillis = 200)
@@ -112,7 +114,6 @@ fun CardView(
                 Column(
                     modifier = modifier
                         .align(BiasAlignment(0f, 0.7f))
-                        .fillMaxWidth()
                 ) {
                     Text(
                         text = name,
@@ -121,9 +122,6 @@ fun CardView(
                         ),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        modifier = modifier
-                            .background(color = Color.Cyan)
-                            .fillMaxWidth()
                     )
 
                     Spacer(Modifier.height(4.dp))
@@ -138,7 +136,6 @@ fun CardView(
                         softWrap = true,
                         modifier = modifier
                             .background(color = Color.Yellow)
-                            .fillMaxWidth()
                     )
                 }
             }
