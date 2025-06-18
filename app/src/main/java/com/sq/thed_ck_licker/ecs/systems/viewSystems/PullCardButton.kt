@@ -17,7 +17,7 @@ fun PullCardButton(
 ) {
     Column(
         modifier = modifier.padding(
-            start = 16.dp,
+            top = 50.dp,
             bottom = navigationBarPadding.calculateBottomPadding() // Add bottom padding for the navigation bar
         ),
     ) {
