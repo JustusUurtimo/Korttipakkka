@@ -23,6 +23,7 @@ fun CardRow(cardSize: DpSize, zoomedCardId: MutableIntState, cards: List<Int>, o
                 CardView(
                     cardSize = cardSize,
                     isZoomed = isThisCardZoomed,
+                    isForCardRow = true,
                     card,
                     { onCardClick(card) },
                     modifier.height(150.dp),

@@ -6,20 +6,19 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -27,7 +26,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
@@ -56,6 +54,7 @@ var lastTime = -1L
 fun CardView(
     cardSize: DpSize,
     isZoomed: Boolean,
+    isForCardRow: Boolean = false,
     entityId: Int = 1,
     activateCard: () -> Unit,
     modifier: Modifier,
@@ -83,7 +82,7 @@ fun CardView(
     println("description: $description")
 
     val fontSize by animateFloatAsState(
-        targetValue = if (isZoomed) 6f else 10f,
+        targetValue = if (isZoomed ||isForCardRow ) 5.5f else 10f,
         animationSpec = tween(durationMillis = 200)
     )
 
@@ -118,59 +117,63 @@ fun CardView(
         Box(Modifier.fillMaxSize()) {
             Box(
                 modifier = modifier
+                    .align(Alignment.Center)
                     .fillMaxSize()
                     .paint(
                         painterResource(image), contentScale = ContentScale.FillBounds
                     ),
-                contentAlignment = Alignment.Center
+            )
 
-            ) {
-                Column(
-                    modifier = modifier
-                        .align(BiasAlignment(0f, 0.7f))
-                ) {
-                    Text(
-                        text = name,
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontSize = fontSize.sp  // Convert Float to TextUnit
-                        ),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                    Spacer(Modifier.height(4.dp))
-
-                    Text(
-                        text = description,
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            fontSize = fontSize.sp  // Same animated size
-                        ),
-                        maxLines = if (isZoomed) 999 else 2,
-                        overflow = if (isZoomed) TextOverflow.Visible else TextOverflow.Ellipsis,
-                        softWrap = true,
-
-                        modifier = modifier
-                            .background(color = Color.Yellow)
-                            .fillMaxWidth()
-                    )
-                }
-            }
-            Text(
-                text = buildAnnotatedString {
-                    appendInlineContent("health_icon", "[icon]")
-                    append(cardHealth?.getHealth()?.toString() ?: "inf",) // Your value
-                },
-                inlineContent = mapOf(
-                    "health_icon" to InlineTextContent(
-                        Placeholder(12.sp, 12.sp, PlaceholderVerticalAlign.TextCenter)
-                    ) {
-                        Icon(Icons.Default.Favorite, "Health", tint = Color.Red)
-                    }
-                ),
+            Row(
                 modifier = Modifier
-                    .align(Alignment.TopEnd),
-                style = MaterialTheme.typography.titleLarge.copy(
-                    fontSize = fontSize.sp  // Convert Float to TextUnit
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = name,
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontSize = fontSize.sp
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                        .weight(1f)
+                )
+
+                // Health Text with Icon (aligned to the end)
+                Text(
+                    text = buildAnnotatedString {
+                        appendInlineContent("health_icon", "[icon]")
+                        append(cardHealth?.getHealth()?.toString() ?: "inf") // Your value
+                    },
+                    inlineContent = mapOf(
+                        "health_icon" to InlineTextContent(
+                            Placeholder(12.sp, 12.sp, PlaceholderVerticalAlign.TextCenter)
+                        ) {
+                            Icon(Icons.Default.Favorite, "Health", tint = Color.Red)
+                        }
+                    ),
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontSize = fontSize.sp  // Convert Float to TextUnit
+                    )
+                )
+            }
+
+
+            Text(
+                text = description,
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontSize = fontSize.sp  // Same animated size
                 ),
+                maxLines = if (isZoomed) 999 else 2,
+                overflow = if (isZoomed) TextOverflow.Visible else TextOverflow.Ellipsis,
+                softWrap = true,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .background(color = Color.Yellow)
+                    .fillMaxWidth(),
             )
         }
 

@@ -16,6 +16,7 @@ fun PlayerHandView(
     CardView(
         cardSize = DpSize(120.dp, 170.dp),
         isZoomed,
+        isForCardRow = false,
         latestCard,
         activateCard,
         modifier,
