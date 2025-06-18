@@ -1,9 +1,11 @@
 package com.sq.thed_ck_licker.ecs.systems.characterSystems
 
 import androidx.compose.runtime.snapshotFlow
+import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
+import com.sq.thed_ck_licker.ecs.components.HistoryComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
@@ -33,9 +35,11 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         getPlayerID() add DiscardDeckComponent(mutableListOf<Int>())
         getPlayerID() add MultiplierComponent()
         getPlayerID() add LatestCardComponent()
+        getPlayerID() add HistoryComponent(getPlayerID())
+        getPlayerID() add ActivationCounterComponent()
 
         if (areRealTimeThingsEnabled.value) {
-            getPlayerID() add TickComponent(tickAction = healthTicker())
+            getPlayerID() add TickComponent(tickAction = healthTicker(), tickThreshold = 1000)
         }
     }
 

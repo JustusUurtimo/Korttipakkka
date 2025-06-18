@@ -3,10 +3,11 @@ package com.sq.thed_ck_licker.ecs.systems.cardSystems
 import android.util.Log
 import com.sq.thed_ck_licker.R
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
-import com.sq.thed_ck_licker.ecs.components.CardTag
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
+import com.sq.thed_ck_licker.ecs.components.TagsComponent
+import com.sq.thed_ck_licker.ecs.components.TagsComponent.CardTag
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
@@ -18,8 +19,8 @@ import com.sq.thed_ck_licker.ecs.managers.MerchantEvent
 import com.sq.thed_ck_licker.ecs.managers.MerchantEvents
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.get
-import com.sq.thed_ck_licker.helpers.DescribedEffect
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.CardCreationHelperSystems
+import com.sq.thed_ck_licker.helpers.DescribedEffect
 import com.sq.thed_ck_licker.helpers.MyRandom
 import com.sq.thed_ck_licker.helpers.MyRandom.random
 import com.sq.thed_ck_licker.helpers.navigation.GameNavigator
@@ -63,12 +64,13 @@ class CardCreationSystem @Inject constructor(
     }
 
     fun addHealingCards(amount: Int): List<EntityId> {
-        val healAmount = 10f
+        val healAmount = 40f
         val onActivation = { playerId: Int ->
             (playerId get HealthComponent::class).heal(healAmount)
         }
         val describedEffect = DescribedEffect(onActivation) { "Heal ($healAmount)" }
         return cardBuilder.buildCards {
+            cardHealth = 5f
             cardAmount = amount
             cardImage = R.drawable.heal_10
             name = "Heal"
@@ -77,7 +79,7 @@ class CardCreationSystem @Inject constructor(
     }
 
     fun addDamageCards(amount: Int): List<EntityId> {
-        val damageAmount = 2000f
+        val damageAmount = 150f
         val onActivation = { targetId: Int ->
             (targetId get HealthComponent::class).damage(damageAmount)
         }
@@ -113,7 +115,7 @@ class CardCreationSystem @Inject constructor(
         val onActivation = { targetId: Int ->
             val cardEntity = (getPlayerID() get LatestCardComponent::class).getLatestCard()
             val targetHp = targetId get HealthComponent::class
-            if (MyRandom.getRandomInt() <= 10) {
+            if (MyRandom.getRandomInt() <= 1) {
                 (cardEntity get HealthComponent::class).damage(cardHealthAmount)
                 val damageAmount = abs(targetHp.getHealth().div(2))
                 targetHp.damage(damageAmount)
@@ -133,47 +135,56 @@ class CardCreationSystem @Inject constructor(
 
     fun addBreakingDefaultCards(amount: Int = 7): List<EntityId> {
         val scoreIt = { targetId: Int ->
-            val cardEntity = (getPlayerID() get LatestCardComponent::class).getLatestCard()
+            val cardEntity = (targetId get LatestCardComponent::class).getLatestCard()
             val target = targetId get ScoreComponent::class
             val omaScore = cardEntity get ScoreComponent::class
             target.addScore(omaScore.getScore())
         }
-        val describedEffect = DescribedEffect(scoreIt) { "Gain some points (???)" } // TODO: fix this
-        return cardBuilder.buildCards {
+        val describedEffect = DescribedEffect(scoreIt) { targetId: Int ->
+            val cardEntity = (targetId get LatestCardComponent::class).getLatestCard()
+            val omaScore = cardEntity get ScoreComponent::class
+            "Gain ${omaScore.getScore()} points"
+        }
+
+        val cards = cardBuilder.buildCards {
             cardHealth = 10f
             scoreAmount = 100
             cardAmount = amount
             name = "Default Card"
             onCardPlay = describedEffect
         }
+        return cards
     }
 
 
     fun addDeactivationTestCards(amount: Int = 2): List<EntityId> {
-
+        var stepSize = 2
+        var baseDamage = 1
         val onActivation = { targetId: Int ->
             val cardEntity = (getPlayerID() get LatestCardComponent::class).getLatestCard()
             val target = targetId get ScoreComponent::class
             val riskPoints = cardEntity get ScoreComponent::class
-            val scoreIncrease = riskPoints.getScore() * 3
+            val scoreIncrease = riskPoints.getScore() * 30
             target.addScore(scoreIncrease)
             riskPoints.setScore(0)
-            println("Now its activated")
-            println("Gave $scoreIncrease points")
         }
         val deactivateAction = { playerId: Int ->
             val cardEntity = (getPlayerID() get LatestCardComponent::class).getLatestCard()
             val target = playerId get HealthComponent::class
             val riskPoints = cardEntity get ScoreComponent::class
-            riskPoints.addScore(1)
+            riskPoints.addScore(baseDamage)
+            stepSize++
+            baseDamage += stepSize
             target.damage(riskPoints.getScore().toFloat())
-            println("Now its deactivated")
-            println("Risk is rising!")
-            println("Holds ${riskPoints.getScore()} points")
 
         }
-        val activationEffect = DescribedEffect(onActivation) { "Gain some points based on health lost (???)" } // TODO: fix this
-        val deactivationEffect = DescribedEffect(deactivateAction) { "Lose some health (???)" }// TODO: fix this
+        val activationEffect = DescribedEffect(onActivation) { targetId ->
+            val score = (targetId get ScoreComponent::class).getScore()
+            "Gain 3x points based on health lost from this card ($score points)"
+        }
+        val deactivationEffect = DescribedEffect(deactivateAction) { _ ->
+            "Lose health ($baseDamage points)"
+        }
         return cardBuilder.buildCards {
             scoreAmount = 0
             cardAmount = amount
@@ -185,21 +196,37 @@ class CardCreationSystem @Inject constructor(
 
     fun addTrapTestCards(amount: Int = 1): List<EntityId> {
 
+
         val onDeactivation = { targetId: Int ->
             val cardEntity = (getPlayerID() get LatestCardComponent::class).getLatestCard()
             val target = targetId get ScoreComponent::class
             val activationComponent = (cardEntity get ActivationCounterComponent::class)
-            target.reduceScore((activationComponent.getDeactivations() * 3))
+            target.reduceScore(((1 + activationComponent.getDeactivations()) * 30))
         }
+        val deactivationEffect =
+            DescribedEffect(onDeactivation) { targetId: EntityId ->
+                val cardEntity = (targetId get LatestCardComponent::class).getLatestCard()
+                val activationComponent = (cardEntity get ActivationCounterComponent::class)
+                val amount = (1 + activationComponent.getDeactivations()) * 30
+                "Lose Score based on deactivations ($amount score)"
+            }
+
+
         val onActivation = { targetId: Int ->
-            val cardEntity = (getPlayerID() get LatestCardComponent::class).getLatestCard()
+            val cardEntity = (targetId get LatestCardComponent::class).getLatestCard()
             val target = targetId get HealthComponent::class
             val activationComponent = cardEntity get ActivationCounterComponent::class
-            val damageAmount = (activationComponent.getActivations() * 5).toFloat()
+            val damageAmount = ((1 + activationComponent.getActivations()) * 5).toFloat()
             target.damage(damageAmount)
         }
-        val activationEffect = DescribedEffect(onActivation) { "you lose health (???)" }// TODO: fix this
-        val deactivationEffect = DescribedEffect(onDeactivation) { "you lose score (???)" }// TODO: fix this
+        val activationEffect = DescribedEffect(onActivation) { _: Int ->
+            val cardEntity = (getPlayerID() get LatestCardComponent::class).getLatestCard()
+            val activationComponent = cardEntity get ActivationCounterComponent::class
+            val damageAmount = ((1 + activationComponent.getActivations()) * 5).toFloat()
+            "Lose health based on activations (${damageAmount} health)"
+        }
+
+
         return cardBuilder.buildCards {
             scoreAmount = 1
             cardAmount = amount
@@ -240,7 +267,7 @@ class CardCreationSystem @Inject constructor(
     }
 
     fun addTempMultiplierTestCards(amount: Int = 1): List<EntityId> {
-        val multiplier = 2.8f
+        val multiplier = 3f
         val onActivation = { targetId: Int ->
             cardCreationHelperSystems.addTemporaryMultiplierTo(
                 targetEntityId = targetId,
@@ -255,12 +282,14 @@ class CardCreationSystem @Inject constructor(
             onCardPlay = activationEffect
         }
     }
-    fun addShuffleTestCards(amount: Int = 1): List<EntityId> {
+
+    fun addShuffleTestCards(amount: Int = 1, efficiency: Int = 1): List<EntityId> {
         val playerId = getPlayerID()
 
         val onActivation: (Int) -> Unit = { _: Int ->
             val playerDeck = playerId get DrawDeckComponent::class
             val playerDiscardDeck = playerId get DiscardDeckComponent::class
+            repeat(efficiency) {
             val card = if (playerDeck.getDrawCardDeck().isEmpty()) {
                 playerDiscardDeck.getDiscardDeck()
                     .removeAt(random.nextInt(playerDiscardDeck.getDiscardDeck().size))
@@ -273,12 +302,15 @@ class CardCreationSystem @Inject constructor(
             val second = effect.shuffleToNew()
             Log.i("Shuffle on activation", "Second: $second")
             card add second
+            (card get TagsComponent::class).addTag(CardTag.CORRUPTED)
             playerDeck.getDrawCardDeck().add(card)
+            }
         }
 
         val onDeactivation: (Int) -> Unit = { _: Int ->
             val playerDeck = playerId get DrawDeckComponent::class
             val playerDiscardDeck = playerId get DiscardDeckComponent::class
+            repeat(efficiency) {
             val card = if (playerDiscardDeck.getDiscardDeck().isEmpty()) {
                 playerDeck.getDrawCardDeck()
                     .removeAt(random.nextInt(playerDeck.getDrawCardDeck().size))
@@ -291,11 +323,13 @@ class CardCreationSystem @Inject constructor(
             val second = effect.shuffleToNew()
             Log.i("Shuffle on deactivation", "Second: $second")
             card add second
-            playerDiscardDeck.getDiscardDeck().add(card)
+            (card get TagsComponent::class).addTag(CardTag.CORRUPTED)
+                playerDiscardDeck.getDiscardDeck().add(card)
+            }
         }
-        val activationEffect = DescribedEffect(onActivation) { "Corrupt 1 card(s) in discard" }
+        val activationEffect = DescribedEffect(onActivation) { "Corrupt $efficiency card(s) in discard" }
         val deactivationEffect =
-            DescribedEffect(onDeactivation) { "Corrupt 1 card(s) in draw deck" }
+            DescribedEffect(onDeactivation) { "Corrupt $efficiency card(s) in draw deck" }
         return cardBuilder.buildCards {
             cardHealth = 20f
             cardAmount = amount
@@ -304,6 +338,7 @@ class CardCreationSystem @Inject constructor(
             onCardDeactivate = deactivationEffect
         }
     }
+
     fun addTimeBoundTestCards(numberOfCards: Int = 1): List<EntityId> {
         return cardBuilder.createTimeBoundCards(numberOfCards)
     }
