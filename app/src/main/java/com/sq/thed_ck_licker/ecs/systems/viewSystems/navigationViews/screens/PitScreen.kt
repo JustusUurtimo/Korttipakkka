@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -55,72 +56,86 @@ fun PitScreen(
         pitViewModel.buyShovel()
         gameNavigator.navigateBack()
     }
-
     Box(
         modifier = modifier
             .fillMaxSize()
             .wrapContentSize(Alignment.Center)
-            .pointerInput(isZoomed) {
-                if (isZoomed) {
-                    detectTapGestures { zoomedCardId.intValue = -1 }
-                }
-            }
     ) {
         Column(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = modifier
+                .padding(16.dp)
+                .wrapContentSize(Alignment.Center)
         ) {
-            Text(
-                text = "Pit",
-                modifier = modifier
-                    .fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            Text(
-                text = "Choose a card to drop to the pit",
-                softWrap = true,
-                modifier = modifier
-                    .fillMaxWidth()
-            )
+            Row {
+                Box(
+                    modifier = modifier
+                        .fillMaxSize()
+                        .pointerInput(isZoomed) {
+                            if (isZoomed) {
+                                detectTapGestures { zoomedCardId.intValue = -1 }
+                            }
+                        }
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .padding(16.dp)
+                    ) {
+                        Text(
+                            text = "Pit",
+                            modifier = modifier
+                                .fillMaxWidth()
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Text(
+                            text = "Choose a card to drop to the pit",
+                            softWrap = true,
+                            modifier = modifier
+                                .fillMaxWidth()
+                        )
+                    }
+                    Column(
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
 
-            Spacer(modifier = Modifier.height(24.dp))
+                        CardRow(
+                            cardSize = DpSize(100.dp, 150.dp),
+                            zoomedCardId,
+                            pitCards,
+                            { dropCardInPit(it) },
+                            onZoomChange = { zoom ->
+                                zoomedCardId.intValue = zoom
+                            },
+                            modifier
+                        )
 
-            CardRow(
-                cardSize = DpSize(50.dp, 100.dp),
-                zoomedCardId,
-                pitCards,
-                { dropCardInPit(it) },
-                onZoomChange = { zoom ->
-                    zoomedCardId.intValue = zoom
-                },
-                modifier
-            )
+                        Spacer(modifier = Modifier.height(24.dp))
 
-            Spacer(modifier = Modifier.height(24.dp))
+                        Box(
+                            modifier = modifier
+                                .width(100.dp)
+                                .height(100.dp)
+                        ) {
+                            Image(
+                                painter = painterResource(R.drawable.placeholder),
+                                contentDescription = "The pit"
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(48.dp))
+                        Text(text = "Pay 500 coins to buy a shovel, and close the pit")
+                        Button(
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .align(Alignment.CenterHorizontally),
+                            onClick = { buyShovel() }
+                        ) { Text("Buy shovel") }
+                    }
 
-            Box(
-                modifier = modifier
-                    .width(100.dp)
-                    .height(100.dp)
-            ) {
-                Image(
-                    painter = painterResource(R.drawable.placeholder),
-                    contentDescription = "The pit"
-                )
-            }
+                }
 
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Column {
-                Text(text = "Pay 500 coins to buy a shovel, and close the pit")
-                Button(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .align(Alignment.CenterHorizontally),
-                    onClick = { buyShovel() }
-                ) { Text("Buy shovel") }
             }
         }
     }

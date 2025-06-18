@@ -2,6 +2,7 @@ package com.sq.thed_ck_licker.ecs.systems.viewSystems
 
 import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -14,7 +15,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.InlineTextContent
+import androidx.compose.foundation.text.appendInlineContent
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,6 +35,9 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.Placeholder
+import androidx.compose.ui.text.PlaceholderVerticalAlign
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -65,7 +75,10 @@ fun CardView(
         )
     }
 
-    val scale = if (isZoomed) 2f else 1f
+    val scale by animateFloatAsState(
+        targetValue = if (isZoomed) 1.5f else 1f,
+        animationSpec = spring(dampingRatio = 0.5f, stiffness = 300f)
+    )
 
     println("description: $description")
 
@@ -81,6 +94,7 @@ fun CardView(
 
     Card(
         modifier = modifier
+            .padding(4.dp)
             .size(cardSize)
             .pointerInput(isZoomed) {
                 if (isZoomed) {
@@ -123,7 +137,6 @@ fun CardView(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
-
                     Spacer(Modifier.height(4.dp))
 
                     Text(
@@ -134,23 +147,30 @@ fun CardView(
                         maxLines = if (isZoomed) 999 else 2,
                         overflow = if (isZoomed) TextOverflow.Visible else TextOverflow.Ellipsis,
                         softWrap = true,
+
                         modifier = modifier
                             .background(color = Color.Yellow)
+                            .fillMaxWidth()
                     )
                 }
             }
             Text(
-                text = cardHealth?.getHealth()?.toString() ?: "inf",
+                text = buildAnnotatedString {
+                    appendInlineContent("health_icon", "[icon]")
+                    append(cardHealth?.getHealth()?.toString() ?: "inf",) // Your value
+                },
+                inlineContent = mapOf(
+                    "health_icon" to InlineTextContent(
+                        Placeholder(12.sp, 12.sp, PlaceholderVerticalAlign.TextCenter)
+                    ) {
+                        Icon(Icons.Default.Favorite, "Health", tint = Color.Red)
+                    }
+                ),
                 modifier = Modifier
-                    .align(Alignment.TopEnd)  // Positions at top-right corner
-                    .padding(4.dp)  // Small padding from edges
-                    .background(
-                        color = Color.Black.copy(alpha = 0.5f),
-                        shape = CircleShape
-                    )
-                    .padding(horizontal = 8.dp, vertical = 4.dp),
-                color = Color.White,
-                style = MaterialTheme.typography.labelSmall
+                    .align(Alignment.TopEnd),
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontSize = fontSize.sp  // Convert Float to TextUnit
+                ),
             )
         }
 

@@ -4,7 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
@@ -43,33 +45,50 @@ fun MerchantHandView(
                 }
             }
     ) {
-        Box(
-            modifier = modifier
-                .align(Alignment.Center)
+        Column(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(16.dp)
         ) {
-            Column(
+            Text(
+                text = "Merchant Shop",
                 modifier = modifier
-                    .padding(16.dp)
-                    .wrapContentSize(Alignment.Center)
+                    .fillMaxWidth()
             )
-            {
-                CardRow(
-                    cardSize = DpSize(120.dp, 170.dp),
-                    zoomedCardId,
-                    merchantHand,
-                    { chooseMerchantCard(it) },
-                    onZoomChange = { zoom ->
-                        zoomedCardId.intValue = zoom
-                    },
-                    modifier
-                )
-
-            }
-
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = "Use points to buy a card",
+                softWrap = true,
+                modifier = modifier
+                    .fillMaxWidth()
+            )
         }
-        Button(
-            modifier = modifier.align(Alignment.BottomCenter),
-            onClick = onReRollShop
-        ) { Text("Re-roll shop") }
+
+        Column(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            CardRow(
+                cardSize = DpSize(100.dp, 150.dp),
+                zoomedCardId,
+                merchantHand,
+                { chooseMerchantCard(it) },
+                onZoomChange = { zoom ->
+                    zoomedCardId.intValue = zoom
+                },
+                modifier
+            )
+            Spacer(modifier = Modifier.height(48.dp))
+            Button(
+                modifier = modifier.align(Alignment.CenterHorizontally),
+                onClick = onReRollShop
+            ) { Text("Re-roll shop") }
+        }
+
     }
 }
