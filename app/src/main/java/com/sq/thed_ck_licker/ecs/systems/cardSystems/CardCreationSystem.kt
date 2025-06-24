@@ -158,36 +158,56 @@ class CardCreationSystem @Inject constructor(
 
 
     fun addDeactivationTestCards(amount: Int = 2): List<EntityId> {
-        var stepSize = 2
-        var baseDamage = 1
-        val onActivation = { targetId: Int ->
+        var nextStep = 1
+        var currentDamage = 0
+        val multiplier = 30
+
+        val onActivation1 = { targetId: Int ->
             val cardEntity = (getPlayerID() get LatestCardComponent::class).getLatestCard()
             val target = targetId get ScoreComponent::class
             val riskPoints = cardEntity get ScoreComponent::class
-            val scoreIncrease = riskPoints.getScore() * 30
+            val scoreIncrease = riskPoints.getScore() * multiplier
             target.addScore(scoreIncrease)
             riskPoints.setScore(0)
         }
-        val deactivateAction = { playerId: Int ->
+
+        val onActivation:(Int) -> Unit  = { targetId: EntityId ->
+            val scoreComponent = targetId get ScoreComponent::class
+            scoreComponent.addScore(currentDamage * multiplier)
+            nextStep = 0
+            currentDamage = 1
+
+        }
+        val activationEffect = DescribedEffect(onActivation) { _ ->
+            "Gain ${multiplier}x points based on health lost from this card (${multiplier * currentDamage} points). Resets on use"
+        }
+
+        val deactivateAction1 = { playerId: Int ->
             val cardEntity = (getPlayerID() get LatestCardComponent::class).getLatestCard()
             val target = playerId get HealthComponent::class
             val riskPoints = cardEntity get ScoreComponent::class
-            riskPoints.addScore(baseDamage)
-            stepSize++
-            baseDamage += stepSize
+            riskPoints.addScore(currentDamage)
+            nextStep++
+            currentDamage += nextStep
             target.damage(riskPoints.getScore().toFloat())
 
         }
-        val activationEffect = DescribedEffect(onActivation) { targetId ->
-            val score = (targetId get ScoreComponent::class).getScore()
-            "Gain 3x points based on health lost from this card ($score points)"
+
+        val deactivateAction: (Int) -> Unit = { targetId: EntityId ->
+            val hpComp = targetId get HealthComponent::class
+            hpComp.damage(currentDamage.toFloat())
+            currentDamage += nextStep
+            nextStep++
         }
+
         val deactivationEffect = DescribedEffect(deactivateAction) { _ ->
-            "Lose health ($baseDamage points)"
+            "Lose health (${currentDamage} points), increases damage by $nextStep"
         }
+
         return cardBuilder.buildCards {
             scoreAmount = 0
             cardAmount = amount
+            cardHealth = 6f
             name = "Deactivation Card"
             onCardPlay = activationEffect
             onCardDeactivate = deactivationEffect

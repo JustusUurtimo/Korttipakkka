@@ -82,7 +82,6 @@ class CardCreationSystemTest {
         assert(desc == realDesc) { "Description should be \n'$realDesc', but was \n'$desc'" }
     }
 
-
     @Test
     fun `Activate and deactivate trap card multiple times`() {
         val trapCard = cardCreationSystem.addTrapTestCards(1).first()
@@ -132,7 +131,120 @@ class CardCreationSystemTest {
     }
 
     @Test
-    fun addDeactivationTestCards() {
+    fun `Deactivation cards descriptions on creation`() {
+        val deactivationCard = cardCreationSystem.addDeactivationTestCards(1).first()
+        owner add LatestCardComponent(mutableIntStateOf(deactivationCard))
+        val hpComponent = HealthComponent(1000f)
+        owner add hpComponent
+        val scoreComponent = ScoreComponent(1000)
+        owner add scoreComponent
+        var nextStep = 2
+        var currentDamage = 1
+        val multiplier = 30
+
+
+        val realOnPlayDesc =
+            "Gain ${multiplier}x points based on health lost from this card (${multiplier * currentDamage} points). Resets on use"
+        val onPlayDesc = (deactivationCard get EffectComponent::class).onPlay.describe(owner)
+        assert(onPlayDesc == realOnPlayDesc) { "1: Description on play should be\n'$realOnPlayDesc', but was\n'$onPlayDesc'" }
+
+        val realOnDeactivateDesc =
+            "Lose health (${currentDamage} points), increases damage by $nextStep"
+        val onDeactivateDesc =
+            (deactivationCard get EffectComponent::class).onDeactivate.describe(owner)
+        assert(onDeactivateDesc == realOnDeactivateDesc) { "2: Description on deactivation should be\n'$realOnDeactivateDesc', but was\n'$onDeactivateDesc'" }
+    }
+
+    @Test
+    fun `Deactivate Deactivation card once`() {
+        val deactivationCard = cardCreationSystem.addDeactivationTestCards(1).first()
+        owner add LatestCardComponent(mutableIntStateOf(deactivationCard))
+        val hpComponent = HealthComponent(1000f)
+        owner add hpComponent
+        val scoreComponent = ScoreComponent(1000)
+        owner add scoreComponent
+
+        (deactivationCard get ActivationCounterComponent::class).deactivate()
+        (deactivationCard get EffectComponent::class).onDeactivate.action(owner)
+        assert(hpComponent.getHealth() == 999f) {
+            "Health should be 999, but was ${hpComponent.getHealth()}"
+        }
+        assert(scoreComponent.getScore() == 1000) {
+            "Score should be 1000, but was ${scoreComponent.getScore()}"
+        }
+    }
+
+
+    @Test
+    fun `Only activate Deactivation card once`() {
+        val thousand = 1000
+        val deactivationCard = cardCreationSystem.addDeactivationTestCards(1).first()
+        owner add LatestCardComponent(mutableIntStateOf(deactivationCard))
+        val hpComponent = HealthComponent(thousand.toFloat())
+        owner add hpComponent
+        val scoreComponent = ScoreComponent(thousand)
+        owner add scoreComponent
+
+
+        (deactivationCard get ActivationCounterComponent::class).activate()
+        (deactivationCard get EffectComponent::class).onPlay.action(owner)
+        val hp = hpComponent.getHealth()
+        assert(hp == thousand.toFloat()) { "Health should be$thousand, but was $hp" }
+        val score = scoreComponent.getScore()
+        assert(score == thousand) { "Score should be $thousand, but was $score" }
+    }
+
+        @Test
+    fun `Deactivate and activate Deactivation card once`() {
+        val deactivationCard = cardCreationSystem.addDeactivationTestCards(1).first()
+        owner add LatestCardComponent(mutableIntStateOf(deactivationCard))
+        val hpComponent = HealthComponent(1000f)
+        owner add hpComponent
+        val scoreComponent = ScoreComponent(1000)
+        owner add scoreComponent
+        var nextStep = 2
+        var currentDamage = 1
+        val multiplier = 30
+
+
+        val realOnPlayDesc =
+            "Gain ${multiplier}x points based on health lost from this card (${multiplier * currentDamage} points). Resets on use"
+        val onPlayDesc = (deactivationCard get EffectComponent::class).onPlay.describe(owner)
+        assert(onPlayDesc == realOnPlayDesc) { "1: Description on play should be\n'$realOnPlayDesc', but was\n'$onPlayDesc'" }
+
+        val realOnDeactivateDesc =
+            "Lose health (${currentDamage} points), increases damage by $nextStep"
+        val onDeactivateDesc =
+            (deactivationCard get EffectComponent::class).onDeactivate.describe(owner)
+        assert(onDeactivateDesc == realOnDeactivateDesc) { "2: Description on deactivation should be\n'$realOnDeactivateDesc', but was\n'$onDeactivateDesc'" }
+
+
+        (deactivationCard get ActivationCounterComponent::class).deactivate()
+        (deactivationCard get EffectComponent::class).onDeactivate.action(owner)
+        var hp = hpComponent.getHealth()
+        assert(hp == 999f) { "1: Health should be 999, but was $hp" }
+        var score = scoreComponent.getScore()
+        assert(score == 1000) { "1: Score should be 1000, but was $score" }
+
+
+        (deactivationCard get ActivationCounterComponent::class).activate()
+        (deactivationCard get EffectComponent::class).onPlay.action(owner)
+        hp = hpComponent.getHealth()
+        assert(hp == 999f) { "2: Health should be 999, but was $hp" }
+        score = scoreComponent.getScore()
+        assert(score == 1030) { "2: Score should be 1030, but was $score" }
+
+
+        val realOnPlayDesc2 =
+            "Gain ${multiplier}x points based on health lost from this card (${multiplier * currentDamage} points). Resets on use"
+        val onPlayDesc2 = (deactivationCard get EffectComponent::class).onPlay.describe(owner)
+        assert(onPlayDesc2 == realOnPlayDesc2) { "3: Description on play should be\n'$realOnPlayDesc2', but was\n'$onPlayDesc2'" }
+
+        val realOnDeactivateDesc2 =
+            "Lose health (${currentDamage} points), increases damage by $nextStep"
+        val onDeactivateDesc2 =
+            (deactivationCard get EffectComponent::class).onDeactivate.describe(owner)
+        assert(onDeactivateDesc2 == realOnDeactivateDesc2) { "4: Description on deactivation should be\n'$realOnDeactivateDesc2',\n but \n'$onDeactivateDesc2'" }
     }
 
     @Test
