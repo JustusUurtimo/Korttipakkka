@@ -19,6 +19,12 @@ import com.sq.thed_ck_licker.ecs.managers.MerchantEvent
 import com.sq.thed_ck_licker.ecs.managers.MerchantEvents
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.get
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.generateCards
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.withBasicCardDefaults
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.withEffect
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.withHealth
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.withName
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.withScore
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.CardCreationHelperSystems
 import com.sq.thed_ck_licker.helpers.DescribedEffect
 import com.sq.thed_ck_licker.helpers.MyRandom
@@ -60,6 +66,23 @@ class CardCreationSystem @Inject constructor(
             cardAmount = amount
             name = "Basic score card"
             onCardPlay = describedEffect
+        }
+    }
+
+    fun addBasicScoreCardsV2(amount: Int): List<EntityId> {
+        return generateCards(amount) { cardId ->
+            withBasicCardDefaults()(cardId)
+            withHealth(100f)(cardId)
+            withScore(10)(cardId)
+            withName("Basic score card V2")(cardId)
+            val describedEffect = DescribedEffect(action = { targetId ->
+                val score = (cardId get ScoreComponent::class).getScore()
+                (targetId get ScoreComponent::class).addScore(score)
+            }) {
+                val score = (cardId get ScoreComponent::class).getScore()
+                "Gain $score points"
+            }
+            withEffect(EffectComponent(onPlay = describedEffect))(cardId)
         }
     }
 

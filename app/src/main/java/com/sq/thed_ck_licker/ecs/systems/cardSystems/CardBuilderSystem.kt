@@ -19,6 +19,7 @@ import com.sq.thed_ck_licker.ecs.managers.generateEntity
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.onDeathSystem
 import com.sq.thed_ck_licker.helpers.DescribedEffect
+import com.sq.thed_ck_licker.helpers.typealiases.CardPreset
 import javax.inject.Inject
 
 class CardBuilderSystem @Inject constructor(private val componentManager: ComponentManager) {
@@ -111,4 +112,7 @@ class CardBuilderSystem @Inject constructor(private val componentManager: Compon
         }
         return cards
     }
+
+
 }
+
