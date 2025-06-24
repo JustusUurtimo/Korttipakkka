@@ -105,33 +105,42 @@ fun PitScreen(
                             cardSize = DpSize(100.dp, 150.dp),
                             zoomedCardId,
                             pitCards,
-                            { dropCardInPit(it) },
+                            onCardClick = { zoomedCardId.intValue = it },
                             onZoomChange = { zoom ->
                                 zoomedCardId.intValue = zoom
                             },
                             modifier
                         )
 
-                        Spacer(modifier = Modifier.height(24.dp))
+                        if (isZoomed) {
+                            Spacer(modifier = Modifier.height(48.dp))
+                            Button(
+                                modifier = modifier.align(Alignment.CenterHorizontally),
+                                onClick = {dropCardInPit(zoomedCardId.intValue)}
+                            ) { Text("Drop this card") }
 
-                        Box(
-                            modifier = modifier
-                                .width(100.dp)
-                                .height(100.dp)
-                        ) {
-                            Image(
-                                painter = painterResource(R.drawable.placeholder),
-                                contentDescription = "The pit"
-                            )
+                        } else {
+                            Spacer(modifier = Modifier.height(24.dp))
+                            Box(
+                                modifier = modifier
+                                    .width(100.dp)
+                                    .height(100.dp)
+                            ) {
+                                Image(
+                                    painter = painterResource(R.drawable.placeholder),
+                                    contentDescription = "The pit"
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(48.dp))
+                            Text(text = "Pay 500 coins to buy a shovel, and close the pit")
+                            Button(
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .align(Alignment.CenterHorizontally),
+                                onClick = { buyShovel() }
+                            ) { Text("Buy shovel") }
                         }
-                        Spacer(modifier = Modifier.height(48.dp))
-                        Text(text = "Pay 500 coins to buy a shovel, and close the pit")
-                        Button(
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .align(Alignment.CenterHorizontally),
-                            onClick = { buyShovel() }
-                        ) { Text("Buy shovel") }
+
                     }
 
                 }

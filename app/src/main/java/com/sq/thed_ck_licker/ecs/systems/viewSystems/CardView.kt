@@ -3,7 +3,6 @@ package com.sq.thed_ck_licker.ecs.systems.viewSystems
 import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -12,9 +11,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material.icons.Icons
@@ -53,8 +53,8 @@ var lastTime = -1L
 @Composable
 fun CardView(
     cardSize: DpSize,
+    fontSize: Float,
     isZoomed: Boolean,
-    isForCardRow: Boolean = false,
     entityId: Int = 1,
     activateCard: () -> Unit,
     modifier: Modifier,
@@ -77,13 +77,6 @@ fun CardView(
     val scale by animateFloatAsState(
         targetValue = if (isZoomed) 1.5f else 1f,
         animationSpec = spring(dampingRatio = 0.5f, stiffness = 300f)
-    )
-
-    println("description: $description")
-
-    val fontSize by animateFloatAsState(
-        targetValue = if (isZoomed ||isForCardRow ) 5.5f else 10f,
-        animationSpec = tween(durationMillis = 200)
     )
 
     if (lastTime + 5000 < System.currentTimeMillis()) {
@@ -114,15 +107,13 @@ fun CardView(
             .zIndex(if (isZoomed) 10f else 0f)
             .background(color = Color.Green)
     ) {
-        Box(Modifier.fillMaxSize()) {
-            Box(
-                modifier = modifier
-                    .align(Alignment.Center)
-                    .fillMaxSize()
-                    .paint(
-                        painterResource(image), contentScale = ContentScale.FillBounds
-                    ),
-            )
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .paint(
+                    painterResource(image), contentScale = ContentScale.FillBounds
+                )
+        ) {
 
             Row(
                 modifier = Modifier
@@ -134,7 +125,7 @@ fun CardView(
                 Text(
                     text = name,
                     style = MaterialTheme.typography.titleLarge.copy(
-                        fontSize = fontSize.sp
+                        fontSize = fontSize.sp * 1.2
                     ),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -142,7 +133,6 @@ fun CardView(
                         .weight(1f)
                 )
 
-                // Health Text with Icon (aligned to the end)
                 Text(
                     text = buildAnnotatedString {
                         appendInlineContent("health_icon", "[icon]")
@@ -161,20 +151,26 @@ fun CardView(
                 )
             }
 
+            Spacer(modifier = Modifier.height(12.dp))
+
 
             Text(
                 text = description,
                 style = MaterialTheme.typography.bodyMedium.copy(
-                    fontSize = fontSize.sp  // Same animated size
+                    fontSize = fontSize.sp,
+                    lineHeight = (fontSize * 1.2).sp
                 ),
-                maxLines = if (isZoomed) 999 else 2,
+                maxLines = if (isZoomed) 999 else 6,
                 overflow = if (isZoomed) TextOverflow.Visible else TextOverflow.Ellipsis,
                 softWrap = true,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .background(color = Color.Yellow)
+                    .padding(bottom = 30.dp)
                     .fillMaxWidth(),
             )
+
+
         }
 
     }
