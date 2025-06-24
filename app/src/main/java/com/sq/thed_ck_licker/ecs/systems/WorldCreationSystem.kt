@@ -11,6 +11,7 @@ class WorldCreationSystem @Inject constructor(
     private val componentManager: ComponentManager,
     private val playerSystem: PlayerSystem,
     private val merchantSystem: MerchantSystem,
+    private val rewardSystem: RewardSystem
 ) {
 
     fun destroyWorld() {
@@ -24,6 +25,7 @@ class WorldCreationSystem @Inject constructor(
     private fun initWorld() {
         playerSystem.initPlayer()
         merchantSystem.initRegularMerchant()
+        rewardSystem.initRewards()
     }
 
 }
