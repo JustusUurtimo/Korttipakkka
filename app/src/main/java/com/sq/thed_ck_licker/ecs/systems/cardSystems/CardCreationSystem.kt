@@ -70,23 +70,22 @@ class CardCreationSystem @Inject constructor(
                     )
                 )
             )
-
-
         }
     }
 
     fun addHealingCards(amount: Int): List<EntityId> {
-        val healAmount = 40f
-        val onActivation = { playerId: Int ->
-            (playerId get HealthComponent::class).heal(healAmount)
-        }
-        val describedEffect = DescribedEffect(onActivation) { "Heal ($healAmount)" }
-        return cardBuilder.buildCards {
-            cardHealth = 5f
-            cardAmount = amount
-            cardImage = R.drawable.heal_10
-            name = "Heal"
-            onCardPlay = describedEffect
+        return generateCards(amount) { cardId ->
+            withBasicCardDefaults()(cardId)
+            withHealth(5)(cardId)
+            withName("Heal")(cardId)
+            val healSize = 40
+            cardId add TriggeredEffectsComponent(
+                mutableMapOf(
+                    Trigger.OnPlay to mutableListOf(
+                        Effect.GainHealth(healSize)
+                    )
+                )
+            )
         }
     }
 

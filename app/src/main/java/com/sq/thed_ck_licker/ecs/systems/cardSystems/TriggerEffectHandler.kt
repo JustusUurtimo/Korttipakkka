@@ -3,6 +3,7 @@ package com.sq.thed_ck_licker.ecs.systems.cardSystems
 import com.sq.thed_ck_licker.ecs.components.effectthing.Effect
 import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
 import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
+import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityId
 import com.sq.thed_ck_licker.ecs.managers.get
@@ -24,6 +25,11 @@ object TriggerEffectHandler {
                 is Effect.GainScore -> {
                     val score = target get ScoreComponent::class
                     score.addScore(effect.amount)
+                }
+
+                is Effect.GainHealth ->{
+                    val healthComp = (target get HealthComponent::class)
+                    healthComp.heal(effect.amount)
                 }
             }
         }

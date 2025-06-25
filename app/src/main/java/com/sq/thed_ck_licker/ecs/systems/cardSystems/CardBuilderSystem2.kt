@@ -42,7 +42,7 @@ object CardBuilderSystem2 {
         this add TagsComponent(listOf(CardTag.CARD))
     }
 
-    fun withHealth(hp: Float): CardPreset = {
+    fun withHealth(hp: Number): CardPreset = {
         this add HealthComponent(hp)
     }
 

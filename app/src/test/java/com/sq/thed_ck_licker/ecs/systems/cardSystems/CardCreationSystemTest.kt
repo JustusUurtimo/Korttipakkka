@@ -144,6 +144,25 @@ class CardCreationSystemTest {
 
     @Test
     fun addHealingCards() {
+        val healingCard = cardCreationSystem.addHealingCards(1).first()
+        owner add LatestCardComponent(mutableIntStateOf(healingCard))
+        val healthComponent = HealthComponent(
+            health = 100,
+            maxHealth = 1000
+        )
+        owner add healthComponent
+
+        val context = EffectContext(
+            trigger = Trigger.OnPlay,
+            source = healingCard,
+            target = owner,
+        )
+        val desc = TriggerEffectHandler.describe(healingCard)
+        TriggerEffectHandler.handleTriggerEffect(context)
+
+        assert(healthComponent.getHealth() == 140f) { "Health should be 140f, but was ${healthComponent.getHealth()}" }
+        val realDesc = "OnPlay:\nHeal (40)\n"
+        assert(desc == realDesc) { "Description should be \n'$realDesc', but was \n'$desc'" }
     }
 
     @Test

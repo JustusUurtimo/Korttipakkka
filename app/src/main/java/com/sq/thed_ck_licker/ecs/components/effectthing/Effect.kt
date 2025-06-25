@@ -6,4 +6,10 @@ sealed class Effect {
             return "Gain $amount points" // Going back and forth if this is the correct way or should the handler do this too...
         }
     }
+
+    data class GainHealth(val amount: Number) : Effect(){
+        override fun toString(): String {
+            return "Heal ($amount)"
+        }
+    }
 }
