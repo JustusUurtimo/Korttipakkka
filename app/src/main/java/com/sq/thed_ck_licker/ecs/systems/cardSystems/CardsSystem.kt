@@ -5,12 +5,9 @@ import androidx.compose.runtime.MutableIntState
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
-import com.sq.thed_ck_licker.ecs.components.effectthing.Effect
 import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
 import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
-import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
-import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.managers.GameEvent
 import com.sq.thed_ck_licker.ecs.managers.GameEvents
@@ -68,7 +65,7 @@ class CardsSystem @Inject constructor(
             )
         }
 
-
+        // The Old Era:
         try {
             (latestCard get EffectComponent::class).onPlay.action.invoke(getPlayerID())
         } catch (_: IllegalStateException) {
@@ -76,7 +73,6 @@ class CardsSystem @Inject constructor(
         }
 
         // The New Era:
-
         try {
             val context =
                 EffectContext(trigger = Trigger.OnPlay, source = latestCard, target = getPlayerID())
@@ -113,8 +109,4 @@ class CardsSystem @Inject constructor(
         discardSystem(ownerId = getPlayerID(), cardId = latestCard)
         playerSystem.setLatestCard(-1)
     }
-
-
-
 }
-
