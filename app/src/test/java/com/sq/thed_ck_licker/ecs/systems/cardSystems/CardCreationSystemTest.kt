@@ -3,6 +3,8 @@ package com.sq.thed_ck_licker.ecs.systems.cardSystems
 import androidx.compose.runtime.mutableIntStateOf
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
+import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
+import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
@@ -141,20 +143,25 @@ class CardCreationSystemTest {
         assert(desc == realDesc){ "Description should be \n'$realDesc', but was \n'$desc'"}
     }
 
-//    @Test
-//    fun addBasicScoreCardsV3() {
-//        val basicScoreCard = cardCreationSystem.addBasicScoreCardsV3(1).first()
-//        owner add LatestCardComponent(mutableIntStateOf(basicScoreCard))
-//        val scoreComponent = ScoreComponent(0)
-//        owner add scoreComponent
-//
-//        (basicScoreCard get EffectComponent::class).onPlay.action(owner)
-//        val desc = (basicScoreCard get EffectComponent::class).onPlay.describe(owner)
-//
-//        assert(scoreComponent.getScore() == 10) { "Score should be 10, but was ${scoreComponent.getScore()}" }
-//        val realDesc = "Gain 10 points"
-//        assert(desc == realDesc){ "Description should be \n'$realDesc', but was \n'$desc'"}
-//    }
+    @Test
+    fun addBasicScoreCardsV3() {
+        val basicScoreCard = cardCreationSystem.addBasicScoreCardsV3(1).first()
+        owner add LatestCardComponent(mutableIntStateOf(basicScoreCard))
+        val scoreComponent = ScoreComponent(0)
+        owner add scoreComponent
+
+        val context = EffectContext(
+            trigger = Trigger.OnPlay,
+            source = basicScoreCard,
+            target = owner,
+        )
+        val desc = TriggerEffectHandler.describe(basicScoreCard)
+        TriggerEffectHandler.handleTriggerEffect(context)
+
+        assert(scoreComponent.getScore() == 10) { "Score should be 10, but was ${scoreComponent.getScore()}" }
+        val realDesc = "OnPlay:\nGain 10 points\n"
+        assert(desc == realDesc) { "Description should be \n'$realDesc', but was \n'$desc'" }
+    }
 
     @Test
     fun addShuffleTestCards() {

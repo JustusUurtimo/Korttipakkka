@@ -36,7 +36,7 @@ object TriggerEffectHandler {
 
         for (entry in effects) {
             val trigger = entry.key
-            result += "$trigger: \n"
+            result += "$trigger:\n"
 
             val effectsList = entry.value
             for (effect in effectsList) {
