@@ -5,11 +5,17 @@ import androidx.compose.runtime.MutableIntState
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
+import com.sq.thed_ck_licker.ecs.components.effectthing.Effect
+import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
+import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
+import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
+import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.managers.GameEvent
 import com.sq.thed_ck_licker.ecs.managers.GameEvents
 import com.sq.thed_ck_licker.ecs.managers.get
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.TriggerEffectHandler.handleTriggerEffect
 import com.sq.thed_ck_licker.ecs.systems.characterSystems.PlayerSystem
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.MultiplierSystem
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.discardSystem
@@ -58,9 +64,7 @@ class CardsSystem @Inject constructor(
             latestCardHp = (latestCard get HealthComponent::class)
         } catch (_: IllegalStateException) {
             Log.i(
-                "CardsSystem",
-                "No health component found for activation \n" +
-                        "Yeah yeah, we get it, you are so cool there was no health component"
+                "CardsSystem", "No health component found for $latestCard"
             )
         }
 
@@ -68,12 +72,23 @@ class CardsSystem @Inject constructor(
         try {
             (latestCard get EffectComponent::class).onPlay.action.invoke(getPlayerID())
         } catch (_: IllegalStateException) {
+            Log.i("CardsSystem", "No effect component found for $latestCard")
+        }
+
+        // The New Era:
+
+        try {
+            val context =
+                EffectContext(trigger = Trigger.OnPlay, source = latestCard, target = getPlayerID())
+            handleTriggerEffect(context)
+
+        } catch (_: IllegalStateException) {
             Log.i(
-                "CardsSystem",
-                "No effect component found for activation \n" +
-                        "Yeah yeah, we get it, you are so cool there was no effect component"
+                "CardSystem",
+                "Entity $latestCard has not been converted to new way as they have no TriggerEffect"
             )
         }
+
 
         latestCardHp?.apply {
             damage(1f)
@@ -99,4 +114,7 @@ class CardsSystem @Inject constructor(
         playerSystem.setLatestCard(-1)
     }
 
+
+
 }
+

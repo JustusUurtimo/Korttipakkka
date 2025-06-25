@@ -11,6 +11,7 @@ import com.sq.thed_ck_licker.helpers.MyRandom.random
  * Then you just make what you want in the function body.
  * And maaaagic
  */
+@Deprecated("")
 data class EffectComponent(
     /**
      * When something dies, it will trigger this at the end of everything.

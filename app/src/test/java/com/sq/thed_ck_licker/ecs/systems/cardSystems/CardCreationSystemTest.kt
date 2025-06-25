@@ -141,20 +141,20 @@ class CardCreationSystemTest {
         assert(desc == realDesc){ "Description should be \n'$realDesc', but was \n'$desc'"}
     }
 
-    @Test
-    fun addBasicScoreCardsV3() {
-        val basicScoreCard = cardCreationSystem.addBasicScoreCardsV3(1).first()
-        owner add LatestCardComponent(mutableIntStateOf(basicScoreCard))
-        val scoreComponent = ScoreComponent(0)
-        owner add scoreComponent
-
-        (basicScoreCard get EffectComponent::class).onPlay.action(owner)
-        val desc = (basicScoreCard get EffectComponent::class).onPlay.describe(owner)
-
-        assert(scoreComponent.getScore() == 10) { "Score should be 10, but was ${scoreComponent.getScore()}" }
-        val realDesc = "Gain 10 points"
-        assert(desc == realDesc){ "Description should be \n'$realDesc', but was \n'$desc'"}
-    }
+//    @Test
+//    fun addBasicScoreCardsV3() {
+//        val basicScoreCard = cardCreationSystem.addBasicScoreCardsV3(1).first()
+//        owner add LatestCardComponent(mutableIntStateOf(basicScoreCard))
+//        val scoreComponent = ScoreComponent(0)
+//        owner add scoreComponent
+//
+//        (basicScoreCard get EffectComponent::class).onPlay.action(owner)
+//        val desc = (basicScoreCard get EffectComponent::class).onPlay.describe(owner)
+//
+//        assert(scoreComponent.getScore() == 10) { "Score should be 10, but was ${scoreComponent.getScore()}" }
+//        val realDesc = "Gain 10 points"
+//        assert(desc == realDesc){ "Description should be \n'$realDesc', but was \n'$desc'"}
+//    }
 
     @Test
     fun addShuffleTestCards() {

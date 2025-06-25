@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
@@ -25,6 +24,7 @@ import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.IdentificationComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.managers.get
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.TriggerEffectHandler
 
 @Composable
 fun HealthBar(
@@ -93,7 +93,17 @@ fun AdditionalInfoDisplay(latestCard: Int) {
     var hp = 0f
     var description = "Nan"
     if (latestCard != -1) {
+
+        try {
         description = (latestCard get EffectComponent::class).toString()
+        } catch (_: Exception) {
+            Log.v("AdditionalInfoDisplay", "No effect component found for $latestCard")
+        }
+        try {
+            description = TriggerEffectHandler.describe(latestCard)
+        }catch (_: Exception) {
+            Log.v("AdditionalInfoDisplay", "No Trigger Effect component found for $latestCard")
+        }
         name = (latestCard get IdentificationComponent::class).getName()
 
         try {

@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.InlineTextContent
@@ -62,7 +61,12 @@ fun CardView(
 ) {
     val image = (entityId get ImageComponent::class).getImage()
     val name = (entityId get IdentificationComponent::class).getName()
-    val description = (entityId get EffectComponent::class).toString()
+    val description =
+        try {
+            (entityId get EffectComponent::class).toString()
+        } catch (_: Exception) {
+            "aaa"
+        }
     var cardHealth: HealthComponent? = null
     try {
         cardHealth = (entityId get HealthComponent::class)

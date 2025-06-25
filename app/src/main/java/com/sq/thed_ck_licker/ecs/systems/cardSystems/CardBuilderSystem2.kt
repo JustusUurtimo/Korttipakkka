@@ -57,8 +57,4 @@ object CardBuilderSystem2 {
     fun withEffect(effectComponent: EffectComponent): CardPreset = {
         this add effectComponent
     }
-
-    fun addComp(comp: Any): CardPreset = {
-        this add comp
-    }
 }

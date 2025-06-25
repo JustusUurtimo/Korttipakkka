@@ -2,10 +2,8 @@ package com.sq.thed_ck_licker.ecs.systems.cardSystems
 
 import androidx.compose.runtime.mutableIntStateOf
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
-import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.HistoryComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
-import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.ComponentManager
@@ -18,7 +16,6 @@ import com.sq.thed_ck_licker.ecs.systems.helperSystems.CardCreationHelperSystems
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.CardCreationHelperSystems_Factory
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.MultiplierSystem
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.MultiplierSystem_Factory
-import com.sq.thed_ck_licker.helpers.DescribedEffect
 import com.sq.thed_ck_licker.helpers.navigation.GameNavigator_Factory
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -90,6 +87,33 @@ class CardsSystemTest {
 
         val score = owner get ScoreComponent::class
         val endScore = 1000
+        assert(score.getScore() == endScore) { "Score should be $endScore but was ${score.getScore()}" }
+        assert(latest.getLatestCard() == -1) { "Latest card should be -1 but was ${latest.getLatestCard()}" }
+    }
+
+    @Test
+    fun `Activate players point card 10 times with the new system`() {
+        val latest = LatestCardComponent()
+        owner add latest
+        val discardDeckComponent = DiscardDeckComponent()
+        owner add discardDeckComponent
+        owner add ScoreComponent()
+        owner add HistoryComponent(owner)
+        owner add MultiplierComponent()
+        multiSystem.addHistoryComponentOfItself(owner)
+        val card = cardCreationSystem.addBasicScoreCardsV3(1).first()
+        val count = mutableIntStateOf(0)
+
+
+        repeat(10) {
+            latest.setLatestCard(card)
+            cardManager.cardActivation(count)
+            val cardFromDiscard = discardDeckComponent.getDiscardDeck().first()
+            discardDeckComponent.removeCards(listOf(cardFromDiscard))
+        }
+
+        val score = owner get ScoreComponent::class
+        val endScore = 100
         assert(score.getScore() == endScore) { "Score should be $endScore but was ${score.getScore()}" }
         assert(latest.getLatestCard() == -1) { "Latest card should be -1 but was ${latest.getLatestCard()}" }
     }

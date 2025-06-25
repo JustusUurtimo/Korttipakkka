@@ -9,8 +9,8 @@ import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent.CardTag
 import com.sq.thed_ck_licker.ecs.components.effectthing.Effect
-import com.sq.thed_ck_licker.ecs.components.effectthing.TriggerAndEffectsComponent
 import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
+import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
@@ -22,7 +22,6 @@ import com.sq.thed_ck_licker.ecs.managers.MerchantEvent
 import com.sq.thed_ck_licker.ecs.managers.MerchantEvents
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.get
-import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.addComp
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.generateCards
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.withBasicCardDefaults
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.withEffect
@@ -96,13 +95,16 @@ class CardCreationSystem @Inject constructor(
             withHealth(100f)(cardId)
             withScore(10)(cardId)
             withName("Basic score card V3")(cardId)
-            addComp{
-                val score = (cardId get ScoreComponent::class).getScore()
-                TriggerAndEffectsComponent(
-                    trigger = Trigger.OnPlay,
-                    effects = listOf(Effect.GainScore(score))
+            val score = (cardId get ScoreComponent::class).getScore()
+            cardId add TriggeredEffectsComponent(
+                mutableMapOf(
+                    Trigger.OnPlay to mutableListOf(
+                        Effect.GainScore(score)
+                    )
                 )
-            }(cardId)
+            )
+
+
         }
     }
 
