@@ -24,7 +24,6 @@ import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.generateCards
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.withBasicCardDefaults
-import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.withEffect
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.withHealth
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.withName
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.withScore
@@ -58,38 +57,6 @@ class CardCreationSystem @Inject constructor(
     }
 
     fun addBasicScoreCards(amount: Int): List<EntityId> {
-        val score = 10
-        val onActivation = { targetId: Int ->
-            (targetId get ScoreComponent::class).addScore(score)
-        }
-        val describedEffect = DescribedEffect(onActivation) { "Gives $score points" }
-        return cardBuilder.buildCards {
-            cardHealth = 10f
-            scoreAmount = score
-            cardAmount = amount
-            name = "Basic score card"
-            onCardPlay = describedEffect
-        }
-    }
-
-    fun addBasicScoreCardsV2(amount: Int): List<EntityId> {
-        return generateCards(amount) { cardId ->
-            withBasicCardDefaults()(cardId)
-            withHealth(100f)(cardId)
-            withScore(10)(cardId)
-            withName("Basic score card V2")(cardId)
-            val describedEffect = DescribedEffect(action = { targetId ->
-                val score = (cardId get ScoreComponent::class).getScore()
-                (targetId get ScoreComponent::class).addScore(score)
-            }) {
-                val score = (cardId get ScoreComponent::class).getScore()
-                "Gain $score points"
-            }
-            withEffect(EffectComponent(onPlay = describedEffect))(cardId)
-        }
-    }
-
-    fun addBasicScoreCardsV3(amount: Int): List<EntityId> {
         return generateCards(amount) { cardId ->
             withBasicCardDefaults()(cardId)
             withHealth(100f)(cardId)

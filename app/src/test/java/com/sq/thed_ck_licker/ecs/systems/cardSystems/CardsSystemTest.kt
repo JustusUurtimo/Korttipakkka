@@ -101,7 +101,7 @@ class CardsSystemTest {
         owner add HistoryComponent(owner)
         owner add MultiplierComponent()
         multiSystem.addHistoryComponentOfItself(owner)
-        val card = cardCreationSystem.addBasicScoreCardsV3(1).first()
+        val card = cardCreationSystem.addBasicScoreCards(1).first()
         val count = mutableIntStateOf(0)
 
 

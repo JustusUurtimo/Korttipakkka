@@ -53,8 +53,4 @@ object CardBuilderSystem2 {
     fun withName(name: String, characterId: Int? = null): CardPreset = {
         this add IdentificationComponent(name, characterId)
     }
-
-    fun withEffect(effectComponent: EffectComponent): CardPreset = {
-        this add effectComponent
-    }
 }
