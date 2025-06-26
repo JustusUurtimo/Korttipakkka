@@ -41,7 +41,7 @@ object CardBuilderSystem2 {
         val tags: List<CardTag> = listOf(CardTag.CARD),
         val name: String = "Card",
         val characterId: Int? = null,
-        val hp: Number? = 10,
+        val hp: Float? = 10f,
         val score: Int? = null,
         val multiplier: Float = 1f
     )

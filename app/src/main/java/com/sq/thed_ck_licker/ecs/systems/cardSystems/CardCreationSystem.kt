@@ -58,7 +58,7 @@ class CardCreationSystem @Inject constructor(
         return generateCards(amount) { cardId ->
             withBasicCardDefaults(
                 CardConfig(
-                    name = "Basic score card V4", hp = 100, score = 10
+                    name = "Basic score card V4", hp = 100f, score = 10
                 )
             )(cardId)
             val score = (cardId get ScoreComponent::class).getScore()
@@ -70,10 +70,10 @@ class CardCreationSystem @Inject constructor(
         return generateCards(amount) { cardId ->
             withBasicCardDefaults(
                 CardConfig(
-                    img = R.drawable.heal_10, name = "Heal", hp = 5
+                    img = R.drawable.heal_10, name = "Heal", hp = 5f
                 )
             )(cardId)
-            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.GainHealth(40) )
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.GainHealth(40f) )
         }
     }
 
@@ -81,10 +81,10 @@ class CardCreationSystem @Inject constructor(
         return generateCards(amount) { cardId ->
             withBasicCardDefaults(
                 CardConfig(
-                    img = R.drawable.damage_6, name = "Damage", hp = 20
+                    img = R.drawable.damage_6, name = "Damage", hp = 20f
                 )
             )(cardId)
-            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.TakeDamage(150))
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.TakeDamage(150f))
         }
     }
 

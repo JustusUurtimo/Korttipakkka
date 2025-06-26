@@ -31,12 +31,14 @@ object TriggerEffectHandler {
                 }
                 is Effect.GainHealth ->{
                     val healthComp = (target get HealthComponent::class)
-                    healthComp.heal(effect.amount)
+                    val amount = (effect.amount * sourceMulti * targetMulti).toFloat()
+                    healthComp.heal(amount)
                 }
 
                 is Effect.TakeDamage -> {
                     val healthComp = (target get HealthComponent::class)
-                    healthComp.damage(effect.amount)
+                    val amount = (effect.amount * sourceMulti * targetMulti).toFloat()
+                    healthComp.damage(amount)
                 }
             }
         }

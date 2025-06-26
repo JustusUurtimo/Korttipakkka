@@ -12,20 +12,21 @@ data class HealthComponent(
     /**
      * This can be used in cases where you want thing to be not on full hp at the start
      */
-    constructor(health: Number = 100f, maxHealth: Number = 100f) : this(
-        mutableFloatStateOf(health.toFloat()),
-        mutableFloatStateOf(maxHealth.toFloat())
+    constructor(health: Float = 100f, maxHealth: Float = 100f) : this(
+        mutableFloatStateOf(health),
+        mutableFloatStateOf(maxHealth)
     )
 
     /**
      * This can be used to construct Health component with health same as max health
      */
-    constructor(maxHealth: Number = 100f) : this(
-        mutableFloatStateOf(maxHealth.toFloat()),
-        mutableFloatStateOf(maxHealth.toFloat())
+    constructor(maxHealth: Float = 100f) : this(
+        mutableFloatStateOf(maxHealth),
+        mutableFloatStateOf(maxHealth)
     )
-    fun setHealth(health: Number) {
-        this.health.floatValue = health.toFloat()
+
+    fun setHealth(health: Float) {
+        this.health.floatValue = health
     }
 
     fun getHealth(): Float {
@@ -36,18 +37,17 @@ data class HealthComponent(
         return this.maxHealth.floatValue
     }
 
-    fun increaseMaxHealth(amount: Number) {
+    fun increaseMaxHealth(amount: Float) {
         this.maxHealth.floatValue += amount.toFloat()
     }
 
     private var lastTime = -1L
-    fun add(amount: Number) {
-        var amountFloat = amount.toFloat()
+    fun add(amount: Float) {
         var logging = "This is going to be modified $this"
-        if ((this.health.floatValue + amountFloat) > this.maxHealth.floatValue) {
+        if ((this.health.floatValue + amount) > this.maxHealth.floatValue) {
             this.health.floatValue = this.maxHealth.floatValue
         } else {
-            this.health.floatValue += amountFloat
+            this.health.floatValue += amount
         }
         logging += "and the end result is $this"
 
@@ -58,8 +58,8 @@ data class HealthComponent(
         }
     }
 
-    fun heal(amount: Number) = add(amount)
-    fun damage(amount: Number) = add(-amount.toFloat())
+    fun heal(amount: Float) = add(amount)
+    fun damage(amount: Float) = add(-amount)
 
     fun combineHealthComponents(other: HealthComponent): HealthComponent {
         return HealthComponent(

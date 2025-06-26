@@ -15,13 +15,13 @@ sealed class Effect {
         }
     }
 
-    data class GainHealth(val amount: Number) : Effect(){
+    data class GainHealth(val amount: Float) : Effect(){
         override fun describe(modifiedAmount: Number): String {
             return "Heal ($modifiedAmount)"
         }
     }
 
-    data class TakeDamage(val amount: Number) : Effect(){
+    data class TakeDamage(val amount: Float) : Effect(){
         override fun describe(modifiedAmount: Number): String {
             return "Take damage ($modifiedAmount)"
         }

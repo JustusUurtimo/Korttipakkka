@@ -56,7 +56,7 @@ class CardCreationSystemTest {
         val damageCard = cardCreationSystem.addDamageCards(1).first()
         owner add LatestCardComponent(mutableIntStateOf(damageCard))
         val healthComponent = HealthComponent(
-            maxHealth = 1000
+            maxHealth = 1000f
         )
         owner add healthComponent
 
@@ -166,8 +166,8 @@ class CardCreationSystemTest {
         val healingCard = cardCreationSystem.addHealingCards(1).first()
         owner add LatestCardComponent(mutableIntStateOf(healingCard))
         val healthComponent = HealthComponent(
-            health = 100,
-            maxHealth = 1000
+            health = 100f,
+            maxHealth = 1000f
         )
         owner add healthComponent
 
