@@ -1,0 +1,109 @@
+package com.sq.thed_ck_licker.ecs.systems.helperSystems
+
+import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
+import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
+import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
+import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
+import com.sq.thed_ck_licker.ecs.managers.ComponentManager
+import com.sq.thed_ck_licker.ecs.managers.EntityId
+import com.sq.thed_ck_licker.ecs.managers.EntityManager
+import com.sq.thed_ck_licker.ecs.managers.add
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem_Factory
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.TriggerEffectHandler
+import com.sq.thed_ck_licker.helpers.navigation.GameNavigator_Factory
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import kotlin.properties.Delegates
+
+class CardCreationHelperSystemsTest {
+    var cardCreationSystem by Delegates.notNull<CardCreationSystem>()
+    var owner by Delegates.notNull<EntityId>()
+    var cardsHelper by Delegates.notNull<CardCreationHelperSystems>()
+
+    @BeforeEach
+    fun setUp() {
+        owner = EntityManager.createNewEntity()
+        cardCreationSystem = CardCreationSystem(
+            cardCreationHelperSystems = CardCreationHelperSystems_Factory.newInstance(),
+            cardBuilder = CardBuilderSystem_Factory.newInstance(ComponentManager.componentManager),
+            gameNavigator = GameNavigator_Factory.newInstance()
+        )
+        cardsHelper = CardCreationHelperSystems_Factory.newInstance()
+    }
+
+    @Test
+    fun `Limited time heal activates`() {
+        val healthComponent = HealthComponent(100f, 1000f)
+        owner add healthComponent
+
+        val gainer = cardsHelper.addLimitedSupplyAutoHealToEntity(owner, 100f)
+
+        val context = EffectContext(
+            trigger = Trigger.OnTurnStart,
+            source = gainer,
+            target = owner,
+        )
+
+        TriggerEffectHandler.handleTriggerEffect(context)
+
+        assert(healthComponent.getHealth() == 200f) { "Health should be 200, but was ${healthComponent.getHealth()}" }
+    }
+
+    @Test
+    fun `take damage to activate limited heal`() {
+        val healthComponent = HealthComponent(500f, 1000f)
+        owner add healthComponent
+
+        val gainer = cardsHelper.addLimitedSupplyAutoHealToEntity(owner, 100f)
+
+        val damage = cardCreationSystem.addDamageCards(1).first()
+
+        val context = EffectContext(
+            trigger = Trigger.OnTurnStart,
+            source = gainer,
+            target = owner,
+        )
+
+        val context2 = EffectContext(
+            trigger = Trigger.OnPlay,
+            source = damage,
+            target = owner,
+        )
+
+
+        TriggerEffectHandler.handleTriggerEffect(context)
+        assert(healthComponent.getHealth() == 500f) { "Health should be 500, but was ${healthComponent.getHealth()}" }
+
+        TriggerEffectHandler.handleTriggerEffect(context2)
+        TriggerEffectHandler.handleTriggerEffect(context)
+
+        assert(healthComponent.getHealth() == 450f) { "Health should be 450, but was ${healthComponent.getHealth()}" }
+    }
+
+
+    @Test
+    fun addPassiveScoreGainerToEntity() {
+        val scoreComp = ScoreComponent(0)
+        owner add scoreComp
+
+        val gainer = cardsHelper.addPassiveScoreGainerToEntity(owner)
+
+        val context = EffectContext(
+            trigger = Trigger.OnTurnStart,
+            source = gainer,
+            target = owner,
+        )
+
+        repeat(10) {
+            TriggerEffectHandler.handleTriggerEffect(context)
+        }
+
+        assert(scoreComp.getScore() == 30) { "Score should be 30, but was ${scoreComp.getScore()}" }
+    }
+
+    @Test
+    fun addTemporaryMultiplierTo() {
+    }
+
+}

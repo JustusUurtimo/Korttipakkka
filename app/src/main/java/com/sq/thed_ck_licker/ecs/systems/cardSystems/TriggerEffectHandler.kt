@@ -8,6 +8,7 @@ import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.helpers.MyRandom
+import kotlin.math.min
 
 object TriggerEffectHandler {
 
@@ -70,6 +71,23 @@ object TriggerEffectHandler {
                         healthComp.increaseMaxHealth(amount)
                     }
                 }
+
+                is Effect.HealOnUnderThreshold -> {
+                    val targetHealthComp = (target get HealthComponent::class)
+                    val sourceHealthComp = (source get HealthComponent::class)
+
+                    if (targetHealthComp.getHealth() < targetHealthComp.getMaxHealth() * effect.threshold) {
+                        var sourceHealth = sourceHealthComp.getHealth()
+                        val healingPotential =
+                            targetHealthComp.getMaxHealth() - targetHealthComp.getHealth()
+                        val transferAmount = min(sourceHealth, healingPotential)
+                        val finalTransferAmount =
+                            (transferAmount * sourceMulti * targetMulti).toFloat()
+                        targetHealthComp.heal(finalTransferAmount)
+                        sourceHealthComp.damage(transferAmount)
+                    }
+
+                }
             }
         }
     }
@@ -129,6 +147,10 @@ object TriggerEffectHandler {
 
                         is Effect.TakeDamageOrGainMaxHP -> {
                             effect.maxHp.toFloat()
+                        }
+
+                        is Effect.HealOnUnderThreshold -> {
+                            effect.limit.toFloat()
                         }
                     }
                 var amount = (initialAmount * sourceMulti * targetMulti).toInt()

@@ -5,8 +5,13 @@ import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
+import com.sq.thed_ck_licker.ecs.components.OwnerComponent
+import com.sq.thed_ck_licker.ecs.components.effectthing.Effect
+import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
+import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
+import com.sq.thed_ck_licker.ecs.managers.EntityId
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.generateEntity
 import com.sq.thed_ck_licker.ecs.managers.get
@@ -16,25 +21,20 @@ import kotlin.math.min
 
 class CardCreationHelperSystems @Inject constructor() {
 
-    fun addPassiveScoreGainerToEntity(targetId: Int, pointsPerCard: Int = 3) {
-
+    fun addPassiveScoreGainerToEntity(targetId: Int, pointsPerCard: Int = 3): EntityId {
         val gainerEntity = generateEntity()
-        val activationCounter = ActivationCounterComponent()
-        val activateAction = { id: Int ->
-            val targetScoreComp = id get ScoreComponent::class
-            activationCounter.activate()
-            targetScoreComp.addScore(pointsPerCard)
-        }
-        val activationEffect =
-            DescribedEffect(activateAction) { "Gain $pointsPerCard points per card played" }
-        gainerEntity add activationCounter
-        gainerEntity add EffectComponent(onTurnStart = activationEffect)
+        val scoreComp = ScoreComponent(pointsPerCard)
+        gainerEntity add scoreComp
+        gainerEntity add TriggeredEffectsComponent(
+            Trigger.OnTurnStart,
+            Effect.GainScore(scoreComp.getScore())
+        )
+        gainerEntity add OwnerComponent(targetId)
 
-        val targetEffectStackComp = (targetId get EffectStackComponent::class)
-        targetEffectStackComp addEntity (gainerEntity)  // I think i have gone mad from the power
+        return gainerEntity
     }
 
-    fun addLimitedSupplyAutoHealToEntity(targetEntityId: Int, health: Float) {
+    fun addLimitedSupplyAutoHealToEntityV1(targetEntityId: Int, health: Float) {
         val limitedHealEntity = generateEntity()
         val selfHp = HealthComponent(health)
         limitedHealEntity add selfHp
@@ -66,6 +66,17 @@ class CardCreationHelperSystems @Inject constructor() {
 
         val targetEffectStackComp = (targetEntityId get EffectStackComponent::class)
         targetEffectStackComp addEntity (limitedHealEntity)
+    }
+
+    fun addLimitedSupplyAutoHealToEntity(targetId: EntityId, health: Float, threshold: Float = 0.5f): EntityId {
+        val limitedHealEntity = generateEntity()
+        val selfHp = HealthComponent(health)
+        limitedHealEntity add selfHp
+        limitedHealEntity add TriggeredEffectsComponent(
+            Trigger.OnTurnStart, Effect.HealOnUnderThreshold(threshold, health)
+        )
+        limitedHealEntity add OwnerComponent(targetId)
+        return limitedHealEntity
     }
 
     fun addTemporaryMultiplierTo(

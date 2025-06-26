@@ -2,8 +2,9 @@ package com.sq.thed_ck_licker.ecs.components.misc
 
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.mutableIntStateOf
+import com.sq.thed_ck_licker.ecs.components.Component
 
-data class ScoreComponent(private var score: MutableIntState) {
+data class ScoreComponent(private var score: MutableIntState): Component {
     constructor(score: Int = 0) : this(mutableIntStateOf(score))
 
     fun addScore(score: Int) {
