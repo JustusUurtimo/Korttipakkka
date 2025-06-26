@@ -56,24 +56,4 @@ object CardBuilderSystem2 {
         this add MultiplierComponent(config.multiplier)
     }
 
-    fun withBasicCardDefaults(
-        img: Int = R.drawable.placeholder,
-        tags: List<CardTag> = listOf(CardTag.CARD)
-    ): CardPreset = {
-        this add ActivationCounterComponent()
-        this add ImageComponent(img)
-        this add TagsComponent(tags)
-    }
-
-    fun withHealth(hp: Number): CardPreset = {
-        this add HealthComponent(hp)
-    }
-
-    fun withScore(score: Int): CardPreset = {
-        this add ScoreComponent(score)
-    }
-
-    fun withName(name: String, characterId: Int? = null): CardPreset = {
-        this add IdentificationComponent(name, characterId)
-    }
 }

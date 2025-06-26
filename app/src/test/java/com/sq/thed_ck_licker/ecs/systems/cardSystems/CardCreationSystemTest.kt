@@ -53,6 +53,24 @@ class CardCreationSystemTest {
 
     @Test
     fun addDamageCards() {
+        val damageCard = cardCreationSystem.addDamageCards(1).first()
+        owner add LatestCardComponent(mutableIntStateOf(damageCard))
+        val healthComponent = HealthComponent(
+            maxHealth = 1000
+        )
+        owner add healthComponent
+
+        val context = EffectContext(
+            trigger = Trigger.OnPlay,
+            source = damageCard,
+            target = owner,
+        )
+        val desc = TriggerEffectHandler.describe(damageCard)
+        TriggerEffectHandler.handleTriggerEffect(context)
+
+        assert(healthComponent.getHealth() == 850f) { "Health should be 850f, but was ${healthComponent.getHealth()}" }
+        val realDesc = "OnPlay:\nTake damage (150)"
+        assert(desc == realDesc) { "Description should be\n'$realDesc', but was \n'$desc'" }
     }
 
     @Test
@@ -130,7 +148,7 @@ class CardCreationSystemTest {
         TriggerEffectHandler.handleTriggerEffect(context)
 
         assert(scoreComponent.getScore() == 10) { "Score should be 10, but was ${scoreComponent.getScore()}" }
-        val realDesc = "OnPlay:\nGain 10 points\n"
+        val realDesc = "OnPlay:\nGain 10 points"
         assert(desc == realDesc) { "Description should be \n'$realDesc', but was \n'$desc'" }
     }
 
@@ -162,7 +180,7 @@ class CardCreationSystemTest {
         TriggerEffectHandler.handleTriggerEffect(context)
 
         assert(healthComponent.getHealth() == 140f) { "Health should be 140f, but was ${healthComponent.getHealth()}" }
-        val realDesc = "OnPlay:\nHeal (40)\n"
+        val realDesc = "OnPlay:\nHeal (40)"
         assert(desc == realDesc) { "Description should be \n'$realDesc', but was \n'$desc'" }
     }
 

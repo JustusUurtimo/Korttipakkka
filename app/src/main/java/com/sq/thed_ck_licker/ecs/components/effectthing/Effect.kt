@@ -12,4 +12,10 @@ sealed class Effect {
             return "Heal ($amount)"
         }
     }
+
+    data class TakeDamage(val amount: Number) : Effect(){
+        override fun toString(): String {
+            return "Take damage ($amount)"
+        }
+    }
 }

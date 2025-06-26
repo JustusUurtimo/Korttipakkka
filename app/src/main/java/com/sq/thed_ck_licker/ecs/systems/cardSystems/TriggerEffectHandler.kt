@@ -31,6 +31,11 @@ object TriggerEffectHandler {
                     val healthComp = (target get HealthComponent::class)
                     healthComp.heal(effect.amount)
                 }
+
+                is Effect.TakeDamage -> {
+                    val healthComp = (target get HealthComponent::class)
+                    healthComp.damage(effect.amount)
+                }
             }
         }
     }
@@ -49,6 +54,7 @@ object TriggerEffectHandler {
                 result += "$effect\n"
             }
         }
+        result = result.trimEnd()
 
         return result
     }

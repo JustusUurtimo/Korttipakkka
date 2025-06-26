@@ -25,9 +25,6 @@ import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.CardConfig
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.generateCards
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.withBasicCardDefaults
-import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.withHealth
-import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.withName
-import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.withScore
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.CardCreationHelperSystems
 import com.sq.thed_ck_licker.helpers.DescribedEffect
 import com.sq.thed_ck_licker.helpers.MyRandom
@@ -94,16 +91,20 @@ class CardCreationSystem @Inject constructor(
     }
 
     fun addDamageCards(amount: Int): List<EntityId> {
-        val damageAmount = 150f
-        val onActivation = { targetId: Int ->
-            (targetId get HealthComponent::class).damage(damageAmount)
-        }
-        val describedEffect = DescribedEffect(onActivation) { "Take damage ($damageAmount)" }
-        return cardBuilder.buildCards {
-            cardAmount = amount
-            cardImage = R.drawable.damage_6
-            name = "Damage"
-            onCardPlay = describedEffect
+        return generateCards(amount) { cardId ->
+            withBasicCardDefaults(
+                CardConfig(
+                    img = R.drawable.damage_6, name = "Damage", hp = 20
+                )
+            )(cardId)
+            val damageAmount = 150
+            cardId add TriggeredEffectsComponent(
+                mutableMapOf(
+                    Trigger.OnPlay to mutableListOf(
+                        Effect.TakeDamage(damageAmount)
+                    )
+                )
+            )
         }
     }
 
