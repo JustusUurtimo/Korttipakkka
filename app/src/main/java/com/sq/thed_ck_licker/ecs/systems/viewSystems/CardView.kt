@@ -43,6 +43,8 @@ import androidx.compose.ui.zIndex
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.IdentificationComponent
 import com.sq.thed_ck_licker.ecs.components.ImageComponent
+import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
+import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.TriggerEffectHandler
@@ -69,7 +71,10 @@ fun CardView(
         Log.i("CardView", "No effect component found for card")
     }
     try {
-        description = TriggerEffectHandler.describe(entityId)
+        description = TriggerEffectHandler.describe(context = EffectContext(
+            trigger = Trigger.OnPlay,
+            source = entityId
+        ))
     } catch (_: Exception) {
         Log.i("CardView", "No TriggerEffect component found for card")
     }

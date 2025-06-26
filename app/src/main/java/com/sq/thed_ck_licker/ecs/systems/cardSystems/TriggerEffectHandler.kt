@@ -1,16 +1,16 @@
 package com.sq.thed_ck_licker.ecs.systems.cardSystems
 
+import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
 import com.sq.thed_ck_licker.ecs.components.effectthing.Effect
 import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
 import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
-import com.sq.thed_ck_licker.ecs.managers.EntityId
 import com.sq.thed_ck_licker.ecs.managers.get
 
 object TriggerEffectHandler {
 
-     fun handleTriggerEffect(context: EffectContext) {
+    fun handleTriggerEffect(context: EffectContext) {
         val trigger = context.trigger
         val source = context.source
         val target = context.target
@@ -20,13 +20,15 @@ object TriggerEffectHandler {
 
         if (effects == null) return
 
+        val (sourceMulti, targetMulti) = getMultipliers(context)
+
         for (effect in effects) {
             when (effect) {
                 is Effect.GainScore -> {
-                    val score = target get ScoreComponent::class
-                    score.addScore(effect.amount)
+                    val score = context.target get ScoreComponent::class
+                    var amount = (effect.amount * sourceMulti * targetMulti).toInt()
+                    score.addScore(amount)
                 }
-
                 is Effect.GainHealth ->{
                     val healthComp = (target get HealthComponent::class)
                     healthComp.heal(effect.amount)
@@ -40,10 +42,27 @@ object TriggerEffectHandler {
         }
     }
 
-    fun describe(entity: EntityId): String {
+    fun getMultipliers(context: EffectContext): Pair<Float, Float> {
+        val sourceMulti = try {
+            (context.source get MultiplierComponent::class).multiplier
+        } catch (_: Exception) {
+            1f
+        }
+        val targetMulti = try {
+            (context.target get MultiplierComponent::class).multiplier
+        } catch (_: Exception) {
+            1f
+        }
+        return Pair(sourceMulti, targetMulti)
+    }
+
+    fun describe(context: EffectContext): String {
+        val entity = context.source
         val trigEffComp = (entity get TriggeredEffectsComponent::class)
         val effects = trigEffComp.effectsByTrigger
         var result = ""
+
+        val (sourceMulti, targetMulti) = getMultipliers(context)
 
         for (entry in effects) {
             val trigger = entry.key
@@ -51,7 +70,22 @@ object TriggerEffectHandler {
 
             val effectsList = entry.value
             for (effect in effectsList) {
-                result += "$effect\n"
+                val aamount =
+                    when (effect) {
+                        is Effect.GainScore -> {
+                            effect.amount.toFloat()
+                        }
+
+                        is Effect.GainHealth -> {
+                            effect.amount.toFloat()
+                        }
+
+                        is Effect.TakeDamage -> {
+                            effect.amount.toFloat()
+                        }
+                    }
+                var amount = (aamount * sourceMulti * targetMulti).toInt()
+                result += effect.describe(amount) + "\n"
             }
         }
         result = result.trimEnd()

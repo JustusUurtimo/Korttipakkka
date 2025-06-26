@@ -22,6 +22,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.IdentificationComponent
+import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
+import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.TriggerEffectHandler
@@ -100,7 +102,10 @@ fun AdditionalInfoDisplay(latestCard: Int) {
             Log.v("AdditionalInfoDisplay", "No effect component found for $latestCard")
         }
         try {
-            description = TriggerEffectHandler.describe(latestCard)
+            description = TriggerEffectHandler.describe(EffectContext(
+                trigger = Trigger.OnPlay,
+                source = latestCard
+            ))
         }catch (_: Exception) {
             Log.v("AdditionalInfoDisplay", "No Trigger Effect component found for $latestCard")
         }

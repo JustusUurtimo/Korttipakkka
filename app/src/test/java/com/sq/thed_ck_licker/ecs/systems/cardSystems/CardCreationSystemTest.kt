@@ -65,7 +65,7 @@ class CardCreationSystemTest {
             source = damageCard,
             target = owner,
         )
-        val desc = TriggerEffectHandler.describe(damageCard)
+        val desc = TriggerEffectHandler.describe(context)
         TriggerEffectHandler.handleTriggerEffect(context)
 
         assert(healthComponent.getHealth() == 850f) { "Health should be 850f, but was ${healthComponent.getHealth()}" }
@@ -144,7 +144,7 @@ class CardCreationSystemTest {
             source = basicScoreCard,
             target = owner,
         )
-        val desc = TriggerEffectHandler.describe(basicScoreCard)
+        val desc = TriggerEffectHandler.describe(context)
         TriggerEffectHandler.handleTriggerEffect(context)
 
         assert(scoreComponent.getScore() == 10) { "Score should be 10, but was ${scoreComponent.getScore()}" }
@@ -176,7 +176,7 @@ class CardCreationSystemTest {
             source = healingCard,
             target = owner,
         )
-        val desc = TriggerEffectHandler.describe(healingCard)
+        val desc = TriggerEffectHandler.describe(context)
         TriggerEffectHandler.handleTriggerEffect(context)
 
         assert(healthComponent.getHealth() == 140f) { "Health should be 140f, but was ${healthComponent.getHealth()}" }
