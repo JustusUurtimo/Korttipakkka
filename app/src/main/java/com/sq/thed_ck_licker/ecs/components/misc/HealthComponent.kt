@@ -60,6 +60,7 @@ data class HealthComponent(
 
     fun heal(amount: Float) = add(amount)
     fun damage(amount: Float) = add(-amount)
+    fun kill() = setHealth(0f)
 
     fun combineHealthComponents(other: HealthComponent): HealthComponent {
         return HealthComponent(

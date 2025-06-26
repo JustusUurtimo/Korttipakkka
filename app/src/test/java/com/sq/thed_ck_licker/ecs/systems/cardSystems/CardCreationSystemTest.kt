@@ -14,6 +14,8 @@ import com.sq.thed_ck_licker.ecs.managers.EntityManager
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.CardCreationHelperSystems_Factory
+import com.sq.thed_ck_licker.helpers.FixedRandom
+import com.sq.thed_ck_licker.helpers.MyRandom
 import com.sq.thed_ck_licker.helpers.navigation.GameNavigator_Factory
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -132,7 +134,56 @@ class CardCreationSystemTest {
     }
 
     @Test
-    fun addMaxHpTrapCards() {
+    fun `Explode max hp trap once`() {
+        val trapCard = cardCreationSystem.addMaxHpTrapCards(1).first()
+        owner add LatestCardComponent(mutableIntStateOf(trapCard))
+        val hpComp = HealthComponent(100f)
+        owner add hpComp
+
+        MyRandom.random = FixedRandom(listOf(1))
+
+        val context = EffectContext(
+            trigger = Trigger.OnPlay,
+            source = trapCard,
+            target = owner,
+        )
+        val desc = TriggerEffectHandler.describe(context)
+        TriggerEffectHandler.handleTriggerEffect(context)
+
+        val maxi = hpComp.getMaxHealth()
+        val hp = hpComp.getHealth()
+
+        assert(hp == 50f) { "Health should be 50, but hp was $hp" }
+        assert(maxi == 100f) { "Max health should be 100, but maxi was $maxi" }
+        val realDesc = "OnPlay:\nGain (10) max health or might explode"
+        assert(desc == realDesc) { "Description should be \n'$realDesc', but was \n'$desc'" }
+    }
+
+    @Test
+    fun `Activate max hp trap once`() {
+        val trapCard = cardCreationSystem.addMaxHpTrapCards(1).first()
+        owner add LatestCardComponent(mutableIntStateOf(trapCard))
+        val hpComp = HealthComponent(100f)
+        owner add hpComp
+
+        MyRandom.random = FixedRandom(listOf(3))
+
+
+        val context = EffectContext(
+            trigger = Trigger.OnPlay,
+            source = trapCard,
+            target = owner,
+        )
+        val desc = TriggerEffectHandler.describe(context)
+        TriggerEffectHandler.handleTriggerEffect(context)
+
+        val maxi = hpComp.getMaxHealth()
+        val hp = hpComp.getHealth()
+
+        assert(hp == 100f) { "Health should be 100, but hp was $hp" }
+        assert(maxi == 110f) { "Max health should be 110, but maxi was $maxi" }
+        val realDesc = "OnPlay:\nGain (10) max health or might explode"
+        assert(desc == realDesc) { "Description should be \n'$realDesc', but was \n'$desc'" }
     }
 
     @Test

@@ -26,4 +26,25 @@ sealed class Effect {
             return "Take damage ($modifiedAmount)"
         }
     }
+
+    data class GainMaxHealth(val amount: Float) : Effect(){
+        override fun describe(modifiedAmount: Number): String {
+            return "Gain ($modifiedAmount) max health"
+        }
+    }
+
+    data class TakeDamagePercentage(val percentage: Float) : Effect(){
+        override fun describe(modifiedAmount: Number): String {
+            return "Take damage ($modifiedAmount%) of your current health"
+        }
+    }
+
+    data class TakeDamageOrGainMaxHP(val maxHp: Float) : Effect(){
+        override fun describe(modifiedAmount: Number): String {
+            return "Gain ($modifiedAmount) max health or might explode"
+        }
+    }
+
+
+
 }

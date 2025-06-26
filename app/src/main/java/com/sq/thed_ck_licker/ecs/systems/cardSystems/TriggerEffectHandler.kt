@@ -7,6 +7,7 @@ import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponen
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.get
+import com.sq.thed_ck_licker.helpers.MyRandom
 
 object TriggerEffectHandler {
 
@@ -39,6 +40,35 @@ object TriggerEffectHandler {
                     val healthComp = (target get HealthComponent::class)
                     val amount = (effect.amount * sourceMulti * targetMulti).toFloat()
                     healthComp.damage(amount)
+                }
+
+                is Effect.GainMaxHealth -> {
+                    val healthComp = (target get HealthComponent::class)
+                    val amount = (effect.amount * sourceMulti * targetMulti).toFloat()
+                    healthComp.increaseMaxHealth(amount)
+                }
+
+                is Effect.TakeDamagePercentage -> {
+                    val healthComp = (target get HealthComponent::class)
+                    val amount =
+                        healthComp.getHealth() * (effect.percentage * sourceMulti * targetMulti).toFloat()
+                    healthComp.damage(amount)
+                }
+
+                is Effect.TakeDamageOrGainMaxHP -> {
+                    val destiny = MyRandom.getRandomInt()
+                    if (destiny <= 1) {
+                        val healthComp = (target get HealthComponent::class)
+                        val amount =
+                            healthComp.getHealth() * (0.5 * sourceMulti * targetMulti).toFloat()
+                        healthComp.damage(amount)
+
+                        (source get HealthComponent::class).kill()
+                    } else {
+                        val healthComp = (target get HealthComponent::class)
+                        val amount = (effect.maxHp * sourceMulti * targetMulti).toFloat()
+                        healthComp.increaseMaxHealth(amount)
+                    }
                 }
             }
         }
@@ -87,6 +117,18 @@ object TriggerEffectHandler {
 
                         is Effect.TakeDamage -> {
                             effect.amount.toFloat()
+                        }
+
+                        is Effect.GainMaxHealth -> {
+                            effect.amount.toFloat()
+                        }
+
+                        is Effect.TakeDamagePercentage -> {
+                            effect.percentage.toFloat()
+                        }
+
+                        is Effect.TakeDamageOrGainMaxHP -> {
+                            effect.maxHp.toFloat()
                         }
                     }
                 var amount = (initialAmount * sourceMulti * targetMulti).toInt()

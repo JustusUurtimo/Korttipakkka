@@ -27,12 +27,10 @@ import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.generate
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.withBasicCardDefaults
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.CardCreationHelperSystems
 import com.sq.thed_ck_licker.helpers.DescribedEffect
-import com.sq.thed_ck_licker.helpers.MyRandom
 import com.sq.thed_ck_licker.helpers.MyRandom.random
 import com.sq.thed_ck_licker.helpers.navigation.GameNavigator
 import com.sq.thed_ck_licker.helpers.navigation.Screen
 import javax.inject.Inject
-import kotlin.math.abs
 
 class CardCreationSystem @Inject constructor(
     private val cardCreationHelperSystems: CardCreationHelperSystems,
@@ -106,28 +104,15 @@ class CardCreationSystem @Inject constructor(
     }
 
     fun addMaxHpTrapCards(amount: Int = 5): List<EntityId> {
-        val cardHealthAmount = 100f
-        val maxHp = 10f
-        val onActivation = { targetId: Int ->
-            val cardEntity = (getPlayerID() get LatestCardComponent::class).getLatestCard()
-            val targetHp = targetId get HealthComponent::class
-            if (MyRandom.getRandomInt() <= 1) {
-                (cardEntity get HealthComponent::class).damage(cardHealthAmount)
-                val damageAmount = abs(targetHp.getHealth().div(2))
-                targetHp.damage(damageAmount)
-            } else {
-                targetHp.increaseMaxHealth(maxHp)
-            }
-        }
-        val describedEffect = DescribedEffect(onActivation) { "Gain $maxHp max health on play, might explode" }
-        return cardBuilder.buildCards {
-            cardHealth = cardHealthAmount
-            cardAmount = amount
-            name = "Max HP Trap Card"
-            onCardPlay = describedEffect
+        return generateCards(amount) { cardId ->
+            withBasicCardDefaults(
+                CardConfig(
+                    name = "Max HP Trap Card", hp = 5f
+                )
+            )(cardId)
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.TakeDamageOrGainMaxHP(10f))
         }
     }
-
 
     fun addBreakingDefaultCards(amount: Int): List<EntityId> {
         return generateCards(amount) { cardId ->
@@ -219,8 +204,7 @@ class CardCreationSystem @Inject constructor(
             onCardDeactivate = deactivationEffect
         }
     }
-
-
+    
     fun addScoreGainerTestCards(amount: Int = 1): List<EntityId> {
         val pointsPerCard = 3
         val onActivation = { playerId: Int ->
