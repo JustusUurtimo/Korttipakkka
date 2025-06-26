@@ -8,6 +8,7 @@ package com.sq.thed_ck_licker.helpers
  *  This makes the strings dynamic and similar to lazy init.
  *
  */
+@Deprecated("As of 0.1.2.146, The TriggerEffect thing is so much better, this will be reworked out of commission")
 data class DescribedEffect(
     val action: (Int) -> Unit,
     val describe: (Int) -> String
