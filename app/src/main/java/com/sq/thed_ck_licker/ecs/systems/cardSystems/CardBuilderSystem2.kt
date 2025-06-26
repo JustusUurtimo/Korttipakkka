@@ -2,9 +2,9 @@ package com.sq.thed_ck_licker.ecs.systems.cardSystems
 
 import com.sq.thed_ck_licker.R
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
-import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.IdentificationComponent
 import com.sq.thed_ck_licker.ecs.components.ImageComponent
+import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent.CardTag
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
@@ -15,7 +15,7 @@ import com.sq.thed_ck_licker.ecs.managers.generateEntity
 import com.sq.thed_ck_licker.helpers.typealiases.CardPreset
 
 
-/*
+/**
  * This is mainly a suggestion.
  * As we need more and more cards that need to refer their own components,
  * this way supports it more cleanly.
@@ -36,10 +36,33 @@ object CardBuilderSystem2 {
         return cardIds
     }
 
-    fun withBasicCardDefaults(): CardPreset = {
+    data class CardConfig(
+        val img: Int = R.drawable.placeholder,
+        val tags: List<CardTag> = listOf(CardTag.CARD),
+        val name: String = "Card",
+        val characterId: Int? = null,
+        val hp: Number? = 10,
+        val score: Int? = null,
+        val multiplier: Float = 1f
+    )
+
+    fun withBasicCardDefaults(config: CardConfig = CardConfig()): CardPreset = {
         this add ActivationCounterComponent()
-        this add ImageComponent(R.drawable.placeholder)
-        this add TagsComponent(listOf(CardTag.CARD))
+        this add ImageComponent(config.img)
+        this add TagsComponent(config.tags)
+        this add IdentificationComponent(config.name, config.characterId)
+        config.hp?.let { this add HealthComponent(it) }
+        config.score?.let { this add ScoreComponent(it) }
+        this add MultiplierComponent(config.multiplier)
+    }
+
+    fun withBasicCardDefaults(
+        img: Int = R.drawable.placeholder,
+        tags: List<CardTag> = listOf(CardTag.CARD)
+    ): CardPreset = {
+        this add ActivationCounterComponent()
+        this add ImageComponent(img)
+        this add TagsComponent(tags)
     }
 
     fun withHealth(hp: Number): CardPreset = {

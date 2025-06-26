@@ -22,6 +22,7 @@ import com.sq.thed_ck_licker.ecs.managers.MerchantEvent
 import com.sq.thed_ck_licker.ecs.managers.MerchantEvents
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.get
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.CardConfig
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.generateCards
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.withBasicCardDefaults
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.withHealth
@@ -58,10 +59,11 @@ class CardCreationSystem @Inject constructor(
 
     fun addBasicScoreCards(amount: Int): List<EntityId> {
         return generateCards(amount) { cardId ->
-            withBasicCardDefaults()(cardId)
-            withHealth(100f)(cardId)
-            withScore(10)(cardId)
-            withName("Basic score card V3")(cardId)
+            withBasicCardDefaults(
+                CardConfig(
+                    name = "Basic score card V4", hp = 100, score = 10
+                )
+            )(cardId)
             val score = (cardId get ScoreComponent::class).getScore()
             cardId add TriggeredEffectsComponent(
                 mutableMapOf(
@@ -75,9 +77,11 @@ class CardCreationSystem @Inject constructor(
 
     fun addHealingCards(amount: Int): List<EntityId> {
         return generateCards(amount) { cardId ->
-            withBasicCardDefaults()(cardId)
-            withHealth(5)(cardId)
-            withName("Heal")(cardId)
+            withBasicCardDefaults(
+                CardConfig(
+                    img = R.drawable.heal_10, name = "Heal", hp = 5
+                )
+            )(cardId)
             val healSize = 40
             cardId add TriggeredEffectsComponent(
                 mutableMapOf(
