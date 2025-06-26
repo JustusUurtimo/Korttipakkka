@@ -60,19 +60,19 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         val basicsV3 = cardCreationSystem.addBasicScoreCards(5)
         
         return emptyList<Int>() +
-//                playerHealingCards +
-//                playerDamageCards +
-//                defaultCards +
-//                deactivationCards +
-//                trapCards +
-//                scoreGainerCards +
-//                beerGogglesCards +
+                playerHealingCards +
+                playerDamageCards +
+                defaultCards +
+                deactivationCards +
+                trapCards +
+                scoreGainerCards +
+                beerGogglesCards +
                 maxHpCards +
-//                merchantCards +
-//                multiplierCards +
-//                corruptionCards +
-//                timeBoundCards +
-//                basicsV3 +
+                merchantCards +
+                multiplierCards +
+                corruptionCards +
+                timeBoundCards +
+                basicsV3 +
                 emptyList<Int>()
     }
 
