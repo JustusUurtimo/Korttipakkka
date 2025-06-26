@@ -11,7 +11,7 @@ import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.difference
 import com.sq.thed_ck_licker.ecs.managers.get
 import javax.inject.Inject
-
+@Deprecated("As of 0.1.2.146, Well it was broken anyway... The new handler way is better place to handle all of them")
 class MultiplierSystem @Inject constructor(private val componentManager: ComponentManager) {
     fun addHistoryComponentOfItself(entityId: EntityId) {
         val copy = componentManager.copy(entityId)

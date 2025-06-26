@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.InlineTextContent
@@ -44,8 +43,11 @@ import androidx.compose.ui.zIndex
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.IdentificationComponent
 import com.sq.thed_ck_licker.ecs.components.ImageComponent
+import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
+import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.managers.get
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.TriggerEffectHandler
 import com.sq.thed_ck_licker.helpers.displayInfo
 
 var lastTime = -1L
@@ -62,7 +64,21 @@ fun CardView(
 ) {
     val image = (entityId get ImageComponent::class).getImage()
     val name = (entityId get IdentificationComponent::class).getName()
-    val description = (entityId get EffectComponent::class).toString()
+    var description = ""
+    try {
+        description = (entityId get EffectComponent::class).toString()
+    } catch (_: Exception) {
+        Log.i("CardView", "No effect component found for card")
+    }
+    try {
+        description = TriggerEffectHandler.describe(context = EffectContext(
+            trigger = Trigger.OnPlay,
+            source = entityId
+        ))
+    } catch (_: Exception) {
+        Log.i("CardView", "No TriggerEffect component found for card")
+    }
+
     var cardHealth: HealthComponent? = null
     try {
         cardHealth = (entityId get HealthComponent::class)
@@ -92,12 +108,9 @@ fun CardView(
                 if (isZoomed) {
                     detectTapGestures { onZoomChange(entityId) }
                 } else {
-                    detectTapGestures(
-                        onLongPress = {
-                            onZoomChange(entityId)
-                        },
-                        onTap = { activateCard() }
-                    )
+                    detectTapGestures(onLongPress = {
+                        onZoomChange(entityId)
+                    }, onTap = { activateCard() })
                 }
             }
             .graphicsLayer {

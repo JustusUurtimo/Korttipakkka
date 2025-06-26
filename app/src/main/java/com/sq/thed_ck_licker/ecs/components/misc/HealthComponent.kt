@@ -3,11 +3,12 @@ package com.sq.thed_ck_licker.ecs.components.misc
 import android.util.Log
 import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.mutableFloatStateOf
+import com.sq.thed_ck_licker.ecs.components.Component
 
 data class HealthComponent(
     private var health: MutableFloatState,
     private var maxHealth: MutableFloatState
-) {
+) : Component {
     /**
      * This can be used in cases where you want thing to be not on full hp at the start
      */
@@ -23,6 +24,7 @@ data class HealthComponent(
         mutableFloatStateOf(maxHealth),
         mutableFloatStateOf(maxHealth)
     )
+
     fun setHealth(health: Float) {
         this.health.floatValue = health
     }
@@ -36,7 +38,7 @@ data class HealthComponent(
     }
 
     fun increaseMaxHealth(amount: Float) {
-        this.maxHealth.floatValue += amount
+        this.maxHealth.floatValue += amount.toFloat()
     }
 
     private var lastTime = -1L

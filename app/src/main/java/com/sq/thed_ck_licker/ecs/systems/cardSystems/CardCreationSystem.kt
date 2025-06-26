@@ -8,6 +8,9 @@ import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent.CardTag
+import com.sq.thed_ck_licker.ecs.components.effectthing.Effect
+import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
+import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
@@ -19,6 +22,9 @@ import com.sq.thed_ck_licker.ecs.managers.MerchantEvent
 import com.sq.thed_ck_licker.ecs.managers.MerchantEvents
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.get
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.CardConfig
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.generateCards
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.withBasicCardDefaults
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.CardCreationHelperSystems
 import com.sq.thed_ck_licker.helpers.DescribedEffect
 import com.sq.thed_ck_licker.helpers.MyRandom
@@ -49,46 +55,36 @@ class CardCreationSystem @Inject constructor(
     }
 
     fun addBasicScoreCards(amount: Int): List<EntityId> {
-        val score = 10
-        val onActivation = { targetId: Int ->
-            (targetId get ScoreComponent::class).addScore(score)
-        }
-        val describedEffect = DescribedEffect(onActivation) { "Gives $score points" }
-        return cardBuilder.buildCards {
-            cardHealth = 10f
-            scoreAmount = score
-            cardAmount = amount
-            name = "Basic score card"
-            onCardPlay = describedEffect
+        return generateCards(amount) { cardId ->
+            withBasicCardDefaults(
+                CardConfig(
+                    name = "Basic score card V4", hp = 100f, score = 10
+                )
+            )(cardId)
+            val score = (cardId get ScoreComponent::class).getScore()
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.GainScore(score))
         }
     }
 
     fun addHealingCards(amount: Int): List<EntityId> {
-        val healAmount = 40f
-        val onActivation = { playerId: Int ->
-            (playerId get HealthComponent::class).heal(healAmount)
-        }
-        val describedEffect = DescribedEffect(onActivation) { "Heal ($healAmount)" }
-        return cardBuilder.buildCards {
-            cardHealth = 5f
-            cardAmount = amount
-            cardImage = R.drawable.heal_10
-            name = "Heal"
-            onCardPlay = describedEffect
+        return generateCards(amount) { cardId ->
+            withBasicCardDefaults(
+                CardConfig(
+                    img = R.drawable.heal_10, name = "Heal", hp = 5f
+                )
+            )(cardId)
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.GainHealth(40f) )
         }
     }
 
     fun addDamageCards(amount: Int): List<EntityId> {
-        val damageAmount = 150f
-        val onActivation = { targetId: Int ->
-            (targetId get HealthComponent::class).damage(damageAmount)
-        }
-        val describedEffect = DescribedEffect(onActivation) { "Take damage ($damageAmount)" }
-        return cardBuilder.buildCards {
-            cardAmount = amount
-            cardImage = R.drawable.damage_6
-            name = "Damage"
-            onCardPlay = describedEffect
+        return generateCards(amount) { cardId ->
+            withBasicCardDefaults(
+                CardConfig(
+                    img = R.drawable.damage_6, name = "Damage", hp = 20f
+                )
+            )(cardId)
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.TakeDamage(150f))
         }
     }
 

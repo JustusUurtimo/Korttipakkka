@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
@@ -23,8 +22,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.IdentificationComponent
+import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
+import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
+import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
+import com.sq.thed_ck_licker.ecs.managers.EntityManager
 import com.sq.thed_ck_licker.ecs.managers.get
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.TriggerEffectHandler
 
 @Composable
 fun HealthBar(
@@ -92,8 +96,24 @@ fun AdditionalInfoDisplay(latestCard: Int) {
     var name = "-"
     var hp = 0f
     var description = "Nan"
+
+    var playerMultiplier = (EntityManager.getPlayerID() get MultiplierComponent::class).multiplier
+    var cardMultiplier = 1f
     if (latestCard != -1) {
+
+        try {
         description = (latestCard get EffectComponent::class).toString()
+        } catch (_: Exception) {
+            Log.v("AdditionalInfoDisplay", "No effect component found for $latestCard")
+        }
+        try {
+            description = TriggerEffectHandler.describe(EffectContext(
+                trigger = Trigger.OnTurnStart, // This is ignored here so it feels bit weird... But no can do for now
+                source = latestCard
+            ))
+        }catch (_: Exception) {
+            Log.v("AdditionalInfoDisplay", "No Trigger Effect component found for $latestCard")
+        }
         name = (latestCard get IdentificationComponent::class).getName()
 
         try {
@@ -101,9 +121,22 @@ fun AdditionalInfoDisplay(latestCard: Int) {
         } catch (_: Exception) {
             Log.v("AdditionalInfoDisplay", "No health component found for $latestCard")
         }
+
+        val (source, target) = TriggerEffectHandler.getMultipliers(
+            EffectContext(
+                trigger = Trigger.OnPlay, // This is ignored here so it feels bit weird... But no can do for now
+                source = latestCard
+            )
+        )
+        cardMultiplier = source
+        playerMultiplier = target
     }
+    val multiplier = cardMultiplier * playerMultiplier
     Text("Info")
     Text("Name: $name")
     Text("Health: ${hp.toInt()}")
+    Text("Total multi: $multiplier")
+    Text("Player multi: $playerMultiplier")
+    Text("Card multi: $cardMultiplier")
     Text("Desc: \n$description")
 }
