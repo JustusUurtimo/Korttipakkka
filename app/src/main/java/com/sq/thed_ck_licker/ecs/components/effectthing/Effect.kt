@@ -45,6 +45,13 @@ sealed class Effect {
         }
     }
 
+    data class HealOnUnderThreshold(val threshold: Float, val limit: Float) : Effect(){
+        override fun describe(modifiedAmount: Number): String {
+            return "Heal ($modifiedAmount) if health is under $threshold"
+        }
+
+    }
+
 
 
 }

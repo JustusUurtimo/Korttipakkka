@@ -12,14 +12,13 @@ import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlin.reflect.KClass
 
-// Component Manager
+@Suppress("UNCHECKED_CAST")
 class ComponentManager {
 
     companion object {
         val componentManager: ComponentManager = ComponentManager()
     }
 
-    @IgnoredOnParcel
     private val components = mutableStateMapOf<KClass<*>, SnapshotStateMap<Int, Any>>()
 
     fun <T : Any> addComponent(entity: Int, component: T) {
@@ -35,7 +34,6 @@ class ComponentManager {
 
         // Check the type of the component before casting
         if (componentClass.isInstance(component)) {
-            @Suppress("UNCHECKED_CAST") // Safe cast after type check
             return component as T
         } else {
             throw IllegalStateException("Component for entity $entity is not of type ${componentClass.simpleName}")
@@ -43,9 +41,10 @@ class ComponentManager {
     }
 
 
-    fun <T : Any> getEntitiesWithComponent(componentClass: KClass<T>): Map<Int, Any>? {
-        return components[componentClass]
+    fun <T : Any> getEntitiesWithComponent(componentClass: KClass<T>): Map<Int, T>? {
+        return components[componentClass] as? Map<Int, T>
     }
+
 
     fun <T : Any> getEntitiesWithTheseComponents(componentClasses: List<KClass<T>>): List<EntityId> {
         val result = mutableListOf<List<EntityId>>()
@@ -153,15 +152,6 @@ infix fun <T : Any> EntityId.get(componentClass: KClass<T>): T {
  */
 inline fun <reified T> List<Any>.hasComponent(): Boolean {
     return any { it is T }
-}
-
-
-
-fun List<EntityId>.applyComponentToAll(component: Any): List<EntityId> {
-    this.forEach { entity ->
-        entity add component
-    }
-    return this
 }
 
 

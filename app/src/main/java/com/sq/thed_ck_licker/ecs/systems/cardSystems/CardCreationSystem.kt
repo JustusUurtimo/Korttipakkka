@@ -204,13 +204,15 @@ class CardCreationSystem @Inject constructor(
             onCardDeactivate = deactivationEffect
         }
     }
-    
+
     fun addScoreGainerTestCards(amount: Int = 1): List<EntityId> {
         val pointsPerCard = 3
-        val onActivation = { playerId: Int ->
+        val onActivation: (Int) -> Unit = { playerId: Int ->
             cardCreationHelperSystems.addPassiveScoreGainerToEntity(playerId, pointsPerCard)
         }
-        val activationEffect = DescribedEffect(onActivation) { "Gain Score gainer\n Every time you play card you gain $pointsPerCard points" }
+        val activationEffect = DescribedEffect(onActivation) {
+            "Gain Score gainer\n Every time you play card you gain $pointsPerCard points"
+        }
         return cardBuilder.buildCards {
             cardHealth = 1f
             scoreAmount = pointsPerCard
@@ -222,7 +224,7 @@ class CardCreationSystem @Inject constructor(
 
     fun addBeerGogglesTestCards(amount: Int = 1): List<EntityId> {
         val healLimit = 150f
-        val onActivation = { playerId: Int ->
+        val onActivation: (Int) -> Unit = { playerId: Int ->
             cardCreationHelperSystems.addLimitedSupplyAutoHealToEntity(playerId, healLimit)
         }
         val activationEffect = DescribedEffect(onActivation) { "Equip Beer Goggles that will heal you bit (up to $healLimit health points)" }
