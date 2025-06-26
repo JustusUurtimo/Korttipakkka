@@ -129,29 +129,17 @@ class CardCreationSystem @Inject constructor(
     }
 
 
-    fun addBreakingDefaultCards(amount: Int = 7): List<EntityId> {
-        val scoreIt = { targetId: Int ->
-            val cardEntity = (targetId get LatestCardComponent::class).getLatestCard()
-            val target = targetId get ScoreComponent::class
-            val omaScore = cardEntity get ScoreComponent::class
-            target.addScore(omaScore.getScore())
+    fun addBreakingDefaultCards(amount: Int): List<EntityId> {
+        return generateCards(amount) { cardId ->
+            withBasicCardDefaults(
+                CardConfig(
+                    name = "Default Card", hp = 10f, score = 100
+                )
+            )(cardId)
+            val score = (cardId get ScoreComponent::class).getScore()
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.GainScore(score))
         }
-        val describedEffect = DescribedEffect(scoreIt) { targetId: Int ->
-            val cardEntity = (targetId get LatestCardComponent::class).getLatestCard()
-            val omaScore = cardEntity get ScoreComponent::class
-            "Gain ${omaScore.getScore()} points"
-        }
-
-        val cards = cardBuilder.buildCards {
-            cardHealth = 10f
-            scoreAmount = 100
-            cardAmount = amount
-            name = "Default Card"
-            onCardPlay = describedEffect
-        }
-        return cards
     }
-
 
     fun addDeactivationTestCards(amount: Int = 2): List<EntityId> {
         var stepSize = 2

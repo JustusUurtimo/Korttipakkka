@@ -39,11 +39,19 @@ class CardCreationSystemTest {
         val scoreComponent = ScoreComponent(100)
         owner add scoreComponent
 
-        val desc = (breakingCard get EffectComponent::class).onPlay.describe(owner)
-        (breakingCard get EffectComponent::class).onPlay.action(owner)
+//        val desc = (breakingCard get EffectComponent::class).onPlay.describe(owner)
+//        (breakingCard get EffectComponent::class).onPlay.action(owner)
+
+        val context = EffectContext(
+            trigger = Trigger.OnPlay,
+            source = breakingCard,
+            target = owner,
+        )
+        val desc = TriggerEffectHandler.describe(context)
+        TriggerEffectHandler.handleTriggerEffect(context)
 
         assert(scoreComponent.getScore() == 200) { "Score should be 200, but was ${scoreComponent.getScore()}" }
-        val realDesc = "Gain 100 points"
+        val realDesc = "OnPlay:\nGain (100) points"
         assert(desc == realDesc) { "Description should be \n'$realDesc', but was \n'$desc'" }
     }
 
@@ -148,7 +156,7 @@ class CardCreationSystemTest {
         TriggerEffectHandler.handleTriggerEffect(context)
 
         assert(scoreComponent.getScore() == 10) { "Score should be 10, but was ${scoreComponent.getScore()}" }
-        val realDesc = "OnPlay:\nGain 10 points"
+        val realDesc = "OnPlay:\nGain (10) points"
         assert(desc == realDesc) { "Description should be \n'$realDesc', but was \n'$desc'" }
     }
 
