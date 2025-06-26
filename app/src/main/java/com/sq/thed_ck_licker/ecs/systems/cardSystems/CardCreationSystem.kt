@@ -62,13 +62,7 @@ class CardCreationSystem @Inject constructor(
                 )
             )(cardId)
             val score = (cardId get ScoreComponent::class).getScore()
-            cardId add TriggeredEffectsComponent(
-                mutableMapOf(
-                    Trigger.OnPlay to mutableListOf(
-                        Effect.GainScore(score)
-                    )
-                )
-            )
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.GainScore(score))
         }
     }
 
@@ -79,14 +73,7 @@ class CardCreationSystem @Inject constructor(
                     img = R.drawable.heal_10, name = "Heal", hp = 5
                 )
             )(cardId)
-            val healSize = 40
-            cardId add TriggeredEffectsComponent(
-                mutableMapOf(
-                    Trigger.OnPlay to mutableListOf(
-                        Effect.GainHealth(healSize)
-                    )
-                )
-            )
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.GainHealth(40) )
         }
     }
 
@@ -97,14 +84,7 @@ class CardCreationSystem @Inject constructor(
                     img = R.drawable.damage_6, name = "Damage", hp = 20
                 )
             )(cardId)
-            val damageAmount = 150
-            cardId add TriggeredEffectsComponent(
-                mutableMapOf(
-                    Trigger.OnPlay to mutableListOf(
-                        Effect.TakeDamage(damageAmount)
-                    )
-                )
-            )
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.TakeDamage(150))
         }
     }
 
