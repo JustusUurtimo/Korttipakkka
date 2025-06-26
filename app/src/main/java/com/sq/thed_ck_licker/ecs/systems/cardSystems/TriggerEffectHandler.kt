@@ -44,6 +44,9 @@ object TriggerEffectHandler {
         }
     }
 
+    /**
+     *  @return Pair of multipliers for source and target
+     */
     fun getMultipliers(context: EffectContext): Pair<Float, Float> {
         val sourceMulti = try {
             (context.source get MultiplierComponent::class).multiplier
@@ -72,7 +75,7 @@ object TriggerEffectHandler {
 
             val effectsList = entry.value
             for (effect in effectsList) {
-                val aamount =
+                val initialAmount =
                     when (effect) {
                         is Effect.GainScore -> {
                             effect.amount.toFloat()
@@ -86,7 +89,7 @@ object TriggerEffectHandler {
                             effect.amount.toFloat()
                         }
                     }
-                var amount = (aamount * sourceMulti * targetMulti).toInt()
+                var amount = (initialAmount * sourceMulti * targetMulti).toInt()
                 result += effect.describe(amount) + "\n"
             }
         }

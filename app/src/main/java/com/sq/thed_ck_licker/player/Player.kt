@@ -22,9 +22,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.IdentificationComponent
+import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
 import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
 import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
+import com.sq.thed_ck_licker.ecs.managers.EntityManager
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.TriggerEffectHandler
 
@@ -94,6 +96,9 @@ fun AdditionalInfoDisplay(latestCard: Int) {
     var name = "-"
     var hp = 0f
     var description = "Nan"
+
+    var playerMultiplier = (EntityManager.getPlayerID() get MultiplierComponent::class).multiplier
+    var cardMultiplier = 1f
     if (latestCard != -1) {
 
         try {
@@ -103,7 +108,7 @@ fun AdditionalInfoDisplay(latestCard: Int) {
         }
         try {
             description = TriggerEffectHandler.describe(EffectContext(
-                trigger = Trigger.OnPlay,
+                trigger = Trigger.OnTurnStart, // This is ignored here so it feels bit weird... But no can do for now
                 source = latestCard
             ))
         }catch (_: Exception) {
@@ -116,9 +121,22 @@ fun AdditionalInfoDisplay(latestCard: Int) {
         } catch (_: Exception) {
             Log.v("AdditionalInfoDisplay", "No health component found for $latestCard")
         }
+
+        val (source, target) = TriggerEffectHandler.getMultipliers(
+            EffectContext(
+                trigger = Trigger.OnPlay, // This is ignored here so it feels bit weird... But no can do for now
+                source = latestCard
+            )
+        )
+        cardMultiplier = source
+        playerMultiplier = target
     }
+    val multiplier = cardMultiplier * playerMultiplier
     Text("Info")
     Text("Name: $name")
     Text("Health: ${hp.toInt()}")
+    Text("Total multi: $multiplier")
+    Text("Player multi: $playerMultiplier")
+    Text("Card multi: $cardMultiplier")
     Text("Desc: \n$description")
 }
