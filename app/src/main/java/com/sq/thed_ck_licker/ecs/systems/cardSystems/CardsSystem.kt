@@ -14,10 +14,10 @@ import com.sq.thed_ck_licker.ecs.managers.GameEvents
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.TriggerEffectHandler.handleTriggerEffect
 import com.sq.thed_ck_licker.ecs.systems.characterSystems.PlayerSystem
+import com.sq.thed_ck_licker.ecs.systems.helperSystems.DeathSystem
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.MultiplierSystem
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.TurnStartSystem
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.discardSystem
-import com.sq.thed_ck_licker.ecs.systems.helperSystems.onDeathSystem
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.onTurnStartEffectStackSystem
 import com.sq.thed_ck_licker.helpers.getRandomElement
 import javax.inject.Inject
@@ -44,12 +44,9 @@ class CardsSystem @Inject constructor(
         playerCardCount: MutableIntState
     ) {
         Log.v("CardsSystem", "Card activation started. Turn started.")
-        onTurnStartEffectStackSystem()
         TurnStartSystem.onTurnStart()
         activateCard(playerCardCount)
-        multiSystem.multiplyEntityAgainstOldItself(getPlayerID())
-        multiSystem.addHistoryComponentOfItself(getPlayerID())
-        onDeathSystem()
+        DeathSystem.checkForDeath()
         Log.v("CardsSystem", "Card activation finished. Turn finished.")
     }
 

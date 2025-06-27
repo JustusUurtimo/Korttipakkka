@@ -88,6 +88,22 @@ object TriggerEffectHandler {
                     }
 
                 }
+
+                is Effect.TakeSelfDamage -> {
+                    val healthComp = (source get HealthComponent::class)
+                    val amount = (effect.amount * sourceMulti).toFloat()
+                    healthComp.damage(amount)
+                }
+
+                is Effect.AddMultiplier -> {
+                    val multiComp = (target get MultiplierComponent::class)
+                    multiComp.timesMultiplier(effect.amount)
+                }
+
+                is Effect.RemoveMultiplier -> {
+                    val multiComp = (target get MultiplierComponent::class)
+                    multiComp.removeMultiplier(effect.amount)
+                }
             }
         }
     }
@@ -123,37 +139,48 @@ object TriggerEffectHandler {
 
             val effectsList = entry.value
             for (effect in effectsList) {
-                val initialAmount =
+                val amount =
                     when (effect) {
                         is Effect.GainScore -> {
-                            effect.amount.toFloat()
+                            (effect.amount * sourceMulti * targetMulti).toInt()
                         }
 
                         is Effect.GainHealth -> {
-                            effect.amount.toFloat()
+                            (effect.amount * sourceMulti * targetMulti).toInt()
                         }
 
                         is Effect.TakeDamage -> {
-                            effect.amount.toFloat()
+                            (effect.amount * sourceMulti * targetMulti).toInt()
                         }
 
                         is Effect.GainMaxHealth -> {
-                            effect.amount.toFloat()
+                            (effect.amount * sourceMulti * targetMulti).toInt()
                         }
 
                         is Effect.TakeDamagePercentage -> {
-                            effect.percentage.toFloat()
+                            (effect.percentage * sourceMulti * targetMulti).toInt()
                         }
 
                         is Effect.TakeDamageOrGainMaxHP -> {
-                            effect.maxHp.toFloat()
+                            (effect.maxHp * sourceMulti * targetMulti).toInt()
                         }
 
                         is Effect.HealOnUnderThreshold -> {
-                            effect.limit.toFloat()
+                            (effect.limit * sourceMulti * targetMulti).toInt()
+                        }
+
+                        is Effect.TakeSelfDamage -> {
+                            (effect.amount * sourceMulti * targetMulti).toInt()
+                        }
+
+                        is Effect.AddMultiplier -> {
+                            effect.amount.toFloat()
+                        }
+
+                        is Effect.RemoveMultiplier -> {
+                            effect.amount.toFloat()
                         }
                     }
-                var amount = (initialAmount * sourceMulti * targetMulti).toInt()
                 result += effect.describe(amount) + "\n"
             }
         }

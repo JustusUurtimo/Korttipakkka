@@ -17,7 +17,7 @@ import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.states.PlayerState
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem
-import com.sq.thed_ck_licker.ecs.systems.helperSystems.onDeathSystem
+import com.sq.thed_ck_licker.ecs.systems.helperSystems.DeathSystem
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.areRealTimeThingsEnabled
 import com.sq.thed_ck_licker.helpers.DescribedEffect
 import kotlinx.coroutines.flow.Flow
@@ -127,7 +127,7 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
             val targetHealth = target get HealthComponent::class
             targetHealth.damage(amountOfDamage)
             if (targetHealth.getHealth() <= 0) {
-                onDeathSystem()
+                DeathSystem.checkForDeath()
             }
         }
         val describedEffect = DescribedEffect(theAction) { "Take damage on each trigger" }

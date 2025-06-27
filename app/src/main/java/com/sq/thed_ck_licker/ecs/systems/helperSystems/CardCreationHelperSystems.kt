@@ -1,12 +1,13 @@
 package com.sq.thed_ck_licker.ecs.systems.helperSystems
 
+import android.R.attr.targetId
 import android.util.Log
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
-import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
 import com.sq.thed_ck_licker.ecs.components.OwnerComponent
 import com.sq.thed_ck_licker.ecs.components.effectthing.Effect
+import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
 import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
 import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
@@ -15,9 +16,9 @@ import com.sq.thed_ck_licker.ecs.managers.EntityId
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.generateEntity
 import com.sq.thed_ck_licker.ecs.managers.get
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.TriggerEffectHandler
 import com.sq.thed_ck_licker.helpers.DescribedEffect
 import javax.inject.Inject
-import kotlin.math.min
 
 class CardCreationHelperSystems @Inject constructor() {
 
@@ -46,38 +47,34 @@ class CardCreationHelperSystems @Inject constructor() {
     }
 
     fun addTemporaryMultiplierTo(
-        targetEntityId: Int,
-        health: Float = 10f,
+        targetEntityId: EntityId,
+        health: Float = 28f,
         multiplier: Float = 2.8f
-    ) {
+    ): EntityId {
         val limitedMultiEntity = generateEntity()
         val selfHp = HealthComponent(health)
         limitedMultiEntity add selfHp
-        limitedMultiEntity add ActivationCounterComponent()
+        limitedMultiEntity add OwnerComponent(targetEntityId)
 
-
-        try {
-            val targetMultiComp = targetEntityId get MultiplierComponent::class
-            targetMultiComp.timesMultiplier(multiplier)
-        } catch (_: IllegalStateException) {
-            Log.e("CardsSystem", "Target entity has no multiplier component")
-        }
-        val damage = 1f
-        val onTurnStart = { _: Int -> selfHp.damage(damage) }
-        val activationEffect =
-            DescribedEffect(onTurnStart) { "Take $damage damage" }
-
-        val onDeath = { targetId: Int ->
-            val targetMultiComp = targetId get MultiplierComponent::class
-            targetMultiComp.removeMultiplier(multiplier)
-        }
-
-        val onDeathEffect =
-            DescribedEffect(onDeath) { "Removes the $multiplier multiplier" }
-        limitedMultiEntity add EffectComponent(
-            onTurnStart = activationEffect,
-            onDeath = onDeathEffect
+        limitedMultiEntity add TriggeredEffectsComponent(
+            mutableMapOf(
+                Trigger.OnCreation to mutableListOf(
+                    Effect.AddMultiplier(multiplier)
+                ),
+                Trigger.OnTurnStart to mutableListOf(
+                    Effect.TakeSelfDamage(1f)
+                ),
+                Trigger.OnDeath to mutableListOf(
+                    Effect.RemoveMultiplier(multiplier)
+                )
+            )
         )
 
+        TriggerEffectHandler.handleTriggerEffect(EffectContext(
+            trigger = Trigger.OnCreation,
+            source = limitedMultiEntity,
+            target = targetEntityId
+        ))
+        return limitedMultiEntity
     }
 }

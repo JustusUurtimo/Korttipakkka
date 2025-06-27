@@ -52,11 +52,11 @@ class CardCreationSystem @Inject constructor(
         }
     }
 
-    fun addBasicScoreCards(amount: Int): List<EntityId> {
+    fun addBasicScoreCards(amount: Int, scoreSize: Int = 10): List<EntityId> {
         return generateCards(amount) { cardId ->
             withBasicCardDefaults(
                 CardConfig(
-                    name = "Basic score card V4", hp = 100f, score = 10
+                    name = "Basic score card V4", hp = 100f, score = scoreSize
                 )
             )(cardId)
             val score = (cardId get ScoreComponent::class).getScore()
@@ -64,25 +64,25 @@ class CardCreationSystem @Inject constructor(
         }
     }
 
-    fun addHealingCards(amount: Int): List<EntityId> {
+    fun addHealingCards(amount: Int, healSize: Float = 40f): List<EntityId> {
         return generateCards(amount) { cardId ->
             withBasicCardDefaults(
                 CardConfig(
                     img = R.drawable.heal_10, name = "Heal", hp = 5f
                 )
             )(cardId)
-            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.GainHealth(40f) )
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.GainHealth(healSize))
         }
     }
 
-    fun addDamageCards(amount: Int): List<EntityId> {
+    fun addDamageCards(amount: Int, damageSize: Float = 150f): List<EntityId> {
         return generateCards(amount) { cardId ->
             withBasicCardDefaults(
                 CardConfig(
                     img = R.drawable.damage_6, name = "Damage", hp = 20f
                 )
             )(cardId)
-            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.TakeDamage(150f))
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.TakeDamage(damageSize))
         }
     }
 
@@ -238,7 +238,7 @@ class CardCreationSystem @Inject constructor(
 
     fun addTempMultiplierTestCards(amount: Int = 1): List<EntityId> {
         val multiplier = 3f
-        val onActivation = { targetId: Int ->
+        val onActivation: (Int) -> Unit = { targetId: Int ->
             cardCreationHelperSystems.addTemporaryMultiplierTo(
                 targetEntityId = targetId,
                 multiplier = multiplier
