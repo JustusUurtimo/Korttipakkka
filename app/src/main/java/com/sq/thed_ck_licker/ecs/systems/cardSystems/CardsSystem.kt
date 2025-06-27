@@ -40,9 +40,7 @@ class CardsSystem @Inject constructor(
         }
     }
 
-    fun cardActivation(
-        playerCardCount: MutableIntState
-    ) {
+    fun cardActivation(playerCardCount: MutableIntState) {
         Log.v("CardsSystem", "Card activation started. Turn started.")
         TurnStartSystem.onTurnStart()
         activateCard(playerCardCount)

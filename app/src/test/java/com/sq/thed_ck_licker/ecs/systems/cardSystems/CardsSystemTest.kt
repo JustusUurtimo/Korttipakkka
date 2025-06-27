@@ -2,8 +2,10 @@ package com.sq.thed_ck_licker.ecs.systems.cardSystems
 
 import androidx.compose.runtime.mutableIntStateOf
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
+import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.HistoryComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
+import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.ComponentManager
@@ -16,6 +18,7 @@ import com.sq.thed_ck_licker.ecs.systems.helperSystems.CardCreationHelperSystems
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.CardCreationHelperSystems_Factory
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.MultiplierSystem
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.MultiplierSystem_Factory
+import com.sq.thed_ck_licker.helpers.DescribedEffect
 import com.sq.thed_ck_licker.helpers.navigation.GameNavigator_Factory
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -81,8 +84,10 @@ class CardsSystemTest {
         repeat(10) {
             latest.setLatestCard(card)
             cardManager.cardActivation(count)
+            if (it < 10) {
             val cardFromDiscard = discardDeckComponent.getDiscardDeck().first()
-            discardDeckComponent.removeCards(listOf(cardFromDiscard))
+                discardDeckComponent.removeCards(listOf(cardFromDiscard))
+            }
         }
 
         val score = owner get ScoreComponent::class
@@ -119,63 +124,63 @@ class CardsSystemTest {
     }
 
 
-//    @Test
-//    fun `Activate players point card 7 times with multiplier`() {
-//        val latest = LatestCardComponent()
-//        owner add latest
-//        val discardDeckComponent = DiscardDeckComponent()
-//        owner add discardDeckComponent
-//        owner add ScoreComponent()
-//        owner add MultiplierComponent(2f)
-//        val card = cardCreationSystem.addBreakingDefaultCards(1).first()
-//        multiSystem.addHistoryComponentOfItself(owner)
-//
-//        val count = mutableIntStateOf(0)
-//        repeat(7) {
-//            latest.setLatestCard(card)
-//            cardManager.cardActivation(count)
-//            val cardFromDiscard = discardDeckComponent.getDiscardDeck().first()
-//            discardDeckComponent.removeCards(listOf(cardFromDiscard))
-//        }
-//
-//        val score = owner get ScoreComponent::class
-//        val endScore = 1400
-//        assert(score.getScore() == endScore) { "Score should be $endScore but was ${score.getScore()}" }
-//    }
-//
-//
-//    @Test
-//    fun `Activate players point card 7 times with temp multiplier`() {
-//        val latest = LatestCardComponent()
-//        owner add latest
-//        val discardDeckComponent = DiscardDeckComponent()
-//        owner add discardDeckComponent
-//        owner add ScoreComponent()
-//        owner add MultiplierComponent()
-//
-//        cardCreationHelperSystems.addTemporaryMultiplierTo(
-//            targetEntityId = owner,
-//            health = 5f,
-//            multiplier = 6f
-//        )
-//
-//        val card = cardCreationSystem.addBreakingDefaultCards(1).first()
-//        multiSystem.addHistoryComponentOfItself(owner)
-//
-//        val count = mutableIntStateOf(0)
-//
-//        repeat(7) {
-//            latest.setLatestCard(card)
-//            cardManager.cardActivation(count)
-//            val cardFromDiscard = discardDeckComponent.getDiscardDeck().first()
-//            discardDeckComponent.removeCards(listOf(cardFromDiscard))
-//        }
-//
-//        val score = owner get ScoreComponent::class
-//        val endScore = 3200
-//        assert(score.getScore() == endScore) { "Score should be $endScore but was ${score.getScore()}" }
-//    }
-//
+    @Test
+    fun `Activate players point card 7 times with multiplier`() {
+        val latest = LatestCardComponent()
+        owner add latest
+        val discardDeckComponent = DiscardDeckComponent()
+        owner add discardDeckComponent
+        owner add ScoreComponent()
+        owner add MultiplierComponent(2f)
+        val card = cardCreationSystem.addBreakingDefaultCards(1).first()
+        multiSystem.addHistoryComponentOfItself(owner)
+
+        val count = mutableIntStateOf(0)
+        repeat(7) {
+            latest.setLatestCard(card)
+            cardManager.cardActivation(count)
+            val cardFromDiscard = discardDeckComponent.getDiscardDeck().first()
+            discardDeckComponent.removeCards(listOf(cardFromDiscard))
+        }
+
+        val score = owner get ScoreComponent::class
+        val endScore = 1400
+        assert(score.getScore() == endScore) { "Score should be $endScore but was ${score.getScore()}" }
+    }
+
+
+    @Test
+    fun `Activate players point card 7 times with temp multiplier`() {
+        val latest = LatestCardComponent()
+        owner add latest
+        val discardDeckComponent = DiscardDeckComponent()
+        owner add discardDeckComponent
+        owner add ScoreComponent()
+        owner add MultiplierComponent()
+
+        cardCreationHelperSystems.addTemporaryMultiplierTo(
+            targetEntityId = owner,
+            health = 5f,
+            multiplier = 6f
+        )
+
+        val card = cardCreationSystem.addBreakingDefaultCards(1).first()
+        multiSystem.addHistoryComponentOfItself(owner)
+
+        val count = mutableIntStateOf(0)
+
+        repeat(7) {
+            latest.setLatestCard(card)
+            cardManager.cardActivation(count)
+            val cardFromDiscard = discardDeckComponent.getDiscardDeck().first()
+            discardDeckComponent.removeCards(listOf(cardFromDiscard))
+        }
+
+        val score = owner get ScoreComponent::class
+        val endScore = 3200
+        assert(score.getScore() == endScore) { "Score should be $endScore but was ${score.getScore()}" }
+    }
+
 //
 //    @Test
 //    fun `Activate players point card 7 times with new temp multiplier`() {
