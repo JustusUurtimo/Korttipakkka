@@ -52,6 +52,21 @@ sealed class Effect {
 
     }
 
+    data class TakeSelfDamage(val amount: Float) : Effect(){
+        override fun describe(modifiedAmount: Number): String {
+            return "Take self damage ($modifiedAmount)"
+        }
+    }
 
+    data class AddMultiplier(val amount: Float) : Effect(){
+        override fun describe(modifiedAmount: Number): String {
+            return "Gain ($modifiedAmount) Multiplier"
+        }
+    }
 
+    data class RemoveMultiplier(val amount: Float) : Effect(){
+        override fun describe(modifiedAmount: Number): String {
+            return "Lose ($modifiedAmount) Multiplier"
+        }
+    }
 }

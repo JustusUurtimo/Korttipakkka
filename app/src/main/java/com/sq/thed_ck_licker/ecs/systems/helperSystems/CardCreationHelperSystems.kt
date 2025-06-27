@@ -1,12 +1,13 @@
 package com.sq.thed_ck_licker.ecs.systems.helperSystems
 
+import android.R.attr.targetId
 import android.util.Log
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
-import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
 import com.sq.thed_ck_licker.ecs.components.OwnerComponent
 import com.sq.thed_ck_licker.ecs.components.effectthing.Effect
+import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
 import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
 import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
@@ -15,9 +16,9 @@ import com.sq.thed_ck_licker.ecs.managers.EntityId
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.generateEntity
 import com.sq.thed_ck_licker.ecs.managers.get
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.TriggerEffectHandler
 import com.sq.thed_ck_licker.helpers.DescribedEffect
 import javax.inject.Inject
-import kotlin.math.min
 
 class CardCreationHelperSystems @Inject constructor() {
 
@@ -45,11 +46,11 @@ class CardCreationHelperSystems @Inject constructor() {
         return limitedHealEntity
     }
 
-    fun addTemporaryMultiplierTo(
+    fun addTemporaryMultiplierToV1(
         targetEntityId: Int,
         health: Float = 10f,
         multiplier: Float = 2.8f
-    ) {
+    ): EntityId {
         val limitedMultiEntity = generateEntity()
         val selfHp = HealthComponent(health)
         limitedMultiEntity add selfHp
@@ -79,5 +80,38 @@ class CardCreationHelperSystems @Inject constructor() {
             onDeath = onDeathEffect
         )
 
+        return limitedMultiEntity
+    }
+
+    fun addTemporaryMultiplierTo(
+        targetEntityId: EntityId,
+        health: Float = 28f,
+        multiplier: Float = 2.8f
+    ): EntityId {
+        val limitedMultiEntity = generateEntity()
+        val selfHp = HealthComponent(health)
+        limitedMultiEntity add selfHp
+        limitedMultiEntity add OwnerComponent(targetEntityId)
+
+        limitedMultiEntity add TriggeredEffectsComponent(
+            mutableMapOf(
+                Trigger.OnCreation to mutableListOf(
+                    Effect.AddMultiplier(multiplier)
+                ),
+                Trigger.OnTurnStart to mutableListOf(
+                    Effect.TakeSelfDamage(1f)
+                ),
+                Trigger.OnDeath to mutableListOf(
+                    Effect.RemoveMultiplier(multiplier)
+                )
+            )
+        )
+
+        TriggerEffectHandler.handleTriggerEffect(EffectContext(
+            trigger = Trigger.OnCreation,
+            source = limitedMultiEntity,
+            target = targetEntityId
+        ))
+        return limitedMultiEntity
     }
 }
