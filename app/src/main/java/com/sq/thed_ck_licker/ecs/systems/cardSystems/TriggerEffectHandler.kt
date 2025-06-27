@@ -52,7 +52,7 @@ object TriggerEffectHandler {
                 is Effect.TakeDamagePercentage -> {
                     val healthComp = (target get HealthComponent::class)
                     val amount =
-                        healthComp.getHealth() * (effect.percentage * sourceMulti * targetMulti).toFloat()
+                        healthComp.getHealth() * (effect.amount * sourceMulti * targetMulti).toFloat()
                     healthComp.damage(amount)
                 }
 
@@ -67,7 +67,7 @@ object TriggerEffectHandler {
                         (source get HealthComponent::class).kill()
                     } else {
                         val healthComp = (target get HealthComponent::class)
-                        val amount = (effect.maxHp * sourceMulti * targetMulti).toFloat()
+                        val amount = (effect.amount * sourceMulti * targetMulti).toFloat()
                         healthComp.increaseMaxHealth(amount)
                     }
                 }
@@ -158,15 +158,15 @@ object TriggerEffectHandler {
                         }
 
                         is Effect.TakeDamagePercentage -> {
-                            (effect.percentage * sourceMulti * targetMulti).toInt()
+                            (effect.amount * sourceMulti * targetMulti).toInt()
                         }
 
                         is Effect.TakeDamageOrGainMaxHP -> {
-                            (effect.maxHp * sourceMulti * targetMulti).toInt()
+                            (effect.amount * sourceMulti * targetMulti).toInt()
                         }
 
                         is Effect.HealOnUnderThreshold -> {
-                            (effect.limit * sourceMulti * targetMulti).toInt()
+                            (effect.amount * sourceMulti * targetMulti).toInt()
                         }
 
                         is Effect.TakeSelfDamage -> {

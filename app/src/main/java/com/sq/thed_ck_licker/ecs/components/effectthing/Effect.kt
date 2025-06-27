@@ -8,63 +8,73 @@ sealed class Effect {
      */
     abstract fun describe(modifiedAmount: Number): String
 
+    /**
+     * I am not super happy with this.
+     * But the idea is that every effect basically always has some base value.
+     * So by implementing this the handling can be simplified.
+     *
+     * I am open to idea of no value ones too.
+     * But for now if those are the minority, thy can have some bogus value there...
+     */
+    abstract val amount:Float
 
-    data class GainScore(val amount: Int) : Effect(){
+
+    data class GainScore(override val amount: Float) : Effect(){
         override fun describe(modifiedAmount: Number): String { //Not super sure about this one...
             return "Gain ($modifiedAmount) points"
         }
     }
 
-    data class GainHealth(val amount: Float) : Effect(){
+    data class GainHealth(override val amount: Float) : Effect(){
         override fun describe(modifiedAmount: Number): String {
             return "Heal ($modifiedAmount)"
         }
     }
 
-    data class TakeDamage(val amount: Float) : Effect(){
+    data class TakeDamage(override val amount: Float) : Effect(){
         override fun describe(modifiedAmount: Number): String {
             return "Take damage ($modifiedAmount)"
         }
     }
 
-    data class GainMaxHealth(val amount: Float) : Effect(){
+    data class GainMaxHealth(override val amount: Float) : Effect(){
         override fun describe(modifiedAmount: Number): String {
             return "Gain ($modifiedAmount) max health"
         }
     }
 
-    data class TakeDamagePercentage(val percentage: Float) : Effect(){
+    data class TakeDamagePercentage(override val amount: Float) : Effect(){
         override fun describe(modifiedAmount: Number): String {
             return "Take damage ($modifiedAmount%) of your current health"
         }
     }
 
-    data class TakeDamageOrGainMaxHP(val maxHp: Float) : Effect(){
+    data class TakeDamageOrGainMaxHP(override val amount: Float) : Effect(){
         override fun describe(modifiedAmount: Number): String {
             return "Gain ($modifiedAmount) max health or might explode"
         }
     }
 
-    data class HealOnUnderThreshold(val threshold: Float, val limit: Float) : Effect(){
+    data class HealOnUnderThreshold(val threshold: Float, override val amount: Float) : Effect(){
         override fun describe(modifiedAmount: Number): String {
             return "Heal ($modifiedAmount) if health is under $threshold"
         }
 
     }
 
-    data class TakeSelfDamage(val amount: Float) : Effect(){
+    data class TakeSelfDamage(override val amount: Float) : Effect(){
         override fun describe(modifiedAmount: Number): String {
             return "Take self damage ($modifiedAmount)"
         }
     }
 
-    data class AddMultiplier(val amount: Float) : Effect(){
+    data class AddMultiplier(override val amount: Float) : Effect(){
         override fun describe(modifiedAmount: Number): String {
             return "Gain ($modifiedAmount) Multiplier"
         }
     }
 
-    data class RemoveMultiplier(val amount: Float) : Effect(){
+    data class RemoveMultiplier(override val amount: Float) : Effect(){
         override fun describe(modifiedAmount: Number): String {
             return "Lose ($modifiedAmount) Multiplier"
         }

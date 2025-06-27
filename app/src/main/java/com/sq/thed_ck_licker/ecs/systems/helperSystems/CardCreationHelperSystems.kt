@@ -1,10 +1,5 @@
 package com.sq.thed_ck_licker.ecs.systems.helperSystems
 
-import android.R.attr.targetId
-import android.util.Log
-import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
-import com.sq.thed_ck_licker.ecs.components.EffectComponent
-import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
 import com.sq.thed_ck_licker.ecs.components.OwnerComponent
 import com.sq.thed_ck_licker.ecs.components.effectthing.Effect
 import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
@@ -15,9 +10,7 @@ import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityId
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.generateEntity
-import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.TriggerEffectHandler
-import com.sq.thed_ck_licker.helpers.DescribedEffect
 import javax.inject.Inject
 
 class CardCreationHelperSystems @Inject constructor() {
@@ -28,7 +21,7 @@ class CardCreationHelperSystems @Inject constructor() {
         gainerEntity add scoreComp
         gainerEntity add TriggeredEffectsComponent(
             Trigger.OnTurnStart,
-            Effect.GainScore(scoreComp.getScore())
+            Effect.GainScore(scoreComp.getScore().toFloat())
         )
         gainerEntity add OwnerComponent(targetId)
 

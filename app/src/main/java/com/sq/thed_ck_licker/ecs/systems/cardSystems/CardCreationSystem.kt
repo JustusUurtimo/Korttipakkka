@@ -59,7 +59,7 @@ class CardCreationSystem @Inject constructor(
                     name = "Basic score card V4", hp = 100f, score = scoreSize
                 )
             )(cardId)
-            val score = (cardId get ScoreComponent::class).getScore()
+            val score = (cardId get ScoreComponent::class).getScoreF()
             cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.GainScore(score))
         }
     }
@@ -121,7 +121,7 @@ class CardCreationSystem @Inject constructor(
                     name = "Default Card", hp = 10f, score = 100
                 )
             )(cardId)
-            val score = (cardId get ScoreComponent::class).getScore()
+            val score = (cardId get ScoreComponent::class).getScoreF()
             cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.GainScore(score))
         }
     }

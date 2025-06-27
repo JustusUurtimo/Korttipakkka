@@ -18,6 +18,9 @@ data class ScoreComponent(private var score: MutableIntState): Component {
     fun getScore(): Int {
         return this.score.intValue
     }
+    fun getScoreF(): Float {
+        return this.score.intValue.toFloat()
+    }
 
     fun setScore(score: Int) {
         this.score.intValue = score
