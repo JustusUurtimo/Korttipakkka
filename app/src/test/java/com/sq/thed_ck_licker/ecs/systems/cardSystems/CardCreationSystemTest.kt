@@ -3,6 +3,8 @@ package com.sq.thed_ck_licker.ecs.systems.cardSystems
 import androidx.compose.runtime.mutableIntStateOf
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
+import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
+import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
@@ -51,6 +53,24 @@ class CardCreationSystemTest {
 
     @Test
     fun addDamageCards() {
+        val damageCard = cardCreationSystem.addDamageCards(1).first()
+        owner add LatestCardComponent(mutableIntStateOf(damageCard))
+        val healthComponent = HealthComponent(
+            maxHealth = 1000f
+        )
+        owner add healthComponent
+
+        val context = EffectContext(
+            trigger = Trigger.OnPlay,
+            source = damageCard,
+            target = owner,
+        )
+        val desc = TriggerEffectHandler.describe(context)
+        TriggerEffectHandler.handleTriggerEffect(context)
+
+        assert(healthComponent.getHealth() == 850f) { "Health should be 850f, but was ${healthComponent.getHealth()}" }
+        val realDesc = "OnPlay:\nTake damage (150)"
+        assert(desc == realDesc) { "Description should be\n'$realDesc', but was \n'$desc'" }
     }
 
     @Test
@@ -111,9 +131,27 @@ class CardCreationSystemTest {
     fun addBeerGogglesTestCards() {
     }
 
+
     @Test
     fun addBasicScoreCards() {
+        val basicScoreCard = cardCreationSystem.addBasicScoreCards(1).first()
+        owner add LatestCardComponent(mutableIntStateOf(basicScoreCard))
+        val scoreComponent = ScoreComponent(0)
+        owner add scoreComponent
+
+        val context = EffectContext(
+            trigger = Trigger.OnPlay,
+            source = basicScoreCard,
+            target = owner,
+        )
+        val desc = TriggerEffectHandler.describe(context)
+        TriggerEffectHandler.handleTriggerEffect(context)
+
+        assert(scoreComponent.getScore() == 10) { "Score should be 10, but was ${scoreComponent.getScore()}" }
+        val realDesc = "OnPlay:\nGain 10 points"
+        assert(desc == realDesc) { "Description should be \n'$realDesc', but was \n'$desc'" }
     }
+
 
     @Test
     fun addShuffleTestCards() {
@@ -125,6 +163,25 @@ class CardCreationSystemTest {
 
     @Test
     fun addHealingCards() {
+        val healingCard = cardCreationSystem.addHealingCards(1).first()
+        owner add LatestCardComponent(mutableIntStateOf(healingCard))
+        val healthComponent = HealthComponent(
+            health = 100f,
+            maxHealth = 1000f
+        )
+        owner add healthComponent
+
+        val context = EffectContext(
+            trigger = Trigger.OnPlay,
+            source = healingCard,
+            target = owner,
+        )
+        val desc = TriggerEffectHandler.describe(context)
+        TriggerEffectHandler.handleTriggerEffect(context)
+
+        assert(healthComponent.getHealth() == 140f) { "Health should be 140f, but was ${healthComponent.getHealth()}" }
+        val realDesc = "OnPlay:\nHeal (40)"
+        assert(desc == realDesc) { "Description should be \n'$realDesc', but was \n'$desc'" }
     }
 
     @Test

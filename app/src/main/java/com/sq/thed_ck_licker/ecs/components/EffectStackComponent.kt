@@ -5,6 +5,7 @@ import com.sq.thed_ck_licker.ecs.managers.ComponentManager
 import com.sq.thed_ck_licker.ecs.managers.EntityId
 import com.sq.thed_ck_licker.ecs.managers.hasComponent
 
+@Deprecated("As of 0.1.2.145, Use the TriggerEffectComponent instead")
 data class EffectStackComponent(private val effectEntities: MutableList<EntityId> = mutableListOf<EntityId>()) {
     fun getEffectEntities(): List<EntityId> {
         return this.effectEntities
