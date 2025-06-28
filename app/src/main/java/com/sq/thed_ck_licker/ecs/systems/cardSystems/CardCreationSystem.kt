@@ -191,21 +191,18 @@ class CardCreationSystem @Inject constructor(
             )
         }
     }
-
-    fun addTempMultiplierTestCards(amount: Int = 1): List<EntityId> {
-        val multiplier = 3f
-        val onActivation: (Int) -> Unit = { targetId: Int ->
-            cardCreationHelperSystems.addTemporaryMultiplierTo(
-                targetEntityId = targetId,
-                multiplier = multiplier
+    
+    fun addTempMultiplierTestCards(amount: Int = 1, multiplier: Float = 3f): List<EntityId> {
+        return generateCards(amount) { cardId ->
+            withBasicCardDefaults(
+                CardConfig(
+                    name = "Steroids", hp = 1f
+                )
+            )(cardId)
+            cardId add TriggeredEffectsComponent(
+                Trigger.OnPlay,
+                Effect.AddTempMultiplier(multiplier)
             )
-        }
-        val activationEffect = DescribedEffect(onActivation) { "Inject steroids and make more every time you do any thing ($multiplier times)" }
-        return cardBuilder.buildCards {
-            cardHealth = 1f
-            cardAmount = amount
-            name = "Steroids"
-            onCardPlay = activationEffect
         }
     }
 

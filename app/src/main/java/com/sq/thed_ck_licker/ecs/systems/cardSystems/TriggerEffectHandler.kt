@@ -202,6 +202,12 @@ object TriggerEffectHandler {
                         effect.amount
                     )
                 }
+                is Effect.AddTempMultiplier -> {
+                    CardCreationHelperSystems2.addLimitedSupplyAutoHealToEntity(
+                        context.target,
+                        effect.amount
+                    )
+                }
             }
         }
     }

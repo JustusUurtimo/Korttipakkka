@@ -148,4 +148,10 @@ sealed class Effect {
         }
     }
 
+    data class AddTempMultiplier(override val amount: Float) : Effect() {
+        override fun describe(modifiedAmount: Float?): String {
+            return "Inject steroids and make more every time you do any thing ($amount times)"
+        }
+    }
+
 }

@@ -2,6 +2,7 @@ package com.sq.thed_ck_licker.ecs.systems.helperSystems
 
 import com.sq.thed_ck_licker.ecs.components.OwnerComponent
 import com.sq.thed_ck_licker.ecs.components.effectthing.Effect
+import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
 import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
 import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
@@ -9,6 +10,7 @@ import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityId
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.generateEntity
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.TriggerEffectHandler
 
 object CardCreationHelperSystems2 {
 
@@ -33,5 +35,37 @@ object CardCreationHelperSystems2 {
         )
         limitedHealEntity add OwnerComponent(targetId)
         return limitedHealEntity
+    }
+
+
+    fun addTemporaryMultiplierTo(
+        targetEntityId: EntityId,
+        health: Float = 28f,
+        multiplier: Float = 2.8f
+    ): EntityId {
+        val limitedMultiEntity = generateEntity()
+        limitedMultiEntity add  HealthComponent(health)
+        limitedMultiEntity add OwnerComponent(targetEntityId)
+
+        limitedMultiEntity add TriggeredEffectsComponent(
+            mutableMapOf(
+                Trigger.OnCreation to mutableListOf(
+                    Effect.AddMultiplier(multiplier)
+                ),
+                Trigger.OnTurnStart to mutableListOf(
+                    Effect.TakeSelfDamage(1f)
+                ),
+                Trigger.OnDeath to mutableListOf(
+                    Effect.RemoveMultiplier(multiplier)
+                )
+            )
+        )
+
+        TriggerEffectHandler.handleTriggerEffect(EffectContext(
+            trigger = Trigger.OnCreation,
+            source = limitedMultiEntity,
+            target = targetEntityId
+        ))
+        return limitedMultiEntity
     }
 }

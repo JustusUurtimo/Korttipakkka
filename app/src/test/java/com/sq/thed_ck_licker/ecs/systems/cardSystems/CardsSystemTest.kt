@@ -15,6 +15,7 @@ import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.characterSystems.PlayerSystem_Factory
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.CardCreationHelperSystems
+import com.sq.thed_ck_licker.ecs.systems.helperSystems.CardCreationHelperSystems2
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.CardCreationHelperSystems_Factory
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.MultiplierSystem
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.MultiplierSystem_Factory
@@ -158,7 +159,7 @@ class CardsSystemTest {
         owner add ScoreComponent()
         owner add MultiplierComponent()
 
-        cardCreationHelperSystems.addTemporaryMultiplierTo(
+        CardCreationHelperSystems2.addTemporaryMultiplierTo(
             targetEntityId = owner,
             health = 5f,
             multiplier = 6f
