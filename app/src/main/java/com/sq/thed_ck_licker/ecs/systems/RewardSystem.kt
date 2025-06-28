@@ -55,7 +55,7 @@ class RewardSystem @Inject constructor(
     fun getRewardCards(): List<Int> {
         val playerScore = playerSystem.getPlayerScore()
         val rewardTier = when {
-            playerScore in 1000..1999 -> {getRegularRewardID()}
+            playerScore in 100..199 -> {getRegularRewardID()}
             else -> { getSpecialRewardID() }
         }
         val deck = (rewardTier get DrawDeckComponent::class).getDrawCardDeck()
@@ -67,7 +67,7 @@ class RewardSystem @Inject constructor(
     }
 
     fun selectReward(chosenCard: Int) {
-
+        playerSystem.setLatestCard(chosenCard)
     }
 
 }

@@ -110,7 +110,7 @@ fun PitScreen(
                         )
 
                         if (isZoomed) {
-                            Spacer(modifier = Modifier.height(48.dp))
+                            Spacer(modifier = Modifier.height(100.dp))
                             Button(
                                 modifier = modifier.align(Alignment.CenterHorizontally),
                                 onClick = {dropCardInPit(zoomedCardId.intValue)}

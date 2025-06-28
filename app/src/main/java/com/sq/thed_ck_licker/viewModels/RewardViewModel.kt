@@ -13,7 +13,7 @@ class RewardViewModel @Inject constructor(private val rewardSystem: RewardSystem
     private val _rewardSelection = MutableStateFlow<List<Int>>(emptyList())
     val rewardSelection: StateFlow<List<Int>> get() = _rewardSelection
 
-    fun getRewardCards(rewardTier: Int): List<Int> {
+    fun getRewardCards(): List<Int> {
         return rewardSystem.getRewardCards().also {
             _rewardSelection.value = it
         }

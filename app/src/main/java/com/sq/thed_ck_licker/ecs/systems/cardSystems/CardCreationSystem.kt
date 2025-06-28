@@ -130,7 +130,7 @@ class CardCreationSystem @Inject constructor(
 
 
     fun addBreakingDefaultCards(amount: Int = 7): List<EntityId> {
-        val scoreIt = { targetId: Int ->
+        val scoreIt: (Int) -> Unit = { targetId: Int ->
             val cardEntity = (targetId get LatestCardComponent::class).getLatestCard()
             val target = targetId get ScoreComponent::class
             val omaScore = cardEntity get ScoreComponent::class

@@ -107,7 +107,7 @@ fun GameNavigation(
             PitScreen(modifier, gameNavigator, pitViewModel)
         }
 
-        composable(route = Screen.Reward.route)
+        composable(route = Screen.RewardScreen.route)
         {
             val viewModel: RewardViewModel = hiltViewModel()
             RewardScreen(modifier, viewModel, gameNavigator)

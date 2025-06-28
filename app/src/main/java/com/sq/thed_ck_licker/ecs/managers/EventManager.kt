@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 sealed class GameEvent {
     object PlayerDied : GameEvent()
     object ShovelUsed : GameEvent()
+    object RewardTierChanged : GameEvent()
 }
 
 sealed class MerchantEvent {
