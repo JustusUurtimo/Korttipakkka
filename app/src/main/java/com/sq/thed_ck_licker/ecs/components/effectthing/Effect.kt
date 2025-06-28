@@ -1,5 +1,7 @@
 package com.sq.thed_ck_licker.ecs.components.effectthing
 
+import com.sq.thed_ck_licker.helpers.navigation.GameNavigator
+
 sealed class Effect {
     /*
      * If we end up having multiple things at same effect, this will allow all of them:
@@ -7,6 +9,8 @@ sealed class Effect {
      * until then the single version is good enough
      */
     open fun describe(modifiedAmount: Float?): String? = null
+
+    open fun describe(): String? = null
 
     /**
      * I am not super happy with this.
@@ -18,12 +22,17 @@ sealed class Effect {
      */
     open val amount:Float? = null
 
+    open fun describeWithContext(modifiedAmount: Float?): String? {
+        return describe(modifiedAmount) ?: describe()
+    }
+
 
     data class GainScore(override val amount: Float) : Effect(){
         override fun describe(modifiedAmount: Float?): String { //Not super sure about this one...
             return "Gain ($modifiedAmount) points"
         }
     }
+
     object GainScoreFromScoreComp: Effect() {
         override fun describe(modifiedAmount: Float?): String {
             return "Gain ($modifiedAmount) points"
@@ -100,7 +109,7 @@ sealed class Effect {
         }
     }
 
-    class StoreDamageDealtAsSelfScore() : Effect() {
+    object StoreDamageDealtAsSelfScore : Effect() {
         override fun describe(modifiedAmount: Float?): String {
             return "Store ($modifiedAmount) points to self."
         }
@@ -154,4 +163,15 @@ sealed class Effect {
         }
     }
 
+    object Shovel : Effect() {
+        override fun describe(): String {
+            return "Open the fiery pit of doom!"
+        }
+    }
+
+    data class OpenMerchant(override val amount: Float, val gameNavigator: GameNavigator) : Effect() {
+        override fun describe(): String {
+            return "Gain access to a shop"
+        }
+    }
 }

@@ -10,10 +10,13 @@ import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.GameEvent
 import com.sq.thed_ck_licker.ecs.managers.GameEvents
+import com.sq.thed_ck_licker.ecs.managers.MerchantEvent
+import com.sq.thed_ck_licker.ecs.managers.MerchantEvents
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.CardCreationHelperSystems2
 import com.sq.thed_ck_licker.helpers.MyRandom
+import com.sq.thed_ck_licker.helpers.navigation.Screen
 import kotlin.math.abs
 import kotlin.math.min
 
@@ -213,6 +216,15 @@ object TriggerEffectHandler {
                 is Effect.Shovel -> {
                     GameEvents.tryEmit(GameEvent.ShovelUsed)
                 }
+                is Effect.OpenMerchant -> {
+                    MerchantEvents.tryEmit(
+                        MerchantEvent.MerchantShopOpened(
+                            effect.amount.toInt(),
+                            source
+                        )
+                    )
+                    effect.gameNavigator.navigateTo(Screen.MerchantShop.route)
+                }
             }
         }
     }
@@ -269,7 +281,7 @@ object TriggerEffectHandler {
                             (effect.amount?.times(sourceMulti)?.times(targetMulti))
                         }
                     }
-                result += effect.describe(amount) + "\n"
+                result += effect.describeWithContext(amount) + "\n"
             }
         }
         result = result.trimEnd()

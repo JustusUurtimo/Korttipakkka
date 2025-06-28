@@ -10,12 +10,9 @@ import com.sq.thed_ck_licker.ecs.components.TagsComponent.CardTag
 import com.sq.thed_ck_licker.ecs.components.effectthing.Effect
 import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
 import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
-import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityId
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
-import com.sq.thed_ck_licker.ecs.managers.MerchantEvent
-import com.sq.thed_ck_licker.ecs.managers.MerchantEvents
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.CardConfig
@@ -25,7 +22,6 @@ import com.sq.thed_ck_licker.ecs.systems.helperSystems.CardCreationHelperSystems
 import com.sq.thed_ck_licker.helpers.DescribedEffect
 import com.sq.thed_ck_licker.helpers.MyRandom.random
 import com.sq.thed_ck_licker.helpers.navigation.GameNavigator
-import com.sq.thed_ck_licker.helpers.navigation.Screen
 import javax.inject.Inject
 
 class CardCreationSystem @Inject constructor(
@@ -78,20 +74,19 @@ class CardCreationSystem @Inject constructor(
     }
 
     fun addMerchantCards(amount: Int, merchantId: Int): List<EntityId> {
-        val openMerchant = { _: Int ->
-            val cardEntity = (getPlayerID() get LatestCardComponent::class).getLatestCard()
-            MerchantEvents.tryEmit(MerchantEvent.MerchantShopOpened(merchantId, cardEntity))
-            gameNavigator.navigateTo(Screen.MerchantShop.route)
+        return generateCards(amount) { cardId ->
+            withBasicCardDefaults(
+                CardConfig(
+                    name = "Merchant #$merchantId",
+                    characterId = merchantId,
+                    tags = listOf(CardTag.CARD, CardTag.MERCHANT)
+                )
+            )(cardId)
+            cardId add TriggeredEffectsComponent(
+                Trigger.OnPlay,
+                Effect.OpenMerchant(merchantId.toFloat(), gameNavigator)
+            )
         }
-        val describedEffect = DescribedEffect(openMerchant) { "Gain access to a shop" }
-        return cardBuilder.buildCards {
-            cardAmount = amount
-            name = "Merchant #$merchantId"
-            characterId = merchantId
-            onCardPlay = describedEffect
-            tags = listOf(CardTag.CARD, CardTag.MERCHANT)
-        }
-
     }
 
     fun addMaxHpTrapCards(amount: Int = 5): List<EntityId> {
