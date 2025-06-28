@@ -94,6 +94,12 @@ sealed class Effect {
         }
     }
 
+    data class TakeRisingScore(override var amount: Float, var risingAmount: Float) : Effect() {
+        override fun describe(modifiedAmount: Float?): String {
+            return "Take ($modifiedAmount) rising score damage."
+        }
+    }
+
     class StoreDamageDealtAsSelfScore() : Effect() {
         override fun describe(modifiedAmount: Float?): String {
             return "Store ($modifiedAmount) points to self."

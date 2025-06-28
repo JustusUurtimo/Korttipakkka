@@ -180,6 +180,13 @@ object TriggerEffectHandler {
                         effectsByTrigger = mutableMap.toMap()
                     )
                 }
+
+                is Effect.TakeRisingScore -> {
+                    val scoreComponent = (target get ScoreComponent::class)
+                    val amount = (effect.amount * sourceMulti * targetMulti).toFloat()
+                    scoreComponent.addScore(amount.toInt())
+                    effect.amount += effect.risingAmount
+                }
             }
         }
     }

@@ -151,45 +151,20 @@ class CardCreationSystem @Inject constructor(
     }
 
     fun addTrapTestCards(amount: Int = 1): List<EntityId> {
-
-
-        val onDeactivation = { targetId: Int ->
-            val cardEntity = (getPlayerID() get LatestCardComponent::class).getLatestCard()
-            val target = targetId get ScoreComponent::class
-            val activationComponent = (cardEntity get ActivationCounterComponent::class)
-            target.reduceScore(((1 + activationComponent.getDeactivations()) * 30))
-        }
-        val deactivationEffect =
-            DescribedEffect(onDeactivation) { targetId: EntityId ->
-                val cardEntity = (targetId get LatestCardComponent::class).getLatestCard()
-                val activationComponent = (cardEntity get ActivationCounterComponent::class)
-                val amount = (1 + activationComponent.getDeactivations()) * 30
-                "Lose Score based on deactivations ($amount score)"
-            }
-
-
-        val onActivation: (Int) -> Unit = { targetId: Int ->
-            val cardEntity = (targetId get LatestCardComponent::class).getLatestCard()
-            val target = targetId get HealthComponent::class
-            val activationComponent = cardEntity get ActivationCounterComponent::class
-            val damageAmount = ((1 + activationComponent.getActivations()) * 5).toFloat()
-            target.damage(damageAmount)
-        }
-        val activationEffect = DescribedEffect(onActivation) { _: Int ->
-            val cardEntity = (getPlayerID() get LatestCardComponent::class).getLatestCard()
-            val activationComponent = cardEntity get ActivationCounterComponent::class
-            val damageAmount = ((1 + activationComponent.getActivations()) * 5).toFloat()
-            "Lose health based on activations (${damageAmount} health)"
+        return generateCards(amount) { cardId ->
+            withBasicCardDefaults(
+                CardConfig(
+                    name = "Trap card", hp = 50f, score = 1
+                )
+            )(cardId)
+            cardId add TriggeredEffectsComponent(
+                mutableMapOf(
+                    Trigger.OnPlay to mutableListOf(Effect.TakeRisingDamage(5f, 5f)),
+                    Trigger.OnDeactivation to mutableListOf(Effect.TakeRisingScore(-30f, -30f)),
+                )
+            )
         }
 
-
-        return cardBuilder.buildCards {
-            scoreAmount = 1
-            cardAmount = amount
-            name = "Trap card"
-            onCardPlay = activationEffect
-            onCardDeactivate = deactivationEffect
-        }
     }
 
     fun addScoreGainerTestCards(amount: Int = 1): List<EntityId> {
