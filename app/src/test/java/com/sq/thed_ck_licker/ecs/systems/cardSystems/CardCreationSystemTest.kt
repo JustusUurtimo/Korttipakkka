@@ -20,6 +20,7 @@ import com.sq.thed_ck_licker.helpers.navigation.GameNavigator_Factory
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.properties.Delegates
+import kotlin.test.assertEquals
 
 class CardCreationSystemTest {
     var cardCreationSystem by Delegates.notNull<CardCreationSystem>()
@@ -41,9 +42,6 @@ class CardCreationSystemTest {
         val scoreComponent = ScoreComponent(100)
         owner add scoreComponent
 
-//        val desc = (breakingCard get EffectComponent::class).onPlay.describe(owner)
-//        (breakingCard get EffectComponent::class).onPlay.action(owner)
-
         val context = EffectContext(
             trigger = Trigger.OnPlay,
             source = breakingCard,
@@ -53,7 +51,7 @@ class CardCreationSystemTest {
         TriggerEffectHandler.handleTriggerEffect(context)
 
         assert(scoreComponent.getScore() == 200) { "Score should be 200, but was ${scoreComponent.getScore()}" }
-        val realDesc = "OnPlay:\nGain (100) points"
+        val realDesc = "OnPlay:\nGain (100.0) points"
         assert(desc == realDesc) { "Description should be \n'$realDesc', but was \n'$desc'" }
     }
 
@@ -79,7 +77,7 @@ class CardCreationSystemTest {
         TriggerEffectHandler.handleTriggerEffect(context)
 
         assert(healthComponent.getHealth() == 850f) { "Health should be 850f, but was ${healthComponent.getHealth()}" }
-        val realDesc = "OnPlay:\nTake damage (150)"
+        val realDesc = "OnPlay:\nTake damage (150.0)"
         assert(desc == realDesc) { "Description should be\n'$realDesc', but was \n'$desc'" }
     }
 
@@ -155,7 +153,7 @@ class CardCreationSystemTest {
 
         assert(hp == 50f) { "Health should be 50, but hp was $hp" }
         assert(maxi == 100f) { "Max health should be 100, but maxi was $maxi" }
-        val realDesc = "OnPlay:\nGain (10) max health or might explode"
+        val realDesc = "OnPlay:\nGain (10.0) max health or might explode"
         assert(desc == realDesc) { "Description should be \n'$realDesc', but was \n'$desc'" }
     }
 
@@ -182,7 +180,7 @@ class CardCreationSystemTest {
 
         assert(hp == 100f) { "Health should be 100, but hp was $hp" }
         assert(maxi == 110f) { "Max health should be 110, but maxi was $maxi" }
-        val realDesc = "OnPlay:\nGain (10) max health or might explode"
+        val realDesc = "OnPlay:\nGain (10.0) max health or might explode"
         assert(desc == realDesc) { "Description should be \n'$realDesc', but was \n'$desc'" }
     }
 
@@ -207,7 +205,7 @@ class CardCreationSystemTest {
         TriggerEffectHandler.handleTriggerEffect(context)
 
         assert(scoreComponent.getScore() == 10) { "Score should be 10, but was ${scoreComponent.getScore()}" }
-        val realDesc = "OnPlay:\nGain (10) points"
+        val realDesc = "OnPlay:\nGain (10.0) points"
         assert(desc == realDesc) { "Description should be \n'$realDesc', but was \n'$desc'" }
     }
 
@@ -223,7 +221,6 @@ class CardCreationSystemTest {
     @Test
     fun addHealingCards() {
         val healingCard = cardCreationSystem.addHealingCards(1).first()
-        owner add LatestCardComponent(mutableIntStateOf(healingCard))
         val healthComponent = HealthComponent(
             health = 100f,
             maxHealth = 1000f
@@ -239,7 +236,7 @@ class CardCreationSystemTest {
         TriggerEffectHandler.handleTriggerEffect(context)
 
         assert(healthComponent.getHealth() == 140f) { "Health should be 140f, but was ${healthComponent.getHealth()}" }
-        val realDesc = "OnPlay:\nHeal (40)"
+        val realDesc = "OnPlay:\nHeal (40.0)"
         assert(desc == realDesc) { "Description should be \n'$realDesc', but was \n'$desc'" }
     }
 
@@ -248,8 +245,106 @@ class CardCreationSystemTest {
     }
 
     @Test
-    fun addDeactivationTestCards() {
+    fun `DeactivationTestCard OnPlay should not affect score or HP initially`() {
+        val deactCard = cardCreationSystem.addDeactivationTestCards(1).first()
+        owner add HealthComponent(1000f)
+        owner add ScoreComponent(0)
+
+        val context = EffectContext(
+            trigger = Trigger.OnPlay,
+            source = deactCard,
+            target = owner,
+        )
+
+        TriggerEffectHandler.handleTriggerEffect(context)
+
+        assertEquals(0, (owner get ScoreComponent::class).getScore())
+        assertEquals(1000f, (owner get HealthComponent::class).getHealth())
     }
+
+    @Test
+    fun `DeactivationTestCard OnDeactivation should reduce HP over time`() {
+        val deactCard = cardCreationSystem.addDeactivationTestCards(1).first()
+        owner add HealthComponent(1000f)
+        owner add ScoreComponent(0)
+
+        val context = EffectContext(
+            trigger = Trigger.OnDeactivation,
+            source = deactCard,
+            target = owner,
+        )
+
+        repeat(10) {
+            TriggerEffectHandler.handleTriggerEffect(context)
+        }
+
+        assertEquals(945f, (owner get HealthComponent::class).getHealth())
+        assertEquals(0, (owner get ScoreComponent::class).getScore())
+    }
+
+
+    @Test
+    fun `DeactivationTestCard OnDeactivation, then OnActivation should give points`() {
+        val deactCard = cardCreationSystem.addDeactivationTestCards(1).first()
+        val hpComp = HealthComponent(1000f)
+        owner add hpComp
+        val scoreComp = ScoreComponent(0)
+        owner add scoreComp
+
+        val actContext = EffectContext(
+            trigger = Trigger.OnPlay,
+            source = deactCard,
+            target = owner,
+        )
+
+        val deActContext = EffectContext(
+            trigger = Trigger.OnDeactivation,
+            source = deactCard,
+            target = owner,
+        )
+
+        val thing = deactCard get ScoreComponent::class
+        repeat(10) {
+            TriggerEffectHandler.handleTriggerEffect(deActContext)
+        }
+        TriggerEffectHandler.handleTriggerEffect(actContext)
+
+        assertEquals(1650, scoreComp.getScore())
+        assertEquals(945f, hpComp.getHealth())
+    }
+
+    @Test
+    fun `DeactivationTestCard OnDeactivation, OnActivation then OnActivation should not give points`() {
+        val deactCard = cardCreationSystem.addDeactivationTestCards(1).first()
+        val hpComp = HealthComponent(1000f)
+        owner add hpComp
+        val scoreComp = ScoreComponent(0)
+        owner add scoreComp
+
+        val actContext = EffectContext(
+            trigger = Trigger.OnPlay,
+            source = deactCard,
+            target = owner,
+        )
+
+        val deActContext = EffectContext(
+            trigger = Trigger.OnDeactivation,
+            source = deactCard,
+            target = owner,
+        )
+
+
+        repeat(10) {
+            TriggerEffectHandler.handleTriggerEffect(deActContext)
+        }
+        TriggerEffectHandler.handleTriggerEffect(actContext)
+
+        TriggerEffectHandler.handleTriggerEffect(actContext)
+
+        assertEquals(1650, scoreComp.getScore())
+        assertEquals(945f, hpComp.getHealth())
+    }
+
 
     @Test
     fun addTempMultiplierTestCards() {

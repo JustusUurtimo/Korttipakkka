@@ -121,45 +121,32 @@ class CardCreationSystem @Inject constructor(
                     name = "Default Card", hp = 10f, score = 100
                 )
             )(cardId)
-            val score = (cardId get ScoreComponent::class).getScoreF()
-            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.GainScore(score))
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.GainScoreFromScoreComp)
         }
     }
 
-    fun addDeactivationTestCards(amount: Int = 2): List<EntityId> {
-        var stepSize = 2
-        var baseDamage = 1
-        val onActivation = { targetId: Int ->
-            val cardEntity = (getPlayerID() get LatestCardComponent::class).getLatestCard()
-            val target = targetId get ScoreComponent::class
-            val riskPoints = cardEntity get ScoreComponent::class
-            val scoreIncrease = riskPoints.getScore() * 30
-            target.addScore(scoreIncrease)
-            riskPoints.setScore(0)
-        }
-        val deactivateAction = { playerId: Int ->
-            val cardEntity = (getPlayerID() get LatestCardComponent::class).getLatestCard()
-            val target = playerId get HealthComponent::class
-            val riskPoints = cardEntity get ScoreComponent::class
-            riskPoints.addScore(baseDamage)
-            stepSize++
-            baseDamage += stepSize
-            target.damage(riskPoints.getScore().toFloat())
+    fun addDeactivationTestCards(amount: Int = 2, multiplier:Float = 30f): List<EntityId> {
+        return generateCards(amount) { cardId ->
+            withBasicCardDefaults(
+                CardConfig(
+                    name = "Deactivation Card", hp = 10f, score = 0, multiplier = multiplier
+                )
+            )(cardId)
 
-        }
-        val activationEffect = DescribedEffect(onActivation) { targetId ->
-            val score = (targetId get ScoreComponent::class).getScore()
-            "Gain 3x points based on health lost from this card ($score points)"
-        }
-        val deactivationEffect = DescribedEffect(deactivateAction) { _ ->
-            "Lose health ($baseDamage points)"
-        }
-        return cardBuilder.buildCards {
-            scoreAmount = 0
-            cardAmount = amount
-            name = "Deactivation Card"
-            onCardPlay = activationEffect
-            onCardDeactivate = deactivationEffect
+            val asd = 1/multiplier
+            cardId add TriggeredEffectsComponent(
+                mutableMapOf(
+                    Trigger.OnPlay to mutableListOf( //Not happy at all with this...
+                        Effect.GainScoreFromScoreComp,
+                        Effect.ResetSelfScore(),
+                        Effect.ResetTakeRisingDamage(asd,asd)
+                    ), Trigger.OnDeactivation to mutableListOf(
+                        Effect.TakeRisingDamage(asd,asd),
+                        Effect.StoreDamageDealtAsSelfScore()
+                    )
+                )
+            )
+
         }
     }
 
@@ -181,7 +168,7 @@ class CardCreationSystem @Inject constructor(
             }
 
 
-        val onActivation = { targetId: Int ->
+        val onActivation: (Int) -> Unit = { targetId: Int ->
             val cardEntity = (targetId get LatestCardComponent::class).getLatestCard()
             val target = targetId get HealthComponent::class
             val activationComponent = cardEntity get ActivationCounterComponent::class

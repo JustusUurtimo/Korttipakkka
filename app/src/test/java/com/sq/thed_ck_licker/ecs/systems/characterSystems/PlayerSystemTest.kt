@@ -16,7 +16,6 @@ import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem_Factory
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.CardCreationHelperSystems_Factory
-import com.sq.thed_ck_licker.ecs.systems.helperSystems.MultiplierSystem
 import com.sq.thed_ck_licker.helpers.navigation.GameNavigator_Factory
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -47,9 +46,7 @@ class PlayerSystemTest {
 
         playerSystem = PlayerSystem(cardCreationSystem)
 
-        cardsSystem = CardsSystem_Factory.newInstance(
-            MultiplierSystem(ComponentManager.componentManager), playerSystem
-        )
+        cardsSystem = CardsSystem_Factory.newInstance(playerSystem)
 
         cardPullingSystem = CardPullingSystem(
             cardsSystem = cardsSystem, playerSystem = playerSystem

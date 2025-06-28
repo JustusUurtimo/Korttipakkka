@@ -41,7 +41,7 @@ class CardsSystemTest {
             gameNavigator = GameNavigator_Factory.newInstance()
         )
         val playerSystem = PlayerSystem_Factory.newInstance(cardCreationSystem)
-        cardManager = CardsSystem_Factory.newInstance(multiSystem, playerSystem)
+        cardManager = CardsSystem_Factory.newInstance(playerSystem)
         owner = EntityManager.getPlayerID()
     }
 

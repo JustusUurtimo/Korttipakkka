@@ -15,15 +15,12 @@ import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.TriggerEffectHandler.handleTriggerEffect
 import com.sq.thed_ck_licker.ecs.systems.characterSystems.PlayerSystem
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.DeathSystem
-import com.sq.thed_ck_licker.ecs.systems.helperSystems.MultiplierSystem
+import com.sq.thed_ck_licker.ecs.systems.helperSystems.DiscardSystem
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.TurnStartSystem
-import com.sq.thed_ck_licker.ecs.systems.helperSystems.discardSystem
-import com.sq.thed_ck_licker.ecs.systems.helperSystems.onTurnStartEffectStackSystem
 import com.sq.thed_ck_licker.helpers.getRandomElement
 import javax.inject.Inject
 
 class CardsSystem @Inject constructor(
-    private var multiSystem: MultiplierSystem,
     private val playerSystem: PlayerSystem
 ) {
 
@@ -103,7 +100,7 @@ class CardsSystem @Inject constructor(
                         "Yeah yeah, we get it, you are so cool there was no actCounter component"
             )
         }
-        discardSystem(ownerId = getPlayerID(), cardId = latestCard)
+        DiscardSystem.handleDiscard(ownerId = getPlayerID(), cardId = latestCard)
         playerSystem.setLatestCard(-1)
     }
 }

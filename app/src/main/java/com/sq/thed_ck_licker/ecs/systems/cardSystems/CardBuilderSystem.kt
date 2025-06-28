@@ -21,6 +21,7 @@ import com.sq.thed_ck_licker.ecs.systems.helperSystems.DeathSystem
 import com.sq.thed_ck_licker.helpers.DescribedEffect
 import javax.inject.Inject
 
+@Deprecated("As of 0.1.2.148, Use CardBuilderSystem2 instead")
 class CardBuilderSystem @Inject constructor(private val componentManager: ComponentManager) {
 
     var cardHealth: Float? = null

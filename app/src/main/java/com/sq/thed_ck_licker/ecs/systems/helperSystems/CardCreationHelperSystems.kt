@@ -30,8 +30,7 @@ class CardCreationHelperSystems @Inject constructor() {
 
     fun addLimitedSupplyAutoHealToEntity(targetId: EntityId, health: Float, threshold: Float = 0.5f): EntityId {
         val limitedHealEntity = generateEntity()
-        val selfHp = HealthComponent(health)
-        limitedHealEntity add selfHp
+        limitedHealEntity add HealthComponent(health)
         limitedHealEntity add TriggeredEffectsComponent(
             Trigger.OnTurnStart, Effect.HealOnUnderThreshold(health, threshold)
         )
@@ -45,8 +44,7 @@ class CardCreationHelperSystems @Inject constructor() {
         multiplier: Float = 2.8f
     ): EntityId {
         val limitedMultiEntity = generateEntity()
-        val selfHp = HealthComponent(health)
-        limitedMultiEntity add selfHp
+        limitedMultiEntity add  HealthComponent(health)
         limitedMultiEntity add OwnerComponent(targetEntityId)
 
         limitedMultiEntity add TriggeredEffectsComponent(

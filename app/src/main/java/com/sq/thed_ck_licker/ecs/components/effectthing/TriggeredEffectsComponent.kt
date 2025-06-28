@@ -1,6 +1,7 @@
 package com.sq.thed_ck_licker.ecs.components.effectthing
 
 import com.sq.thed_ck_licker.ecs.components.Component
+import kotlin.reflect.KClass
 
 /**
  * These two are functionally identical:
@@ -20,4 +21,19 @@ data class TriggeredEffectsComponent(
     constructor(trigger: Trigger = Trigger.OnPlay, vararg effects: Effect) : this(
         mutableMapOf(trigger to effects.toList())
     )
+
+
+    fun <T : Effect> findEffect(eff: KClass<T>): List<T> {
+        val result = mutableListOf<T>()
+        for (entry in effectsByTrigger) {
+            for (effect in entry.value) {
+                if (effect::class == eff) {
+                    @Suppress("UNCHECKED_CAST")
+                    result.add(effect as T)
+                }
+            }
+        }
+        return result
+    }
+
 }
