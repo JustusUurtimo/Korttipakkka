@@ -21,7 +21,7 @@ class CardCreationHelperSystems @Inject constructor() {
         gainerEntity add scoreComp
         gainerEntity add TriggeredEffectsComponent(
             Trigger.OnTurnStart,
-            Effect.GainScore(scoreComp.getScore().toFloat())
+            Effect.GainScore(scoreComp.getScoreF())
         )
         gainerEntity add OwnerComponent(targetId)
 
@@ -33,7 +33,7 @@ class CardCreationHelperSystems @Inject constructor() {
         val selfHp = HealthComponent(health)
         limitedHealEntity add selfHp
         limitedHealEntity add TriggeredEffectsComponent(
-            Trigger.OnTurnStart, Effect.HealOnUnderThreshold(threshold, health)
+            Trigger.OnTurnStart, Effect.HealOnUnderThreshold(health, threshold)
         )
         limitedHealEntity add OwnerComponent(targetId)
         return limitedHealEntity

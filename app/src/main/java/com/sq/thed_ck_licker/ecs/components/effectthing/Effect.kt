@@ -55,13 +55,16 @@ sealed class Effect {
         }
     }
 
-    data class HealOnUnderThreshold(val threshold: Float, override val amount: Float) : Effect(){
+    data class HealOnUnderThreshold(override val amount: Float, val threshold: Float) : Effect() {
         override fun describe(modifiedAmount: Number): String {
             return "Heal ($modifiedAmount) if health is under $threshold"
         }
 
     }
 
+    /**
+     * Differs from the Take damage as the source takes this damage instead of the target
+     */
     data class TakeSelfDamage(override val amount: Float) : Effect(){
         override fun describe(modifiedAmount: Number): String {
             return "Take self damage ($modifiedAmount)"

@@ -141,44 +141,15 @@ object TriggerEffectHandler {
             for (effect in effectsList) {
                 val amount =
                     when (effect) {
-                        is Effect.GainScore -> {
-                            (effect.amount * sourceMulti * targetMulti).toInt()
-                        }
-
-                        is Effect.GainHealth -> {
-                            (effect.amount * sourceMulti * targetMulti).toInt()
-                        }
-
-                        is Effect.TakeDamage -> {
-                            (effect.amount * sourceMulti * targetMulti).toInt()
-                        }
-
-                        is Effect.GainMaxHealth -> {
-                            (effect.amount * sourceMulti * targetMulti).toInt()
-                        }
-
-                        is Effect.TakeDamagePercentage -> {
-                            (effect.amount * sourceMulti * targetMulti).toInt()
-                        }
-
-                        is Effect.TakeDamageOrGainMaxHP -> {
-                            (effect.amount * sourceMulti * targetMulti).toInt()
-                        }
-
-                        is Effect.HealOnUnderThreshold -> {
-                            (effect.amount * sourceMulti * targetMulti).toInt()
-                        }
-
-                        is Effect.TakeSelfDamage -> {
-                            (effect.amount * sourceMulti * targetMulti).toInt()
-                        }
-
                         is Effect.AddMultiplier -> {
                             effect.amount.toFloat()
                         }
 
                         is Effect.RemoveMultiplier -> {
                             effect.amount.toFloat()
+                        }
+                        else -> {
+                            (effect.amount * sourceMulti * targetMulti).toInt()
                         }
                     }
                 result += effect.describe(amount) + "\n"
