@@ -2,6 +2,7 @@ package com.sq.thed_ck_licker.ecs.systems.cardSystems
 
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
 import com.sq.thed_ck_licker.ecs.components.effectthing.Effect
+import com.sq.thed_ck_licker.ecs.components.effectthing.Effect.TakeRisingDamage
 import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
 import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
 import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
@@ -9,6 +10,7 @@ import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.get
+import com.sq.thed_ck_licker.ecs.systems.helperSystems.CardCreationHelperSystems2
 import com.sq.thed_ck_licker.helpers.MyRandom
 import kotlin.math.abs
 import kotlin.math.min
@@ -167,7 +169,7 @@ object TriggerEffectHandler {
                                 filteredEffects.add(effect)
                             } else {
                                 filteredEffects.add(
-                                    Effect.TakeRisingDamage(
+                                    TakeRisingDamage(
                                         effect.amount,
                                         effect.risingAmount
                                     )
@@ -186,6 +188,13 @@ object TriggerEffectHandler {
                     val amount = (effect.amount * sourceMulti * targetMulti).toFloat()
                     scoreComponent.addScore(amount.toInt())
                     effect.amount += effect.risingAmount
+                }
+
+                is Effect.AddScoreGainer -> {
+                    CardCreationHelperSystems2.addPassiveScoreGainerToEntity(
+                        context.target,
+                        effect.amount.toInt()
+                    )
                 }
             }
         }

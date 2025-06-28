@@ -2,7 +2,6 @@ package com.sq.thed_ck_licker.ecs.systems.cardSystems
 
 import android.util.Log
 import com.sq.thed_ck_licker.R
-import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
@@ -11,7 +10,6 @@ import com.sq.thed_ck_licker.ecs.components.TagsComponent.CardTag
 import com.sq.thed_ck_licker.ecs.components.effectthing.Effect
 import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
 import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
-import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityId
@@ -164,23 +162,19 @@ class CardCreationSystem @Inject constructor(
                 )
             )
         }
-
     }
 
-    fun addScoreGainerTestCards(amount: Int = 1): List<EntityId> {
-        val pointsPerCard = 3
-        val onActivation: (Int) -> Unit = { playerId: Int ->
-            cardCreationHelperSystems.addPassiveScoreGainerToEntity(playerId, pointsPerCard)
-        }
-        val activationEffect = DescribedEffect(onActivation) {
-            "Gain Score gainer\n Every time you play card you gain $pointsPerCard points"
-        }
-        return cardBuilder.buildCards {
-            cardHealth = 1f
-            scoreAmount = pointsPerCard
-            cardAmount = amount
-            name = "Score Gainer Card"
-            onCardPlay = activationEffect
+    fun addScoreGainerTestCards(amount: Int = 1, pointsPerCard: Int = 3): List<EntityId> {
+        return generateCards(amount) { cardId ->
+            withBasicCardDefaults(
+                CardConfig(
+                    name = "Score Gainer Card", hp = 1f, score = pointsPerCard
+                )
+            )(cardId)
+            cardId add TriggeredEffectsComponent(
+                Trigger.OnPlay,
+                Effect.AddScoreGainer(pointsPerCard.toFloat())
+            )
         }
     }
 

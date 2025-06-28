@@ -118,7 +118,6 @@ sealed class Effect {
         }
     }
 
-
     data class AddSelfMultiplier(override val amount: Float) : Effect(){
         override fun describe(modifiedAmount: Float?): String {
             return "Gain ($modifiedAmount) self multiplier"
@@ -131,12 +130,16 @@ sealed class Effect {
         }
     }
 
-
     data class ResetTakeRisingDamage(override var amount: Float, var risingAmount: Float) : Effect() { //Not happy about this one... at all
         override fun describe(modifiedAmount: Float?): String {
             return "Reset rising damage to $modifiedAmount"
         }
     }
 
+    data class AddScoreGainer(override val amount: Float) : Effect() {
+        override fun describe(modifiedAmount: Float?): String {
+            return "Gain score gainer"
+        }
+    }
 
 }
