@@ -9,6 +9,7 @@ import com.sq.thed_ck_licker.ecs.components.OwnerComponent
 import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
 import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
+import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
 import com.sq.thed_ck_licker.ecs.managers.ComponentManager
 import com.sq.thed_ck_licker.ecs.managers.EntityId
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
@@ -109,5 +110,15 @@ object DeathSystem {
             component.removeCards(deaths)
         }
 
+        val toClean4 =
+            componentManager.getEntitiesWithComponent(LatestCardComponent::class) ?: return
+        for (entityAndComp in toClean4) {
+            val component = entityAndComp.value
+            deaths.forEach {
+                if (component.getLatestCard() == it) {
+                    component.setLatestCard(-1)
+                }
+            }
+        }
     }
 }

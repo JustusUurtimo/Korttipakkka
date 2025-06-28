@@ -2,16 +2,22 @@ package com.sq.thed_ck_licker.ecs.systems.cardSystems
 
 import android.util.Log
 import com.sq.thed_ck_licker.R
+import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
+import com.sq.thed_ck_licker.ecs.components.IdentificationComponent
+import com.sq.thed_ck_licker.ecs.components.ImageComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent.CardTag
 import com.sq.thed_ck_licker.ecs.components.effectthing.Effect
 import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
 import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
+import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
+import com.sq.thed_ck_licker.ecs.components.misc.TickComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityId
+import com.sq.thed_ck_licker.ecs.managers.EntityManager
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.get
@@ -19,6 +25,7 @@ import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.CardConf
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.generateCards
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.withBasicCardDefaults
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.CardCreationHelperSystems
+import com.sq.thed_ck_licker.ecs.systems.helperSystems.DeathSystem
 import com.sq.thed_ck_licker.helpers.DescribedEffect
 import com.sq.thed_ck_licker.helpers.MyRandom.random
 import com.sq.thed_ck_licker.helpers.navigation.GameNavigator
@@ -250,7 +257,22 @@ class CardCreationSystem @Inject constructor(
         }
     }
 
-    fun addTimeBoundTestCards(numberOfCards: Int = 1): List<EntityId> {
-        return cardBuilder.createTimeBoundCards(numberOfCards)
+    fun addTimeBoundTestCards(amount: Int): List<EntityId> {
+        return generateCards(amount) { cardId ->
+            withBasicCardDefaults(
+                CardConfig(
+                    name = "Time Bound Card", hp = 123f, score = 10000
+                )
+            )(cardId)
+            cardId add TickComponent(1000)
+            cardId add TriggeredEffectsComponent(
+                mutableMapOf(
+                    Trigger.OnPlay to mutableListOf(
+                        Effect.OnRepeatActivationGainScore(3f),
+                        Effect.SelfAddEffectsToTrigger(Trigger.OnTick, listOf(Effect.TakeSelfDamage(1f)))
+                    ),
+                )
+            )
+        }
     }
 }

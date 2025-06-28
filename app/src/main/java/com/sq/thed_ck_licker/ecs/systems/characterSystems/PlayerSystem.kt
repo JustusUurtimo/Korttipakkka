@@ -6,7 +6,12 @@ import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
 import com.sq.thed_ck_licker.ecs.components.HistoryComponent
+import com.sq.thed_ck_licker.ecs.components.ImageComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
+import com.sq.thed_ck_licker.ecs.components.OwnerComponent
+import com.sq.thed_ck_licker.ecs.components.effectthing.Effect
+import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
+import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
@@ -37,9 +42,12 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         getPlayerID() add LatestCardComponent()
         getPlayerID() add HistoryComponent(getPlayerID())
         getPlayerID() add ActivationCounterComponent()
+        getPlayerID() add ImageComponent()
+        getPlayerID() add OwnerComponent(getPlayerID())
 
         if (areRealTimeThingsEnabled.value) {
             getPlayerID() add TickComponent(tickAction = healthTicker(), tickThreshold = 1000)
+            getPlayerID() add TriggeredEffectsComponent(Trigger.OnTick, Effect.TakeDamage(1f))
         }
     }
 
@@ -65,13 +73,13 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
 //                defaultCards +
 //                deactivationCards +
 //                trapCards +
-                scoreGainerCards +
+//                scoreGainerCards +
 //                beerGogglesCards +
 //                maxHpCards +
 //                merchantCards +
 //                multiplierCards +
 //                corruptionCards +
-//                timeBoundCards +
+                timeBoundCards +
                 basicsV3 +
                 emptyList<Int>()
     }

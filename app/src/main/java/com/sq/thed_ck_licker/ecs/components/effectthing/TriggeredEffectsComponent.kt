@@ -36,4 +36,15 @@ data class TriggeredEffectsComponent(
         return result
     }
 
+    fun addEffect(trigger: Trigger, effects: List<Effect>): TriggeredEffectsComponent {
+        val thing = effectsByTrigger.toMutableMap()
+        val effectsForTrigger = thing[trigger]
+        if (effectsForTrigger != null) {
+            thing[trigger] = effectsForTrigger + effects
+        } else {
+            thing[trigger] = effects
+        }
+        return TriggeredEffectsComponent(thing.toMap())
+    }
+
 }

@@ -28,7 +28,7 @@ object TriggerEffectHandler {
         val target = context.target
 
         val trigEffComp = (source get TriggeredEffectsComponent::class)
-        val effects = trigEffComp.effectsByTrigger[trigger]
+        val effects = trigEffComp.effectsByTrigger[trigger]?.toMutableList()
 
         if (effects == null) return
 
@@ -41,39 +41,33 @@ object TriggerEffectHandler {
                     var amount = (effect.amount * sourceMulti * targetMulti).toInt()
                     score.addScore(amount)
                 }
-
                 is Effect.GainScoreFromScoreComp -> {
                     var sourceScore = context.source get ScoreComponent::class
                     val targetScore = context.target get ScoreComponent::class
                     var amount = (sourceScore.getScore() * sourceMulti * targetMulti).toInt()
                     targetScore.addScore(amount)
                 }
-
                 is Effect.GainHealth -> {
                     val healthComp = (target get HealthComponent::class)
                     val amount = (effect.amount * sourceMulti * targetMulti).toFloat()
                     healthComp.heal(amount)
                 }
-
                 is Effect.TakeDamage -> {
                     val healthComp = (target get HealthComponent::class)
                     val amount = (effect.amount * sourceMulti * targetMulti).toFloat()
                     healthComp.damage(amount)
                 }
-
                 is Effect.GainMaxHealth -> {
                     val healthComp = (target get HealthComponent::class)
                     val amount = (effect.amount * sourceMulti * targetMulti).toFloat()
                     healthComp.increaseMaxHealth(amount)
                 }
-
                 is Effect.TakeDamagePercentage -> {
                     val healthComp = (target get HealthComponent::class)
                     val amount =
                         healthComp.getHealth() * (effect.amount * sourceMulti * targetMulti).toFloat()
                     healthComp.damage(amount)
                 }
-
                 is Effect.TakeDamageOrGainMaxHP -> {
                     val destiny = MyRandom.getRandomInt()
                     if (destiny <= 1) {
@@ -89,7 +83,6 @@ object TriggerEffectHandler {
                         healthComp.increaseMaxHealth(amount)
                     }
                 }
-
                 is Effect.HealOnUnderThreshold -> {
                     val targetHealthComp = (target get HealthComponent::class)
                     val sourceHealthComp = (source get HealthComponent::class)
@@ -106,24 +99,20 @@ object TriggerEffectHandler {
                     }
 
                 }
-
                 is Effect.TakeSelfDamage -> {
                     val healthComp = (source get HealthComponent::class)
                     val amount = (effect.amount * sourceMulti).toFloat()
                     healthComp.damage(amount)
                 }
-
                 is Effect.AddMultiplier -> {
                     val multiComp = (target get MultiplierComponent::class)
                     multiComp.timesMultiplier(effect.amount)
                 }
-
                 is Effect.RemoveMultiplier -> {
                     val multiComp = (target get MultiplierComponent::class)
                     multiComp.removeMultiplier(effect.amount)
                 }
-
-                is Effect.TakeRisingDamage -> {
+                is TakeRisingDamage -> {
                     val healthComp = (target get HealthComponent::class)
                     val amount = (effect.amount * sourceMulti * targetMulti).toFloat()
                     val damageDone = healthComp.damage(amount)
@@ -132,36 +121,30 @@ object TriggerEffectHandler {
                     val cumulativeDamageDealt = (context.contextClues["damage dealt"] as? Float) ?: 0f
                     context.contextClues["damage dealt"] = damageDone + cumulativeDamageDealt
                 }
-
                 is Effect.GainScalingScore -> {
                     val score = context.target get ScoreComponent::class
                     var amount =
                         (effect.amount * sourceMulti * targetMulti * effect.scalingFactor).toInt()
                     score.addScore(amount)
                 }
-
                 is Effect.StoreDamageDealtAsSelfScore -> {
                     val damage = context.contextClues["damage dealt"] as? Float ?: 0f
                     val score = context.source get ScoreComponent::class
                     score.addScore(abs((damage).toInt()))
                     context.contextClues["damage dealt"] = 0f
                 }
-
                 is Effect.ResetSelfScore -> {
                     val score = context.source get ScoreComponent::class
                     score.setScore(effect.amount.toInt())
                 }
-
                 is Effect.AddSelfMultiplier -> {
                     val multiComp = (source get MultiplierComponent::class)
                     multiComp.timesMultiplier(effect.amount)
                 }
-
                 is Effect.RemoveSelfMultiplier -> {
                     val multiComp = (source get MultiplierComponent::class)
                     multiComp.removeMultiplier(effect.amount)
                 }
-
                 is Effect.ResetTakeRisingDamage -> {
                     val sourceEffectsComponent =
                         (context.source get TriggeredEffectsComponent::class)
@@ -170,7 +153,7 @@ object TriggerEffectHandler {
                     for (entry in sourceEffects) {
                         val filteredEffects = mutableListOf<Effect>()
                         for (effect in entry.value) {
-                            if (effect !is Effect.TakeRisingDamage) {
+                            if (effect !is TakeRisingDamage) {
                                 filteredEffects.add(effect)
                             } else {
                                 filteredEffects.add(
@@ -187,14 +170,12 @@ object TriggerEffectHandler {
                         effectsByTrigger = mutableMap.toMap()
                     )
                 }
-
                 is Effect.TakeRisingScore -> {
                     val scoreComponent = (target get ScoreComponent::class)
                     val amount = (effect.amount * sourceMulti * targetMulti).toFloat()
                     scoreComponent.addScore(amount.toInt())
                     effect.amount += effect.risingAmount
                 }
-
                 is Effect.AddScoreGainer -> {
                     CardCreationHelperSystems2.addPassiveScoreGainerToEntity(
                         context.target,
@@ -225,6 +206,27 @@ object TriggerEffectHandler {
                     )
                     effect.gameNavigator.navigateTo(Screen.MerchantShop.route)
                 }
+                is Effect.OnRepeatActivationGainScore -> {
+                    if (effect.current < effect.amount) {
+                        effect.current++
+                    }else{
+                        effect.current = 0
+                        var sourceScore = context.source get ScoreComponent::class
+                        val targetScore = context.target get ScoreComponent::class
+                        var amount = (sourceScore.getScore() * sourceMulti * targetMulti).toInt()
+                        targetScore.addScore(amount)
+                    }
+//                    if(effect.current < effect.amount-1) {
+//                        effects.add(Effect.GainScoreFromScoreComp)
+//                    }
+                }
+                is Effect.SelfAddEffectsToTrigger -> {
+                    source add (source get TriggeredEffectsComponent::class).addEffect(
+                        effect.trigger,
+                        effect.effects
+                    )
+                }
+
             }
         }
     }

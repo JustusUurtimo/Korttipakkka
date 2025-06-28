@@ -174,4 +174,15 @@ sealed class Effect {
             return "Gain access to a shop"
         }
     }
+
+    data class OnRepeatActivationGainScore(
+        override val amount: Float = 3f,
+        var current: Int = 0
+    ) : Effect() {
+        override fun describe(modifiedAmount: Float?): String {
+            return "Gain ($modifiedAmount) points if you manage to play this $amount ($current/$amount)"
+        }
+    }
+
+    data class SelfAddEffectsToTrigger(val trigger: Trigger, var effects: List<Effect>): Effect()
 }

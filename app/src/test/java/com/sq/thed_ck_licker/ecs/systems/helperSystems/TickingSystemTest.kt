@@ -1,8 +1,11 @@
 package com.sq.thed_ck_licker.ecs.systems.helperSystems
 
+import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
+import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
 import com.sq.thed_ck_licker.ecs.components.misc.TickComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityManager
 import com.sq.thed_ck_licker.ecs.managers.add
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.TriggerEffectHandler
 import com.sq.thed_ck_licker.helpers.DescribedEffect
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -28,6 +31,8 @@ class TickingSystemTest {
         }
         val describedEffect = DescribedEffect(tickAction) { "Increase counter by 1 foreach tick" }
         ent add TickComponent(tickAction = describedEffect)
+
+
 
         system.tick()
         assert(counter == 1) { "Counter should be 1, but was $counter" }
