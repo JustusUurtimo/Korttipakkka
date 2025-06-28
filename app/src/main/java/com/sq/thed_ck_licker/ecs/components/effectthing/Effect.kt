@@ -142,4 +142,10 @@ sealed class Effect {
         }
     }
 
+    data class AddBeerGoggles(override val amount: Float) : Effect() {
+        override fun describe(modifiedAmount: Float?): String {
+            return "Equip Beer Goggles that will heal you bit (up to $modifiedAmount health points)"
+        }
+    }
+
 }

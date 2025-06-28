@@ -178,17 +178,17 @@ class CardCreationSystem @Inject constructor(
         }
     }
 
-    fun addBeerGogglesTestCards(amount: Int = 1): List<EntityId> {
-        val healLimit = 150f
-        val onActivation: (Int) -> Unit = { playerId: Int ->
-            cardCreationHelperSystems.addLimitedSupplyAutoHealToEntity(playerId, healLimit)
-        }
-        val activationEffect = DescribedEffect(onActivation) { "Equip Beer Goggles that will heal you bit (up to $healLimit health points)" }
-        return cardBuilder.buildCards {
-            cardHealth = 1f
-            cardAmount = amount
-            name = "Beer Goggles Card"
-            onCardPlay = activationEffect
+    fun addBeerGogglesTestCards(amount: Int = 1, healLimit: Float = 150f): List<EntityId> {
+        return generateCards(amount) { cardId ->
+            withBasicCardDefaults(
+                CardConfig(
+                    name = "Beer Goggles Card", hp = 1f
+                )
+            )(cardId)
+            cardId add TriggeredEffectsComponent(
+                Trigger.OnPlay,
+                Effect.AddBeerGoggles(healLimit)
+            )
         }
     }
 

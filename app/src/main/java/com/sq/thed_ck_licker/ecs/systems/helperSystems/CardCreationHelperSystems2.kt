@@ -4,6 +4,7 @@ import com.sq.thed_ck_licker.ecs.components.OwnerComponent
 import com.sq.thed_ck_licker.ecs.components.effectthing.Effect
 import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
 import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
+import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityId
 import com.sq.thed_ck_licker.ecs.managers.add
@@ -22,5 +23,15 @@ object CardCreationHelperSystems2 {
         gainerEntity add OwnerComponent(targetId)
 
         return gainerEntity
+    }
+
+    fun addLimitedSupplyAutoHealToEntity(targetId: EntityId, health: Float, threshold: Float = 0.5f): EntityId {
+        val limitedHealEntity = generateEntity()
+        limitedHealEntity add HealthComponent(health)
+        limitedHealEntity add TriggeredEffectsComponent(
+            Trigger.OnTurnStart, Effect.HealOnUnderThreshold(health, threshold)
+        )
+        limitedHealEntity add OwnerComponent(targetId)
+        return limitedHealEntity
     }
 }

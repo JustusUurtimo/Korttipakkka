@@ -196,6 +196,12 @@ object TriggerEffectHandler {
                         effect.amount.toInt()
                     )
                 }
+                is Effect.AddBeerGoggles -> {
+                    CardCreationHelperSystems2.addLimitedSupplyAutoHealToEntity(
+                        context.target,
+                        effect.amount
+                    )
+                }
             }
         }
     }
