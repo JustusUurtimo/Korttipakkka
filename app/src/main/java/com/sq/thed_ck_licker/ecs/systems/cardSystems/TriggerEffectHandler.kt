@@ -8,6 +8,8 @@ import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
 import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
+import com.sq.thed_ck_licker.ecs.managers.GameEvent
+import com.sq.thed_ck_licker.ecs.managers.GameEvents
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.CardCreationHelperSystems2
@@ -203,10 +205,13 @@ object TriggerEffectHandler {
                     )
                 }
                 is Effect.AddTempMultiplier -> {
-                    CardCreationHelperSystems2.addLimitedSupplyAutoHealToEntity(
+                    CardCreationHelperSystems2.addTemporaryMultiplierTo(
                         context.target,
                         effect.amount
                     )
+                }
+                is Effect.Shovel -> {
+                    GameEvents.tryEmit(GameEvent.ShovelUsed)
                 }
             }
         }
@@ -257,7 +262,7 @@ object TriggerEffectHandler {
 
                         is Effect.StoreDamageDealtAsSelfScore -> {
                             val asd = context.source get TriggeredEffectsComponent::class
-                            val dddd = asd.findEffect(Effect.TakeRisingDamage::class)
+                            val dddd = asd.findEffect(TakeRisingDamage::class)
                             dddd.first().amount
                         }
                         else -> {

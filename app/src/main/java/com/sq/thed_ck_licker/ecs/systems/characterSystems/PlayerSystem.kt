@@ -48,7 +48,7 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         val playerHealingCards = cardCreationSystem.addHealingCards(1)
         val playerDamageCards = cardCreationSystem.addDamageCards(5)
         val defaultCards = cardCreationSystem.addBreakingDefaultCards(1)
-        val deactivationCards = cardCreationSystem.addDeactivationTestCards(2)
+        val deactivationCards = cardCreationSystem.addDeactivationTestCards(1)
         val trapCards = cardCreationSystem.addTrapTestCards()
         val scoreGainerCards = cardCreationSystem.addScoreGainerTestCards()
         val beerGogglesCards = cardCreationSystem.addBeerGogglesTestCards()
@@ -60,18 +60,18 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         val basicsV3 = cardCreationSystem.addBasicScoreCards(5)
         
         return emptyList<Int>() +
-                playerHealingCards +
-                playerDamageCards +
-                defaultCards +
-                deactivationCards +
-                trapCards +
+//                playerHealingCards +
+//                playerDamageCards +
+//                defaultCards +
+//                deactivationCards +
+//                trapCards +
                 scoreGainerCards +
-                beerGogglesCards +
-                maxHpCards +
-                merchantCards +
-                multiplierCards +
-                corruptionCards +
-                timeBoundCards +
+//                beerGogglesCards +
+//                maxHpCards +
+//                merchantCards +
+//                multiplierCards +
+//                corruptionCards +
+//                timeBoundCards +
                 basicsV3 +
                 emptyList<Int>()
     }

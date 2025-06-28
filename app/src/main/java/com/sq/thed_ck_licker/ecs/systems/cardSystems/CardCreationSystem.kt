@@ -14,8 +14,6 @@ import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityId
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
-import com.sq.thed_ck_licker.ecs.managers.GameEvent
-import com.sq.thed_ck_licker.ecs.managers.GameEvents
 import com.sq.thed_ck_licker.ecs.managers.MerchantEvent
 import com.sq.thed_ck_licker.ecs.managers.MerchantEvents
 import com.sq.thed_ck_licker.ecs.managers.add
@@ -37,16 +35,11 @@ class CardCreationSystem @Inject constructor(
 ) {
 
     fun addShovelCards(amount: Int): List<EntityId> {
-
-        val onActivation: (Int) -> Unit = { _ ->
-            GameEvents.tryEmit(GameEvent.ShovelUsed)
-        }
-        val describedEffect = DescribedEffect(onActivation) { "Open the fiery pit of doom!" }
-        return cardBuilder.buildCards {
-            cardHealth = 10f
-            cardAmount = amount
-            name = "Shovel"
-            onCardPlay = describedEffect
+        return generateCards(amount) { cardId ->
+            withBasicCardDefaults(
+                CardConfig(name = "Shovel", hp = 10f)
+            )(cardId)
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.Shovel)
         }
     }
 
@@ -140,7 +133,7 @@ class CardCreationSystem @Inject constructor(
                         Effect.ResetTakeRisingDamage(asd,asd)
                     ), Trigger.OnDeactivation to mutableListOf(
                         Effect.TakeRisingDamage(asd,asd),
-                        Effect.StoreDamageDealtAsSelfScore()
+                        Effect.StoreDamageDealtAsSelfScore
                     )
                 )
             )
@@ -191,7 +184,7 @@ class CardCreationSystem @Inject constructor(
             )
         }
     }
-    
+
     fun addTempMultiplierTestCards(amount: Int = 1, multiplier: Float = 3f): List<EntityId> {
         return generateCards(amount) { cardId ->
             withBasicCardDefaults(
