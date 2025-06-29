@@ -15,7 +15,7 @@ import androidx.compose.runtime.mutableIntStateOf
 data class ActivationCounterComponent(
     private var activations: MutableIntState,
     private var deactivations: MutableIntState
-) {
+): Component {
     constructor(
         activations: Int = 0,
         deactivations: Int = 0
