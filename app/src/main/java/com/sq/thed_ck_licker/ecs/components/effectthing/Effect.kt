@@ -1,8 +1,5 @@
 package com.sq.thed_ck_licker.ecs.components.effectthing
 
-import com.sq.thed_ck_licker.ecs.components.Component
-import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
-import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.helpers.navigation.GameNavigator
 import kotlin.reflect.KClass
 
