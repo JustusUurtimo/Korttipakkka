@@ -128,12 +128,11 @@ fun Game(
 @Composable
 private fun RealtimeEffects() {
     var realTimeTickingEnabled by remember { areRealTimeThingsEnabled }
-    val tickSystem = TickingSystem()
     val tickSize = 100
     LaunchedEffect(realTimeTickingEnabled) {
         while (realTimeTickingEnabled) {
             delay(tickSize.toLong())
-            tickSystem.tick(tickSize)
+            TickingSystem.tick(tickSize)
         }
     }
 }

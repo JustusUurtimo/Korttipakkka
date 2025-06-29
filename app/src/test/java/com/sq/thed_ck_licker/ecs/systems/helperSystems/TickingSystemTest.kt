@@ -1,11 +1,9 @@
 package com.sq.thed_ck_licker.ecs.systems.helperSystems
 
-import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
-import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
 import com.sq.thed_ck_licker.ecs.components.misc.TickComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityManager
 import com.sq.thed_ck_licker.ecs.managers.add
-import com.sq.thed_ck_licker.ecs.systems.cardSystems.TriggerEffectHandler
+import com.sq.thed_ck_licker.ecs.systems.helperSystems.TickingSystem
 import com.sq.thed_ck_licker.helpers.DescribedEffect
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -13,14 +11,8 @@ import kotlin.properties.Delegates
 
 class TickingSystemTest {
 
-    var system: TickingSystem by Delegates.notNull()
+    var system: TickingSystem =TickingSystem
 
-
-
-    @BeforeEach
-    fun setUp() {
-        system = TickingSystem()
-    }
 
     @Test
     fun `Tick once`() {

@@ -8,7 +8,7 @@ import com.sq.thed_ck_licker.ecs.managers.ComponentManager.Companion.componentMa
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.TriggerEffectHandler
 
-class TickingSystem {
+object TickingSystem {
 
     /**
      * @param value is the amount that time has moved in milliseconds.
