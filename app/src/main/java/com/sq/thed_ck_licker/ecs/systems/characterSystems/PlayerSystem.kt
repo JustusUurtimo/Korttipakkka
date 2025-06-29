@@ -17,7 +17,7 @@ import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.states.PlayerState
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem
-import com.sq.thed_ck_licker.ecs.systems.helperSystems.onDeathSystem
+import com.sq.thed_ck_licker.ecs.systems.helperSystems.DeathSystem
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.areRealTimeThingsEnabled
 import com.sq.thed_ck_licker.helpers.DescribedEffect
 import kotlinx.coroutines.flow.Flow
@@ -48,7 +48,7 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         val playerHealingCards = cardCreationSystem.addHealingCards(1)
         val playerDamageCards = cardCreationSystem.addDamageCards(5)
         val defaultCards = cardCreationSystem.addBreakingDefaultCards(1)
-        val deactivationCards = cardCreationSystem.addDeactivationTestCards(2)
+        val deactivationCards = cardCreationSystem.addDeactivationTestCards(1)
         val trapCards = cardCreationSystem.addTrapTestCards()
         val scoreGainerCards = cardCreationSystem.addScoreGainerTestCards()
         val beerGogglesCards = cardCreationSystem.addBeerGogglesTestCards()
@@ -60,18 +60,18 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         val basicsV3 = cardCreationSystem.addBasicScoreCards(5)
         
         return emptyList<Int>() +
-                playerHealingCards +
-                playerDamageCards +
-                defaultCards +
-                deactivationCards +
-                trapCards +
+//                playerHealingCards +
+//                playerDamageCards +
+//                defaultCards +
+//                deactivationCards +
+//                trapCards +
                 scoreGainerCards +
-                beerGogglesCards +
-                maxHpCards +
-                merchantCards +
-                multiplierCards +
-                corruptionCards +
-                timeBoundCards +
+//                beerGogglesCards +
+//                maxHpCards +
+//                merchantCards +
+//                multiplierCards +
+//                corruptionCards +
+//                timeBoundCards +
                 basicsV3 +
                 emptyList<Int>()
     }
@@ -127,7 +127,7 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
             val targetHealth = target get HealthComponent::class
             targetHealth.damage(amountOfDamage)
             if (targetHealth.getHealth() <= 0) {
-                onDeathSystem()
+                DeathSystem.checkForDeath()
             }
         }
         val describedEffect = DescribedEffect(theAction) { "Take damage on each trigger" }

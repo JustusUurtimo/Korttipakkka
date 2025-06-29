@@ -17,10 +17,11 @@ import com.sq.thed_ck_licker.ecs.managers.EntityManager
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.generateEntity
 import com.sq.thed_ck_licker.ecs.managers.get
-import com.sq.thed_ck_licker.ecs.systems.helperSystems.onDeathSystem
+import com.sq.thed_ck_licker.ecs.systems.helperSystems.DeathSystem
 import com.sq.thed_ck_licker.helpers.DescribedEffect
 import javax.inject.Inject
 
+@Deprecated("As of 0.1.2.148, Use CardBuilderSystem2 instead")
 class CardBuilderSystem @Inject constructor(private val componentManager: ComponentManager) {
 
     var cardHealth: Float? = null
@@ -72,7 +73,7 @@ class CardBuilderSystem @Inject constructor(private val componentManager: Compon
                     val targetHealth = target get HealthComponent::class
                     targetHealth.damage(1f)
                     if (targetHealth.getHealth() <= 0) {
-                        onDeathSystem()
+                        DeathSystem.checkForDeath()
                     }
                 }
             }

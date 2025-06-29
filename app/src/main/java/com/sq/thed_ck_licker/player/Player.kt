@@ -108,7 +108,7 @@ fun AdditionalInfoDisplay(latestCard: Int) {
         }
         try {
             description = TriggerEffectHandler.describe(EffectContext(
-                trigger = Trigger.OnTurnStart, // This is ignored here so it feels bit weird... But no can do for now
+                trigger = Trigger.Blank,
                 source = latestCard
             ))
         }catch (_: Exception) {
@@ -124,7 +124,7 @@ fun AdditionalInfoDisplay(latestCard: Int) {
 
         val (source, target) = TriggerEffectHandler.getMultipliers(
             EffectContext(
-                trigger = Trigger.OnPlay, // This is ignored here so it feels bit weird... But no can do for now
+                trigger = Trigger.Blank,
                 source = latestCard
             )
         )

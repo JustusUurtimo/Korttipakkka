@@ -2,7 +2,6 @@ package com.sq.thed_ck_licker.ecs.systems.cardSystems
 
 import android.util.Log
 import com.sq.thed_ck_licker.R
-import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
@@ -11,15 +10,9 @@ import com.sq.thed_ck_licker.ecs.components.TagsComponent.CardTag
 import com.sq.thed_ck_licker.ecs.components.effectthing.Effect
 import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
 import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
-import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
-import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityId
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
-import com.sq.thed_ck_licker.ecs.managers.GameEvent
-import com.sq.thed_ck_licker.ecs.managers.GameEvents
-import com.sq.thed_ck_licker.ecs.managers.MerchantEvent
-import com.sq.thed_ck_licker.ecs.managers.MerchantEvents
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.CardConfig
@@ -27,12 +20,9 @@ import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.generate
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.withBasicCardDefaults
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.CardCreationHelperSystems
 import com.sq.thed_ck_licker.helpers.DescribedEffect
-import com.sq.thed_ck_licker.helpers.MyRandom
 import com.sq.thed_ck_licker.helpers.MyRandom.random
 import com.sq.thed_ck_licker.helpers.navigation.GameNavigator
-import com.sq.thed_ck_licker.helpers.navigation.Screen
 import javax.inject.Inject
-import kotlin.math.abs
 
 class CardCreationSystem @Inject constructor(
     private val cardCreationHelperSystems: CardCreationHelperSystems,
@@ -41,241 +31,166 @@ class CardCreationSystem @Inject constructor(
 ) {
 
     fun addShovelCards(amount: Int): List<EntityId> {
-
-        val onActivation: (Int) -> Unit = { _ ->
-            GameEvents.tryEmit(GameEvent.ShovelUsed)
-        }
-        val describedEffect = DescribedEffect(onActivation) { "Open the fiery pit of doom!" }
-        return cardBuilder.buildCards {
-            cardHealth = 10f
-            cardAmount = amount
-            name = "Shovel"
-            onCardPlay = describedEffect
+        return generateCards(amount) { cardId ->
+            withBasicCardDefaults(
+                CardConfig(name = "Shovel", hp = 10f)
+            )(cardId)
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.Shovel)
         }
     }
 
-    fun addBasicScoreCards(amount: Int): List<EntityId> {
+    fun addBasicScoreCards(amount: Int, scoreSize: Int = 10): List<EntityId> {
         return generateCards(amount) { cardId ->
             withBasicCardDefaults(
                 CardConfig(
-                    name = "Basic score card V4", hp = 100f, score = 10
+                    name = "Basic score card V4", hp = 100f, score = scoreSize
                 )
             )(cardId)
-            val score = (cardId get ScoreComponent::class).getScore()
+            val score = (cardId get ScoreComponent::class).getScoreF()
             cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.GainScore(score))
         }
     }
 
-    fun addHealingCards(amount: Int): List<EntityId> {
+    fun addHealingCards(amount: Int, healSize: Float = 40f): List<EntityId> {
         return generateCards(amount) { cardId ->
             withBasicCardDefaults(
                 CardConfig(
                     img = R.drawable.heal_10, name = "Heal", hp = 5f
                 )
             )(cardId)
-            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.GainHealth(40f) )
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.GainHealth(healSize))
         }
     }
 
-    fun addDamageCards(amount: Int): List<EntityId> {
+    fun addDamageCards(amount: Int, damageSize: Float = 150f): List<EntityId> {
         return generateCards(amount) { cardId ->
             withBasicCardDefaults(
                 CardConfig(
                     img = R.drawable.damage_6, name = "Damage", hp = 20f
                 )
             )(cardId)
-            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.TakeDamage(150f))
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.TakeDamage(damageSize))
         }
     }
 
     fun addMerchantCards(amount: Int, merchantId: Int): List<EntityId> {
-        val openMerchant = { _: Int ->
-            val cardEntity = (getPlayerID() get LatestCardComponent::class).getLatestCard()
-            MerchantEvents.tryEmit(MerchantEvent.MerchantShopOpened(merchantId, cardEntity))
-            gameNavigator.navigateTo(Screen.MerchantShop.route)
+        return generateCards(amount) { cardId ->
+            withBasicCardDefaults(
+                CardConfig(
+                    name = "Merchant #$merchantId",
+                    characterId = merchantId,
+                    tags = listOf(CardTag.CARD, CardTag.MERCHANT)
+                )
+            )(cardId)
+            cardId add TriggeredEffectsComponent(
+                Trigger.OnPlay,
+                Effect.OpenMerchant(merchantId.toFloat(), gameNavigator)
+            )
         }
-        val describedEffect = DescribedEffect(openMerchant) { "Gain access to a shop" }
-        return cardBuilder.buildCards {
-            cardAmount = amount
-            name = "Merchant #$merchantId"
-            characterId = merchantId
-            onCardPlay = describedEffect
-            tags = listOf(CardTag.CARD, CardTag.MERCHANT)
-        }
-
     }
 
     fun addMaxHpTrapCards(amount: Int = 5): List<EntityId> {
-        val cardHealthAmount = 100f
-        val maxHp = 10f
-        val onActivation = { targetId: Int ->
-            val cardEntity = (getPlayerID() get LatestCardComponent::class).getLatestCard()
-            val targetHp = targetId get HealthComponent::class
-            if (MyRandom.getRandomInt() <= 1) {
-                (cardEntity get HealthComponent::class).damage(cardHealthAmount)
-                val damageAmount = abs(targetHp.getHealth().div(2))
-                targetHp.damage(damageAmount)
-            } else {
-                targetHp.increaseMaxHealth(maxHp)
-            }
-        }
-        val describedEffect = DescribedEffect(onActivation) { "Gain $maxHp max health on play, might explode" }
-        return cardBuilder.buildCards {
-            cardHealth = cardHealthAmount
-            cardAmount = amount
-            name = "Max HP Trap Card"
-            onCardPlay = describedEffect
+        return generateCards(amount) { cardId ->
+            withBasicCardDefaults(
+                CardConfig(
+                    name = "Max HP Trap Card", hp = 5f
+                )
+            )(cardId)
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.TakeDamageOrGainMaxHP(10f))
         }
     }
 
-
-    fun addBreakingDefaultCards(amount: Int = 7): List<EntityId> {
-        val scoreIt = { targetId: Int ->
-            val cardEntity = (targetId get LatestCardComponent::class).getLatestCard()
-            val target = targetId get ScoreComponent::class
-            val omaScore = cardEntity get ScoreComponent::class
-            target.addScore(omaScore.getScore())
+    fun addBreakingDefaultCards(amount: Int): List<EntityId> {
+        return generateCards(amount) { cardId ->
+            withBasicCardDefaults(
+                CardConfig(
+                    name = "Default Card", hp = 10f, score = 100
+                )
+            )(cardId)
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.GainScoreFromScoreComp)
         }
-        val describedEffect = DescribedEffect(scoreIt) { targetId: Int ->
-            val cardEntity = (targetId get LatestCardComponent::class).getLatestCard()
-            val omaScore = cardEntity get ScoreComponent::class
-            "Gain ${omaScore.getScore()} points"
-        }
-
-        val cards = cardBuilder.buildCards {
-            cardHealth = 10f
-            scoreAmount = 100
-            cardAmount = amount
-            name = "Default Card"
-            onCardPlay = describedEffect
-        }
-        return cards
     }
 
+    fun addDeactivationTestCards(amount: Int = 2, multiplier:Float = 30f): List<EntityId> {
+        return generateCards(amount) { cardId ->
+            withBasicCardDefaults(
+                CardConfig(
+                    name = "Deactivation Card", hp = 10f, score = 0, multiplier = multiplier
+                )
+            )(cardId)
 
-    fun addDeactivationTestCards(amount: Int = 2): List<EntityId> {
-        var stepSize = 2
-        var baseDamage = 1
-        val onActivation = { targetId: Int ->
-            val cardEntity = (getPlayerID() get LatestCardComponent::class).getLatestCard()
-            val target = targetId get ScoreComponent::class
-            val riskPoints = cardEntity get ScoreComponent::class
-            val scoreIncrease = riskPoints.getScore() * 30
-            target.addScore(scoreIncrease)
-            riskPoints.setScore(0)
-        }
-        val deactivateAction = { playerId: Int ->
-            val cardEntity = (getPlayerID() get LatestCardComponent::class).getLatestCard()
-            val target = playerId get HealthComponent::class
-            val riskPoints = cardEntity get ScoreComponent::class
-            riskPoints.addScore(baseDamage)
-            stepSize++
-            baseDamage += stepSize
-            target.damage(riskPoints.getScore().toFloat())
+            val asd = 1/multiplier
+            cardId add TriggeredEffectsComponent(
+                mutableMapOf(
+                    Trigger.OnPlay to mutableListOf( //Not happy at all with this...
+                        Effect.GainScoreFromScoreComp,
+                        Effect.ResetSelfScore(),
+                        Effect.ResetTakeRisingDamage(asd,asd)
+                    ), Trigger.OnDeactivation to mutableListOf(
+                        Effect.TakeRisingDamage(asd,asd),
+                        Effect.StoreDamageDealtAsSelfScore
+                    )
+                )
+            )
 
-        }
-        val activationEffect = DescribedEffect(onActivation) { targetId ->
-            val score = (targetId get ScoreComponent::class).getScore()
-            "Gain 3x points based on health lost from this card ($score points)"
-        }
-        val deactivationEffect = DescribedEffect(deactivateAction) { _ ->
-            "Lose health ($baseDamage points)"
-        }
-        return cardBuilder.buildCards {
-            scoreAmount = 0
-            cardAmount = amount
-            name = "Deactivation Card"
-            onCardPlay = activationEffect
-            onCardDeactivate = deactivationEffect
         }
     }
 
     fun addTrapTestCards(amount: Int = 1): List<EntityId> {
-
-
-        val onDeactivation = { targetId: Int ->
-            val cardEntity = (getPlayerID() get LatestCardComponent::class).getLatestCard()
-            val target = targetId get ScoreComponent::class
-            val activationComponent = (cardEntity get ActivationCounterComponent::class)
-            target.reduceScore(((1 + activationComponent.getDeactivations()) * 30))
-        }
-        val deactivationEffect =
-            DescribedEffect(onDeactivation) { targetId: EntityId ->
-                val cardEntity = (targetId get LatestCardComponent::class).getLatestCard()
-                val activationComponent = (cardEntity get ActivationCounterComponent::class)
-                val amount = (1 + activationComponent.getDeactivations()) * 30
-                "Lose Score based on deactivations ($amount score)"
-            }
-
-
-        val onActivation = { targetId: Int ->
-            val cardEntity = (targetId get LatestCardComponent::class).getLatestCard()
-            val target = targetId get HealthComponent::class
-            val activationComponent = cardEntity get ActivationCounterComponent::class
-            val damageAmount = ((1 + activationComponent.getActivations()) * 5).toFloat()
-            target.damage(damageAmount)
-        }
-        val activationEffect = DescribedEffect(onActivation) { _: Int ->
-            val cardEntity = (getPlayerID() get LatestCardComponent::class).getLatestCard()
-            val activationComponent = cardEntity get ActivationCounterComponent::class
-            val damageAmount = ((1 + activationComponent.getActivations()) * 5).toFloat()
-            "Lose health based on activations (${damageAmount} health)"
-        }
-
-
-        return cardBuilder.buildCards {
-            scoreAmount = 1
-            cardAmount = amount
-            name = "Trap card"
-            onCardPlay = activationEffect
-            onCardDeactivate = deactivationEffect
-        }
-    }
-
-
-    fun addScoreGainerTestCards(amount: Int = 1): List<EntityId> {
-        val pointsPerCard = 3
-        val onActivation = { playerId: Int ->
-            cardCreationHelperSystems.addPassiveScoreGainerToEntity(playerId, pointsPerCard)
-        }
-        val activationEffect = DescribedEffect(onActivation) { "Gain Score gainer\n Every time you play card you gain $pointsPerCard points" }
-        return cardBuilder.buildCards {
-            cardHealth = 1f
-            scoreAmount = pointsPerCard
-            cardAmount = amount
-            name = "Score Gainer Card"
-            onCardPlay = activationEffect
-        }
-    }
-
-    fun addBeerGogglesTestCards(amount: Int = 1): List<EntityId> {
-        val healLimit = 150f
-        val onActivation = { playerId: Int ->
-            cardCreationHelperSystems.addLimitedSupplyAutoHealToEntity(playerId, healLimit)
-        }
-        val activationEffect = DescribedEffect(onActivation) { "Equip Beer Goggles that will heal you bit (up to $healLimit health points)" }
-        return cardBuilder.buildCards {
-            cardHealth = 1f
-            cardAmount = amount
-            name = "Beer Goggles Card"
-            onCardPlay = activationEffect
-        }
-    }
-
-    fun addTempMultiplierTestCards(amount: Int = 1): List<EntityId> {
-        val multiplier = 3f
-        val onActivation = { targetId: Int ->
-            cardCreationHelperSystems.addTemporaryMultiplierTo(
-                targetEntityId = targetId,
-                multiplier = multiplier
+        return generateCards(amount) { cardId ->
+            withBasicCardDefaults(
+                CardConfig(
+                    name = "Trap card", hp = 50f, score = 1
+                )
+            )(cardId)
+            cardId add TriggeredEffectsComponent(
+                mutableMapOf(
+                    Trigger.OnPlay to mutableListOf(Effect.TakeRisingDamage(5f, 5f)),
+                    Trigger.OnDeactivation to mutableListOf(Effect.TakeRisingScore(-30f, -30f)),
+                )
             )
         }
-        val activationEffect = DescribedEffect(onActivation) { "Inject steroids and make more every time you do any thing ($multiplier times)" }
-        return cardBuilder.buildCards {
-            cardHealth = 1f
-            cardAmount = amount
-            name = "Steroids"
-            onCardPlay = activationEffect
+    }
+
+    fun addScoreGainerTestCards(amount: Int = 1, pointsPerCard: Int = 3): List<EntityId> {
+        return generateCards(amount) { cardId ->
+            withBasicCardDefaults(
+                CardConfig(
+                    name = "Score Gainer Card", hp = 1f, score = pointsPerCard
+                )
+            )(cardId)
+            cardId add TriggeredEffectsComponent(
+                Trigger.OnPlay,
+                Effect.AddScoreGainer(pointsPerCard.toFloat())
+            )
+        }
+    }
+
+    fun addBeerGogglesTestCards(amount: Int = 1, healLimit: Float = 150f): List<EntityId> {
+        return generateCards(amount) { cardId ->
+            withBasicCardDefaults(
+                CardConfig(
+                    name = "Beer Goggles Card", hp = 1f
+                )
+            )(cardId)
+            cardId add TriggeredEffectsComponent(
+                Trigger.OnPlay,
+                Effect.AddBeerGoggles(healLimit)
+            )
+        }
+    }
+
+    fun addTempMultiplierTestCards(amount: Int = 1, multiplier: Float = 3f): List<EntityId> {
+        return generateCards(amount) { cardId ->
+            withBasicCardDefaults(
+                CardConfig(
+                    name = "Steroids", hp = 1f
+                )
+            )(cardId)
+            cardId add TriggeredEffectsComponent(
+                Trigger.OnPlay,
+                Effect.AddTempMultiplier(multiplier)
+            )
         }
     }
 

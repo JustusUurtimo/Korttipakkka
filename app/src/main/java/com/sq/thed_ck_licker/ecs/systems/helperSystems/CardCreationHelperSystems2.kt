@@ -11,9 +11,8 @@ import com.sq.thed_ck_licker.ecs.managers.EntityId
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.generateEntity
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.TriggerEffectHandler
-import javax.inject.Inject
 
-class CardCreationHelperSystems @Inject constructor() {
+object CardCreationHelperSystems2 {
 
     fun addPassiveScoreGainerToEntity(targetId: Int, pointsPerCard: Int = 3): EntityId {
         val gainerEntity = generateEntity()
@@ -37,6 +36,7 @@ class CardCreationHelperSystems @Inject constructor() {
         limitedHealEntity add OwnerComponent(targetId)
         return limitedHealEntity
     }
+
 
     fun addTemporaryMultiplierTo(
         targetEntityId: EntityId,

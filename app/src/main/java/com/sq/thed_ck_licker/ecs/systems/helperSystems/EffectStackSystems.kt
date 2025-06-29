@@ -5,7 +5,7 @@ import com.sq.thed_ck_licker.ecs.managers.ComponentManager
 import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
 import com.sq.thed_ck_licker.ecs.managers.get
-
+@Deprecated("As of 0.1.2.146, Use TurnStartSystem instead")
 fun onTurnStartEffectStackSystem(componentManager: ComponentManager = ComponentManager.componentManager) {
     val targetsWithEffectStack =
         componentManager.getEntitiesWithComponent(EffectStackComponent::class) ?: return

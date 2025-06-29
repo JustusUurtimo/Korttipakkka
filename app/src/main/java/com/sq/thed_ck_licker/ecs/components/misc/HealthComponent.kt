@@ -42,9 +42,11 @@ data class HealthComponent(
     }
 
     private var lastTime = -1L
-    fun add(amount: Float) {
+    fun add(amount: Float): Float {
         var logging = "This is going to be modified $this"
+        var healthGained = amount
         if ((this.health.floatValue + amount) > this.maxHealth.floatValue) {
+            healthGained = this.maxHealth.floatValue - this.health.floatValue
             this.health.floatValue = this.maxHealth.floatValue
         } else {
             this.health.floatValue += amount
@@ -56,10 +58,12 @@ data class HealthComponent(
             lastTime = now
             Log.i("HealthComponent", logging)
         }
+        return healthGained
     }
 
     fun heal(amount: Float) = add(amount)
     fun damage(amount: Float) = add(-amount)
+    fun kill() = setHealth(0f)
 
     fun combineHealthComponents(other: HealthComponent): HealthComponent {
         return HealthComponent(
