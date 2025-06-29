@@ -4,7 +4,6 @@ import androidx.compose.runtime.snapshotFlow
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
-import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
 import com.sq.thed_ck_licker.ecs.components.HistoryComponent
 import com.sq.thed_ck_licker.ecs.components.ImageComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
@@ -36,7 +35,6 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         getPlayerID() add HealthComponent(100f)
         getPlayerID() add ScoreComponent()
         getPlayerID() add DrawDeckComponent(initPlayerDeck() as MutableList<Int>)
-        getPlayerID() add EffectStackComponent()
         getPlayerID() add DiscardDeckComponent(mutableListOf<Int>())
         getPlayerID() add MultiplierComponent()
         getPlayerID() add LatestCardComponent()
@@ -127,18 +125,5 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
                 latestCard = latestCard
             )
         }
-    }
-
-    //This probably has some more sensible place than here.
-    private fun healthTicker(amountOfDamage: Float = 1f): DescribedEffect {
-        val theAction = { target: Int ->
-            val targetHealth = target get HealthComponent::class
-            targetHealth.damage(amountOfDamage)
-            if (targetHealth.getHealth() <= 0) {
-                DeathSystem.checkForDeath()
-            }
-        }
-        val describedEffect = DescribedEffect(theAction) { "Take damage on each trigger" }
-        return describedEffect
     }
 }
