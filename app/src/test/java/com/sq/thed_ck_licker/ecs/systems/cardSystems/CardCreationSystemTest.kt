@@ -1,18 +1,15 @@
 package com.sq.thed_ck_licker.ecs.systems.cardSystems
 
 import androidx.compose.runtime.mutableIntStateOf
-import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
 import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
-import com.sq.thed_ck_licker.ecs.managers.ComponentManager
 import com.sq.thed_ck_licker.ecs.managers.EntityId
 import com.sq.thed_ck_licker.ecs.managers.EntityManager
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.get
-import com.sq.thed_ck_licker.ecs.systems.helperSystems.CardCreationHelperSystems_Factory
 import com.sq.thed_ck_licker.helpers.FixedRandom
 import com.sq.thed_ck_licker.helpers.MyRandom
 import com.sq.thed_ck_licker.helpers.navigation.GameNavigator_Factory
@@ -28,8 +25,6 @@ class CardCreationSystemTest {
     fun setUp() {
         owner = EntityManager.getPlayerID()
         cardCreationSystem = CardCreationSystem(
-            cardCreationHelperSystems = CardCreationHelperSystems_Factory.newInstance(),
-            cardBuilder = CardBuilderSystem_Factory.newInstance(ComponentManager.componentManager),
             gameNavigator = GameNavigator_Factory.newInstance()
         )
     }

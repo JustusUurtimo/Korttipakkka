@@ -34,8 +34,6 @@ class CardsSystemTest {
         multiSystem = MultiplierSystem_Factory.newInstance(ComponentManager.componentManager)
         cardCreationHelperSystems = CardCreationHelperSystems_Factory.newInstance()
         cardCreationSystem = CardCreationSystem(
-            cardCreationHelperSystems = cardCreationHelperSystems,
-            cardBuilder = CardBuilderSystem_Factory.newInstance(ComponentManager.componentManager),
             gameNavigator = GameNavigator_Factory.newInstance()
         )
         val playerSystem = PlayerSystem_Factory.newInstance(cardCreationSystem)
