@@ -1,7 +1,7 @@
 package com.sq.thed_ck_licker.ecs.components
 
 
-data class TagsComponent(private val tags: List<CardTag> = emptyList()) {
+data class TagsComponent(private val tags: List<CardTag> = emptyList()) : Component {
 
     enum class CardTag { CARD, MERCHANT, CORRUPTED }
 
@@ -16,5 +16,4 @@ data class TagsComponent(private val tags: List<CardTag> = emptyList()) {
     fun addTag(tag: CardTag) {
         this.tags.plus(tag)
     }
-
 }

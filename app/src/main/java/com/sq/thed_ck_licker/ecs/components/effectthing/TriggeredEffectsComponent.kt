@@ -49,7 +49,6 @@ data class TriggeredEffectsComponent(
     }
 
     fun shuffleTo(activeTriggers: Set<Trigger> = Trigger.duringPlayTriggers): TriggeredEffectsComponent {
-        println("shuffle shuffle")
         val values = effectsByTrigger.values.toMutableList()
         val size= values.size
         val result = mutableMapOf<Trigger, List<Effect>>()

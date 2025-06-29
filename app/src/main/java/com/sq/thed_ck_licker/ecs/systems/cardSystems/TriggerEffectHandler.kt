@@ -25,6 +25,8 @@ import kotlin.math.min
 
 object TriggerEffectHandler {
 
+   const val damageDealtKey = "damage dealt"
+
     fun handleTriggerEffect(context: EffectContext) {
         val trigger = context.trigger
         val source = context.source
@@ -36,9 +38,7 @@ object TriggerEffectHandler {
         if (effects == null) return
 
         val (sourceMulti, targetMulti) = getMultipliers(context)
-        println("vnvnvm")
         for (effect in effects) {
-            println("effect: $effect")
             when (effect) { //Its getting quite big...
                 is Effect.GainScore -> {
                     val score = context.target get ScoreComponent::class
@@ -122,8 +122,8 @@ object TriggerEffectHandler {
                     val damageDone = healthComp.damage(amount)
 
                     effect.amount += effect.risingAmount
-                    val cumulativeDamageDealt = (context.contextClues["damage dealt"] as? Float) ?: 0f
-                    context.contextClues["damage dealt"] = damageDone + cumulativeDamageDealt
+                    val cumulativeDamageDealt = (context.contextClues[damageDealtKey] as? Float) ?: 0f
+                    context.contextClues[damageDealtKey] = damageDone + cumulativeDamageDealt
                 }
                 is Effect.GainScalingScore -> {
                     val score = context.target get ScoreComponent::class
@@ -132,10 +132,10 @@ object TriggerEffectHandler {
                     score.addScore(amount)
                 }
                 is Effect.StoreDamageDealtAsSelfScore -> {
-                    val damage = context.contextClues["damage dealt"] as? Float ?: 0f
+                    val damage = context.contextClues[damageDealtKey] as? Float ?: 0f
                     val score = context.source get ScoreComponent::class
                     score.addScore(abs((damage).toInt()))
-                    context.contextClues["damage dealt"] = 0f
+                    context.contextClues[damageDealtKey] = 0f
                 }
                 is Effect.ResetSelfScore -> {
                     val score = context.source get ScoreComponent::class
@@ -213,7 +213,9 @@ object TriggerEffectHandler {
                 is Effect.OnRepeatActivationGainScore -> {
                     if (effect.current < effect.amount) {
                         effect.current++
+                        println("Current: ${effect.current}")
                     }else{
+                        println("Alallal")
                         effect.current = 0
                         var sourceScore = context.source get ScoreComponent::class
                         val targetScore = context.target get ScoreComponent::class
@@ -227,7 +229,6 @@ object TriggerEffectHandler {
                         effect.effects
                     )
                 }
-
                 is Effect.CorruptCards -> {
                     val efficiency = (effect.amount * sourceMulti * targetMulti).toInt()
                     val target = (context.target get effect.targetDeck)
@@ -252,14 +253,10 @@ object TriggerEffectHandler {
                             return
                         }
                     }
-                    println("Moiii")
                     repeat(efficiency) {
-                        println("Round: $it")
                         val card = deck.removeAt(MyRandom.random.nextInt(deck.size))
                         val trigEffComp = card get TriggeredEffectsComponent::class
-                        println("trigEffComp: $trigEffComp")
                         val corruptedTriggeredEffect = trigEffComp.shuffleTo()
-                        println("Corrupted: $corruptedTriggeredEffect")
                         card add corruptedTriggeredEffect
                         val tags = card get TagsComponent::class
                         tags.addTag(TagsComponent.CardTag.CORRUPTED)

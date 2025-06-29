@@ -1,12 +1,8 @@
 package com.sq.thed_ck_licker.ecs.systems.cardSystems
 
-import android.util.Log
 import com.sq.thed_ck_licker.R
-import com.sq.thed_ck_licker.ecs.components.Component
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
-import com.sq.thed_ck_licker.ecs.components.EffectComponent
-import com.sq.thed_ck_licker.ecs.components.TagsComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent.CardTag
 import com.sq.thed_ck_licker.ecs.components.effectthing.Effect
 import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
@@ -14,18 +10,14 @@ import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponen
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.components.misc.TickComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityId
-import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.CardConfig
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.generateCards
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.withBasicCardDefaults
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.CardCreationHelperSystems
-import com.sq.thed_ck_licker.helpers.DescribedEffect
-import com.sq.thed_ck_licker.helpers.MyRandom.random
 import com.sq.thed_ck_licker.helpers.navigation.GameNavigator
 import javax.inject.Inject
-import kotlin.reflect.KClass
 
 class CardCreationSystem @Inject constructor(
     private val cardCreationHelperSystems: CardCreationHelperSystems,
@@ -49,8 +41,7 @@ class CardCreationSystem @Inject constructor(
                     name = "Basic score card V4", hp = 100f, score = scoreSize
                 )
             )(cardId)
-            val score = (cardId get ScoreComponent::class).getScoreF()
-            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.GainScore(score))
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.GainScoreFromScoreComp)
         }
     }
 
@@ -208,11 +199,11 @@ class CardCreationSystem @Inject constructor(
                 mutableMapOf(
                     Trigger.OnPlay to mutableListOf(
                         Effect.CorruptCards(efficiency.toFloat(),
-                            DrawDeckComponent::class as KClass<Component>
+                            DrawDeckComponent::class
                         )
                     ), Trigger.OnDeactivation to mutableListOf(
                         Effect.CorruptCards(efficiency.toFloat(),
-                            DiscardDeckComponent::class as KClass<Component>
+                            DiscardDeckComponent::class
                         )
                     )
                 )
