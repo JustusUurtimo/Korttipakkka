@@ -3,12 +3,11 @@ package com.sq.thed_ck_licker.ecs.systems.helperSystems
 import android.util.Log
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
-import com.sq.thed_ck_licker.ecs.components.EffectComponent
-import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
 import com.sq.thed_ck_licker.ecs.components.OwnerComponent
 import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
 import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
+import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
 import com.sq.thed_ck_licker.ecs.managers.ComponentManager
 import com.sq.thed_ck_licker.ecs.managers.EntityId
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
@@ -55,11 +54,6 @@ object DeathSystem {
     ): EntityId {
         val entityId = dyingEntityEntry.key
         try {
-            (entityId get EffectComponent::class).onDeath.action.invoke(getPlayerID())
-        } catch (_: IllegalStateException) {
-            Log.i("Death Happening", "No cool death for you, mate. $entityId ")
-        }
-        try {
             val owner = try {
                 (entityId get OwnerComponent::class).ownerId
             } catch (_: IllegalStateException) {
@@ -86,13 +80,6 @@ object DeathSystem {
      * Probably needs refactor to some observer/event-based/subscriber pattern
      */
     private fun performCleanup(componentManager: ComponentManager, deaths: List<EntityId>) {
-        val toClean =
-            componentManager.getEntitiesWithComponent(EffectStackComponent::class) ?: return
-
-        for (entityAndComp in toClean) {
-            val component = entityAndComp.value
-            component.removeEntities(deaths)
-        }
 
         val toClean2 = componentManager.getEntitiesWithComponent(DrawDeckComponent::class) ?: return
 
@@ -109,5 +96,15 @@ object DeathSystem {
             component.removeCards(deaths)
         }
 
+        val toClean4 =
+            componentManager.getEntitiesWithComponent(LatestCardComponent::class) ?: return
+        for (entityAndComp in toClean4) {
+            val component = entityAndComp.value
+            deaths.forEach {
+                if (component.getLatestCard() == it) {
+                    component.setLatestCard(-1)
+                }
+            }
+        }
     }
 }

@@ -3,7 +3,6 @@ package com.sq.thed_ck_licker.ecs.managers
 import android.util.Log
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.snapshots.SnapshotStateMap
-import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent.CardTag
@@ -61,14 +60,11 @@ class ComponentManager {
 
     fun getEntitiesWithTags(tags: List<CardTag>): Map<Int, Any> {
         val entities = getEntitiesWithComponent(TagsComponent::class)
-        if (entities == null) {
-            throw IllegalStateException("No entities with TagsComponent found")
-        } else {
-            val matchingEntities = entities.filter { (_, value) ->
-                (value as TagsComponent).getTags().containsAll(tags)
-            }
-            return matchingEntities
+        checkNotNull(entities) { "No entities with TagsComponent found" }
+        val matchingEntities = entities.filter { (_, value) ->
+            (value).getTags().containsAll(tags)
         }
+        return matchingEntities
     }
 
     fun getAllComponentsOfEntity(entityId: Int): List<Any> {
@@ -115,16 +111,8 @@ class ComponentManager {
                 component.getHealth(),
                 component.getMaxHealth()
             )
-
             is ScoreComponent -> ScoreComponent(component.getScore())
             is MultiplierComponent -> MultiplierComponent(component.multiplier)
-            is EffectComponent -> EffectComponent(
-                onDeath = component.onDeath,
-                onDraw = component.onDraw,
-                onTurnStart = component.onTurnStart,
-                onPlay = component.onPlay,
-                onDeactivate = component.onDeactivate
-            )
             else -> {
                 Log.w("ComponentManager", "Unknown component type: ${component.javaClass.name}, it was not copied.")
                 return null
@@ -187,15 +175,6 @@ infix fun EntityId.difference(entity: EntityId): EntityId {
                 secondComponent as MultiplierComponent
                 if (component.multiplier - secondComponent.multiplier == 0f) continue
                 MultiplierComponent(component.multiplier - secondComponent.multiplier)
-            }
-
-            is EffectComponent -> {
-                /* This one is kind a meh
-                *  It does work but since there is no much point taking method - method as they can be arbitrary.
-                *  So this is actually sum of them.
-                *  In some sense in our context, both of effects are the actual difference, so in that sense sum is same as difference.
-                */
-                component.combineEffectComponents(secondComponent as EffectComponent)
             }
 
             else -> {

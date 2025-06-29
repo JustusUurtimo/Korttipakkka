@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.compose.runtime.MutableIntState
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
-import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
 import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
@@ -27,13 +26,13 @@ class CardsSystem @Inject constructor(
     fun pullRandomCardFromEntityDeck(entityId: Int): Int {
         val drawDeckComponent = (entityId get DrawDeckComponent::class)
         val deck = drawDeckComponent.getDrawCardDeck()
-        if (deck.isEmpty()) {
+        return if (deck.isEmpty()) {
             GameEvents.tryEmit(GameEvent.PlayerDied)
-            return -1
+            -1
         } else {
             val theCard = deck.getRandomElement()
             drawDeckComponent.removeCard(theCard)
-            return theCard
+            theCard
         }
     }
 
@@ -57,13 +56,6 @@ class CardsSystem @Inject constructor(
             Log.i(
                 "CardsSystem", "No health component found for $latestCard"
             )
-        }
-
-        // The Old Era:
-        try {
-            (latestCard get EffectComponent::class).onPlay.action.invoke(getPlayerID())
-        } catch (_: IllegalStateException) {
-            Log.i("CardsSystem", "No effect component found for $latestCard")
         }
 
         // The New Era:

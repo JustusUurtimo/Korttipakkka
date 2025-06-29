@@ -4,9 +4,13 @@ import androidx.compose.runtime.snapshotFlow
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
-import com.sq.thed_ck_licker.ecs.components.EffectStackComponent
 import com.sq.thed_ck_licker.ecs.components.HistoryComponent
+import com.sq.thed_ck_licker.ecs.components.ImageComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
+import com.sq.thed_ck_licker.ecs.components.OwnerComponent
+import com.sq.thed_ck_licker.ecs.components.effectthing.Effect
+import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
+import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
@@ -17,9 +21,7 @@ import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.states.PlayerState
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem
-import com.sq.thed_ck_licker.ecs.systems.helperSystems.DeathSystem
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.areRealTimeThingsEnabled
-import com.sq.thed_ck_licker.helpers.DescribedEffect
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
@@ -31,15 +33,17 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         getPlayerID() add HealthComponent(100f)
         getPlayerID() add ScoreComponent()
         getPlayerID() add DrawDeckComponent(initPlayerDeck() as MutableList<Int>)
-        getPlayerID() add EffectStackComponent()
         getPlayerID() add DiscardDeckComponent(mutableListOf<Int>())
         getPlayerID() add MultiplierComponent()
         getPlayerID() add LatestCardComponent()
         getPlayerID() add HistoryComponent(getPlayerID())
         getPlayerID() add ActivationCounterComponent()
+        getPlayerID() add ImageComponent()
+        getPlayerID() add OwnerComponent(getPlayerID())
 
         if (areRealTimeThingsEnabled.value) {
-            getPlayerID() add TickComponent(tickAction = healthTicker(), tickThreshold = 1000)
+            getPlayerID() add TickComponent(tickThreshold = 1000)
+            getPlayerID() add TriggeredEffectsComponent(Trigger.OnTick, Effect.TakeDamage(1f))
         }
     }
 
@@ -60,18 +64,18 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         val basicsV3 = cardCreationSystem.addBasicScoreCards(5)
         
         return emptyList<Int>() +
-//                playerHealingCards +
-//                playerDamageCards +
-//                defaultCards +
-//                deactivationCards +
-//                trapCards +
+                playerHealingCards +
+                playerDamageCards +
+                defaultCards +
+                deactivationCards +
+                trapCards +
                 scoreGainerCards +
-//                beerGogglesCards +
-//                maxHpCards +
-//                merchantCards +
-//                multiplierCards +
-//                corruptionCards +
-//                timeBoundCards +
+                beerGogglesCards +
+                maxHpCards +
+                merchantCards +
+                multiplierCards +
+                corruptionCards +
+                timeBoundCards +
                 basicsV3 +
                 emptyList<Int>()
     }
@@ -119,18 +123,5 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
                 latestCard = latestCard
             )
         }
-    }
-
-    //This probably has some more sensible place than here.
-    private fun healthTicker(amountOfDamage: Float = 1f): DescribedEffect {
-        val theAction = { target: Int ->
-            val targetHealth = target get HealthComponent::class
-            targetHealth.damage(amountOfDamage)
-            if (targetHealth.getHealth() <= 0) {
-                DeathSystem.checkForDeath()
-            }
-        }
-        val describedEffect = DescribedEffect(theAction) { "Take damage on each trigger" }
-        return describedEffect
     }
 }

@@ -4,7 +4,6 @@ import android.util.Log
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
-import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
 import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
 import com.sq.thed_ck_licker.ecs.managers.EntityId
@@ -24,15 +23,6 @@ class CardPullingSystem @Inject constructor(
     ) {
 
         try {
-            (latestCard get EffectComponent::class).onDeactivate.action.invoke(ownerId)
-        } catch (_: IllegalStateException) {
-            Log.i(
-                "pullNewCardSystem",
-                "No effect component found for pullNewCardSystem \n" +
-                        "Yeah yeah, we get it, you are so cool there was no effect component"
-            )
-        }
-        try {
             val context = EffectContext(
                 trigger = Trigger.OnDeactivation, source = latestCard, target = ownerId
             )
@@ -49,7 +39,7 @@ class CardPullingSystem @Inject constructor(
         } catch (_: IllegalStateException) {
             Log.i(
                 "pullNewCardSystem",
-                "No actCounter component found for pullNewCardSystem \n" +
+                "No actCounter component found for pullNewCardSystem for $latestCard\n" +
                         "Yeah yeah, we get it, you are so cool there was no actCounter component"
             )
         }
