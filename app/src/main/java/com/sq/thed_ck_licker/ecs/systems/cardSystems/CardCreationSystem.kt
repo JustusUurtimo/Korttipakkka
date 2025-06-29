@@ -215,7 +215,7 @@ class CardCreationSystem @Inject constructor(
         return generateCards(amount) { cardId ->
             withBasicCardDefaults(
                 CardConfig(
-                    name = "Time Bound Card", hp = 123f, score = 10000
+                    name = "Time Bound Card", hp = 183f, score = 10000
                 )
             )(cardId)
             cardId add TickComponent(1000)

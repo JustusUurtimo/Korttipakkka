@@ -2,10 +2,8 @@ package com.sq.thed_ck_licker.ecs.systems.cardSystems
 
 import androidx.compose.runtime.mutableIntStateOf
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
-import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.HistoryComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
-import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.ComponentManager
@@ -19,7 +17,6 @@ import com.sq.thed_ck_licker.ecs.systems.helperSystems.CardCreationHelperSystems
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.CardCreationHelperSystems_Factory
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.MultiplierSystem
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.MultiplierSystem_Factory
-import com.sq.thed_ck_licker.helpers.DescribedEffect
 import com.sq.thed_ck_licker.helpers.navigation.GameNavigator_Factory
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
