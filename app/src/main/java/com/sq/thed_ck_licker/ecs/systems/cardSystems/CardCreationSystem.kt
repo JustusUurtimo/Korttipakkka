@@ -13,13 +13,10 @@ import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.CardConfig
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.generateCards
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.withBasicCardDefaults
-import com.sq.thed_ck_licker.ecs.systems.helperSystems.CardCreationHelperSystems
 import com.sq.thed_ck_licker.helpers.navigation.GameNavigator
 import javax.inject.Inject
 
 class CardCreationSystem @Inject constructor(
-    private val cardCreationHelperSystems: CardCreationHelperSystems,
-    private val cardBuilder: CardBuilderSystem,
     private val gameNavigator: GameNavigator
 ) {
 
