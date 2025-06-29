@@ -1,6 +1,9 @@
 package com.sq.thed_ck_licker.ecs.systems.cardSystems
 
+import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
+import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
+import com.sq.thed_ck_licker.ecs.components.TagsComponent
 import com.sq.thed_ck_licker.ecs.components.effectthing.Effect
 import com.sq.thed_ck_licker.ecs.components.effectthing.Effect.TakeRisingDamage
 import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
@@ -33,8 +36,9 @@ object TriggerEffectHandler {
         if (effects == null) return
 
         val (sourceMulti, targetMulti) = getMultipliers(context)
-
+        println("vnvnvm")
         for (effect in effects) {
+            println("effect: $effect")
             when (effect) { //Its getting quite big...
                 is Effect.GainScore -> {
                     val score = context.target get ScoreComponent::class
@@ -216,17 +220,52 @@ object TriggerEffectHandler {
                         var amount = (sourceScore.getScore() * sourceMulti * targetMulti).toInt()
                         targetScore.addScore(amount)
                     }
-//                    if(effect.current < effect.amount-1) {
-//                        effects.add(Effect.GainScoreFromScoreComp)
-//                    }
                 }
                 is Effect.SelfAddEffectsToTrigger -> {
-                    source add (source get TriggeredEffectsComponent::class).addEffect(
+                    source add (source get TriggeredEffectsComponent::class).addEffects(
                         effect.trigger,
                         effect.effects
                     )
                 }
 
+                is Effect.CorruptCards -> {
+                    val efficiency = (effect.amount * sourceMulti * targetMulti).toInt()
+                    val target = (context.target get effect.targetDeck)
+                    val deck = when (target) {
+                        is DrawDeckComponent -> {
+                            var thing = target.getDrawCardDeck()
+                            if(thing.isEmpty()){
+                                thing  = (context.target get DiscardDeckComponent::class).getDiscardDeck()
+                            }
+                            thing
+                        }
+
+                        is DiscardDeckComponent -> {
+                            var thing = target.getDiscardDeck()
+                            if(thing.isEmpty()){
+                                thing  = (context.target get DrawDeckComponent::class).getDrawCardDeck()
+                            }
+                            thing
+                        }
+
+                        else -> {
+                            return
+                        }
+                    }
+                    println("Moiii")
+                    repeat(efficiency) {
+                        println("Round: $it")
+                        val card = deck.removeAt(MyRandom.random.nextInt(deck.size))
+                        val trigEffComp = card get TriggeredEffectsComponent::class
+                        println("trigEffComp: $trigEffComp")
+                        val corruptedTriggeredEffect = trigEffComp.shuffleTo()
+                        println("Corrupted: $corruptedTriggeredEffect")
+                        card add corruptedTriggeredEffect
+                        val tags = card get TagsComponent::class
+                        tags.addTag(TagsComponent.CardTag.CORRUPTED)
+                        deck.add(card)
+                    }
+                }
             }
         }
     }

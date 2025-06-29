@@ -6,4 +6,8 @@ enum class Trigger {
       */
     Blank,
     OnPlay, OnDraw, OnTurnStart, OnDeactivation, OnSpecial, OnCreation, OnDeath, OnDiscard, OnTick;
+
+    companion object{
+        val duringPlayTriggers = setOf(OnPlay, OnDraw, OnTurnStart, OnDeactivation, OnDeath, OnDiscard)
+    }
 }

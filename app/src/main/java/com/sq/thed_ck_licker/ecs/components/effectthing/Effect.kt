@@ -1,6 +1,10 @@
 package com.sq.thed_ck_licker.ecs.components.effectthing
 
+import com.sq.thed_ck_licker.ecs.components.Component
+import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
+import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.helpers.navigation.GameNavigator
+import kotlin.reflect.KClass
 
 sealed class Effect {
     /*
@@ -185,4 +189,10 @@ sealed class Effect {
     }
 
     data class SelfAddEffectsToTrigger(val trigger: Trigger, var effects: List<Effect>): Effect()
+
+    data class CorruptCards(override val amount: Float, val targetDeck: KClass<*>) : Effect() {
+        override fun describe(modifiedAmount: Float?): String {
+            return "Corrupt $modifiedAmount card(s) in ${targetDeck.simpleName}"
+        }
+    }
 }

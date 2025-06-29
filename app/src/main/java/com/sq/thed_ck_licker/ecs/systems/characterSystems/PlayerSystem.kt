@@ -46,7 +46,7 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         getPlayerID() add OwnerComponent(getPlayerID())
 
         if (areRealTimeThingsEnabled.value) {
-            getPlayerID() add TickComponent(tickAction = healthTicker(), tickThreshold = 1000)
+            getPlayerID() add TickComponent(tickThreshold = 1000)
             getPlayerID() add TriggeredEffectsComponent(Trigger.OnTick, Effect.TakeDamage(1f))
         }
     }
@@ -68,17 +68,17 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         val basicsV3 = cardCreationSystem.addBasicScoreCards(5)
         
         return emptyList<Int>() +
-//                playerHealingCards +
-//                playerDamageCards +
-//                defaultCards +
-//                deactivationCards +
-//                trapCards +
-//                scoreGainerCards +
-//                beerGogglesCards +
-//                maxHpCards +
-//                merchantCards +
-//                multiplierCards +
-//                corruptionCards +
+                playerHealingCards +
+                playerDamageCards +
+                defaultCards +
+                deactivationCards +
+                trapCards +
+                scoreGainerCards +
+                beerGogglesCards +
+                maxHpCards +
+                merchantCards +
+                multiplierCards +
+                corruptionCards +
                 timeBoundCards +
                 basicsV3 +
                 emptyList<Int>()
