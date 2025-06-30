@@ -6,6 +6,9 @@ import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.TriggerEffectHandler.getMultipliers
 import com.sq.thed_ck_licker.ecs.systems.helperSystems.CardCreationHelperSystems2
+import com.sq.thed_ck_licker.ecs.systems.helperSystems.DeckHelper
+import com.sq.thed_ck_licker.helpers.MyRandom
+import com.sq.thed_ck_licker.helpers.getRandomElement
 import kotlin.math.min
 
 object HealthHandlers {
@@ -54,6 +57,33 @@ object HealthHandlers {
         CardCreationHelperSystems2.addLimitedSupplyAutoHealToEntity(
             context.target, effect.amount
         )
+    }
+
+    fun applyFullHealToAmountEntities(
+        context: EffectContext,
+        effect: Effect.HealEntitiesInDeckToFull
+    ) {
+        val deck = DeckHelper.getEntityFullDeck(context.target)
+
+        var counter = 0
+        deck.shuffle(MyRandom.random)
+        deck.forEach {
+            val healthComp = (it get HealthComponent::class)
+            if (counter < effect.amount && healthComp.getHealth() < healthComp.getMaxHealth() * 0.80) {
+                healthComp.heal(healthComp.getMaxHealth())
+                counter++
+                if (counter.toFloat() == effect.amount) return
+            }
+        }
+    }
+
+    fun applyMultiplyTheMaxHp(context: EffectContext, effect: Effect.MultiplyMaxHp) {
+        val (sourceMulti, targetMulti) = getMultipliers(context)
+        val deck = DeckHelper.getEntityFullDeck(context.target)
+        val card = deck.getRandomElement()
+        val healthComp = (card get HealthComponent::class)
+        val amount = (effect.amount * sourceMulti * targetMulti).toFloat()
+        healthComp.setMaxHealth(healthComp.getMaxHealth() * amount)
     }
 
 }

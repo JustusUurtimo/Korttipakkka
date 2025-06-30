@@ -204,9 +204,25 @@ sealed class Effect {
             return "Lose ($modifiedAmount) Multiplier"
         }
     }
+
     object None : Effect(){
         override fun describe(modifiedAmount: Float?): String {
             return "Do nothing"
+        }
+    }
+
+    /**
+     * @param amount How many targets to heal
+     */
+    data class HealEntitiesInDeckToFull(override val amount: Float) : Effect() {
+        override fun describe(modifiedAmount: Float?): String {
+            return "Heal to full ($modifiedAmount targets)"
+        }
+    }
+
+    data class MultiplyMaxHp(override val amount: Float) : Effect() {
+        override fun describe(modifiedAmount: Float?): String {
+            return "Multiply max health of card by $modifiedAmount"
         }
     }
 }

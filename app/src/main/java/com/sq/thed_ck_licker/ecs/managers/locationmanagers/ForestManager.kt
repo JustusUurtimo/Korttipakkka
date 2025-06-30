@@ -6,10 +6,12 @@ import com.sq.thed_ck_licker.ecs.components.TagsComponent.Tag
 import com.sq.thed_ck_licker.ecs.components.effectthing.Effect
 import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
 import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
+import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityId
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.generateEntity
+import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.CardConfig
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.generateCards
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.withBasicCardDefaults
@@ -33,6 +35,9 @@ object ForestManager {
             fuq = false
         }
         list.addAll(addLameForestCards(5))
+        list.addAll(addEnchantressForestCards(1))
+        list.addAll(buildingTheEnchantressPart1(1))
+        list.addAll(buildingTheEnchantressPart2(1))
         return list
     }
 
@@ -58,17 +63,60 @@ object ForestManager {
         return multiArti
     }
 
-    fun addLameForestCards(amount: Int, scoreSize: Int = 1): List<EntityId> {
+    fun addLameForestCards(amount: Int): List<EntityId> {
         return generateCards(amount) { cardId ->
             withBasicCardDefaults(
                 CardConfig(
                     name = "Lame Forest Card...?",
                     hp = 1000f,
-                    score = scoreSize,
+                    score = 0,
+                    tags = listOf(Tag.FOREST, Tag.CARD)
+                )
+            )(cardId)
+            (cardId get HealthComponent::class).setHealth(100f)
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.None)
+        }
+    }
+
+    fun addEnchantressForestCards(amount: Int): List<EntityId> {
+        return generateCards(amount) { cardId ->
+            withBasicCardDefaults(
+                CardConfig(
+                    name = "Enchantress",
+                    hp = 3f,
+                    score = 0,
                     tags = listOf(Tag.FOREST, Tag.CARD)
                 )
             )(cardId)
             cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.None)
+        }
+    }
+
+    fun buildingTheEnchantressPart1(amount: Int): List<EntityId> {
+        return generateCards(amount) { cardId ->
+            withBasicCardDefaults(
+                CardConfig(
+                    name = "Heal to full",
+                    hp = 5f,
+                    score = 0,
+                    tags = listOf(Tag.FOREST, Tag.CARD)
+                )
+            )(cardId)
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.HealEntitiesInDeckToFull(5f))
+        }
+    }
+
+    fun buildingTheEnchantressPart2(amount: Int): List<EntityId> {
+        return generateCards(amount) { cardId ->
+            withBasicCardDefaults(
+                CardConfig(
+                    name = "Double The Max HP",
+                    hp = 2f,
+                    score = 0,
+                    tags = listOf(Tag.FOREST, Tag.CARD)
+                )
+            )(cardId)
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.MultiplyMaxHp(2f))
         }
     }
 }

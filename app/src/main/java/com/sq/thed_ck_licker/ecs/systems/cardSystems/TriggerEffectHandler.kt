@@ -14,10 +14,12 @@ import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.D
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.DamageHandlers.applySelfDamage
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.DamageHandlers.applyTakeRisingDamageEffect
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.DamageHandlers.resetRisingDamageEffect
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.HealthHandlers.applyFullHealToAmountEntities
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.HealthHandlers.applyGainMaxHealthEffect
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.HealthHandlers.applyHealEffect
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.HealthHandlers.applyHealOnUnderThreshold
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.HealthHandlers.applyLimitedSupplyAutoHeal
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.HealthHandlers.applyMultiplyTheMaxHp
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.MiscHandler.addEffectsToSourceTrigger
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.MiscHandler.applyCorruptCardsEffect
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.MiscHandler.applyDamageOrBoostMaxHp
@@ -141,6 +143,12 @@ object TriggerEffectHandler {
                 }
                 is Effect.None -> {
                     displayInfo("Nothing happens")
+                }
+                is Effect.HealEntitiesInDeckToFull -> {
+                    applyFullHealToAmountEntities(context, effect)
+                }
+                is Effect.MultiplyMaxHp -> {
+                    applyMultiplyTheMaxHp(context, effect)
                 }
             }
         }

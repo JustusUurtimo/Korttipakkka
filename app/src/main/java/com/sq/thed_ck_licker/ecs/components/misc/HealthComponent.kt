@@ -33,6 +33,9 @@ data class HealthComponent(
         return this.health.floatValue
     }
 
+    fun setMaxHealth(health: Float) {
+        this.maxHealth.floatValue = health
+    }
     fun getMaxHealth(): Float {
         return this.maxHealth.floatValue
     }
@@ -42,6 +45,10 @@ data class HealthComponent(
     }
 
     private var lastTime = -1L
+
+    /**
+     * @return amount of health gained
+     */
     fun add(amount: Float): Float {
         var logging = "This is going to be modified $this"
         var healthGained = amount
