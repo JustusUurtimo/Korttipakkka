@@ -192,4 +192,21 @@ sealed class Effect {
             return "Corrupt $modifiedAmount card(s) in ${targetDeck.simpleName}"
         }
     }
+
+    data class AddFlatMultiplier(override val amount: Float) : Effect() {
+        override fun describe(modifiedAmount: Float?): String {
+            return "Gain ($modifiedAmount) Multiplier"
+        }
+    }
+
+    data class RemoveFlatMultiplier(override val amount: Float) : Effect() {
+        override fun describe(modifiedAmount: Float?): String {
+            return "Lose ($modifiedAmount) Multiplier"
+        }
+    }
+    object None : Effect(){
+        override fun describe(modifiedAmount: Float?): String {
+            return "Do nothing"
+        }
+    }
 }

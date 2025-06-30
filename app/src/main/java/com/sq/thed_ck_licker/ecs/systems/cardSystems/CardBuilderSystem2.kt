@@ -7,7 +7,7 @@ import com.sq.thed_ck_licker.ecs.components.ImageComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
 import com.sq.thed_ck_licker.ecs.components.OwnerComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent
-import com.sq.thed_ck_licker.ecs.components.TagsComponent.CardTag
+import com.sq.thed_ck_licker.ecs.components.TagsComponent.Tag
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityId
@@ -40,7 +40,7 @@ object CardBuilderSystem2 {
 
     data class CardConfig(
         val img: Int = R.drawable.placeholder,
-        val tags: List<CardTag> = listOf(CardTag.CARD),
+        val tags: List<Tag> = listOf(Tag.CARD),
         val name: String = "Card",
         val characterId: Int? = null,
         val hp: Float? = 10f,

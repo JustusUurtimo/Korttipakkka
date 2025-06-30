@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent
-import com.sq.thed_ck_licker.ecs.components.TagsComponent.CardTag
+import com.sq.thed_ck_licker.ecs.components.TagsComponent.Tag
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import kotlin.reflect.KClass
@@ -58,7 +58,7 @@ class ComponentManager {
     }
 
 
-    fun getEntitiesWithTags(tags: List<CardTag>): Map<Int, Any> {
+    fun getEntitiesWithTags(tags: List<Tag>): Map<Int, Any> {
         val entities = getEntitiesWithComponent(TagsComponent::class)
         checkNotNull(entities) { "No entities with TagsComponent found" }
         val matchingEntities = entities.filter { (_, value) ->

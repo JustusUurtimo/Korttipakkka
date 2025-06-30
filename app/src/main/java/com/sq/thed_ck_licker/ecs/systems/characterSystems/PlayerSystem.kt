@@ -19,6 +19,7 @@ import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getRegularMerchantID
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.get
+import com.sq.thed_ck_licker.ecs.managers.locationmanagers.ForestManager
 import com.sq.thed_ck_licker.ecs.states.PlayerState
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.areRealTimeThingsEnabled
@@ -62,7 +63,9 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         val corruptionCards = cardCreationSystem.addShuffleTestCards(2)
         val timeBoundCards = cardCreationSystem.addTimeBoundTestCards(1)
         val basicsV3 = cardCreationSystem.addBasicScoreCards(5)
-        
+
+        val forestPackage = ForestManager.getForestPackage(getPlayerID())
+
         return emptyList<Int>() +
                 playerHealingCards +
                 playerDamageCards +
@@ -77,6 +80,7 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
                 corruptionCards +
                 timeBoundCards +
                 basicsV3 +
+                forestPackage+
                 emptyList<Int>()
     }
 
