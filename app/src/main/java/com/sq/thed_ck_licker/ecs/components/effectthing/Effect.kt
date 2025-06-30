@@ -1,5 +1,6 @@
 package com.sq.thed_ck_licker.ecs.components.effectthing
 
+import com.sq.thed_ck_licker.ecs.managers.EntityId
 import com.sq.thed_ck_licker.helpers.navigation.GameNavigator
 import kotlin.reflect.KClass
 
@@ -232,6 +233,24 @@ sealed class Effect {
     data class GainSelfHpAsScore(override val amount: Float) : Effect() {
         override fun describe(modifiedAmount: Float?): String {
             return "Gain ${amount * 100}% health as score ($modifiedAmount)" //fuq... again the descriptions are not updating...
+        }
+    }
+
+    data class GiveCardInDeckMultiplier(override val amount: Float) : Effect() {
+        override fun describe(modifiedAmount: Float?): String {
+            return "Gift card in your deck with multiplier of $modifiedAmount"
+        }
+    }
+
+    data class AddTempMultiplierToCardsInDeck(override val amount: Float, val size: Float) : Effect() {
+        override fun describe(modifiedAmount: Float?): String {
+            return "Gift $modifiedAmount cards in your deck with temp multiplier of $size"
+        }
+    }
+
+    data class CoActivation(val newSource: EntityId?, val asTrigger: Trigger?, var isThisRecursion: Boolean = false) : Effect() {
+        override fun describe(): String {
+            return "Co-activate entity $newSource with $asTrigger"
         }
     }
 }

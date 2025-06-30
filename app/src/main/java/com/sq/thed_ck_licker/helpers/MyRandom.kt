@@ -9,12 +9,3 @@ object MyRandom {
     fun getRandomInt(min: Int = 0, max: Int = 10) = random.nextInt(min, max)
 
 }
-
-/**
- * I prefer to not use this one on empty list
- */
-fun <T> List<T>.getRandomElement(): T {
-    return this[MyRandom.getRandomInt(max = this.size)]
-}
-
-

@@ -9,7 +9,6 @@ import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.GameEvent
 import com.sq.thed_ck_licker.ecs.managers.GameEvents
 import com.sq.thed_ck_licker.ecs.managers.get
-import com.sq.thed_ck_licker.ecs.systems.cardSystems.TriggerEffectHandler.getMultipliers
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.DamageHandlers.applyDamageEffect
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.DamageHandlers.applyPercentageDamage
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.DamageHandlers.applySelfDamage
@@ -24,12 +23,15 @@ import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.H
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.MiscHandler.addEffectsToSourceTrigger
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.MiscHandler.applyCorruptCardsEffect
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.MiscHandler.applyDamageOrBoostMaxHp
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.MiscHandler.coactivate
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.MiscHandler.openMerchant
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.MultiplierHandlers.addFlatMultiplier
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.MultiplierHandlers.applyMultiplier
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.MultiplierHandlers.applyRemoveMultiplier
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.MultiplierHandlers.applySelfMultiplier
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.MultiplierHandlers.applyTemporaryMultiplier
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.MultiplierHandlers.giftMultiplierToCard
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.MultiplierHandlers.giftTempMultiToCards
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.MultiplierHandlers.removeFlatMultiplier
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.MultiplierHandlers.removeSelfMultiplier
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.ScoreHandlers.addScoreGainer
@@ -154,6 +156,15 @@ object TriggerEffectHandler {
                 }
                 is Effect.GainSelfHpAsScore -> {
                     applyGainHpAsScore(context, effect)
+                }
+                is Effect.GiveCardInDeckMultiplier -> {
+                    giftMultiplierToCard(context, effect)
+                }
+                is Effect.AddTempMultiplierToCardsInDeck -> {
+                    giftTempMultiToCards(context, effect)
+                }
+                is Effect.CoActivation -> {
+                    coactivate(context, effect)
                 }
             }
         }

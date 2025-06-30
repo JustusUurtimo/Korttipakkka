@@ -4,6 +4,7 @@ import com.sq.thed_ck_licker.ecs.components.OwnerComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent.Tag
 import com.sq.thed_ck_licker.ecs.components.effectthing.Effect
+import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
 import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
 import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
@@ -15,6 +16,7 @@ import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.CardConfig
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.generateCards
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.withBasicCardDefaults
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.TriggerEffectHandler
 import com.sq.thed_ck_licker.helpers.MyRandom
 
 object ForestManager {
@@ -28,17 +30,20 @@ object ForestManager {
         //So this needs to be here to block getting 2 of these...
         if (fuq) {
             if (MyRandom.random.nextBoolean()) {
-                addBasicForestArtifact(targetId)
+//                addBasicForestArtifact(targetId)
             } else {
-                addBasicForestArtifact2(targetId)
+//                addBasicForestArtifact2(targetId)
             }
             fuq = false
         }
         list.addAll(addLameForestCards(5))
-        list.addAll(addEnchantressForestCards(1))
-        list.addAll(buildingTheEnchantressPart1(1))
-        list.addAll(buildingTheEnchantressPart2(1))
-        list.addAll(buildingTheEnchantressPart3(5))
+//        list.addAll(addEnchantressForestCards(1))
+//        list.addAll(buildingTheEnchantressPart1(1))
+//        list.addAll(buildingTheEnchantressPart2(1))
+//        list.addAll(buildingTheEnchantressPart3(5))
+//        list.addAll(buildingTheEnchantressPart4(3))
+        list.addAll(buildingTheEnchantressPart5(1))
+//        list.addAll(buildingTheEnchantressPart5dot5(1))
         return list
     }
 
@@ -70,12 +75,12 @@ object ForestManager {
                 CardConfig(
                     name = "Lame Forest Card...?",
                     hp = 1000f,
-                    score = 0,
+                    score = cardId,
                     tags = listOf(Tag.FOREST, Tag.CARD)
                 )
             )(cardId)
             (cardId get HealthComponent::class).setHealth(100f)
-            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.None)
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.GainScoreFromScoreComp)
         }
     }
 
@@ -132,6 +137,89 @@ object ForestManager {
                 )
             )(cardId)
             cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.GainSelfHpAsScore(0.25f))
+        }
+    }
+
+    fun buildingTheEnchantressPart4(amount: Int): List<EntityId> {
+        return generateCards(amount) { cardId ->
+            withBasicCardDefaults(
+                CardConfig(
+                    name = "Gain Super Strength",
+                    hp = 1f,
+                    score = 0,
+                    tags = listOf(Tag.FOREST, Tag.CARD)
+                )
+            )(cardId)
+            cardId add TriggeredEffectsComponent(
+                Trigger.OnPlay,
+                Effect.GiveCardInDeckMultiplier(10f)
+            )
+        }
+    }
+
+    fun buildingTheEnchantressPart5(amount: Int): List<EntityId> {
+        return generateCards(amount) { cardId ->
+            withBasicCardDefaults(
+                CardConfig(
+                    name = "Burst of Speed",
+                    hp = 1f,
+                    score = 0,
+                    tags = listOf(Tag.FOREST, Tag.CARD)
+                )
+            )(cardId)
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.AddTempMultiplierToCardsInDeck(amount= 5f, size = 2f))
+        }
+    }
+
+    fun addTemporaryForestMultiplierTo(
+        targetEntityId: EntityId,
+        health: Float = 1f,
+        multiplier: Float
+    ): EntityId {
+        val limitedMultiEntity = generateEntity()
+        limitedMultiEntity add HealthComponent(health)
+        limitedMultiEntity add OwnerComponent(targetEntityId)
+
+        limitedMultiEntity add TriggeredEffectsComponent(
+            mutableMapOf(
+                Trigger.OnCreation to mutableListOf(
+                    Effect.AddMultiplier(multiplier)
+                ),
+                Trigger.OnSpecial to mutableListOf(
+                    Effect.TakeSelfDamage(1f)
+                ),
+                Trigger.OnDeath to mutableListOf(
+                    Effect.RemoveMultiplier(multiplier)
+                )
+            )
+        )
+
+        TriggerEffectHandler.handleTriggerEffect(
+            EffectContext(
+                trigger = Trigger.OnCreation,
+                source = limitedMultiEntity,
+                target = targetEntityId
+            )
+        )
+        return limitedMultiEntity
+    }
+
+    fun buildingTheEnchantressPart5dot5(amount: Int): List<EntityId> {
+        return generateCards(amount) { cardId ->
+            withBasicCardDefaults(
+                CardConfig(
+                    name = "CoActivation",
+                    hp = 1f,
+                    score = 0,
+                    tags = listOf(Tag.FOREST, Tag.CARD)
+                )
+            )(cardId)
+            cardId add TriggeredEffectsComponent(
+                Trigger.OnPlay, Effect.CoActivation(
+                    newSource = null,
+                    Trigger.OnPlay
+                )
+            )
         }
     }
 }

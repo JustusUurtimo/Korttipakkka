@@ -1,5 +1,6 @@
 package com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations
 
+import android.util.Log
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent
@@ -11,8 +12,11 @@ import com.sq.thed_ck_licker.ecs.managers.MerchantEvent
 import com.sq.thed_ck_licker.ecs.managers.MerchantEvents
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.get
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.TriggerEffectHandler
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.TriggerEffectHandler.getMultipliers
+import com.sq.thed_ck_licker.ecs.systems.helperSystems.DeckHelper
 import com.sq.thed_ck_licker.helpers.MyRandom
+import com.sq.thed_ck_licker.helpers.getRandomElement
 import com.sq.thed_ck_licker.helpers.navigation.Screen
 
 object MiscHandler {
@@ -95,4 +99,42 @@ object MiscHandler {
             effect.effects
         )
     }
+
+    fun coactivate(
+        context: EffectContext,
+        effect: Effect.CoActivation
+    ) {
+        /*
+         * You can still hit infinite recursion with this.
+         * While unlikely, if this hits another coactivation and that hits this back, they will recurse forever.
+         * If this becomes actual concern, we can just make the recursion lock be global.
+         */
+        if (effect.isThisRecursion == true) return
+        effect.isThisRecursion = true
+        Log.i("coactivate","CoActivation starts")
+
+       val newSource = if (effect.newSource != null) {
+           effect.newSource
+        }else{
+            val deck = DeckHelper.getEntityFullDeck(context.target)
+           deck.getRandomElement()
+       }
+        val newTrigger = if (effect.asTrigger != null) {
+            effect.asTrigger
+        }else{
+            val trigEffComp = newSource get TriggeredEffectsComponent::class
+            trigEffComp.effectsByTrigger.keys.toList().getRandomElement()
+        }
+
+        TriggerEffectHandler.handleTriggerEffect(
+            EffectContext(
+                trigger = newTrigger,
+                source = newSource,
+                target = context.target,
+            )
+        )
+        Log.i("coactivate","CoActivation ends")
+        effect.isThisRecursion = false
+    }
+
 }
