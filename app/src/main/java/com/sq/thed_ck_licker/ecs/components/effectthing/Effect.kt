@@ -253,4 +253,10 @@ sealed class Effect {
             return "Co-activate entity $newSource with $asTrigger"
         }
     }
+
+    data class TakeSelfPercentageDamage(override val amount: Float) : Effect(){
+        override fun describe(modifiedAmount: Float?): String {
+            return "Take %-based self damage ($modifiedAmount)"
+        }
+    }
 }

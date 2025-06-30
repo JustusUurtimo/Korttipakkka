@@ -36,14 +36,15 @@ object ForestManager {
             }
             fuq = false
         }
-        list.addAll(addLameForestCards(5))
+//        list.addAll(addLameForestCards(5))
 //        list.addAll(addEnchantressForestCards(1))
 //        list.addAll(buildingTheEnchantressPart1(1))
 //        list.addAll(buildingTheEnchantressPart2(1))
 //        list.addAll(buildingTheEnchantressPart3(5))
 //        list.addAll(buildingTheEnchantressPart4(3))
-        list.addAll(buildingTheEnchantressPart5(1))
+//        list.addAll(buildingTheEnchantressPart5(1))
 //        list.addAll(buildingTheEnchantressPart5dot5(1))
+        list.addAll(buildingTheEnchantressPart6(5))
         return list
     }
 
@@ -220,6 +221,20 @@ object ForestManager {
                     Trigger.OnPlay
                 )
             )
+        }
+    }
+
+    fun buildingTheEnchantressPart6(amount: Int): List<EntityId> {
+        return generateCards(amount) { cardId ->
+            withBasicCardDefaults(
+                CardConfig(
+                    name = "Thunderstruck",
+                    hp = 1000f,
+                    score = 0,
+                    tags = listOf(Tag.FOREST, Tag.CARD)
+                )
+            )(cardId)
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.TakeSelfPercentageDamage(0.10f))
         }
     }
 }

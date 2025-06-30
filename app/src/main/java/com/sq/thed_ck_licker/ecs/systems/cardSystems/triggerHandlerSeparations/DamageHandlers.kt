@@ -33,6 +33,16 @@ object DamageHandlers {
         healthComp.damage(amount)
     }
 
+    fun applyPercentageSelfDamage(
+        context: EffectContext,
+        effect: Effect.TakeSelfPercentageDamage ,
+    ) {
+        val (sourceMulti, _) = getMultipliers(context)
+        val healthComp = (context.source get HealthComponent::class)
+        val amount = healthComp.getMaxHealth() * (effect.amount * sourceMulti).toFloat()
+        healthComp.damage(amount)
+    }
+
     fun applyDamageEffect(
         context: EffectContext, effect: Effect.TakeDamage
     ) {

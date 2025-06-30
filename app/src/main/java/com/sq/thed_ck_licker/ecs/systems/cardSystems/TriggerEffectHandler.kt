@@ -11,6 +11,7 @@ import com.sq.thed_ck_licker.ecs.managers.GameEvents
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.DamageHandlers.applyDamageEffect
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.DamageHandlers.applyPercentageDamage
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.DamageHandlers.applyPercentageSelfDamage
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.DamageHandlers.applySelfDamage
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.DamageHandlers.applyTakeRisingDamageEffect
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.DamageHandlers.resetRisingDamageEffect
@@ -165,6 +166,9 @@ object TriggerEffectHandler {
                 }
                 is Effect.CoActivation -> {
                     coactivate(context, effect)
+                }
+                is Effect.TakeSelfPercentageDamage -> {
+                    applyPercentageSelfDamage(context, effect)
                 }
             }
         }
