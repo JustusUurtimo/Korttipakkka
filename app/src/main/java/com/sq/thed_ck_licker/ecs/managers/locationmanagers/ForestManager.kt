@@ -38,6 +38,7 @@ object ForestManager {
         list.addAll(addEnchantressForestCards(1))
         list.addAll(buildingTheEnchantressPart1(1))
         list.addAll(buildingTheEnchantressPart2(1))
+        list.addAll(buildingTheEnchantressPart3(5))
         return list
     }
 
@@ -117,6 +118,20 @@ object ForestManager {
                 )
             )(cardId)
             cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.MultiplyMaxHp(2f))
+        }
+    }
+
+    fun buildingTheEnchantressPart3(amount: Int): List<EntityId> {
+        return generateCards(amount) { cardId ->
+            withBasicCardDefaults(
+                CardConfig(
+                    name = "HP as score",
+                    hp = 100f,
+                    score = 0,
+                    tags = listOf(Tag.FOREST, Tag.CARD)
+                )
+            )(cardId)
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.GainSelfHpAsScore(0.25f))
         }
     }
 }

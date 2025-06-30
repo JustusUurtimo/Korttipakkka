@@ -225,4 +225,13 @@ sealed class Effect {
             return "Multiply max health of card by $modifiedAmount"
         }
     }
+
+    /**
+     * @param amount How much % to gain as score
+     */
+    data class GainSelfHpAsScore(override val amount: Float) : Effect() {
+        override fun describe(modifiedAmount: Float?): String {
+            return "Gain ${amount * 100}% health as score ($modifiedAmount)" //fuq... again the descriptions are not updating...
+        }
+    }
 }

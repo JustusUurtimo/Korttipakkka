@@ -9,6 +9,7 @@ import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.GameEvent
 import com.sq.thed_ck_licker.ecs.managers.GameEvents
 import com.sq.thed_ck_licker.ecs.managers.get
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.TriggerEffectHandler.getMultipliers
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.DamageHandlers.applyDamageEffect
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.DamageHandlers.applyPercentageDamage
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.DamageHandlers.applySelfDamage
@@ -32,6 +33,7 @@ import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.M
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.MultiplierHandlers.removeFlatMultiplier
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.MultiplierHandlers.removeSelfMultiplier
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.ScoreHandlers.addScoreGainer
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.ScoreHandlers.applyGainHpAsScore
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.ScoreHandlers.applyGainScalingScore
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.ScoreHandlers.applyRisingScoreEffect
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations.ScoreHandlers.gainScore
@@ -149,6 +151,9 @@ object TriggerEffectHandler {
                 }
                 is Effect.MultiplyMaxHp -> {
                     applyMultiplyTheMaxHp(context, effect)
+                }
+                is Effect.GainSelfHpAsScore -> {
+                    applyGainHpAsScore(context, effect)
                 }
             }
         }

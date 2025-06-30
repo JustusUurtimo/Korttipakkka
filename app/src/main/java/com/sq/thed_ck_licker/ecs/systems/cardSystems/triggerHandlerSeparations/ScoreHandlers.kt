@@ -2,6 +2,7 @@ package com.sq.thed_ck_licker.ecs.systems.cardSystems.triggerHandlerSeparations
 
 import com.sq.thed_ck_licker.ecs.components.effectthing.Effect
 import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
+import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.TriggerEffectHandler.damageDealtKey
@@ -86,6 +87,15 @@ object ScoreHandlers {
         val score = context.source get ScoreComponent::class
         score.addScore(abs((damage).toInt()))
         context.contextClues[damageDealtKey] = 0f
+    }
+
+    fun applyGainHpAsScore(context: EffectContext, effect: Effect.GainSelfHpAsScore) {
+        val hp = context.source get HealthComponent::class
+        val (sourceMulti, targetMulti) = getMultipliers(context)
+
+        val targetScore = context.target get ScoreComponent::class
+        var amount = ((hp.getHealth() * effect.amount) * sourceMulti * targetMulti).toInt()
+        targetScore.addScore(amount)
     }
 
 }
