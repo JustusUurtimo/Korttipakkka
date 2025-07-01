@@ -20,4 +20,7 @@ data class DrawDeckComponent @Inject constructor(
     fun removeCard(cardId: Int) {
         this.drawCardDeck.remove(cardId)
     }
+    fun addCards(cards: List<Int>) {
+        this.drawCardDeck.addAll(cards)
+    }
 }

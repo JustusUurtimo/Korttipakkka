@@ -22,7 +22,7 @@ import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.managers.locationmanagers.ForestManager
 import com.sq.thed_ck_licker.ecs.states.PlayerState
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem
-import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.areRealTimeThingsEnabled
+import com.sq.thed_ck_licker.helpers.Settings
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
@@ -33,7 +33,8 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
     fun initPlayer() {
         getPlayerID() add HealthComponent(100f)
         getPlayerID() add ScoreComponent()
-        getPlayerID() add DrawDeckComponent(initPlayerDeck() as MutableList<Int>)
+        val deck = DrawDeckComponent(mutableListOf())
+        getPlayerID() add deck
         getPlayerID() add DiscardDeckComponent(mutableListOf<Int>())
         getPlayerID() add MultiplierComponent()
         getPlayerID() add LatestCardComponent()
@@ -42,9 +43,15 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         getPlayerID() add ImageComponent()
         getPlayerID() add OwnerComponent(getPlayerID())
 
-        if (areRealTimeThingsEnabled.value) {
+        if (Settings.areRealTimeThingsEnabled.value) {
             getPlayerID() add TickComponent(tickThreshold = 1000)
             getPlayerID() add TriggeredEffectsComponent(Trigger.OnTick, TakeDamage(1f))
+        }
+        if (Settings.addBaseTestPackage.value) {
+            deck.addCards(initPlayerDeck())
+        }
+        if (Settings.addForestPackage.value) {
+            deck.addCards(ForestManager.getForestPackage(getPlayerID()))
         }
     }
 
