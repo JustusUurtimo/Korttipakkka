@@ -4,8 +4,11 @@ import android.util.Log
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.OwnerComponent
+import com.sq.thed_ck_licker.ecs.components.effectthing.Effect
 import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
 import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
+import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
+import com.sq.thed_ck_licker.ecs.components.effectthing.miscEffects.CoActivation
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
 import com.sq.thed_ck_licker.ecs.managers.ComponentManager
@@ -16,6 +19,7 @@ import com.sq.thed_ck_licker.ecs.managers.GameEvents
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.TriggerEffectHandler
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.areRealTimeThingsEnabled
+import kotlin.reflect.KClass
 
 object DeathSystem {
     fun checkForDeath(componentManager: ComponentManager = ComponentManager.componentManager) {
@@ -103,6 +107,31 @@ object DeathSystem {
             deaths.forEach {
                 if (component.getLatestCard() == it) {
                     component.setLatestCard(-1)
+                }
+            }
+        }
+
+
+        /*
+         * This here...
+         * It most certainly does not work...
+         * Well let me be more specific:
+         * At least the descriptions are not updated,
+         * Even tho the tested effect seems to be gone.
+         */
+        val toClean5 =
+            componentManager.getEntitiesWithComponent(TriggeredEffectsComponent::class) ?: return
+
+        for (entityAndComp in toClean5) {
+            val component = entityAndComp.value
+
+            @Suppress("UNCHECKED_CAST")
+            val asd = component.hasEffect(CoActivation::class as KClass<Effect>)
+            if (asd == null) return
+            val effects = component.findEffect(CoActivation::class)
+            for (effect in effects) {
+                if (deaths.contains(effect.newSource)) {
+                    component.removeEffect(asd, effect)
                 }
             }
         }

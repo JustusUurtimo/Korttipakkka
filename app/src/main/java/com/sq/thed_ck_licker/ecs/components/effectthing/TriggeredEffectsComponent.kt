@@ -37,6 +37,28 @@ data class TriggeredEffectsComponent(
         return result
     }
 
+    fun hasEffect(effect: KClass<Effect>): Trigger? {
+        val effects = effectsByTrigger.values.flatten()
+        for(i in effects.indices){
+            if(effects[i]::class == effect){
+                return effectsByTrigger.keys.toList()[i]
+            }
+        }
+        return null
+    }
+
+    fun removeEffect(trigger: Trigger, effect: Effect): TriggeredEffectsComponent {
+        val effects = effectsByTrigger[trigger]
+        if (effects == null) return this
+
+        val newEffects = effects.toMutableList()
+        newEffects.remove(effect)
+
+        val newMap = effectsByTrigger.toMutableMap()
+        newMap[trigger] = newEffects
+        return TriggeredEffectsComponent(newMap.toMap())
+    }
+
     fun addEffects(trigger: Trigger, effects: List<Effect>): TriggeredEffectsComponent {
         val thing = effectsByTrigger.toMutableMap()
         val effectsForTrigger = thing[trigger]

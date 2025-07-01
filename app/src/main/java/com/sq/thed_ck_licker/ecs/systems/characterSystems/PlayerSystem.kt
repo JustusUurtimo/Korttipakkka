@@ -8,9 +8,9 @@ import com.sq.thed_ck_licker.ecs.components.HistoryComponent
 import com.sq.thed_ck_licker.ecs.components.ImageComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
 import com.sq.thed_ck_licker.ecs.components.OwnerComponent
-import com.sq.thed_ck_licker.ecs.components.effectthing.Effect
 import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
 import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
+import com.sq.thed_ck_licker.ecs.components.effectthing.damageEffects.TakeDamage
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
@@ -19,6 +19,7 @@ import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getRegularMerchantID
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.get
+import com.sq.thed_ck_licker.ecs.managers.locationmanagers.ForestManager
 import com.sq.thed_ck_licker.ecs.states.PlayerState
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.areRealTimeThingsEnabled
@@ -43,7 +44,7 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
 
         if (areRealTimeThingsEnabled.value) {
             getPlayerID() add TickComponent(tickThreshold = 1000)
-            getPlayerID() add TriggeredEffectsComponent(Trigger.OnTick, Effect.TakeDamage(1f))
+            getPlayerID() add TriggeredEffectsComponent(Trigger.OnTick, TakeDamage(1f))
         }
     }
 
@@ -62,7 +63,9 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         val corruptionCards = cardCreationSystem.addShuffleTestCards(2)
         val timeBoundCards = cardCreationSystem.addTimeBoundTestCards(1)
         val basicsV3 = cardCreationSystem.addBasicScoreCards(5)
-        
+
+        val forestPackage = ForestManager.getForestPackage(getPlayerID())
+
         return emptyList<Int>() +
                 playerHealingCards +
                 playerDamageCards +
@@ -77,6 +80,7 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
                 corruptionCards +
                 timeBoundCards +
                 basicsV3 +
+                forestPackage+
                 emptyList<Int>()
     }
 
