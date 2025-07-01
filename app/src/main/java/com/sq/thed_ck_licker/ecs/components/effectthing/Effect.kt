@@ -19,9 +19,19 @@ abstract class Effect {
 
     open fun describe(modifiedAmount: Float?): String? = null
 
+    /**
+     * Override this to provide a dynamic value (e.g. from a component),
+     * instead of using the static `amount`.
+     */
+    open fun getDynamicAmountFromContext(context: EffectContext): Float? = null
+
     open fun describeWithContext(context: EffectContext): String? {
         val (sourceMulti, targetMulti) = TriggerEffectHandler.getMultipliers(context)
-        val modifiedAmount = amount?.times(sourceMulti)?.times(targetMulti)
+
+        val dynamicAmount = getDynamicAmountFromContext(context)
+        val baseAmount = dynamicAmount ?: amount
+        val modifiedAmount = baseAmount?.times(sourceMulti)?.times(targetMulti)
+
         return describe(modifiedAmount) ?: describe()
     }
 }
