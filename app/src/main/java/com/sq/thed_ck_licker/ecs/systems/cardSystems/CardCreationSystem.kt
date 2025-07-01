@@ -4,9 +4,24 @@ import com.sq.thed_ck_licker.R
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent.Tag
-import com.sq.thed_ck_licker.ecs.components.effectthing.Effect
 import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
 import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
+import com.sq.thed_ck_licker.ecs.components.effectthing.damageEffects.TakeDamage
+import com.sq.thed_ck_licker.ecs.components.effectthing.damageEffects.TakeRisingDamage
+import com.sq.thed_ck_licker.ecs.components.effectthing.damageEffects.TakeSelfDamage
+import com.sq.thed_ck_licker.ecs.components.effectthing.healthEffects.AddBeerGoggles
+import com.sq.thed_ck_licker.ecs.components.effectthing.healthEffects.GainHealth
+import com.sq.thed_ck_licker.ecs.components.effectthing.miscEffects.CorruptCards
+import com.sq.thed_ck_licker.ecs.components.effectthing.miscEffects.OpenMerchant
+import com.sq.thed_ck_licker.ecs.components.effectthing.miscEffects.SelfAddEffectsToTrigger
+import com.sq.thed_ck_licker.ecs.components.effectthing.miscEffects.Shovel
+import com.sq.thed_ck_licker.ecs.components.effectthing.miscEffects.TakeDamageOrGainMaxHP
+import com.sq.thed_ck_licker.ecs.components.effectthing.multiplierEffects.AddTempMultiplier
+import com.sq.thed_ck_licker.ecs.components.effectthing.scoreEffects.AddScoreGainer
+import com.sq.thed_ck_licker.ecs.components.effectthing.scoreEffects.GainScoreFromScoreComp
+import com.sq.thed_ck_licker.ecs.components.effectthing.scoreEffects.OnRepeatActivationGainScore
+import com.sq.thed_ck_licker.ecs.components.effectthing.scoreEffects.ResetSelfScore
+import com.sq.thed_ck_licker.ecs.components.effectthing.scoreEffects.TakeRisingScore
 import com.sq.thed_ck_licker.ecs.components.misc.TickComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityId
 import com.sq.thed_ck_licker.ecs.managers.add
@@ -25,7 +40,7 @@ class CardCreationSystem @Inject constructor(
             withBasicCardDefaults(
                 CardConfig(name = "Shovel", hp = 10f)
             )(cardId)
-            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.Shovel)
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Shovel)
         }
     }
 
@@ -36,7 +51,7 @@ class CardCreationSystem @Inject constructor(
                     name = "Basic score card V4", hp = 100f, score = scoreSize
                 )
             )(cardId)
-            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.GainScoreFromScoreComp)
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, GainScoreFromScoreComp)
         }
     }
 
@@ -47,7 +62,7 @@ class CardCreationSystem @Inject constructor(
                     img = R.drawable.heal_10, name = "Heal", hp = 5f
                 )
             )(cardId)
-            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.GainHealth(healSize))
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, GainHealth(healSize))
         }
     }
 
@@ -58,7 +73,7 @@ class CardCreationSystem @Inject constructor(
                     img = R.drawable.damage_6, name = "Damage", hp = 20f
                 )
             )(cardId)
-            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.TakeDamage(damageSize))
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, TakeDamage(damageSize))
         }
     }
 
@@ -73,7 +88,7 @@ class CardCreationSystem @Inject constructor(
             )(cardId)
             cardId add TriggeredEffectsComponent(
                 Trigger.OnPlay,
-                Effect.OpenMerchant(merchantId.toFloat(), gameNavigator)
+                OpenMerchant(merchantId.toFloat(), gameNavigator)
             )
         }
     }
@@ -85,7 +100,7 @@ class CardCreationSystem @Inject constructor(
                     name = "Max HP Trap Card", hp = 5f
                 )
             )(cardId)
-            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.TakeDamageOrGainMaxHP(10f))
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, TakeDamageOrGainMaxHP(10f))
         }
     }
 
@@ -96,7 +111,7 @@ class CardCreationSystem @Inject constructor(
                     name = "Default Card", hp = 10f, score = 100
                 )
             )(cardId)
-            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.GainScoreFromScoreComp)
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, GainScoreFromScoreComp)
         }
     }
 
@@ -107,7 +122,7 @@ class CardCreationSystem @Inject constructor(
                     name = "Default Card", hp = 1000f, score = 1
                 )
             )(cardId)
-            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.GainScoreFromScoreComp)
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, GainScoreFromScoreComp)
         }
     }
 
@@ -120,15 +135,15 @@ class CardCreationSystem @Inject constructor(
             )(cardId)
 
             val asd = 1/multiplier
+            val risingDamage = TakeRisingDamage(asd, asd)
             cardId add TriggeredEffectsComponent(
                 mutableMapOf(
                     Trigger.OnPlay to mutableListOf( //Not happy at all with this...
-                        Effect.GainScoreFromScoreComp,
-                        Effect.ResetSelfScore(),
-                        Effect.ResetTakeRisingDamage(asd,asd)
+                        GainScoreFromScoreComp,
+                        ResetSelfScore(),
+                        risingDamage
                     ), Trigger.OnDeactivation to mutableListOf(
-                        Effect.TakeRisingDamage(asd,asd),
-                        Effect.StoreDamageDealtAsSelfScore
+                        risingDamage
                     )
                 )
             )
@@ -145,8 +160,8 @@ class CardCreationSystem @Inject constructor(
             )(cardId)
             cardId add TriggeredEffectsComponent(
                 mutableMapOf(
-                    Trigger.OnPlay to mutableListOf(Effect.TakeRisingDamage(5f, 5f)),
-                    Trigger.OnDeactivation to mutableListOf(Effect.TakeRisingScore(-30f, -30f)),
+                    Trigger.OnPlay to mutableListOf(TakeRisingDamage(5f, 5f)),
+                    Trigger.OnDeactivation to mutableListOf(TakeRisingScore(-30f, -30f)),
                 )
             )
         }
@@ -161,7 +176,7 @@ class CardCreationSystem @Inject constructor(
             )(cardId)
             cardId add TriggeredEffectsComponent(
                 Trigger.OnPlay,
-                Effect.AddScoreGainer(pointsPerCard.toFloat())
+                AddScoreGainer(pointsPerCard.toFloat())
             )
         }
     }
@@ -175,7 +190,7 @@ class CardCreationSystem @Inject constructor(
             )(cardId)
             cardId add TriggeredEffectsComponent(
                 Trigger.OnPlay,
-                Effect.AddBeerGoggles(healLimit)
+                AddBeerGoggles(healLimit)
             )
         }
     }
@@ -189,7 +204,7 @@ class CardCreationSystem @Inject constructor(
             )(cardId)
             cardId add TriggeredEffectsComponent(
                 Trigger.OnPlay,
-                Effect.AddTempMultiplier(multiplier)
+                AddTempMultiplier(multiplier)
             )
         }
     }
@@ -204,11 +219,13 @@ class CardCreationSystem @Inject constructor(
             cardId add TriggeredEffectsComponent(
                 mutableMapOf(
                     Trigger.OnPlay to mutableListOf(
-                        Effect.CorruptCards(efficiency.toFloat(),
+                        CorruptCards(
+                            efficiency.toFloat(),
                             DrawDeckComponent::class
                         )
                     ), Trigger.OnDeactivation to mutableListOf(
-                        Effect.CorruptCards(efficiency.toFloat(),
+                        CorruptCards(
+                            efficiency.toFloat(),
                             DiscardDeckComponent::class
                         )
                     )
@@ -228,8 +245,8 @@ class CardCreationSystem @Inject constructor(
             cardId add TriggeredEffectsComponent(
                 mutableMapOf(
                     Trigger.OnPlay to mutableListOf(
-                        Effect.OnRepeatActivationGainScore(3f),
-                        Effect.SelfAddEffectsToTrigger(Trigger.OnTick, listOf(Effect.TakeSelfDamage(1f)))
+                        OnRepeatActivationGainScore(3f),
+                        SelfAddEffectsToTrigger(Trigger.OnTick, listOf(TakeSelfDamage(1f)))
                     ),
                 )
             )

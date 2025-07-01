@@ -8,6 +8,7 @@ import com.sq.thed_ck_licker.ecs.components.effectthing.Effect
 import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
 import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
 import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
+import com.sq.thed_ck_licker.ecs.components.effectthing.miscEffects.CoActivation
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
 import com.sq.thed_ck_licker.ecs.managers.ComponentManager
@@ -123,9 +124,11 @@ object DeathSystem {
 
         for (entityAndComp in toClean5) {
             val component = entityAndComp.value
-            val asd = component.hasEffect(Effect.CoActivation::class as KClass<Effect>)
+
+            @Suppress("UNCHECKED_CAST")
+            val asd = component.hasEffect(CoActivation::class as KClass<Effect>)
             if (asd == null) return
-            val effects = component.findEffect(Effect.CoActivation::class)
+            val effects = component.findEffect(CoActivation::class)
             for (effect in effects) {
                 if (deaths.contains(effect.newSource)) {
                     component.removeEffect(asd, effect)

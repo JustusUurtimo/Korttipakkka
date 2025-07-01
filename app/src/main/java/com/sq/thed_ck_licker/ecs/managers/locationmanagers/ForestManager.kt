@@ -3,10 +3,23 @@ package com.sq.thed_ck_licker.ecs.managers.locationmanagers
 import com.sq.thed_ck_licker.ecs.components.OwnerComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent.Tag
-import com.sq.thed_ck_licker.ecs.components.effectthing.Effect
 import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
 import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
 import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
+import com.sq.thed_ck_licker.ecs.components.effectthing.damageEffects.TakeSelfDamage
+import com.sq.thed_ck_licker.ecs.components.effectthing.damageEffects.TakeSelfPercentageDamage
+import com.sq.thed_ck_licker.ecs.components.effectthing.healthEffects.HealEntitiesInDeckToFull
+import com.sq.thed_ck_licker.ecs.components.effectthing.healthEffects.MultiplyMaxHp
+import com.sq.thed_ck_licker.ecs.components.effectthing.miscEffects.CoActivation
+import com.sq.thed_ck_licker.ecs.components.effectthing.miscEffects.None
+import com.sq.thed_ck_licker.ecs.components.effectthing.multiplierEffects.AddFlatMultiplier
+import com.sq.thed_ck_licker.ecs.components.effectthing.multiplierEffects.AddMultiplier
+import com.sq.thed_ck_licker.ecs.components.effectthing.multiplierEffects.AddTempMultiplierToCardsInDeck
+import com.sq.thed_ck_licker.ecs.components.effectthing.multiplierEffects.GiveCardInDeckMultiplier
+import com.sq.thed_ck_licker.ecs.components.effectthing.multiplierEffects.RemoveFlatMultiplier
+import com.sq.thed_ck_licker.ecs.components.effectthing.multiplierEffects.RemoveMultiplier
+import com.sq.thed_ck_licker.ecs.components.effectthing.scoreEffects.GainScoreFromScoreComp
+import com.sq.thed_ck_licker.ecs.components.effectthing.scoreEffects.GainSelfHpAsScore
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityId
@@ -30,29 +43,29 @@ object ForestManager {
         //So this needs to be here to block getting 2 of these...
         if (fuq) {
             if (MyRandom.random.nextBoolean()) {
-//                addBasicForestArtifact(targetId)
+                addBasicForestArtifact(targetId)
             } else {
-//                addBasicForestArtifact2(targetId)
+                addBasicForestArtifact2(targetId)
             }
             fuq = false
         }
-//        list.addAll(addLameForestCards(5))
-//        list.addAll(addEnchantressForestCards(1))
-//        list.addAll(buildingTheEnchantressPart1(1))
-//        list.addAll(buildingTheEnchantressPart2(1))
-//        list.addAll(buildingTheEnchantressPart3(5))
-//        list.addAll(buildingTheEnchantressPart4(3))
-//        list.addAll(buildingTheEnchantressPart5(1))
-//        list.addAll(buildingTheEnchantressPart5dot5(1))
+        list.addAll(addLameForestCards(5))
+        list.addAll(addEnchantressForestCards(1))
+        list.addAll(buildingTheEnchantressPart1(1))
+        list.addAll(buildingTheEnchantressPart2(1))
+        list.addAll(buildingTheEnchantressPart3(5))
+        list.addAll(buildingTheEnchantressPart4(3))
+        list.addAll(buildingTheEnchantressPart5(1))
+        list.addAll(buildingTheEnchantressPart5dot5(1))
         list.addAll(buildingTheEnchantressPart6(5))
         return list
     }
 
     fun addBasicForestArtifact(targetId: EntityId): EntityId {
         val multiArti = generateEntity()
-        multiArti add ScoreComponent(15)
+        multiArti add ScoreComponent(5)
         multiArti add TriggeredEffectsComponent(
-            Trigger.OnTurnStart, Effect.GainScoreFromScoreComp, Effect.RemoveFlatMultiplier(0.005f)
+            Trigger.OnTurnStart, GainScoreFromScoreComp, RemoveFlatMultiplier(0.001f)
         )
         multiArti add TagsComponent(Tag.FOREST)
         multiArti add OwnerComponent(targetId)
@@ -63,7 +76,7 @@ object ForestManager {
         val multiArti = generateEntity()
         multiArti add ScoreComponent(-30)
         multiArti add TriggeredEffectsComponent(
-            Trigger.OnTurnStart, Effect.GainScoreFromScoreComp, Effect.AddFlatMultiplier(0.05f)
+            Trigger.OnTurnStart, GainScoreFromScoreComp, AddFlatMultiplier(0.05f)
         )
         multiArti add TagsComponent(Tag.FOREST)
         multiArti add OwnerComponent(targetId)
@@ -76,12 +89,12 @@ object ForestManager {
                 CardConfig(
                     name = "Lame Forest Card...?",
                     hp = 1000f,
-                    score = cardId,
+                    score = 0,
                     tags = listOf(Tag.FOREST, Tag.CARD)
                 )
             )(cardId)
             (cardId get HealthComponent::class).setHealth(100f)
-            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.GainScoreFromScoreComp)
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, None)
         }
     }
 
@@ -95,7 +108,7 @@ object ForestManager {
                     tags = listOf(Tag.FOREST, Tag.CARD)
                 )
             )(cardId)
-            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.None)
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, None)
         }
     }
 
@@ -109,7 +122,7 @@ object ForestManager {
                     tags = listOf(Tag.FOREST, Tag.CARD)
                 )
             )(cardId)
-            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.HealEntitiesInDeckToFull(5f))
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, HealEntitiesInDeckToFull(5f))
         }
     }
 
@@ -123,7 +136,7 @@ object ForestManager {
                     tags = listOf(Tag.FOREST, Tag.CARD)
                 )
             )(cardId)
-            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.MultiplyMaxHp(2f))
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, MultiplyMaxHp(2f))
         }
     }
 
@@ -137,7 +150,7 @@ object ForestManager {
                     tags = listOf(Tag.FOREST, Tag.CARD)
                 )
             )(cardId)
-            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.GainSelfHpAsScore(0.25f))
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, GainSelfHpAsScore(0.25f))
         }
     }
 
@@ -153,7 +166,7 @@ object ForestManager {
             )(cardId)
             cardId add TriggeredEffectsComponent(
                 Trigger.OnPlay,
-                Effect.GiveCardInDeckMultiplier(10f)
+                GiveCardInDeckMultiplier(10f)
             )
         }
     }
@@ -168,7 +181,10 @@ object ForestManager {
                     tags = listOf(Tag.FOREST, Tag.CARD)
                 )
             )(cardId)
-            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.AddTempMultiplierToCardsInDeck(amount= 5f, size = 2f))
+            cardId add TriggeredEffectsComponent(
+                Trigger.OnPlay,
+                AddTempMultiplierToCardsInDeck(amount = 5f, size = 2f)
+            )
         }
     }
 
@@ -184,13 +200,13 @@ object ForestManager {
         limitedMultiEntity add TriggeredEffectsComponent(
             mutableMapOf(
                 Trigger.OnCreation to mutableListOf(
-                    Effect.AddMultiplier(multiplier)
+                    AddMultiplier(multiplier)
                 ),
                 Trigger.OnSpecial to mutableListOf(
-                    Effect.TakeSelfDamage(1f)
+                    TakeSelfDamage(1f)
                 ),
                 Trigger.OnDeath to mutableListOf(
-                    Effect.RemoveMultiplier(multiplier)
+                    RemoveMultiplier(multiplier)
                 )
             )
         )
@@ -209,14 +225,19 @@ object ForestManager {
         return generateCards(amount) { cardId ->
             withBasicCardDefaults(
                 CardConfig(
-                    name = "CoActivation",
-                    hp = 1f,
+                    name = "Shielded Activation",
+                    hp = 3f,
                     score = 0,
                     tags = listOf(Tag.FOREST, Tag.CARD)
                 )
             )(cardId)
             cardId add TriggeredEffectsComponent(
-                Trigger.OnPlay, Effect.CoActivation(
+                Trigger.OnPlay,
+                CoActivation(
+                    newSource = null,
+                    Trigger.OnPlay
+                ),
+                CoActivation(
                     newSource = null,
                     Trigger.OnPlay
                 )
@@ -229,12 +250,12 @@ object ForestManager {
             withBasicCardDefaults(
                 CardConfig(
                     name = "Thunderstruck",
-                    hp = 1000f,
+                    hp = 100f,
                     score = 0,
                     tags = listOf(Tag.FOREST, Tag.CARD)
                 )
             )(cardId)
-            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.TakeSelfPercentageDamage(0.10f))
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, TakeSelfPercentageDamage(0.10f))
         }
     }
 }
