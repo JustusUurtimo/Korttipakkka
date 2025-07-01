@@ -1,6 +1,7 @@
 package com.sq.thed_ck_licker.ecs.components.effectthing
 
 import com.sq.thed_ck_licker.ecs.components.Component
+import com.sq.thed_ck_licker.helpers.MyRandom
 import kotlin.reflect.KClass
 
 /**
@@ -34,6 +35,31 @@ data class TriggeredEffectsComponent(
             }
         }
         return result
+    }
+
+    fun addEffects(trigger: Trigger, effects: List<Effect>): TriggeredEffectsComponent {
+        val thing = effectsByTrigger.toMutableMap()
+        val effectsForTrigger = thing[trigger]
+        if (effectsForTrigger != null) {
+            thing[trigger] = effectsForTrigger + effects
+        } else {
+            thing[trigger] = effects
+        }
+        return TriggeredEffectsComponent(thing.toMap())
+    }
+
+    fun shuffleTo(activeTriggers: Set<Trigger> = Trigger.duringPlayTriggers): TriggeredEffectsComponent {
+        val values = effectsByTrigger.values.toMutableList()
+        val size= values.size
+        val result = mutableMapOf<Trigger, List<Effect>>()
+
+        val activeTriggersShuffled = activeTriggers.toMutableList()
+        activeTriggersShuffled.shuffle(MyRandom.random)
+
+        for(i in 0 until size){
+            result[activeTriggersShuffled[i]] = values[i]
+        }
+        return TriggeredEffectsComponent(result.toMap())
     }
 
 }

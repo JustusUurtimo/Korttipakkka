@@ -2,7 +2,8 @@ package com.sq.thed_ck_licker.ecs.components
 
 import javax.inject.Inject
 
-data class DiscardDeckComponent @Inject constructor(private val discardDeck: MutableList<Int> = mutableListOf<Int>()) {
+data class DiscardDeckComponent @Inject constructor(private val discardDeck: MutableList<Int> = mutableListOf<Int>()) :
+    Component {
     fun getSize(): Int {
         return this.discardDeck.size
     }

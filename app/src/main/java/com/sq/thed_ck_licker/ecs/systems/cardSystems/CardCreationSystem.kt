@@ -1,32 +1,22 @@
 package com.sq.thed_ck_licker.ecs.systems.cardSystems
 
-import android.util.Log
 import com.sq.thed_ck_licker.R
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
-import com.sq.thed_ck_licker.ecs.components.EffectComponent
-import com.sq.thed_ck_licker.ecs.components.TagsComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent.CardTag
 import com.sq.thed_ck_licker.ecs.components.effectthing.Effect
 import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
 import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
-import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
+import com.sq.thed_ck_licker.ecs.components.misc.TickComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityId
-import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.managers.add
-import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.CardConfig
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.generateCards
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem2.withBasicCardDefaults
-import com.sq.thed_ck_licker.ecs.systems.helperSystems.CardCreationHelperSystems
-import com.sq.thed_ck_licker.helpers.DescribedEffect
-import com.sq.thed_ck_licker.helpers.MyRandom.random
 import com.sq.thed_ck_licker.helpers.navigation.GameNavigator
 import javax.inject.Inject
 
 class CardCreationSystem @Inject constructor(
-    private val cardCreationHelperSystems: CardCreationHelperSystems,
-    private val cardBuilder: CardBuilderSystem,
     private val gameNavigator: GameNavigator
 ) {
 
@@ -46,8 +36,7 @@ class CardCreationSystem @Inject constructor(
                     name = "Basic score card V4", hp = 100f, score = scoreSize
                 )
             )(cardId)
-            val score = (cardId get ScoreComponent::class).getScoreF()
-            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.GainScore(score))
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.GainScoreFromScoreComp)
         }
     }
 
@@ -105,6 +94,17 @@ class CardCreationSystem @Inject constructor(
             withBasicCardDefaults(
                 CardConfig(
                     name = "Default Card", hp = 10f, score = 100
+                )
+            )(cardId)
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.GainScoreFromScoreComp)
+        }
+    }
+
+    fun addReallyBasicScoreCards(amount: Int): List<EntityId> {
+        return generateCards(amount) { cardId ->
+            withBasicCardDefaults(
+                CardConfig(
+                    name = "Default Card", hp = 1000f, score = 1
                 )
             )(cardId)
             cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.GainScoreFromScoreComp)
@@ -195,62 +195,44 @@ class CardCreationSystem @Inject constructor(
     }
 
     fun addShuffleTestCards(amount: Int = 1, efficiency: Int = 1): List<EntityId> {
-        val playerId = getPlayerID()
-
-        val onActivation: (Int) -> Unit = { _: Int ->
-            val playerDeck = playerId get DrawDeckComponent::class
-            val playerDiscardDeck = playerId get DiscardDeckComponent::class
-            repeat(efficiency) {
-            val card = if (playerDeck.getDrawCardDeck().isEmpty()) {
-                playerDiscardDeck.getDiscardDeck()
-                    .removeAt(random.nextInt(playerDiscardDeck.getDiscardDeck().size))
-            } else {
-                playerDeck.getDrawCardDeck()
-                    .removeAt(random.nextInt(playerDeck.getDrawCardDeck().size))
-            }
-            val effect = card get EffectComponent::class
-            Log.i("Shuffle on activation", "Effect: $effect")
-            val second = effect.shuffleToNew()
-            Log.i("Shuffle on activation", "Second: $second")
-            card add second
-            (card get TagsComponent::class).addTag(CardTag.CORRUPTED)
-            playerDeck.getDrawCardDeck().add(card)
-            }
-        }
-
-        val onDeactivation: (Int) -> Unit = { _: Int ->
-            val playerDeck = playerId get DrawDeckComponent::class
-            val playerDiscardDeck = playerId get DiscardDeckComponent::class
-            repeat(efficiency) {
-            val card = if (playerDiscardDeck.getDiscardDeck().isEmpty()) {
-                playerDeck.getDrawCardDeck()
-                    .removeAt(random.nextInt(playerDeck.getDrawCardDeck().size))
-            } else {
-                playerDiscardDeck.getDiscardDeck()
-                    .removeAt(random.nextInt(playerDiscardDeck.getDiscardDeck().size))
-            }
-            val effect = card get EffectComponent::class
-            Log.i("Shuffle on deactivation", "Effect: $effect")
-            val second = effect.shuffleToNew()
-            Log.i("Shuffle on deactivation", "Second: $second")
-            card add second
-            (card get TagsComponent::class).addTag(CardTag.CORRUPTED)
-                playerDiscardDeck.getDiscardDeck().add(card)
-            }
-        }
-        val activationEffect = DescribedEffect(onActivation) { "Corrupt $efficiency card(s) in discard" }
-        val deactivationEffect =
-            DescribedEffect(onDeactivation) { "Corrupt $efficiency card(s) in draw deck" }
-        return cardBuilder.buildCards {
-            cardHealth = 20f
-            cardAmount = amount
-            name = "Corrupt cards"
-            onCardPlay = activationEffect
-            onCardDeactivate = deactivationEffect
+        return generateCards(amount) { cardId ->
+            withBasicCardDefaults(
+                CardConfig(
+                    img = R.drawable.double_trouble, name = "Corrupt cards", hp = 3f
+                )
+            )(cardId)
+            cardId add TriggeredEffectsComponent(
+                mutableMapOf(
+                    Trigger.OnPlay to mutableListOf(
+                        Effect.CorruptCards(efficiency.toFloat(),
+                            DrawDeckComponent::class
+                        )
+                    ), Trigger.OnDeactivation to mutableListOf(
+                        Effect.CorruptCards(efficiency.toFloat(),
+                            DiscardDeckComponent::class
+                        )
+                    )
+                )
+            )
         }
     }
 
-    fun addTimeBoundTestCards(numberOfCards: Int = 1): List<EntityId> {
-        return cardBuilder.createTimeBoundCards(numberOfCards)
+    fun addTimeBoundTestCards(amount: Int): List<EntityId> {
+        return generateCards(amount) { cardId ->
+            withBasicCardDefaults(
+                CardConfig(
+                    name = "Time Bound Card", hp = 183f, score = 10000
+                )
+            )(cardId)
+            cardId add TickComponent(1000)
+            cardId add TriggeredEffectsComponent(
+                mutableMapOf(
+                    Trigger.OnPlay to mutableListOf(
+                        Effect.OnRepeatActivationGainScore(3f),
+                        Effect.SelfAddEffectsToTrigger(Trigger.OnTick, listOf(Effect.TakeSelfDamage(1f)))
+                    ),
+                )
+            )
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.sq.thed_ck_licker.ecs.components.effectthing
 
 import com.sq.thed_ck_licker.helpers.navigation.GameNavigator
+import kotlin.reflect.KClass
 
 sealed class Effect {
     /*
@@ -172,6 +173,23 @@ sealed class Effect {
     data class OpenMerchant(override val amount: Float, val gameNavigator: GameNavigator) : Effect() {
         override fun describe(): String {
             return "Gain access to a shop"
+        }
+    }
+
+    data class OnRepeatActivationGainScore(
+        override val amount: Float = 3f,
+        var current: Int = 0
+    ) : Effect() {
+        override fun describe(modifiedAmount: Float?): String {
+            return "Gain ($modifiedAmount) points if you manage to play this $amount ($current/$amount)"
+        }
+    }
+
+    data class SelfAddEffectsToTrigger(val trigger: Trigger, var effects: List<Effect>): Effect()
+
+    data class CorruptCards(override val amount: Float, val targetDeck: KClass<*>) : Effect() {
+        override fun describe(modifiedAmount: Float?): String {
+            return "Corrupt $modifiedAmount card(s) in ${targetDeck.simpleName}"
         }
     }
 }
