@@ -33,8 +33,6 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
     fun initPlayer() {
         getPlayerID() add HealthComponent(100f)
         getPlayerID() add ScoreComponent()
-        val deck = DrawDeckComponent(mutableListOf())
-        getPlayerID() add deck
         getPlayerID() add DiscardDeckComponent(mutableListOf<Int>())
         getPlayerID() add MultiplierComponent()
         getPlayerID() add LatestCardComponent()
@@ -42,6 +40,7 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         getPlayerID() add ActivationCounterComponent()
         getPlayerID() add ImageComponent()
         getPlayerID() add OwnerComponent(getPlayerID())
+        val deck = (getPlayerID() add DrawDeckComponent(mutableListOf()))
 
         if (Settings.areRealTimeThingsEnabled.value) {
             getPlayerID() add TickComponent(tickThreshold = 1000)

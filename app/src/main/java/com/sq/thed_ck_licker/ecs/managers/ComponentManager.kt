@@ -125,8 +125,9 @@ class ComponentManager {
  * Extension function to add a component to an entity.
  * Please do not try to use for any other add operation...
  */
-infix fun <T : Any> EntityId.add(component: T) {
+infix fun <T : Any> EntityId.add(component: T): T {
     ComponentManager.componentManager.addComponent(this, component)
+    return component
 }
 
 infix fun <T : Any> EntityId.get(componentClass: KClass<T>): T {
