@@ -87,7 +87,7 @@ object ForestManager {
         return generateCards(amount) { cardId ->
             withBasicCardDefaults(
                 CardConfig(
-                    name = "Lame Forest Card...?",
+                    name = "Lame Tree Card...?",
                     hp = 1000f,
                     score = 0,
                     tags = listOf(Tag.FOREST, Tag.CARD)
@@ -102,7 +102,7 @@ object ForestManager {
         return generateCards(amount) { cardId ->
             withBasicCardDefaults(
                 CardConfig(
-                    name = "Enchantress",
+                    name = "The Forest Enchantress",
                     hp = 3f,
                     score = 0,
                     tags = listOf(Tag.FOREST, Tag.CARD)
@@ -116,7 +116,7 @@ object ForestManager {
         return generateCards(amount) { cardId ->
             withBasicCardDefaults(
                 CardConfig(
-                    name = "Heal to full",
+                    name = "Gift of life",
                     hp = 5f,
                     score = 0,
                     tags = listOf(Tag.FOREST, Tag.CARD)
@@ -130,7 +130,7 @@ object ForestManager {
         return generateCards(amount) { cardId ->
             withBasicCardDefaults(
                 CardConfig(
-                    name = "Double The Max HP",
+                    name = "Gift of growth",
                     hp = 2f,
                     score = 0,
                     tags = listOf(Tag.FOREST, Tag.CARD)
@@ -158,7 +158,7 @@ object ForestManager {
         return generateCards(amount) { cardId ->
             withBasicCardDefaults(
                 CardConfig(
-                    name = "Gain Super Strength",
+                    name = "Gift Super Strength",
                     hp = 1f,
                     score = 0,
                     tags = listOf(Tag.FOREST, Tag.CARD)
@@ -166,7 +166,7 @@ object ForestManager {
             )(cardId)
             cardId add TriggeredEffectsComponent(
                 Trigger.OnPlay,
-                GiveCardInDeckMultiplier(10f)
+                GiveCardInDeckMultiplier(3.5f)
             )
         }
     }
@@ -175,7 +175,7 @@ object ForestManager {
         return generateCards(amount) { cardId ->
             withBasicCardDefaults(
                 CardConfig(
-                    name = "Burst of Speed",
+                    name = "Gift Burst of Speed",
                     hp = 1f,
                     score = 0,
                     tags = listOf(Tag.FOREST, Tag.CARD)
@@ -249,7 +249,7 @@ object ForestManager {
         return generateCards(amount) { cardId ->
             withBasicCardDefaults(
                 CardConfig(
-                    name = "Thunderstruck",
+                    name = "Broken Tree",
                     hp = 100f,
                     score = 0,
                     tags = listOf(Tag.FOREST, Tag.CARD)
