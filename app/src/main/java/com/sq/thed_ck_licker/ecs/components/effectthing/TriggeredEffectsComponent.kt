@@ -1,6 +1,7 @@
 package com.sq.thed_ck_licker.ecs.components.effectthing
 
 import com.sq.thed_ck_licker.ecs.components.Component
+import com.sq.thed_ck_licker.ecs.components.effectthing.miscEffects.None
 import com.sq.thed_ck_licker.helpers.MyRandom
 import kotlin.reflect.KClass
 
@@ -37,7 +38,7 @@ data class TriggeredEffectsComponent(
         return result
     }
 
-    fun hasEffect(effect: KClass<Effect>): Trigger? {
+    fun <T : Effect> hasEffect(effect: KClass<T>): Trigger? {
         val effects = effectsByTrigger.values.flatten()
         for(i in effects.indices){
             if(effects[i]::class == effect){
@@ -68,6 +69,12 @@ data class TriggeredEffectsComponent(
             thing[trigger] = effects
         }
         return TriggeredEffectsComponent(thing.toMap())
+    }
+
+    fun removeNone(): TriggeredEffectsComponent {
+        val exists = hasEffect(None::class)
+        if (exists == null) return this
+        return removeEffect(exists, None)
     }
 
     fun shuffleTo(activeTriggers: Set<Trigger> = Trigger.duringPlayTriggers): TriggeredEffectsComponent {

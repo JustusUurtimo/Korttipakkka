@@ -3,6 +3,7 @@ package com.sq.thed_ck_licker.ecs.managers
 import android.util.Log
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.snapshots.SnapshotStateMap
+import com.sq.thed_ck_licker.ecs.components.Component
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent.Tag
@@ -133,6 +134,32 @@ infix fun <T : Any> EntityId.add(component: T): T {
 infix fun <T : Any> EntityId.get(componentClass: KClass<T>): T {
     return ComponentManager.componentManager.getComponent(this, componentClass)
 }
+
+infix fun <T : Component>EntityId.getOrNull(componentClass: Component): Component? {
+    return try {
+        ComponentManager.componentManager.getComponent(this, componentClass::class)
+    } catch (_: Exception) {
+        null
+    }
+}
+
+infix fun <T : Component> EntityId.getOrNull(componentClass: KClass<T>): T? {
+    return try {
+        ComponentManager.componentManager.getComponent(this, componentClass)
+    } catch (_: Exception) {
+        null
+    }
+}
+
+inline fun <reified T : Component> EntityId.getOrNull(): T? {
+    return try {
+        ComponentManager.componentManager.getComponent(this, T::class)
+    } catch (_: Exception) {
+        null
+    }
+}
+
+
 
 /**
  * For example:

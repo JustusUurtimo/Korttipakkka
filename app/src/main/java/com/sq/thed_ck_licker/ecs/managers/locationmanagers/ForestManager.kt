@@ -6,6 +6,7 @@ import com.sq.thed_ck_licker.ecs.components.TagsComponent.Tag
 import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
 import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
 import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
+import com.sq.thed_ck_licker.ecs.components.effectthing.damageEffects.GiftTickingSelfDamage
 import com.sq.thed_ck_licker.ecs.components.effectthing.damageEffects.TakeSelfDamage
 import com.sq.thed_ck_licker.ecs.components.effectthing.damageEffects.TakeSelfPercentageDamage
 import com.sq.thed_ck_licker.ecs.components.effectthing.healthEffects.HealEntitiesInDeckToFull
@@ -50,14 +51,15 @@ object ForestManager {
             fuq = false
         }
         list.addAll(addLameForestCards(5))
-        list.addAll(addEnchantressForestCards(1))
-        list.addAll(buildingTheEnchantressPart1(1))
-        list.addAll(buildingTheEnchantressPart2(1))
-        list.addAll(buildingTheEnchantressPart3(5))
-        list.addAll(buildingTheEnchantressPart4(3))
-        list.addAll(buildingTheEnchantressPart5(1))
-        list.addAll(buildingTheEnchantressPart5dot5(1))
-        list.addAll(buildingTheEnchantressPart6(5))
+//        list.addAll(addEnchantressForestCards(1))
+//        list.addAll(buildingTheEnchantressPart1(1))
+//        list.addAll(buildingTheEnchantressPart2(1))
+//        list.addAll(buildingTheEnchantressPart3(5))
+//        list.addAll(buildingTheEnchantressPart4(3))
+//        list.addAll(buildingTheEnchantressPart5(1))
+//        list.addAll(buildingTheEnchantressPart5dot5(1))
+//        list.addAll(buildingTheEnchantressPart6(5))
+        list.addAll(buildingTheEnchantressPart7(1))
         return list
     }
 
@@ -256,6 +258,20 @@ object ForestManager {
                 )
             )(cardId)
             cardId add TriggeredEffectsComponent(Trigger.OnPlay, TakeSelfPercentageDamage(0.10f))
+        }
+    }
+
+    fun buildingTheEnchantressPart7(amount: Int): List<EntityId> {
+        return generateCards(amount) { cardId ->
+            withBasicCardDefaults(
+                CardConfig(
+                    name = "Deaths call",
+                    hp = 100f,
+                    score = 0,
+                    tags = listOf(Tag.FOREST, Tag.CARD)
+                )
+            )(cardId)
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, GiftTickingSelfDamage(amount = 4f))
         }
     }
 }
