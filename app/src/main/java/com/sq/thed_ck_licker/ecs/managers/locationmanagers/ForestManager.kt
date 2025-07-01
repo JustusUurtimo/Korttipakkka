@@ -1,5 +1,6 @@
 package com.sq.thed_ck_licker.ecs.managers.locationmanagers
 
+import com.sq.thed_ck_licker.R
 import com.sq.thed_ck_licker.ecs.components.OwnerComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent.Tag
@@ -112,7 +113,8 @@ object ForestManager {
                     name = "Lame Tree...?",
                     hp = 1000f,
                     score = 0,
-                    tags = listOf(Tag.FOREST, Tag.CARD)
+                    tags = listOf(Tag.FOREST, Tag.CARD),
+                    img = R.drawable.forest_card
                 )
             )(cardId)
             (cardId get HealthComponent::class).setHealth(100f)
@@ -127,7 +129,8 @@ object ForestManager {
                     name = "The Forest Enchantress",
                     hp = 3f,
                     score = 0,
-                    tags = listOf(Tag.FOREST, Tag.CARD)
+                    tags = listOf(Tag.FOREST, Tag.CARD),
+                    img = R.drawable.forest_card
                 )
             )(cardId)
             cardId add TriggeredEffectsComponent(
@@ -145,7 +148,8 @@ object ForestManager {
                     name = "Gift of life",
                     hp = 5f,
                     score = 0,
-                    tags = listOf(Tag.FOREST, Tag.CARD)
+                    tags = listOf(Tag.FOREST, Tag.CARD),
+                    img = R.drawable.forest_card
                 )
             )(cardId)
             cardId add TriggeredEffectsComponent(Trigger.OnPlay, HealEntitiesInDeckToFull(5f))
@@ -159,7 +163,8 @@ object ForestManager {
                     name = "Gift of growth",
                     hp = 2f,
                     score = 0,
-                    tags = listOf(Tag.FOREST, Tag.CARD)
+                    tags = listOf(Tag.FOREST, Tag.CARD),
+                    img = R.drawable.forest_card
                 )
             )(cardId)
             cardId add TriggeredEffectsComponent(Trigger.OnPlay, MultiplyMaxHp(2f))
@@ -173,7 +178,8 @@ object ForestManager {
                     name = "HP as score",
                     hp = 100f,
                     score = 0,
-                    tags = listOf(Tag.FOREST, Tag.CARD)
+                    tags = listOf(Tag.FOREST, Tag.CARD),
+                    img = R.drawable.forest_card
                 )
             )(cardId)
             cardId add TriggeredEffectsComponent(Trigger.OnPlay, GainSelfHpAsScore(0.25f))
@@ -187,7 +193,8 @@ object ForestManager {
                     name = "Gift Super Strength",
                     hp = 1f,
                     score = 0,
-                    tags = listOf(Tag.FOREST, Tag.CARD)
+                    tags = listOf(Tag.FOREST, Tag.CARD),
+                    img = R.drawable.forest_card
                 )
             )(cardId)
             cardId add TriggeredEffectsComponent(
@@ -204,7 +211,8 @@ object ForestManager {
                     name = "Gift Burst of Speed",
                     hp = 1f,
                     score = 0,
-                    tags = listOf(Tag.FOREST, Tag.CARD)
+                    tags = listOf(Tag.FOREST, Tag.CARD),
+                    img = R.drawable.forest_card
                 )
             )(cardId)
             cardId add TriggeredEffectsComponent(
@@ -254,7 +262,8 @@ object ForestManager {
                     name = "Humble gardener",
                     hp = 3f,
                     score = 0,
-                    tags = listOf(Tag.FOREST, Tag.CARD)
+                    tags = listOf(Tag.FOREST, Tag.CARD),
+                    img = R.drawable.forest_card
                 )
             )(cardId)
             cardId add TriggeredEffectsComponent(
@@ -278,7 +287,8 @@ object ForestManager {
                     name = "Broken Tree",
                     hp = 100f,
                     score = 0,
-                    tags = listOf(Tag.FOREST, Tag.CARD)
+                    tags = listOf(Tag.FOREST, Tag.CARD),
+                    img = R.drawable.forest_card
                 )
             )(cardId)
             cardId add TriggeredEffectsComponent(Trigger.OnPlay, TakeSelfPercentageDamage(0.10f))
@@ -292,7 +302,8 @@ object ForestManager {
                     name = "Deaths call",
                     hp = 100f,
                     score = 0,
-                    tags = listOf(Tag.FOREST, Tag.CARD)
+                    tags = listOf(Tag.FOREST, Tag.CARD),
+                    img = R.drawable.forest_card
                 )
             )(cardId)
             cardId add TriggeredEffectsComponent(Trigger.OnPlay, GiftTickingSelfDamage(amount = 4f))
@@ -305,7 +316,8 @@ object ForestManager {
                 CardConfig(
                     name = "Spewing Gifts",
                     hp = 3f,
-                    tags = listOf(Tag.FOREST, Tag.CARD)
+                    tags = listOf(Tag.FOREST, Tag.CARD),
+                    img = R.drawable.forest_card
                 )
             )(cardId)
             cardId add TriggeredEffectsComponent(
@@ -331,7 +343,8 @@ object ForestManager {
                 CardConfig(
                     name = "Broken Branches",
                     hp = 100f,
-                    tags = listOf(Tag.FOREST, Tag.CARD)
+                    tags = listOf(Tag.FOREST, Tag.CARD),
+                    img = R.drawable.forest_card
                 )
             )(cardId)
             cardId add TriggeredEffectsComponent(
