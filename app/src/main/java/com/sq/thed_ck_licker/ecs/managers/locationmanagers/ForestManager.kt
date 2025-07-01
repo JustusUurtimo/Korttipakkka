@@ -3,6 +3,7 @@ package com.sq.thed_ck_licker.ecs.managers.locationmanagers
 import com.sq.thed_ck_licker.ecs.components.OwnerComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent.Tag
+import com.sq.thed_ck_licker.ecs.components.effectthing.Effect
 import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
 import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
 import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
@@ -272,6 +273,29 @@ object ForestManager {
                 )
             )(cardId)
             cardId add TriggeredEffectsComponent(Trigger.OnPlay, GiftTickingSelfDamage(amount = 4f))
+        }
+    }
+
+    fun buildingTheEnchantressPart7V2(amount: Int): List<EntityId> = basicForestBuilder(
+        amount = amount,
+        name = "Deaths call",
+        health = 100f,
+        Trigger.OnPlay to listOf(GiftTickingSelfDamage(amount = 4f))
+    )
+
+
+    fun basicForestBuilder(
+        amount: Int, name: String, health: Float, vararg trigEffects: Pair<Trigger, List<Effect>>
+    ): List<EntityId> {
+        return generateCards(amount) { cardId ->
+            withBasicCardDefaults(
+                CardConfig(
+                    name = name, hp = health, score = 0, tags = listOf(Tag.FOREST, Tag.CARD)
+                )
+            )(cardId)
+            cardId add TriggeredEffectsComponent(
+                mutableMapOf(*trigEffects)
+            )
         }
     }
 }
