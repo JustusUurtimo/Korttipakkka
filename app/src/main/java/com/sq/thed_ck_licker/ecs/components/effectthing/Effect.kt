@@ -1,5 +1,7 @@
 package com.sq.thed_ck_licker.ecs.components.effectthing
 
+import com.sq.thed_ck_licker.ecs.systems.cardSystems.TriggerEffectHandler
+
 abstract class Effect {
     /**
      * I am not super happy with this.
@@ -13,11 +15,13 @@ abstract class Effect {
 
     abstract fun execute(context: EffectContext): Float
 
-    open fun describeWithContext(modifiedAmount: Float?): String? {
-        return describe(modifiedAmount) ?: describe()
-    }
-
     open fun describe(): String? = null
 
     open fun describe(modifiedAmount: Float?): String? = null
+
+    open fun describeWithContext(context: EffectContext): String? {
+        val (sourceMulti, targetMulti) = TriggerEffectHandler.getMultipliers(context)
+        val modifiedAmount = amount?.times(sourceMulti)?.times(targetMulti)
+        return describe(modifiedAmount) ?: describe()
+    }
 }
