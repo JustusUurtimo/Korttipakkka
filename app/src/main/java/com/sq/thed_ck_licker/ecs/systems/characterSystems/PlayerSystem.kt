@@ -70,7 +70,6 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         val timeBoundCards = cardCreationSystem.addTimeBoundTestCards(1)
         val basicsV3 = cardCreationSystem.addBasicScoreCards(5)
 
-        val forestPackage = ForestManager.getForestPackage(getPlayerID())
 
         return emptyList<Int>() +
                 playerHealingCards +
@@ -86,7 +85,6 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
                 corruptionCards +
                 timeBoundCards +
                 basicsV3 +
-                forestPackage+
                 emptyList<Int>()
     }
 

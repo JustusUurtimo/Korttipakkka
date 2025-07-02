@@ -314,7 +314,7 @@ object ForestManager {
         return generateCards(amount) { cardId ->
             withBasicCardDefaults(
                 CardConfig(
-                    name = "Spewing Gifts",
+                    name = "Flowery growth",
                     hp = 3f,
                     tags = listOf(Tag.FOREST, Tag.CARD),
                     img = R.drawable.forest_card
