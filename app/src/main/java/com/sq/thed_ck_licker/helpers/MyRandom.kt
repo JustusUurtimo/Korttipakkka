@@ -4,7 +4,7 @@ import kotlin.random.Random
 
 object MyRandom {
 
-    var random = Random(69)
+    var random = Random(System.currentTimeMillis())
 
     fun getRandomInt(min: Int = 0, max: Int = 10) = random.nextInt(min, max)
 
