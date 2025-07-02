@@ -52,7 +52,7 @@ data class HealthComponent(
      * @return amount of health gained
      */
     fun add(amount: Float): Float {
-        var logging = "Hp: ${this.health}/${this.maxHealth}"
+        var logging = "$this"
         var healthGained = amount
         if ((this.health.floatValue + amount) > this.maxHealth.floatValue) {
             healthGained = this.maxHealth.floatValue - this.health.floatValue
@@ -60,7 +60,7 @@ data class HealthComponent(
         } else {
             this.health.floatValue += amount
         }
-        logging += "and the end result is Hp: ${this.health}/${this.maxHealth}"
+        logging += " and the end result is $this"
 
         val now = System.currentTimeMillis()
         if (lastTime + 5000 < now) {
@@ -80,4 +80,10 @@ data class HealthComponent(
             this.getMaxHealth() + other.getMaxHealth()
         )
     }
+
+    override fun toString(): String {
+        return "Hp:${health.floatValue.toInt()}/${maxHealth.floatValue.toInt()}"
+    }
+
+
 }
