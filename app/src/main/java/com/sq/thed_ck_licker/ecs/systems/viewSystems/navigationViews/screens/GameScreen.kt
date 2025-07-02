@@ -27,7 +27,6 @@ import com.sq.thed_ck_licker.ecs.systems.helperSystems.TickingSystem
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.CardDeck
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.PlayerHandView
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.PullCardButton
-import com.sq.thed_ck_licker.helpers.Settings.areRealTimeThingsEnabled
 import com.sq.thed_ck_licker.player.AdditionalInfoDisplay
 import com.sq.thed_ck_licker.player.HealthBar
 import com.sq.thed_ck_licker.player.ScoreDisplay
@@ -123,8 +122,8 @@ fun Game(
 private fun RealtimeEffects() {
     var realTimeTickingEnabled by remember { mutableStateOf(true) }
     val tickSize = 100
-    LaunchedEffect(realTimeTickingEnabled) {
-        while (realTimeTickingEnabled) {
+    LaunchedEffect(true) {
+        while (true) {
             delay(tickSize.toLong())
             TickingSystem.tick(tickSize)
         }

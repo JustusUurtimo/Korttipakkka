@@ -42,7 +42,8 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         getPlayerID() add OwnerComponent(getPlayerID())
         val deck = (getPlayerID() add DrawDeckComponent(mutableListOf()))
 
-        if (Settings.areRealTimeThingsEnabled.value) {
+        if (Settings.isRealTimePlayerDamageEnabled.value) {
+            println("Adding This")
             getPlayerID() add TickComponent(tickThreshold = 1000)
             getPlayerID() add TriggeredEffectsComponent(Trigger.OnTick, TakeDamage(1f))
         }

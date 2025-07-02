@@ -19,7 +19,7 @@ fun SettingsScreen(modifier: Modifier) {
         Text("Settings")
         Text("Not implemented yet")
         SettingCheckbox(
-            Settings.areRealTimeThingsEnabled,
+            Settings.isRealTimePlayerDamageEnabled,
             "Real time things",
             "Now you must hurry mode",
             "Relaxed mode"

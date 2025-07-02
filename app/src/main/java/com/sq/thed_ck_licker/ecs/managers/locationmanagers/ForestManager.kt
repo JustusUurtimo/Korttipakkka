@@ -7,6 +7,7 @@ import com.sq.thed_ck_licker.ecs.components.TagsComponent.Tag
 import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
 import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
 import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
+import com.sq.thed_ck_licker.ecs.components.effectthing.conditionals.OnActivations
 import com.sq.thed_ck_licker.ecs.components.effectthing.damageEffects.DealDamageFromOwnHealth
 import com.sq.thed_ck_licker.ecs.components.effectthing.damageEffects.GiftTickingSelfDamage
 import com.sq.thed_ck_licker.ecs.components.effectthing.damageEffects.TakeSelfDamage
@@ -15,6 +16,7 @@ import com.sq.thed_ck_licker.ecs.components.effectthing.healthEffects.HealEntiti
 import com.sq.thed_ck_licker.ecs.components.effectthing.healthEffects.MultiplyMaxHp
 import com.sq.thed_ck_licker.ecs.components.effectthing.miscEffects.CoActivation
 import com.sq.thed_ck_licker.ecs.components.effectthing.miscEffects.GiftEffects
+import com.sq.thed_ck_licker.ecs.components.effectthing.miscEffects.ManyEffectsHolder
 import com.sq.thed_ck_licker.ecs.components.effectthing.miscEffects.None
 import com.sq.thed_ck_licker.ecs.components.effectthing.multiplierEffects.AddFlatMultiplier
 import com.sq.thed_ck_licker.ecs.components.effectthing.multiplierEffects.AddMultiplier
@@ -86,9 +88,17 @@ object ForestManager {
 
     fun addBasicForestArtifact(targetId: EntityId): EntityId {
         val multiArti = generateEntity()
-        multiArti add ScoreComponent(5)
+        multiArti add ScoreComponent(100)
         multiArti add TriggeredEffectsComponent(
-            Trigger.OnTurnStart, GainScoreFromScoreComp, RemoveFlatMultiplier(0.001f)
+            Trigger.OnTurnStart,
+            OnActivations(
+                threshold = 20,
+                effect = ManyEffectsHolder(
+                    listOf(
+                        GainScoreFromScoreComp, RemoveFlatMultiplier(0.02f)
+                    )
+                )
+            )
         )
         multiArti add TagsComponent(Tag.FOREST)
         multiArti add OwnerComponent(targetId)
@@ -97,9 +107,17 @@ object ForestManager {
 
     fun addBasicForestArtifact2(targetId: EntityId): EntityId {
         val multiArti = generateEntity()
-        multiArti add ScoreComponent(-30)
+        multiArti add ScoreComponent(-200)
         multiArti add TriggeredEffectsComponent(
-            Trigger.OnTurnStart, GainScoreFromScoreComp, AddFlatMultiplier(0.05f)
+            Trigger.OnTurnStart,
+            OnActivations(
+                threshold = 10,
+                effect = ManyEffectsHolder(
+                    listOf(
+                        GainScoreFromScoreComp, AddFlatMultiplier(0.5f)
+                    )
+                )
+            )
         )
         multiArti add TagsComponent(Tag.FOREST)
         multiArti add OwnerComponent(targetId)
@@ -145,14 +163,14 @@ object ForestManager {
         return generateCards(amount) { cardId ->
             withBasicCardDefaults(
                 CardConfig(
-                    name = "Gift of life",
-                    hp = 5f,
+                    name = "Gift of Life",
+                    hp = 2f,
                     score = 0,
                     tags = listOf(Tag.FOREST, Tag.CARD),
                     img = R.drawable.forest_card
                 )
             )(cardId)
-            cardId add TriggeredEffectsComponent(Trigger.OnPlay, HealEntitiesInDeckToFull(5f))
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, HealEntitiesInDeckToFull(3f))
         }
     }
 
