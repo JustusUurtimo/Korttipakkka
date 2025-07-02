@@ -1,6 +1,7 @@
 package com.sq.thed_ck_licker.helpers
 
 import com.sq.thed_ck_licker.ecs.managers.ComponentManager
+import com.sq.thed_ck_licker.ecs.systems.RewardSystem
 import com.sq.thed_ck_licker.ecs.systems.WorldCreationSystem
 import com.sq.thed_ck_licker.ecs.systems.characterSystems.MerchantSystem
 import com.sq.thed_ck_licker.ecs.systems.characterSystems.PlayerSystem
@@ -19,12 +20,14 @@ object GameSystemModule {
     fun provideWorldCreationSystem(
         componentManager: ComponentManager,
         playerSystem: PlayerSystem,
-        merchantSystem: MerchantSystem
+        merchantSystem: MerchantSystem,
+        rewardSystem: RewardSystem
     ): WorldCreationSystem {
         return WorldCreationSystem(
             componentManager,
             playerSystem,
-            merchantSystem
+            merchantSystem,
+            rewardSystem
         )
     }
 

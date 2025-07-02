@@ -9,6 +9,8 @@ import com.sq.thed_ck_licker.ecs.components.effectthing.multiplierEffects.Remove
 import com.sq.thed_ck_licker.ecs.components.effectthing.scoreEffects.GainScoreFromScoreComp
 import com.sq.thed_ck_licker.ecs.components.effectthing.scoreEffects.StoreDamageDealtAsSelfScore
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
+import com.sq.thed_ck_licker.ecs.managers.GameEvent
+import com.sq.thed_ck_licker.ecs.managers.GameEvents
 import com.sq.thed_ck_licker.ecs.managers.get
 
 object TriggerEffectHandler {
