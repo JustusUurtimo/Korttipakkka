@@ -20,7 +20,6 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.IdentificationComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
 import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
@@ -96,19 +95,13 @@ fun AdditionalInfoDisplay(latestCard: Int) {
     var name = "-"
     var hp = 0f
     var description = "Nan"
-
     var playerMultiplier = (EntityManager.getPlayerID() get MultiplierComponent::class).multiplier
     var cardMultiplier = 1f
-    if (latestCard != -1) {
 
-        try {
-        description = (latestCard get EffectComponent::class).toString()
-        } catch (_: Exception) {
-            Log.v("AdditionalInfoDisplay", "No effect component found for $latestCard")
-        }
+    if (latestCard != -1) {
         try {
             description = TriggerEffectHandler.describe(EffectContext(
-                trigger = Trigger.OnTurnStart, // This is ignored here so it feels bit weird... But no can do for now
+                trigger = Trigger.Blank,
                 source = latestCard
             ))
         }catch (_: Exception) {
@@ -124,7 +117,7 @@ fun AdditionalInfoDisplay(latestCard: Int) {
 
         val (source, target) = TriggerEffectHandler.getMultipliers(
             EffectContext(
-                trigger = Trigger.OnPlay, // This is ignored here so it feels bit weird... But no can do for now
+                trigger = Trigger.Blank,
                 source = latestCard
             )
         )

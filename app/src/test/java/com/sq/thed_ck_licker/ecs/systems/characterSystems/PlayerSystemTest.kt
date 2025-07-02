@@ -5,18 +5,14 @@ import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
 import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
-import com.sq.thed_ck_licker.ecs.managers.ComponentManager
 import com.sq.thed_ck_licker.ecs.managers.EntityId
 import com.sq.thed_ck_licker.ecs.managers.EntityManager
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.CardPullingSystem
-import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardBuilderSystem_Factory
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem_Factory
-import com.sq.thed_ck_licker.ecs.systems.helperSystems.CardCreationHelperSystems_Factory
-import com.sq.thed_ck_licker.ecs.systems.helperSystems.MultiplierSystem
 import com.sq.thed_ck_licker.helpers.navigation.GameNavigator_Factory
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -40,16 +36,12 @@ class PlayerSystemTest {
     @BeforeEach
     fun setUp() {
         cardCreationSystem = CardCreationSystem(
-            cardCreationHelperSystems = CardCreationHelperSystems_Factory.newInstance(),
-            cardBuilder = CardBuilderSystem_Factory.newInstance(ComponentManager.componentManager),
             gameNavigator = GameNavigator_Factory.newInstance()
         )
 
         playerSystem = PlayerSystem(cardCreationSystem)
 
-        cardsSystem = CardsSystem_Factory.newInstance(
-            MultiplierSystem(ComponentManager.componentManager), playerSystem
-        )
+        cardsSystem = CardsSystem_Factory.newInstance(playerSystem)
 
         cardPullingSystem = CardPullingSystem(
             cardsSystem = cardsSystem, playerSystem = playerSystem

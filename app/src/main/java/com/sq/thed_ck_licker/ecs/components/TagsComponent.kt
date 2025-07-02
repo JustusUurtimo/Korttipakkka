@@ -1,20 +1,20 @@
 package com.sq.thed_ck_licker.ecs.components
 
 
-data class TagsComponent(private val tags: List<CardTag> = emptyList()) {
+data class TagsComponent(private val tags: List<Tag> = emptyList()) : Component {
+    constructor(vararg tags: Tag) : this(tags.toList())
 
-    enum class CardTag { CARD, MERCHANT, CORRUPTED }
+    enum class Tag { CARD, MERCHANT, CORRUPTED, FOREST, }
 
-    fun getTags(): List<CardTag> {
+    fun getTags(): List<Tag> {
         return this.tags
     }
 
     fun cardIsMerchant(): Boolean {
-        return this.tags.contains(CardTag.MERCHANT)
+        return this.tags.contains(Tag.MERCHANT)
     }
 
-    fun addTag(tag: CardTag) {
+    fun addTag(tag: Tag) {
         this.tags.plus(tag)
     }
-
 }

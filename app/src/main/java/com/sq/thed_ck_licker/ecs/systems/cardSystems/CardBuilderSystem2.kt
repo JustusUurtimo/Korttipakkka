@@ -5,11 +5,13 @@ import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.IdentificationComponent
 import com.sq.thed_ck_licker.ecs.components.ImageComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
+import com.sq.thed_ck_licker.ecs.components.OwnerComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent
-import com.sq.thed_ck_licker.ecs.components.TagsComponent.CardTag
+import com.sq.thed_ck_licker.ecs.components.TagsComponent.Tag
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityId
+import com.sq.thed_ck_licker.ecs.managers.EntityManager
 import com.sq.thed_ck_licker.ecs.managers.add
 import com.sq.thed_ck_licker.ecs.managers.generateEntity
 import com.sq.thed_ck_licker.helpers.typealiases.CardPreset
@@ -38,12 +40,13 @@ object CardBuilderSystem2 {
 
     data class CardConfig(
         val img: Int = R.drawable.placeholder,
-        val tags: List<CardTag> = listOf(CardTag.CARD),
+        val tags: List<Tag> = listOf(Tag.CARD),
         val name: String = "Card",
         val characterId: Int? = null,
         val hp: Float? = 10f,
         val score: Int? = null,
-        val multiplier: Float = 1f
+        val multiplier: Float = 1f,
+        val ownerId: EntityId = EntityManager.getPlayerID()
     )
 
     fun withBasicCardDefaults(config: CardConfig = CardConfig()): CardPreset = {
@@ -54,6 +57,7 @@ object CardBuilderSystem2 {
         config.hp?.let { this add HealthComponent(it) }
         config.score?.let { this add ScoreComponent(it) }
         this add MultiplierComponent(config.multiplier)
+        this add OwnerComponent(config.ownerId)
     }
 
 }

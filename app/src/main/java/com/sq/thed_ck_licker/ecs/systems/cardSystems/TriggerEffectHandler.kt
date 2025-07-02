@@ -1,10 +1,13 @@
 package com.sq.thed_ck_licker.ecs.systems.cardSystems
 
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
-import com.sq.thed_ck_licker.ecs.components.effectthing.Effect
 import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
 import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
-import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
+import com.sq.thed_ck_licker.ecs.components.effectthing.damageEffects.TakeRisingDamage
+import com.sq.thed_ck_licker.ecs.components.effectthing.multiplierEffects.AddMultiplier
+import com.sq.thed_ck_licker.ecs.components.effectthing.multiplierEffects.RemoveMultiplier
+import com.sq.thed_ck_licker.ecs.components.effectthing.scoreEffects.GainScoreFromScoreComp
+import com.sq.thed_ck_licker.ecs.components.effectthing.scoreEffects.StoreDamageDealtAsSelfScore
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.GameEvent
 import com.sq.thed_ck_licker.ecs.managers.GameEvents
@@ -12,45 +15,25 @@ import com.sq.thed_ck_licker.ecs.managers.get
 
 object TriggerEffectHandler {
 
-    fun handleTriggerEffect (context: EffectContext) {
-        val trigger = context.trigger
-        val source = context.source
-        val target = context.target
+   const val damageDealtKey = "damage dealt"
 
-        val trigEffComp = (source get TriggeredEffectsComponent::class)
-        val effects = trigEffComp.effectsByTrigger[trigger] ?: return
+    fun handleTriggerEffect(context: EffectContext) {
+        val trigEffComp = (context.source get TriggeredEffectsComponent::class)
+        val effects = trigEffComp.effectsByTrigger[context.trigger]?.toMutableList()
 
-        val (sourceMulti, targetMulti) = getMultipliers(context)
+        if (effects == null) return
+
 
         for (effect in effects) {
-            when (effect) {
-                is Effect.GainScore -> {
-                    val score = context.target get ScoreComponent::class
-                    val amount = (effect.amount * sourceMulti * targetMulti).toInt()
-                    val playerScore = score.addScore(amount)
-                    val rewardTier = score.getRewardTier()
-                    if ((playerScore.div(100) > rewardTier)) {
-                        score.setRewardTier(rewardTier + 1)
-                        GameEvents.tryEmit(GameEvent.RewardTierChanged)
-                    }
-                }
-                is Effect.GainHealth ->{
-                    val healthComp = (target get HealthComponent::class)
-                    val amount = (effect.amount * sourceMulti * targetMulti)
-                    healthComp.heal(amount)
-                }
-
-                is Effect.TakeDamage -> {
-                    val healthComp = (target get HealthComponent::class)
-                    val amount = (effect.amount * sourceMulti * targetMulti)
-                    healthComp.damage(amount)
-                }
-            }
+            effect.execute(context)
         }
     }
 
     /**
      *  @return Pair of multipliers for source and target
+     *
+     *  Usage:
+     *  val (sourceMulti, targetMulti) = getMultipliers(context)
      */
     fun getMultipliers(context: EffectContext): Pair<Float, Float> {
         val sourceMulti = try {
@@ -80,22 +63,30 @@ object TriggerEffectHandler {
 
             val effectsList = entry.value
             for (effect in effectsList) {
-                val initialAmount =
+                val amount =
                     when (effect) {
-                        is Effect.GainScore -> {
-                            effect.amount.toFloat()
-                        }
-
-                        is Effect.GainHealth -> {
+                        is AddMultiplier -> {
                             effect.amount
                         }
 
-                        is Effect.TakeDamage -> {
+                        is RemoveMultiplier -> {
                             effect.amount
+                        }
+
+                        is GainScoreFromScoreComp -> {
+                            (context.source get ScoreComponent::class).getScore().toFloat()
+                        }
+
+                        is StoreDamageDealtAsSelfScore -> {
+                            val asd = context.source get TriggeredEffectsComponent::class
+                            val dddd = asd.findEffect(TakeRisingDamage::class)
+                            dddd.first().amount
+                        }
+                        else -> {
+                            (effect.amount?.times(sourceMulti)?.times(targetMulti))
                         }
                     }
-                var amount = (initialAmount * sourceMulti * targetMulti).toInt()
-                result += effect.describe(amount) + "\n"
+                result += effect.describeWithContext(amount) + "\n"
             }
         }
         result = result.trimEnd()

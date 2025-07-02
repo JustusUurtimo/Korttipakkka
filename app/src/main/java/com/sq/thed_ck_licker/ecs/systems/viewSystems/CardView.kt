@@ -40,7 +40,6 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import com.sq.thed_ck_licker.ecs.components.EffectComponent
 import com.sq.thed_ck_licker.ecs.components.IdentificationComponent
 import com.sq.thed_ck_licker.ecs.components.ImageComponent
 import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
@@ -66,17 +65,12 @@ fun CardView(
     val name = (entityId get IdentificationComponent::class).getName()
     var description = ""
     try {
-        description = (entityId get EffectComponent::class).toString()
-    } catch (_: Exception) {
-        Log.i("CardView", "No effect component found for card")
-    }
-    try {
         description = TriggerEffectHandler.describe(context = EffectContext(
-            trigger = Trigger.OnPlay,
+            trigger = Trigger.Blank,
             source = entityId
         ))
     } catch (_: Exception) {
-        Log.i("CardView", "No TriggerEffect component found for card")
+        Log.i("CardView", "No TriggerEffect component found for card $entityId")
     }
 
     var cardHealth: HealthComponent? = null
@@ -85,7 +79,7 @@ fun CardView(
     } catch (_: IllegalStateException) {
         Log.i(
             "CardView",
-            "No health component found for card \n" +
+            "No health component found for card $entityId\n" +
                     "Yeah yeah, we get it, you are so cool there was no health component"
         )
     }
