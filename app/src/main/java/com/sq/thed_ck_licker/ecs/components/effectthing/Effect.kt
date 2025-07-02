@@ -39,7 +39,7 @@ abstract class Effect {
     fun executeCall(context: EffectContext): Float {
         if (recursionLock) {
             println("Effect execution blocked due to recursion lock: ${this::class.simpleName}")
-            return 0f // Or some sentinel value
+            return 0f
         }
 
         recursionLock = true

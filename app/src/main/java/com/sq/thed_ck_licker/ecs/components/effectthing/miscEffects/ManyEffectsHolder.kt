@@ -5,7 +5,8 @@ import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
 
 data class ManyEffectsHolder(val list: List<Effect>) : MiscEffect() {
     override fun execute(context: EffectContext): Float {
-        list.forEach { executeCall(context) }
+        list.forEach {
+            it.executeCall(context) }
         return 0f
     }
 }
