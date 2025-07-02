@@ -306,7 +306,7 @@ object ForestManager {
                     img = R.drawable.forest_card
                 )
             )(cardId)
-            cardId add TriggeredEffectsComponent(Trigger.OnPlay, GiftTickingSelfDamage(amount = 4f))
+            cardId add TriggeredEffectsComponent(Trigger.OnPlay, GiftTickingSelfDamage(amount = 2f))
         }
     }
 

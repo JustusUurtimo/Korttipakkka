@@ -24,12 +24,13 @@ data class GiftTickingSelfDamage(override val amount: Float) : DamageEffect() {
         subDeck.forEach { card ->
             val trigComp = card.getOrNull<TriggeredEffectsComponent>()
             check(trigComp != null) { "This card $card is missing all TrigComp things?" }
-            card add (trigComp.addEffects(Trigger.OnTick, listOf(TakeSelfDamage(1f)))).removeNone()
+            card add (trigComp.addEffects(Trigger.OnTick, listOf(TakeSelfDamage(1f),
+                TakeSelfPercentageDamage(0.001f)))).removeNone()
 
             var tickComp: TickComponent? = card.getOrNull<TickComponent>()
 
             if (tickComp == null) {
-                tickComp = TickComponent(1000)
+                tickComp = TickComponent(5000)
             } else {
                 // luls: min(max(tickComp.tickThreshold -100, 100), 1000)
                 val hold = max(tickComp.tickThreshold - 100, 100)
