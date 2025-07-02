@@ -13,7 +13,7 @@ abstract class Effect {
      */
     open val amount:Float? = null
 
-    abstract fun execute(context: EffectContext): Float
+//    abstract fun execute(context: EffectContext): Float
 
     open fun describe(): String? = null
 
@@ -34,4 +34,20 @@ abstract class Effect {
 
         return describe(modifiedAmount) ?: describe()
     }
+    protected abstract fun execute(context: EffectContext): Float
+
+    fun executeCall(context: EffectContext): Float {
+        if (recursionLock) {
+            println("Effect execution blocked due to recursion lock: ${this::class.simpleName}")
+            return 0f // Or some sentinel value
+        }
+
+        recursionLock = true
+        try {
+            return execute(context)
+        } finally {
+            recursionLock = false
+        }
+    }
+    var recursionLock = false
 }

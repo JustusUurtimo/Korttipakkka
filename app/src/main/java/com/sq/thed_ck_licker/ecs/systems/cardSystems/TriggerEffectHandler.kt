@@ -23,7 +23,7 @@ object TriggerEffectHandler {
 
 
         for (effect in effects) {
-            effect.execute(context)
+            effect.executeCall(context)
         }
     }
 

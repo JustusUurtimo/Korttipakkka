@@ -12,7 +12,7 @@ data class OnActivations(
         this.current++
         if (this.current > threshold) {
             this.current -= threshold
-            return effect.execute(context)
+            return effect.executeCall(context)
         }
         return 0f
     }

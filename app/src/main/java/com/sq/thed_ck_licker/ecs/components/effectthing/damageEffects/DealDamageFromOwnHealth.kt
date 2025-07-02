@@ -12,6 +12,6 @@ data class DealDamageFromOwnHealth(override val amount: Float) : DamageEffect() 
     override fun execute(context: EffectContext): Float {
         val healthComp = (context.source get HealthComponent::class)
         val takeDamage = TakeDamage(healthComp.getMaxHealth() * this.amount)
-        return takeDamage.execute(context)
+        return takeDamage.executeCall(context)
     }
 }
