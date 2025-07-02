@@ -17,7 +17,7 @@ data class GiftEffects(
     val useAllEffects: Boolean = false
 ) : MiscEffect() {
     override fun describe(modifiedAmount: Float?): String? {
-        return "Gift ${effects.size} Effects to $modifiedAmount"
+        return "Gift ${effects.size} Effects to ${modifiedAmount?.toInt()}"
     }
 
     override fun execute(context: EffectContext): Float {

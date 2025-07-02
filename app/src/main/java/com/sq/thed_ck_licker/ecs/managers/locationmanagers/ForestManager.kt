@@ -175,7 +175,7 @@ object ForestManager {
         return generateCards(amount) { cardId ->
             withBasicCardDefaults(
                 CardConfig(
-                    name = "HP as score",
+                    name = "Joy of Life",
                     hp = 100f,
                     score = 0,
                     tags = listOf(Tag.FOREST, Tag.CARD),
