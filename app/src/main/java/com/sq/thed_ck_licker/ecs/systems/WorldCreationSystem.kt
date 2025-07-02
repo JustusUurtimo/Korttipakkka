@@ -13,15 +13,19 @@ class WorldCreationSystem @Inject constructor(
     private val merchantSystem: MerchantSystem,
 ) {
 
-    fun destroyWorld() {
-        componentManager.clear()
-        GameEvents.resetEventStream()
-        MerchantEvents.resetEventStream()
-        // Reset any stored flows or state in ViewModels
+    fun destroyWorldAndInitNewOne() {
+        destroyWorld()
         initWorld()
     }
 
+    private fun destroyWorld() {
+        componentManager.clear()
+        GameEvents.resetEventStream()
+        MerchantEvents.resetEventStream()
+    }
+
     private fun initWorld() {
+        // Reset any stored flows or state in ViewModels
         playerSystem.initPlayer()
         merchantSystem.initRegularMerchant()
     }

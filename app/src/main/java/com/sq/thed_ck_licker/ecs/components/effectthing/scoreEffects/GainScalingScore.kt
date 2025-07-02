@@ -5,7 +5,6 @@ import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.TriggerEffectHandler.getMultipliers
 
-@Deprecated("Use GainScoreFromScoreComp instead...")
 data class GainScalingScore(override val amount: Float, var scalingFactor: Float) : ScoreEffect() {
     override fun describe(modifiedAmount: Float?): String {
         return "Gain ${scalingFactor}x($modifiedAmount) points"

@@ -6,6 +6,11 @@ import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.TriggerEffectHandler
 
 object GainScoreFromScoreComp : ScoreEffect() {
+    override fun getDynamicAmountFromContext(context: EffectContext): Float? {
+        val sourceScore = context.source get ScoreComponent::class
+        return sourceScore.getScore().toFloat()
+    }
+
     override fun describe(modifiedAmount: Float?): String {
         return "Gain ($modifiedAmount) points"
     }

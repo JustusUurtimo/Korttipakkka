@@ -22,7 +22,7 @@ import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.managers.locationmanagers.ForestManager
 import com.sq.thed_ck_licker.ecs.states.PlayerState
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem
-import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.areRealTimeThingsEnabled
+import com.sq.thed_ck_licker.helpers.Settings
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
@@ -33,7 +33,6 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
     fun initPlayer() {
         getPlayerID() add HealthComponent(100f)
         getPlayerID() add ScoreComponent()
-        getPlayerID() add DrawDeckComponent(initPlayerDeck() as MutableList<Int>)
         getPlayerID() add DiscardDeckComponent(mutableListOf<Int>())
         getPlayerID() add MultiplierComponent()
         getPlayerID() add LatestCardComponent()
@@ -41,14 +40,23 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         getPlayerID() add ActivationCounterComponent()
         getPlayerID() add ImageComponent()
         getPlayerID() add OwnerComponent(getPlayerID())
+        val deck = (getPlayerID() add DrawDeckComponent(mutableListOf()))
 
-        if (areRealTimeThingsEnabled.value) {
+        if (Settings.isRealTimePlayerDamageEnabled.value) {
+            println("Adding This")
             getPlayerID() add TickComponent(tickThreshold = 1000)
             getPlayerID() add TriggeredEffectsComponent(Trigger.OnTick, TakeDamage(1f))
         }
+        if (Settings.addBaseTestPackage.value) {
+            deck.addCards(buildBasicTestingPlayerDeck())
+        }
+        if (Settings.addForestPackage.value) {
+            deck.addCards(ForestManager.getForestPackage(getPlayerID()))
+        }
+        deck.shuffle()
     }
 
-    private fun initPlayerDeck(): List<Int> {
+    private fun buildBasicTestingPlayerDeck(): List<Int> {
 
         val playerHealingCards = cardCreationSystem.addHealingCards(1)
         val playerDamageCards = cardCreationSystem.addDamageCards(5)
@@ -64,7 +72,6 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         val timeBoundCards = cardCreationSystem.addTimeBoundTestCards(1)
         val basicsV3 = cardCreationSystem.addBasicScoreCards(5)
 
-        val forestPackage = ForestManager.getForestPackage(getPlayerID())
 
         return emptyList<Int>() +
                 playerHealingCards +
@@ -80,7 +87,6 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
                 corruptionCards +
                 timeBoundCards +
                 basicsV3 +
-                forestPackage+
                 emptyList<Int>()
     }
 

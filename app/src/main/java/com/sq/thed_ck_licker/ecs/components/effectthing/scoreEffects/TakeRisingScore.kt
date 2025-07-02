@@ -10,7 +10,7 @@ data class TakeRisingScore(var gainScore: GainScore, var risingAmount: Float) : 
     }
 
     override fun execute(context: EffectContext): Float {
-        val value = gainScore.execute(context)
+        val value = gainScore.executeCall(context)
         gainScore = GainScore(value + this.risingAmount)
         return value.toFloat()
     }

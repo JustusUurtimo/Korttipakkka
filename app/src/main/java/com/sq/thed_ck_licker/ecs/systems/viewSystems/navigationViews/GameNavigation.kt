@@ -15,6 +15,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.sq.thed_ck_licker.ecs.systems.WorldCreationSystem
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.DeathScreen
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.Game
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.HighScoresScreen
@@ -33,6 +34,7 @@ fun GameNavigation(
     innerPadding: PaddingValues,
     gameNavigator: GameNavigator,
     gameViewModel: GameViewModel = hiltViewModel(),
+    worldCreationSystem: WorldCreationSystem
 ) {
     val navController = rememberNavController()
     val modifier = Modifier
@@ -46,7 +48,10 @@ fun GameNavigation(
         composable(route = Screen.MainMenu.route) {
             MainMenuScreen(
                 onSettingsClick = { gameNavigator.navigateTo(Screen.Settings.route) },
-                onGameClick = { gameNavigator.navigateTo(Screen.Game.route) },
+                onGameClick = {
+                    worldCreationSystem.destroyWorldAndInitNewOne()
+                    gameNavigator.navigateTo(Screen.Game.route)
+                },
                 onHighScoresClick = { gameNavigator.navigateTo(Screen.HighScores.route) }
             )
         }

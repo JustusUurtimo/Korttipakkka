@@ -15,6 +15,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -119,10 +120,10 @@ fun Game(
 
 @Composable
 private fun RealtimeEffects() {
-    var realTimeTickingEnabled by remember { areRealTimeThingsEnabled }
+    var realTimeTickingEnabled by remember { mutableStateOf(true) }
     val tickSize = 100
-    LaunchedEffect(realTimeTickingEnabled) {
-        while (realTimeTickingEnabled) {
+    LaunchedEffect(true) {
+        while (true) {
             delay(tickSize.toLong())
             TickingSystem.tick(tickSize)
         }

@@ -17,5 +17,6 @@ data class EffectContext(
      *
      * This survives only this effect context.
      */
+    @Deprecated("I think we can survive on the single carried value, if that ever comes up.")
     val contextClues: MutableMap<String, Any> = mutableMapOf()
 )

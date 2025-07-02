@@ -28,7 +28,7 @@ class TakeRisingDamage(
     }
 
     override fun execute(context: EffectContext): Float {
-        val damageDone = takeDamage.execute(context)
+        val damageDone = takeDamage.executeCall(context)
 
         takeDamage = TakeDamage(this.takeDamage.amount + this.risingAmount)
 
