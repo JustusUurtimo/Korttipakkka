@@ -47,14 +47,15 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
             getPlayerID() add TriggeredEffectsComponent(Trigger.OnTick, TakeDamage(1f))
         }
         if (Settings.addBaseTestPackage.value) {
-            deck.addCards(initPlayerDeck())
+            deck.addCards(buildBasicTestingPlayerDeck())
         }
         if (Settings.addForestPackage.value) {
             deck.addCards(ForestManager.getForestPackage(getPlayerID()))
         }
+        deck.shuffle()
     }
 
-    private fun initPlayerDeck(): List<Int> {
+    private fun buildBasicTestingPlayerDeck(): List<Int> {
 
         val playerHealingCards = cardCreationSystem.addHealingCards(1)
         val playerDamageCards = cardCreationSystem.addDamageCards(5)
