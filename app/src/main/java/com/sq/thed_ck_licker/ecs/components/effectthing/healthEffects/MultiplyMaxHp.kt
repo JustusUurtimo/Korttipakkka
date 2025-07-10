@@ -17,8 +17,7 @@ data class MultiplyMaxHp(override val amount: Float) : HealthEffect() {
         val deck = DeckHelper.getEntityFullDeck(context.target)
         val card = deck.getRandomElement()
         val healthComp = (card get HealthComponent::class)
-        val amount = (this.amount * sourceMulti * targetMulti).toFloat()
+        val amount = (this.amount * sourceMulti * targetMulti)
         return healthComp.setMaxHealth(healthComp.getMaxHealth() * amount)
-
     }
 }

@@ -13,7 +13,7 @@ data class TakeDamage(override val amount: Float) : DamageEffect() {
     override fun execute(context: EffectContext): Float {
         val (sourceMulti, targetMulti) = getMultipliers(context)
         val healthComp = (context.target get HealthComponent::class)
-        val amount = (this.amount * sourceMulti * targetMulti).toFloat()
+        val amount = (this.amount * sourceMulti * targetMulti)
         return healthComp.damage(amount)
     }
 
