@@ -5,4 +5,5 @@ data class PlayerState(
     val maxHealth: Float,
     val score: Int,
     val latestCard: Int,
+    val rewardTier: Int
 )
