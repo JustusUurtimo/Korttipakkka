@@ -35,7 +35,7 @@ object CardCreationHelperSystems2 {
         val limitedHealEntity = generateEntity()
         limitedHealEntity add HealthComponent(health)
         limitedHealEntity add TriggeredEffectsComponent(
-            Trigger.OnTurnStart, HealOnUnderThreshold(health, threshold)
+            Trigger.OnTick, HealOnUnderThreshold(health, threshold)
         )
         limitedHealEntity add OwnerComponent(targetId)
         return limitedHealEntity

@@ -25,7 +25,7 @@ object TriggerEffectHandler {
 
 
         for (effect in effects) {
-            effect.execute(context)
+            effect.executeCall(context)
         }
     }
 
@@ -50,47 +50,18 @@ object TriggerEffectHandler {
     }
 
     fun describe(context: EffectContext): String {
-        val entity = context.source
-        val trigEffComp = (entity get TriggeredEffectsComponent::class)
+        val trigEffComp = ( context.source get TriggeredEffectsComponent::class)
         val effects = trigEffComp.effectsByTrigger
-        var result = ""
-
-        val (sourceMulti, targetMulti) = getMultipliers(context)
-
-        for (entry in effects) {
-            val trigger = entry.key
-            result += "$trigger:\n"
-
-            val effectsList = entry.value
-            for (effect in effectsList) {
-                val amount =
-                    when (effect) {
-                        is AddMultiplier -> {
-                            effect.amount
-                        }
-
-                        is RemoveMultiplier -> {
-                            effect.amount
-                        }
-
-                        is GainScoreFromScoreComp -> {
-                            (context.source get ScoreComponent::class).getScore().toFloat()
-                        }
-
-                        is StoreDamageDealtAsSelfScore -> {
-                            val asd = context.source get TriggeredEffectsComponent::class
-                            val dddd = asd.findEffect(TakeRisingDamage::class)
-                            dddd.first().amount
-                        }
-                        else -> {
-                            (effect.amount?.times(sourceMulti)?.times(targetMulti))
-                        }
-                    }
-                result += effect.describeWithContext(amount) + "\n"
+        val result = buildString {
+            for ((trigger, effectsList) in effects) {
+                append("$trigger:\n")
+                for (effect in effectsList) {
+                    append(effect.describeWithContext(context) ?: "(no description)")
+                    append("\n")
+                }
             }
         }
-        result = result.trimEnd()
-
-        return result
+        return result.trimEnd()
     }
+
 }

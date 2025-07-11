@@ -30,12 +30,12 @@ class GameViewModel @Inject constructor(
     }
 
     fun restartGame() {
-        worldCreationSystem.destroyWorld()
+        worldCreationSystem.destroyWorldAndInitNewOne()
         gameNavigator.restartGame()
     }
 
     fun leaveGame() {
-        worldCreationSystem.destroyWorld()
+        worldCreationSystem.destroyWorldAndInitNewOne()
         gameNavigator.leaveGame()  
     }
 }

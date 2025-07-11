@@ -1,6 +1,8 @@
 package com.sq.thed_ck_licker.ecs.components
 
+import com.sq.thed_ck_licker.helpers.MyRandom
 import javax.inject.Inject
+import kotlin.random.Random
 
 data class DrawDeckComponent @Inject constructor(
     private val drawCardDeck: MutableList<Int>,
@@ -19,5 +21,11 @@ data class DrawDeckComponent @Inject constructor(
 
     fun removeCard(cardId: Int) {
         this.drawCardDeck.remove(cardId)
+    }
+    fun addCards(cards: List<Int>) {
+        this.drawCardDeck.addAll(cards)
+    }
+    fun shuffle(random: Random = MyRandom.random) {
+        this.drawCardDeck.shuffle(random)
     }
 }

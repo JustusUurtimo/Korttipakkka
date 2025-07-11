@@ -5,7 +5,6 @@ import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.TriggerEffectHandler
 
-@Deprecated("Use GainScoreFromScoreComp instead...")
 data class GainScore(override val amount: Float) : ScoreEffect() {
     override fun describe(modifiedAmount: Float?): String { //Not super sure about this one...
         return "Gain ($modifiedAmount) points"
