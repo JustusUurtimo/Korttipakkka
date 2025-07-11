@@ -5,7 +5,7 @@ import com.sq.thed_ck_licker.ecs.managers.GameEvents
 import com.sq.thed_ck_licker.ecs.managers.MerchantEvents
 import com.sq.thed_ck_licker.ecs.systems.characterSystems.MerchantSystem
 import com.sq.thed_ck_licker.ecs.systems.characterSystems.PlayerSystem
-import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.areRealTimeThingsEnabled
+import com.sq.thed_ck_licker.helpers.Settings.isRealTimePlayerDamageEnabled
 import javax.inject.Inject
 
 class WorldCreationSystem @Inject constructor(
@@ -31,7 +31,7 @@ class WorldCreationSystem @Inject constructor(
         playerSystem.initPlayer()
         merchantSystem.initRegularMerchant()
         rewardSystem.initRewards()
-        areRealTimeThingsEnabled.value = true
+        isRealTimePlayerDamageEnabled.value = true
     }
 
 }

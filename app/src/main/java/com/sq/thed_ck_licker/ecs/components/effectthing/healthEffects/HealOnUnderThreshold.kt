@@ -17,7 +17,7 @@ data class HealOnUnderThreshold(override val amount: Float, val threshold: Float
         val sourceHealthComp = (context.source get HealthComponent::class)
 
         if (targetHealthComp.getHealth() < targetHealthComp.getMaxHealth() * this.threshold) {
-            var sourceHealth = sourceHealthComp.getHealth()
+            val sourceHealth = sourceHealthComp.getHealth()
             val healingPotential = targetHealthComp.getMaxHealth() - targetHealthComp.getHealth()
             val transferAmount = min(sourceHealth, healingPotential)
             val finalTransferAmount = (transferAmount * sourceMulti * targetMulti).toFloat()

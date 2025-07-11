@@ -6,20 +6,21 @@ import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.TagsComponent.Tag
 import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
 import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
+import com.sq.thed_ck_licker.ecs.components.effectthing.conditionals.OnNumberedActivations
+import com.sq.thed_ck_licker.ecs.components.effectthing.conditionals.OnThresholdActivations
+import com.sq.thed_ck_licker.ecs.components.effectthing.conditionals.SelfTarget
 import com.sq.thed_ck_licker.ecs.components.effectthing.damageEffects.TakeDamage
 import com.sq.thed_ck_licker.ecs.components.effectthing.damageEffects.TakeRisingDamage
-import com.sq.thed_ck_licker.ecs.components.effectthing.damageEffects.TakeSelfDamage
 import com.sq.thed_ck_licker.ecs.components.effectthing.healthEffects.AddBeerGoggles
 import com.sq.thed_ck_licker.ecs.components.effectthing.healthEffects.GainHealth
+import com.sq.thed_ck_licker.ecs.components.effectthing.miscEffects.AddEffectsToTrigger
 import com.sq.thed_ck_licker.ecs.components.effectthing.miscEffects.CorruptCards
 import com.sq.thed_ck_licker.ecs.components.effectthing.miscEffects.OpenMerchant
-import com.sq.thed_ck_licker.ecs.components.effectthing.miscEffects.SelfAddEffectsToTrigger
 import com.sq.thed_ck_licker.ecs.components.effectthing.miscEffects.Shovel
 import com.sq.thed_ck_licker.ecs.components.effectthing.miscEffects.TakeDamageOrGainMaxHP
 import com.sq.thed_ck_licker.ecs.components.effectthing.multiplierEffects.AddTempMultiplier
 import com.sq.thed_ck_licker.ecs.components.effectthing.scoreEffects.AddScoreGainer
 import com.sq.thed_ck_licker.ecs.components.effectthing.scoreEffects.GainScoreFromScoreComp
-import com.sq.thed_ck_licker.ecs.components.effectthing.scoreEffects.OnRepeatActivationGainScore
 import com.sq.thed_ck_licker.ecs.components.effectthing.scoreEffects.ResetSelfScore
 import com.sq.thed_ck_licker.ecs.components.effectthing.scoreEffects.TakeRisingScore
 import com.sq.thed_ck_licker.ecs.components.misc.TickComponent
@@ -241,12 +242,30 @@ class CardCreationSystem @Inject constructor(
                     name = "Time Bound Card", hp = 183f, score = 10000
                 )
             )(cardId)
-            cardId add TickComponent(1000)
+            cardId add TickComponent(
+                tickThreshold = 1000
+            )
             cardId add TriggeredEffectsComponent(
                 mutableMapOf(
                     Trigger.OnPlay to mutableListOf(
-                        OnRepeatActivationGainScore(3f),
-                        SelfAddEffectsToTrigger(Trigger.OnTick, listOf(TakeSelfDamage(1f)))
+                        OnThresholdActivations(
+                            current = 0,
+                            threshold = 3,
+                            effect = GainScoreFromScoreComp
+                        ),
+                        OnNumberedActivations(
+                            current = 0,
+                            thresholds = listOf(1),
+                            effect = SelfTarget(
+                                effect = AddEffectsToTrigger(
+                                    Trigger.OnTick, listOf(
+                                        SelfTarget(
+                                            TakeDamage(1f)
+                                        )
+                                    )
+                                )
+                            )
+                        ),
                     ),
                 )
             )
