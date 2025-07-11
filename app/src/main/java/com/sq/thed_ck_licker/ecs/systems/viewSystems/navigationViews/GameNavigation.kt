@@ -21,12 +21,14 @@ import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.Hig
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.MainMenuScreen
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.MerchantScreen
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.PitScreen
+import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.RewardScreen
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.SettingsScreen
 import com.sq.thed_ck_licker.helpers.navigation.GameNavigator
 import com.sq.thed_ck_licker.helpers.navigation.Screen
 import com.sq.thed_ck_licker.viewModels.GameViewModel
 import com.sq.thed_ck_licker.viewModels.MerchantViewModel
 import com.sq.thed_ck_licker.viewModels.PitViewModel
+import com.sq.thed_ck_licker.viewModels.RewardViewModel
 
 @Composable
 fun GameNavigation(
@@ -103,6 +105,12 @@ fun GameNavigation(
         {
             val pitViewModel: PitViewModel = hiltViewModel()
             PitScreen(modifier, gameNavigator, pitViewModel)
+        }
+
+        composable(route = Screen.RewardScreen.route)
+        {
+            val viewModel: RewardViewModel = hiltViewModel()
+            RewardScreen(modifier, viewModel, gameNavigator)
         }
 
 

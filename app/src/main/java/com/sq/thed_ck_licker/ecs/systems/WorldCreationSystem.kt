@@ -5,12 +5,14 @@ import com.sq.thed_ck_licker.ecs.managers.GameEvents
 import com.sq.thed_ck_licker.ecs.managers.MerchantEvents
 import com.sq.thed_ck_licker.ecs.systems.characterSystems.MerchantSystem
 import com.sq.thed_ck_licker.ecs.systems.characterSystems.PlayerSystem
+import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.areRealTimeThingsEnabled
 import javax.inject.Inject
 
 class WorldCreationSystem @Inject constructor(
     private val componentManager: ComponentManager,
     private val playerSystem: PlayerSystem,
     private val merchantSystem: MerchantSystem,
+    private val rewardSystem: RewardSystem
 ) {
 
     fun destroyWorld() {
@@ -24,6 +26,8 @@ class WorldCreationSystem @Inject constructor(
     private fun initWorld() {
         playerSystem.initPlayer()
         merchantSystem.initRegularMerchant()
+        rewardSystem.initRewards()
+        areRealTimeThingsEnabled.value = true
     }
 
 }

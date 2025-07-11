@@ -13,6 +13,12 @@ object EntityManager {
     private const val REGULAR_MERCHANT_ID: EntityId = -2
     fun getRegularMerchantID() = REGULAR_MERCHANT_ID
 
+    private const val REGULAR_REWARD_ID: EntityId = -10
+    fun getRegularRewardID() = REGULAR_REWARD_ID
+
+    private const val SPECIAL_REWARD_ID: EntityId = -11
+    fun getSpecialRewardID() = SPECIAL_REWARD_ID
+
     private var nextID: EntityId = 1
 
 

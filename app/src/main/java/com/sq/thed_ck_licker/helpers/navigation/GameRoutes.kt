@@ -8,5 +8,5 @@ sealed class Screen(val route: String) {
     object DeathScreen : Screen("death_screen")
     object MerchantShop : Screen("merchant_shop")
     object Pit : Screen("pit")
-
+    object RewardScreen : Screen("reward")
 }

@@ -101,6 +101,14 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         (getPlayerID() get ScoreComponent::class).addScore(amount)
     }
 
+    fun getPlayerRewardTier(): Int {
+        return (getPlayerID() get ScoreComponent::class).getRewardTier()
+    }
+
+    fun updateRewardTier(tier: Int) {
+        (getPlayerID() get ScoreComponent::class).setRewardTier(tier)
+    }
+
     fun removeCardFromDrawDeck(cardId: Int) {
         (getPlayerID() get DrawDeckComponent::class).removeCard(cardId)
     }
@@ -118,13 +126,15 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
             snapshotFlow { getPlayerHealth() },
             snapshotFlow { getPlayerMaxHealth() },
             snapshotFlow { getPlayerScore() },
-            snapshotFlow { getLatestCard() }
-        ) { health, maxHealth, score, latestCard ->
+            snapshotFlow { getLatestCard() },
+            snapshotFlow { getPlayerRewardTier() }
+        ) { health, maxHealth, score, latestCard, rewardTier ->
             PlayerState(
                 health = health,
                 maxHealth = maxHealth,
                 score = score,
-                latestCard = latestCard
+                latestCard = latestCard,
+                rewardTier = rewardTier
             )
         }
     }
