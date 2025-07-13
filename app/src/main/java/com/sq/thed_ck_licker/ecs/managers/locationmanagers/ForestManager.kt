@@ -7,7 +7,7 @@ import com.sq.thed_ck_licker.ecs.components.TagsComponent.Tag
 import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
 import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
 import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
-import com.sq.thed_ck_licker.ecs.components.effectthing.conditionals.OnActivations
+import com.sq.thed_ck_licker.ecs.components.effectthing.conditionals.OnThresholdActivations
 import com.sq.thed_ck_licker.ecs.components.effectthing.damageEffects.DealDamageFromOwnHealth
 import com.sq.thed_ck_licker.ecs.components.effectthing.damageEffects.GiftTickingSelfDamage
 import com.sq.thed_ck_licker.ecs.components.effectthing.damageEffects.TakeSelfDamage
@@ -91,7 +91,7 @@ object ForestManager {
         multiArti add ScoreComponent(100)
         multiArti add TriggeredEffectsComponent(
             Trigger.OnTurnStart,
-            OnActivations(
+            OnThresholdActivations(
                 threshold = 20,
                 effect = ManyEffectsHolder(
                     listOf(
@@ -110,7 +110,7 @@ object ForestManager {
         multiArti add ScoreComponent(-200)
         multiArti add TriggeredEffectsComponent(
             Trigger.OnTurnStart,
-            OnActivations(
+            OnThresholdActivations(
                 threshold = 10,
                 effect = ManyEffectsHolder(
                     listOf(

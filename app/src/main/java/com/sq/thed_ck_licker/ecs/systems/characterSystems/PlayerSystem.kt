@@ -1,5 +1,6 @@
 package com.sq.thed_ck_licker.ecs.systems.characterSystems
 
+import android.util.Log
 import androidx.compose.runtime.snapshotFlow
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
@@ -33,7 +34,7 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
     fun initPlayer() {
         getPlayerID() add HealthComponent(100f)
         getPlayerID() add ScoreComponent()
-        getPlayerID() add DiscardDeckComponent(mutableListOf<Int>())
+        getPlayerID() add DiscardDeckComponent(mutableListOf())
         getPlayerID() add MultiplierComponent()
         getPlayerID() add LatestCardComponent()
         getPlayerID() add HistoryComponent(getPlayerID())
@@ -43,7 +44,6 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         val deck = (getPlayerID() add DrawDeckComponent(mutableListOf()))
 
         if (Settings.isRealTimePlayerDamageEnabled.value) {
-            println("Adding This")
             getPlayerID() add TickComponent(tickThreshold = 1000)
             getPlayerID() add TriggeredEffectsComponent(Trigger.OnTick, TakeDamage(1f))
         }
@@ -52,6 +52,11 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         }
         if (Settings.addForestPackage.value) {
             deck.addCards(ForestManager.getForestPackage(getPlayerID()))
+        }
+
+        if (deck.getSize() == 0){
+            Log.i("initPlayer"," Player has no deck for some reason? Adding basic cards as lohdutus palkinto.")
+            deck.addCards(cardCreationSystem.addBasicScoreCards(5))
         }
         deck.shuffle()
     }
@@ -87,7 +92,7 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
                 corruptionCards +
                 timeBoundCards +
                 basicsV3 +
-                emptyList<Int>()
+                emptyList()
     }
 
 

@@ -15,10 +15,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
@@ -120,10 +117,9 @@ fun Game(
 
 @Composable
 private fun RealtimeEffects() {
-    var realTimeTickingEnabled by remember { mutableStateOf(true) }
     val tickSize = 100
     LaunchedEffect(true) {
-        while (true) {
+        while (true) { //if we ever want small performance gains on super specific things, this could be disable if no things to tick at the moment. but I suspect it is really pointless.
             delay(tickSize.toLong())
             TickingSystem.tick(tickSize)
         }

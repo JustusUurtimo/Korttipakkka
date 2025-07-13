@@ -19,6 +19,7 @@ import com.sq.thed_ck_licker.ecs.managers.GameEvents
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.TriggerEffectHandler
 import com.sq.thed_ck_licker.helpers.Settings.isRealTimePlayerDamageEnabled
+import com.sq.thed_ck_licker.helpers.displayInfo
 import kotlin.reflect.KClass
 
 object DeathSystem {
@@ -57,6 +58,7 @@ object DeathSystem {
         componentManager: ComponentManager
     ): EntityId {
         val entityId = dyingEntityEntry.key
+        displayInfo("Now this is dying: $entityId")
         try {
             val owner = try {
                 (entityId get OwnerComponent::class).ownerId
