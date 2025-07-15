@@ -1,6 +1,8 @@
 package com.sq.thed_ck_licker.ecs.systems.characterSystems
 
+import android.content.Context
 import androidx.compose.runtime.snapshotFlow
+import com.sq.thed_ck_licker.dataStores.SettingsRepository
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
@@ -22,13 +24,49 @@ import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.managers.locationmanagers.ForestManager
 import com.sq.thed_ck_licker.ecs.states.PlayerState
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem
-import com.sq.thed_ck_licker.helpers.Settings
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreationSystem) {
+class PlayerSystem @Inject constructor(
+    private val cardCreationSystem: CardCreationSystem,
+    private val settings: SettingsRepository,
+    @ApplicationContext private val context: Context
+) {
+    private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
+    private var realTimeDamageEnabled = false
+    private var baseTestPackageAdded = false
+    private var forestPackageAdded = false
+
+    init {
+        coroutineScope.launch {
+            launch {
+                settings.isRealTimePlayerDamageEnabled.collect { enabled ->
+                    realTimeDamageEnabled = enabled
+                    //we can also react to changes from here if we want to taunt players for changin difficulty etc :D
+                }
+            }
+            launch {
+                settings.isBaseTestPackageAdded.collect { enabled ->
+                    baseTestPackageAdded = enabled
+                }
+            }
+            launch {
+                settings.isForestPackageAdded.collect { enabled ->
+                    forestPackageAdded = enabled
+                }
+            }
+
+        }
+    }
+
 
     fun initPlayer() {
         getPlayerID() add HealthComponent(100f)
@@ -42,15 +80,15 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         getPlayerID() add OwnerComponent(getPlayerID())
         val deck = (getPlayerID() add DrawDeckComponent(mutableListOf()))
 
-        if (Settings.isRealTimePlayerDamageEnabled.value) {
+        if (realTimeDamageEnabled) {
             println("Adding This")
             getPlayerID() add TickComponent(tickThreshold = 1000)
             getPlayerID() add TriggeredEffectsComponent(Trigger.OnTick, TakeDamage(1f))
         }
-        if (Settings.addBaseTestPackage.value) {
+        if (baseTestPackageAdded) {
             deck.addCards(buildBasicTestingPlayerDeck())
         }
-        if (Settings.addForestPackage.value) {
+        if (forestPackageAdded) {
             deck.addCards(ForestManager.getForestPackage(getPlayerID()))
         }
         deck.shuffle()

@@ -18,7 +18,6 @@ import com.sq.thed_ck_licker.ecs.managers.GameEvent
 import com.sq.thed_ck_licker.ecs.managers.GameEvents
 import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.TriggerEffectHandler
-import com.sq.thed_ck_licker.helpers.Settings.isRealTimePlayerDamageEnabled
 import kotlin.reflect.KClass
 
 object DeathSystem {
@@ -38,7 +37,6 @@ object DeathSystem {
             if (health <= 0) {
                 if (entity.key == getPlayerID()) {
                     GameEvents.tryEmit(GameEvent.PlayerDied)
-                    isRealTimePlayerDamageEnabled.value = false
                 } else {
                     deaths.add(deathHappening(entity, componentManager))
                     Log.i(

@@ -11,22 +11,21 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.sq.thed_ck_licker.helpers.Settings
 import com.sq.thed_ck_licker.viewModels.SettingsViewModel
 
 @Composable
 fun SettingsScreen(modifier: Modifier, viewModel: SettingsViewModel = hiltViewModel()) {
 
     val realTimePlayerDamageEnabled by viewModel.realTimePlayerDamageEnabled.collectAsState()
+    val baseTestPackageAdded by viewModel.baseTestPackageAdded.collectAsState()
+    val forestPackageAdded by viewModel.forestPackageAdded.collectAsState()
+
 
     Column(
         modifier = modifier
@@ -50,8 +49,8 @@ fun SettingsScreen(modifier: Modifier, viewModel: SettingsViewModel = hiltViewMo
 
 
         SettingCheckbox(
-            Settings.addBaseTestPackage.value,
-            onChanged = { Settings.addBaseTestPackage.value = it },
+            baseTestPackageAdded,
+            onChanged = { viewModel.toggleBaseTestPackageAdded() },
             "Testing Cards",
             "Now you have all kind a test cards",
             "No test cards for you?"
@@ -60,8 +59,8 @@ fun SettingsScreen(modifier: Modifier, viewModel: SettingsViewModel = hiltViewMo
         Spacer(modifier = modifier.height(24.dp))
 
         SettingCheckbox(
-            Settings.addForestPackage.value,
-            onChanged = { Settings.addForestPackage.value = it },
+            forestPackageAdded,
+            onChanged = { viewModel.toggleForestPackageAdded() },
             "Forest package",
             "Now you have forest cards",
             "No forest for you :("
