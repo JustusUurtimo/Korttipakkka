@@ -22,8 +22,7 @@ import kotlin.reflect.KClass
 
 object DeathSystem {
     fun checkForDeath(componentManager: ComponentManager = ComponentManager.componentManager) {
-        val deaths = mutableListOf<EntityId>()
-        deaths += healthDeath(componentManager)
+        val deaths = healthDeath(componentManager)
         if (deaths.isEmpty()) return
         performCleanup(componentManager, deaths)
     }

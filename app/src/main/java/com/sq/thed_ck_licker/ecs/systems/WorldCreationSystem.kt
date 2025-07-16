@@ -14,7 +14,7 @@ class WorldCreationSystem @Inject constructor(
     private val rewardSystem: RewardSystem
 ) {
 
-    fun destroyWorldAndInitNewOne() {
+     fun destroyWorldAndInitNewOne() {
         destroyWorld()
         initWorld()
     }

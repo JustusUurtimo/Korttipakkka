@@ -23,12 +23,10 @@ import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.managers.locationmanagers.ForestManager
 import com.sq.thed_ck_licker.ecs.states.PlayerState
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 
@@ -36,31 +34,17 @@ class PlayerSystem @Inject constructor(
     private val cardCreationSystem: CardCreationSystem,
     private val settings: SettingsRepository
 ) {
-    private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
-
     private var realTimeDamageEnabled = false
     private var baseTestPackageAdded = false
     private var forestPackageAdded = false
 
-    init {
-        coroutineScope.launch {
-            launch {
-                settings.isRealTimePlayerDamageEnabled.collect { enabled ->
-                    realTimeDamageEnabled = enabled
-                    //we can also react to changes from here if we want to taunt players for changin difficulty etc :D
-                }
-            }
-            launch {
-                settings.isBaseTestPackageAdded.collect { enabled ->
-                    baseTestPackageAdded = enabled
-                }
-            }
-            launch {
-                settings.isForestPackageAdded.collect { enabled ->
-                    forestPackageAdded = enabled
-                }
-            }
 
+    // Called manually once from Hilt after settings are loaded
+    fun loadSettingsBlocking() {
+        runBlocking {
+            realTimeDamageEnabled = settings.isRealTimePlayerDamageEnabled.first()
+            baseTestPackageAdded = settings.isBaseTestPackageAdded.first()
+            forestPackageAdded = settings.isForestPackageAdded.first()
         }
     }
 
@@ -125,6 +109,9 @@ class PlayerSystem @Inject constructor(
                 emptyList<Int>()
     }
 
+    fun getPlayerDeck(): MutableList<Int> {
+        return (getPlayerID() get DrawDeckComponent::class).getDrawCardDeck()
+    }
 
     fun getPlayerHealth(): Float {
         return (getPlayerID() get HealthComponent::class).getHealth()

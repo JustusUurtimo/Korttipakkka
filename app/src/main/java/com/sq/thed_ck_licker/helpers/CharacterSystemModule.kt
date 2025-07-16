@@ -22,6 +22,7 @@ object CharacterSystemModule {
         settings: SettingsRepository
     ): PlayerSystem {
         return PlayerSystem(cardCreationSystem, settings).apply {
+            loadSettingsBlocking()
             initPlayer()
         }
     }

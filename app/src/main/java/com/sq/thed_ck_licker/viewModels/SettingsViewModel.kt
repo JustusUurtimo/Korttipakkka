@@ -1,7 +1,6 @@
 package com.sq.thed_ck_licker.viewModels
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.sq.thed_ck_licker.dataStores.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,19 +15,25 @@ class SettingsViewModel @Inject constructor(
     private val settings: SettingsRepository
 ) : ViewModel() {
 
-    private val _realTimePlayerDamageEnabled = MutableStateFlow(true)
+    private val _realTimePlayerDamageEnabled = MutableStateFlow(false)
     val realTimePlayerDamageEnabled: StateFlow<Boolean> = _realTimePlayerDamageEnabled.asStateFlow()
 
-    private val _baseTestPackageAdded = MutableStateFlow(true)
+    private val _baseTestPackageAdded = MutableStateFlow(false)
     val baseTestPackageAdded: StateFlow<Boolean> = _baseTestPackageAdded.asStateFlow()
 
-    private val _forestPackageAdded = MutableStateFlow(true)
+    private val _forestPackageAdded = MutableStateFlow(false)
     val forestPackageAdded: StateFlow<Boolean> = _forestPackageAdded.asStateFlow()
 
     init {
         viewModelScope.launch {
             settings.isRealTimePlayerDamageEnabled.collect { _realTimePlayerDamageEnabled.value = it }
+        }
+
+        viewModelScope.launch {
             settings.isBaseTestPackageAdded.collect { _baseTestPackageAdded.value = it }
+        }
+
+        viewModelScope.launch {
             settings.isForestPackageAdded.collect { _forestPackageAdded.value = it }
         }
     }

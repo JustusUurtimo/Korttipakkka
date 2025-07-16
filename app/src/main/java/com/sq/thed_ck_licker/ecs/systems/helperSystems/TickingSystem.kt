@@ -15,7 +15,7 @@ object TickingSystem {
     /**
      * @param value is the amount that time has moved in milliseconds.
      */
-    fun tick(value: Int = 100, realTimePlayerDamageEnabled: Boolean, ) {
+    fun tick(value: Int = 100, realTimePlayerDamageEnabled: Boolean) {
         val entitiesWithTickComponent: Map<EntityId, TickComponent> =
             componentManager.getEntitiesWithComponent(TickComponent::class) ?: return
         for (entry in entitiesWithTickComponent) {
