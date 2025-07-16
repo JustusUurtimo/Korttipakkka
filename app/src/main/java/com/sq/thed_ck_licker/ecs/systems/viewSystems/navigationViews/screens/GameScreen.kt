@@ -121,7 +121,7 @@ private fun RealtimeEffects(settingsViewModel: SettingsViewModel = hiltViewModel
     val realTimePlayerDamageEnabled by settingsViewModel.realTimePlayerDamageEnabled.collectAsState()
     val tickSize = 100
     LaunchedEffect(true) {
-        while (true) {
+        while (true) { //if we ever want small performance gains on super specific things, this could be disable if no things to tick at the moment. but I suspect it is really pointless.
             delay(tickSize.toLong())
             TickingSystem.tick(tickSize, realTimePlayerDamageEnabled)
         }

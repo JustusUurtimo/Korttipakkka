@@ -13,7 +13,7 @@ data class GainScore(override val amount: Float) : ScoreEffect() {
     override fun execute(context: EffectContext): Float {
         val (sourceMulti, targetMulti) = TriggerEffectHandler.getMultipliers(context)
         val score = context.target get ScoreComponent::class
-        var amount = (this.amount * sourceMulti * targetMulti).toInt()
+        val amount = (this.amount * sourceMulti * targetMulti).toInt()
         score.addScore(amount)
         return amount.toFloat()
     }
