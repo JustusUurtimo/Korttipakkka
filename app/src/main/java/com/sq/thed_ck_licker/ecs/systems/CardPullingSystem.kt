@@ -45,6 +45,7 @@ class CardPullingSystem @Inject constructor(
         }
 
         val drawDeck2 = (ownerId get DrawDeckComponent::class).getDrawCardDeck()
+
         if (latestCard > 0) {
             drawDeck2.add(latestCard)
         }

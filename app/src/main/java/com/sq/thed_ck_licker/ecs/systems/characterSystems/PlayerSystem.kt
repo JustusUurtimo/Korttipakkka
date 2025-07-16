@@ -2,6 +2,7 @@ package com.sq.thed_ck_licker.ecs.systems.characterSystems
 
 import android.util.Log
 import androidx.compose.runtime.snapshotFlow
+import com.sq.thed_ck_licker.dataStores.SettingsRepository
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
@@ -23,13 +24,31 @@ import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.managers.locationmanagers.ForestManager
 import com.sq.thed_ck_licker.ecs.states.PlayerState
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem
-import com.sq.thed_ck_licker.helpers.Settings
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 
-class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreationSystem) {
+class PlayerSystem @Inject constructor(
+    private val cardCreationSystem: CardCreationSystem,
+    private val settings: SettingsRepository
+) {
+    private var realTimeDamageEnabled = false
+    private var baseTestPackageAdded = false
+    private var forestPackageAdded = false
+
+
+    // Called manually once from Hilt after settings are loaded
+    fun loadSettingsBlocking() {
+        runBlocking {
+            realTimeDamageEnabled = settings.isRealTimePlayerDamageEnabled.first()
+            baseTestPackageAdded = settings.isBaseTestPackageAdded.first()
+            forestPackageAdded = settings.isForestPackageAdded.first()
+        }
+    }
+
 
     fun initPlayer() {
         getPlayerID() add HealthComponent(100f)
@@ -43,14 +62,14 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
         getPlayerID() add OwnerComponent(getPlayerID())
         val deck = (getPlayerID() add DrawDeckComponent(mutableListOf()))
 
-        if (Settings.isRealTimePlayerDamageEnabled.value) {
+        if (realTimeDamageEnabled) {
             getPlayerID() add TickComponent(tickThreshold = 1000)
             getPlayerID() add TriggeredEffectsComponent(Trigger.OnTick, TakeDamage(1f))
         }
-        if (Settings.addBaseTestPackage.value) {
+        if (baseTestPackageAdded) {
             deck.addCards(buildBasicTestingPlayerDeck())
         }
-        if (Settings.addForestPackage.value) {
+        if (forestPackageAdded) {
             deck.addCards(ForestManager.getForestPackage(getPlayerID()))
         }
 
@@ -95,6 +114,9 @@ class PlayerSystem @Inject constructor(private val cardCreationSystem: CardCreat
                 emptyList()
     }
 
+    fun getPlayerDeck(): MutableList<Int> {
+        return (getPlayerID() get DrawDeckComponent::class).getDrawCardDeck()
+    }
 
     fun getPlayerHealth(): Float {
         return (getPlayerID() get HealthComponent::class).getHealth()

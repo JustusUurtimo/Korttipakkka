@@ -5,7 +5,6 @@ import com.sq.thed_ck_licker.ecs.managers.GameEvents
 import com.sq.thed_ck_licker.ecs.managers.MerchantEvents
 import com.sq.thed_ck_licker.ecs.systems.characterSystems.MerchantSystem
 import com.sq.thed_ck_licker.ecs.systems.characterSystems.PlayerSystem
-import com.sq.thed_ck_licker.helpers.Settings.isRealTimePlayerDamageEnabled
 import javax.inject.Inject
 
 class WorldCreationSystem @Inject constructor(
@@ -15,7 +14,7 @@ class WorldCreationSystem @Inject constructor(
     private val rewardSystem: RewardSystem
 ) {
 
-    fun destroyWorldAndInitNewOne() {
+     fun destroyWorldAndInitNewOne() {
         destroyWorld()
         initWorld()
     }
@@ -31,7 +30,6 @@ class WorldCreationSystem @Inject constructor(
         playerSystem.initPlayer()
         merchantSystem.initRegularMerchant()
         rewardSystem.initRewards()
-        isRealTimePlayerDamageEnabled.value = true
     }
 
 }

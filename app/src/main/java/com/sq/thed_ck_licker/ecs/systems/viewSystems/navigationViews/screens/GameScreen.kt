@@ -28,6 +28,7 @@ import com.sq.thed_ck_licker.player.AdditionalInfoDisplay
 import com.sq.thed_ck_licker.player.HealthBar
 import com.sq.thed_ck_licker.player.ScoreDisplay
 import com.sq.thed_ck_licker.viewModels.PlayerViewModel
+import com.sq.thed_ck_licker.viewModels.SettingsViewModel
 import kotlinx.coroutines.delay
 
 @Composable
@@ -116,12 +117,13 @@ fun Game(
 
 
 @Composable
-private fun RealtimeEffects() {
+private fun RealtimeEffects(settingsViewModel: SettingsViewModel = hiltViewModel()) {
+    val realTimePlayerDamageEnabled by settingsViewModel.realTimePlayerDamageEnabled.collectAsState()
     val tickSize = 100
     LaunchedEffect(true) {
         while (true) { //if we ever want small performance gains on super specific things, this could be disable if no things to tick at the moment. but I suspect it is really pointless.
             delay(tickSize.toLong())
-            TickingSystem.tick(tickSize)
+            TickingSystem.tick(tickSize, realTimePlayerDamageEnabled)
         }
     }
 }
