@@ -15,10 +15,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
@@ -31,6 +28,7 @@ import com.sq.thed_ck_licker.player.AdditionalInfoDisplay
 import com.sq.thed_ck_licker.player.HealthBar
 import com.sq.thed_ck_licker.player.ScoreDisplay
 import com.sq.thed_ck_licker.viewModels.PlayerViewModel
+import com.sq.thed_ck_licker.viewModels.SettingsViewModel
 import kotlinx.coroutines.delay
 
 @Composable
@@ -119,13 +117,13 @@ fun Game(
 
 
 @Composable
-private fun RealtimeEffects() {
-    var realTimeTickingEnabled by remember { mutableStateOf(true) }
+private fun RealtimeEffects(settingsViewModel: SettingsViewModel = hiltViewModel()) {
+    val realTimePlayerDamageEnabled by settingsViewModel.realTimePlayerDamageEnabled.collectAsState()
     val tickSize = 100
     LaunchedEffect(true) {
         while (true) {
             delay(tickSize.toLong())
-            TickingSystem.tick(tickSize)
+            TickingSystem.tick(tickSize, realTimePlayerDamageEnabled)
         }
     }
 }

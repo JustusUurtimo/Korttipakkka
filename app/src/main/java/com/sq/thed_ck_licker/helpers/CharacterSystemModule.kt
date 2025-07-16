@@ -1,5 +1,6 @@
 package com.sq.thed_ck_licker.helpers
 
+import com.sq.thed_ck_licker.dataStores.SettingsRepository
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem
 import com.sq.thed_ck_licker.ecs.systems.characterSystems.MerchantSystem
@@ -16,8 +17,11 @@ object CharacterSystemModule {
 
     @Provides
     @Singleton
-    fun providePlayerSystem(cardCreationSystem: CardCreationSystem): PlayerSystem {
-        return PlayerSystem(cardCreationSystem).apply {
+    fun providePlayerSystem(
+        cardCreationSystem: CardCreationSystem,
+        settings: SettingsRepository
+    ): PlayerSystem {
+        return PlayerSystem(cardCreationSystem, settings).apply {
             initPlayer()
         }
     }

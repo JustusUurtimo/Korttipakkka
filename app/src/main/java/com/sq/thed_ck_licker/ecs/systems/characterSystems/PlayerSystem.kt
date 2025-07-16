@@ -1,6 +1,5 @@
 package com.sq.thed_ck_licker.ecs.systems.characterSystems
 
-import android.content.Context
 import androidx.compose.runtime.snapshotFlow
 import com.sq.thed_ck_licker.dataStores.SettingsRepository
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
@@ -24,7 +23,6 @@ import com.sq.thed_ck_licker.ecs.managers.get
 import com.sq.thed_ck_licker.ecs.managers.locationmanagers.ForestManager
 import com.sq.thed_ck_licker.ecs.states.PlayerState
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardCreationSystem
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -36,8 +34,7 @@ import javax.inject.Inject
 
 class PlayerSystem @Inject constructor(
     private val cardCreationSystem: CardCreationSystem,
-    private val settings: SettingsRepository,
-    @ApplicationContext private val context: Context
+    private val settings: SettingsRepository
 ) {
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 

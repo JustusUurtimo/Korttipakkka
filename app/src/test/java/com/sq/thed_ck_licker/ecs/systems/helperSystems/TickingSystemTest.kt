@@ -24,7 +24,7 @@ class TickingSystemTest {
         ent add OwnerComponent(ent)
         ent add TickComponent(tickThreshold = 100)
         ent add TriggeredEffectsComponent(Trigger.OnTick, TakeSelfDamage(1f))
-        system.tick()
+        system.tick(collectAsState = settingsViewModel.realTimePlayerDamageEnabled.collectAsState())
         assertEquals(9f, healthComponent.getHealth())
     }
 
@@ -36,7 +36,7 @@ class TickingSystemTest {
         ent add OwnerComponent(ent)
         ent add TickComponent(tickThreshold = 100)
         ent add TriggeredEffectsComponent(Trigger.OnTick, TakeSelfDamage(1f))
-        system.tick(1000)
+        system.tick(1000, settingsViewModel.realTimePlayerDamageEnabled.collectAsState())
         assertEquals(1f, healthComponent.getHealth())
     }
 }
