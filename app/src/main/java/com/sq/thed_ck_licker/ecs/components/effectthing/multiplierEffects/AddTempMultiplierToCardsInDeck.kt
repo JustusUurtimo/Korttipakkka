@@ -1,7 +1,8 @@
 package com.sq.thed_ck_licker.ecs.components.effectthing.multiplierEffects
 
 import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
-import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
+import com.sq.thed_ck_licker.ecs.components.effectthing.OnPlay
+import com.sq.thed_ck_licker.ecs.components.effectthing.OnSpecial
 import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
 import com.sq.thed_ck_licker.ecs.components.effectthing.miscEffects.CoActivation
 import com.sq.thed_ck_licker.ecs.managers.add
@@ -25,8 +26,8 @@ data class AddTempMultiplierToCardsInDeck(override val amount: Float, val size: 
         subDeck.forEach { card ->
             val temp = addTemporaryForestMultiplierTo(card, multiplier = this.size)
             card add (card get TriggeredEffectsComponent::class).addEffects(
-                Trigger.OnPlay,
-                listOf(CoActivation(temp, Trigger.OnSpecial))
+                OnPlay,
+                listOf(CoActivation(temp, OnSpecial))
             )
         }
         return amount

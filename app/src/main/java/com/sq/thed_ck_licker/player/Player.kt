@@ -22,8 +22,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sq.thed_ck_licker.ecs.components.IdentificationComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
+import com.sq.thed_ck_licker.ecs.components.effectthing.Blank
 import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
-import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityManager
 import com.sq.thed_ck_licker.ecs.managers.get
@@ -101,7 +101,7 @@ fun AdditionalInfoDisplay(latestCard: Int) {
     if (latestCard != -1) {
         try {
             description = TriggerEffectHandler.describe(EffectContext(
-                trigger = Trigger.Blank,
+                trigger = Blank,
                 source = latestCard
             ))
         }catch (_: Exception) {
@@ -117,7 +117,7 @@ fun AdditionalInfoDisplay(latestCard: Int) {
 
         val (source, target) = TriggerEffectHandler.getMultipliers(
             EffectContext(
-                trigger = Trigger.Blank,
+                trigger = Blank,
                 source = latestCard
             )
         )

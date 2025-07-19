@@ -5,7 +5,7 @@ import androidx.compose.runtime.MutableIntState
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
-import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
+import com.sq.thed_ck_licker.ecs.components.effectthing.OnPlay
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.managers.GameEvent
@@ -62,7 +62,7 @@ class CardsSystem @Inject constructor(
         // The New Era:
         try {
             val context =
-                EffectContext(trigger = Trigger.OnPlay, source = latestCard, target = getPlayerID())
+                EffectContext(trigger = OnPlay, source = latestCard, target = getPlayerID())
             handleTriggerEffect(context)
 
         } catch (_: IllegalStateException) {
