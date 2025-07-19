@@ -2,7 +2,7 @@ package com.sq.thed_ck_licker.ecs.systems.helperSystems
 
 import com.sq.thed_ck_licker.ecs.components.OwnerComponent
 import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
-import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
+import com.sq.thed_ck_licker.ecs.components.effectthing.OnTick
 import com.sq.thed_ck_licker.ecs.components.misc.TickComponent
 import com.sq.thed_ck_licker.ecs.managers.ComponentManager.Companion.componentManager
 import com.sq.thed_ck_licker.ecs.managers.EntityId
@@ -26,7 +26,7 @@ object TickingSystem {
             while (tickComp.currentAmount >= tickComp.tickThreshold) {
                 tickComp.currentAmount -= tickComp.tickThreshold
                 TriggerEffectHandler.handleTriggerEffect(EffectContext(
-                    trigger = Trigger.OnTick,
+                    trigger = OnTick,
                     source = entry.key,
                     target = target.ownerId,
                 ))

@@ -10,7 +10,7 @@ import com.sq.thed_ck_licker.ecs.components.HistoryComponent
 import com.sq.thed_ck_licker.ecs.components.ImageComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
 import com.sq.thed_ck_licker.ecs.components.OwnerComponent
-import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
+import com.sq.thed_ck_licker.ecs.components.effectthing.OnTick
 import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
 import com.sq.thed_ck_licker.ecs.components.effectthing.damageEffects.TakeDamage
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
@@ -64,7 +64,7 @@ class PlayerSystem @Inject constructor(
 
         if (realTimeDamageEnabled) {
             getPlayerID() add TickComponent(tickThreshold = 1000)
-            getPlayerID() add TriggeredEffectsComponent(Trigger.OnTick, TakeDamage(1f))
+            getPlayerID() add TriggeredEffectsComponent(OnTick, TakeDamage(1f))
         }
         if (baseTestPackageAdded) {
             deck.addCards(buildBasicTestingPlayerDeck())

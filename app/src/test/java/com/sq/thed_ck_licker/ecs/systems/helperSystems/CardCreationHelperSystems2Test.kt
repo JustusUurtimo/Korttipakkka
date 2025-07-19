@@ -2,7 +2,8 @@ package com.sq.thed_ck_licker.ecs.systems.helperSystems
 
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
 import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
-import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
+import com.sq.thed_ck_licker.ecs.components.effectthing.OnPlay
+import com.sq.thed_ck_licker.ecs.components.effectthing.OnTurnStart
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityId
@@ -34,7 +35,7 @@ class CardCreationHelperSystems2Test {
         val gainer = CardCreationHelperSystems2.addPassiveScoreGainerToEntity(owner)
 
         val context = EffectContext(
-            trigger = Trigger.OnTurnStart,
+            trigger = OnTurnStart,
             source = gainer,
             target = owner,
         )
@@ -55,7 +56,7 @@ class CardCreationHelperSystems2Test {
         val gainer = CardCreationHelperSystems2.addLimitedSupplyAutoHealToEntity(owner, 100f)
 
         val context = EffectContext(
-            trigger = Trigger.OnTurnStart,
+            trigger = OnTurnStart,
             source = gainer,
             target = owner,
         )
@@ -75,13 +76,13 @@ class CardCreationHelperSystems2Test {
         val damage = cardCreationSystem.addDamageCards(1).first()
 
         val context = EffectContext(
-            trigger = Trigger.OnTurnStart,
+            trigger = OnTurnStart,
             source = gainer,
             target = owner,
         )
 
         val context2 = EffectContext(
-            trigger = Trigger.OnPlay,
+            trigger = OnPlay,
             source = damage,
             target = owner,
         )
@@ -113,26 +114,26 @@ class CardCreationHelperSystems2Test {
             multiplier = 2.8f
         )
         val multiContext = EffectContext(
-            trigger = Trigger.OnTurnStart,
+            trigger = OnTurnStart,
             source = multiEntity,
             target = owner,
         )
 
         val scoreCard = cardCreationSystem.addBasicScoreCards(1, 100).first()
         val scoreContext = EffectContext(
-            trigger = Trigger.OnPlay,
+            trigger = OnPlay,
             source = scoreCard,
             target = owner,
         )
         val healCard = cardCreationSystem.addHealingCards(1, 100f).first()
         val healContext = EffectContext(
-            trigger = Trigger.OnPlay,
+            trigger = OnPlay,
             source = healCard,
             target = owner,
         )
         val damageCard = cardCreationSystem.addDamageCards(1, 100f).first()
         val damageContext = EffectContext(
-            trigger = Trigger.OnPlay,
+            trigger = OnPlay,
             source = damageCard,
             target = owner,
         )

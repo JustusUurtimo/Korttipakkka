@@ -7,12 +7,12 @@ import kotlin.reflect.KClass
 
 /**
  * These two are functionally identical:
- * cardId add TriggeredEffectsComponent(mutableMapOf(Trigger.OnPlay to mutableListOf(Effect.TakeDamage(damageAmount))))
+ * cardId add TriggeredEffectsComponent(mutableMapOf(OnPlay to mutableListOf(Effect.TakeDamage(damageAmount))))
  * and
- * cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.TakeDamage(damageAmount))
+ * cardId add TriggeredEffectsComponent(OnPlay, Effect.TakeDamage(damageAmount))
  *
  * You can also go wild like:
- * cardId add TriggeredEffectsComponent(Trigger.OnPlay, Effect.TakeDamage(damageAmount), Effect.GainHealth(healAmount))
+ * cardId add TriggeredEffectsComponent(OnPlay, Effect.TakeDamage(damageAmount), Effect.GainHealth(healAmount))
  */
 data class TriggeredEffectsComponent(
     val effectsByTrigger: Map<Trigger, List<Effect>> = mapOf()
@@ -20,7 +20,7 @@ data class TriggeredEffectsComponent(
     /**
      * This constructor is perfect when you want to have one or more effects that are tied to one trigger
      */
-    constructor(trigger: Trigger = Trigger.OnPlay, vararg effects: Effect) : this(
+    constructor(trigger: Trigger = OnPlay, vararg effects: Effect) : this(
         mutableMapOf(trigger to effects.toList())
     )
 
@@ -77,7 +77,7 @@ data class TriggeredEffectsComponent(
         return removeEffect(exists, None)
     }
 
-    fun shuffleTo(activeTriggers: Set<Trigger> = Trigger.duringPlayTriggers): TriggeredEffectsComponent {
+    fun shuffleTo(activeTriggers: Set<Trigger> = DuringPlay.triggers): TriggeredEffectsComponent {
         val values = effectsByTrigger.values.toMutableList()
         val size= values.size
         val result = mutableMapOf<Trigger, List<Effect>>()
