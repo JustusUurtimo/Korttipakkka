@@ -1,9 +1,10 @@
 package com.sq.thed_ck_licker.ecs.systems
 
 import com.sq.thed_ck_licker.ecs.components.IdentificationComponent
-import com.sq.thed_ck_licker.ecs.components.TagsComponent
+import com.sq.thed_ck_licker.ecs.components.Merchant
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.managers.get
+import com.sq.thed_ck_licker.ecs.managers.getOrNull
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem
 import com.sq.thed_ck_licker.ecs.systems.characterSystems.MerchantSystem
 import com.sq.thed_ck_licker.ecs.systems.characterSystems.PlayerSystem
@@ -26,9 +27,8 @@ class PitSystem @Inject constructor(
 
     fun dropCardInPit(latestCard: Int) {
         if (latestCard == -1) return
-        val tagsComponent = latestCard get TagsComponent::class
 
-        if (tagsComponent.cardIsMerchant()) {
+        if (latestCard getOrNull Merchant::class != null) {
             handleMerchantCard(latestCard)
         } else {
             handleCardDrop(latestCard, bonusScore = 200)

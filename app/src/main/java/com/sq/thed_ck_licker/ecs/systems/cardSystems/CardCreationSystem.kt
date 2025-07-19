@@ -1,9 +1,10 @@
 package com.sq.thed_ck_licker.ecs.systems.cardSystems
 
 import com.sq.thed_ck_licker.R
+import com.sq.thed_ck_licker.ecs.components.Card
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
-import com.sq.thed_ck_licker.ecs.components.TagsComponent.Tag
+import com.sq.thed_ck_licker.ecs.components.Merchant
 import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
 import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
 import com.sq.thed_ck_licker.ecs.components.effectthing.conditionals.OnNumberedActivations
@@ -84,7 +85,7 @@ class CardCreationSystem @Inject constructor(
                 CardConfig(
                     name = "Merchant #$merchantId",
                     characterId = merchantId,
-                    tags = listOf(Tag.CARD, Tag.MERCHANT)
+                    tags = listOf(Card, Merchant)
                 )
             )(cardId)
             cardId add TriggeredEffectsComponent(

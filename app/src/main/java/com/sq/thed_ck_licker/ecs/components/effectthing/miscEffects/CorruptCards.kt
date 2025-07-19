@@ -1,8 +1,8 @@
 package com.sq.thed_ck_licker.ecs.components.effectthing.miscEffects
 
+import com.sq.thed_ck_licker.ecs.components.Corrupted
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
-import com.sq.thed_ck_licker.ecs.components.TagsComponent
 import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
 import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
 import com.sq.thed_ck_licker.ecs.managers.add
@@ -46,8 +46,7 @@ data class CorruptCards(override val amount: Float, val targetDeck: KClass<*>) :
             val trigEffComp = card get TriggeredEffectsComponent::class
             val corruptedTriggeredEffect = trigEffComp.shuffleTo()
             card add corruptedTriggeredEffect
-            val tags = card get TagsComponent::class
-            tags.addTag(TagsComponent.Tag.CORRUPTED)
+            card add Corrupted
             deck.add(card)
         }
         return efficiency.toFloat()

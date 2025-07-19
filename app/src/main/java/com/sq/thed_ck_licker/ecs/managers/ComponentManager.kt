@@ -5,8 +5,6 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import com.sq.thed_ck_licker.ecs.components.Component
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
-import com.sq.thed_ck_licker.ecs.components.TagsComponent
-import com.sq.thed_ck_licker.ecs.components.TagsComponent.Tag
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import kotlin.reflect.KClass
@@ -35,7 +33,7 @@ class ComponentManager {
         if (componentClass.isInstance(component)) {
             return component as T
         } else {
-            throw IllegalStateException("Component for entity $entity is not of type ${componentClass.simpleName}")
+            error("Component for entity $entity is not of type ${componentClass.simpleName}")
         }
     }
 
@@ -56,16 +54,6 @@ class ComponentManager {
         val result2 = result.flatten().groupingBy { it }.eachCount()
             .filter { it.value >= result.size }.keys.toList()
         return result2
-    }
-
-
-    fun getEntitiesWithTags(tags: List<Tag>): Map<Int, Any> {
-        val entities = getEntitiesWithComponent(TagsComponent::class)
-        checkNotNull(entities) { "No entities with TagsComponent found" }
-        val matchingEntities = entities.filter { (_, value) ->
-            (value).getTags().containsAll(tags)
-        }
-        return matchingEntities
     }
 
     fun getAllComponentsOfEntity(entityId: Int): List<Any> {

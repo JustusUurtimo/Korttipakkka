@@ -2,12 +2,12 @@ package com.sq.thed_ck_licker.ecs.systems.cardSystems
 
 import com.sq.thed_ck_licker.R
 import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
+import com.sq.thed_ck_licker.ecs.components.Card
 import com.sq.thed_ck_licker.ecs.components.IdentificationComponent
 import com.sq.thed_ck_licker.ecs.components.ImageComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
 import com.sq.thed_ck_licker.ecs.components.OwnerComponent
-import com.sq.thed_ck_licker.ecs.components.TagsComponent
-import com.sq.thed_ck_licker.ecs.components.TagsComponent.Tag
+import com.sq.thed_ck_licker.ecs.components.TagComponent
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
 import com.sq.thed_ck_licker.ecs.managers.EntityId
@@ -40,7 +40,7 @@ object CardBuilderSystem2 {
 
     data class CardConfig(
         val img: Int = R.drawable.placeholder,
-        val tags: List<Tag> = listOf(Tag.CARD),
+        val tags: List<TagComponent> = listOf(Card),
         val name: String = "Card",
         val characterId: Int? = null,
         val hp: Float? = 10f,
@@ -52,7 +52,9 @@ object CardBuilderSystem2 {
     fun withBasicCardDefaults(config: CardConfig = CardConfig()): CardPreset = {
         this add ActivationCounterComponent()
         this add ImageComponent(config.img)
-        this add TagsComponent(config.tags)
+        config.tags.forEach { tag ->
+            this add tag
+        }
         this add IdentificationComponent(config.name, config.characterId)
         config.hp?.let { this add HealthComponent(it) }
         config.score?.let { this add ScoreComponent(it) }
