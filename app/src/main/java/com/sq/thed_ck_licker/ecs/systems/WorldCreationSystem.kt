@@ -27,6 +27,7 @@ class WorldCreationSystem @Inject constructor(
 
     private fun initWorld() {
         // Reset any stored flows or state in ViewModels
+        playerSystem.loadSettingsBlocking()
         playerSystem.initPlayer()
         merchantSystem.initRegularMerchant()
         rewardSystem.initRewards()
