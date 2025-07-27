@@ -63,6 +63,8 @@ object ForestManager {
 
         // For some reason, looking at you hilt..., we init before game starts and then init again after game starts.
         //So this needs to be here to block getting 2 of these...
+        // This was actually me (Jupi) doing the extra init bc im dum dum :D
+        // this might be fixed now that we only init in world creation :D
         if (fuq) {
             if (MyRandom.random.nextBoolean()) {
                 addBasicForestArtifact2(targetId)

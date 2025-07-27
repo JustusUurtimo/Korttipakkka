@@ -9,6 +9,7 @@ import com.sq.thed_ck_licker.ecs.states.PlayerState
 import com.sq.thed_ck_licker.ecs.systems.CardPullingSystem
 import com.sq.thed_ck_licker.ecs.systems.cardSystems.CardsSystem
 import com.sq.thed_ck_licker.ecs.systems.characterSystems.PlayerSystem
+import com.sq.thed_ck_licker.helpers.MyRandom
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -39,6 +40,13 @@ class PlayerViewModel @Inject constructor(
                 if ((playerData.score.div(100) > playerData.rewardTier)) {
                     playerSystem.updateRewardTier(playerData.rewardTier + 1)
                     GameEvents.tryEmit(GameEvent.RewardTierChanged)
+                }
+                if(playerSystem.isForestPackageAdded()) {
+                    val witchChance = playerData.score.div(66.6)
+                    if(MyRandom.getRandomInt(witchChance, 100)) {
+                        playerSystem.updateRewardTier(playerData.rewardTier + 1)
+                        GameEvents.tryEmit(GameEvent.RewardTierChanged)
+                    }
                 }
                 _playerState.value = playerData
             }

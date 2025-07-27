@@ -154,6 +154,10 @@ class PlayerSystem @Inject constructor(
         (getPlayerID() get LatestCardComponent::class).setLatestCard(cardId)
     }
 
+    fun isForestPackageAdded(): Boolean {
+        return forestPackageAdded
+    }
+
     fun playerUpdates(): Flow<PlayerState> {
         return combine(
             snapshotFlow { getPlayerHealth() },
