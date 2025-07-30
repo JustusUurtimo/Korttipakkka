@@ -5,7 +5,8 @@ import com.sq.thed_ck_licker.ecs.components.ActivationCounterComponent
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
-import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
+import com.sq.thed_ck_licker.ecs.components.effectthing.OnDeactivation
+import com.sq.thed_ck_licker.ecs.components.effectthing.OnDraw
 import com.sq.thed_ck_licker.ecs.managers.EntityId
 import com.sq.thed_ck_licker.ecs.managers.EntityManager.getPlayerID
 import com.sq.thed_ck_licker.ecs.managers.get
@@ -24,7 +25,7 @@ class CardPullingSystem @Inject constructor(
 
         try {
             val context = EffectContext(
-                trigger = Trigger.OnDeactivation, source = latestCard, target = ownerId
+                trigger = OnDeactivation, source = latestCard, target = ownerId
             )
             handleTriggerEffect(context)
 
@@ -55,7 +56,7 @@ class CardPullingSystem @Inject constructor(
 
         try {
             val context = EffectContext(
-                trigger = Trigger.OnDraw, source = latestCard, target = ownerId
+                trigger = OnDraw, source = latestCard, target = ownerId
             )
             handleTriggerEffect(context)
 

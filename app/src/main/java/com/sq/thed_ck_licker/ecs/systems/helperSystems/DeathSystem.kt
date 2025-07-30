@@ -6,7 +6,7 @@ import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.OwnerComponent
 import com.sq.thed_ck_licker.ecs.components.effectthing.Effect
 import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
-import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
+import com.sq.thed_ck_licker.ecs.components.effectthing.OnDeath
 import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
 import com.sq.thed_ck_licker.ecs.components.effectthing.miscEffects.CoActivation
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
@@ -64,7 +64,7 @@ object DeathSystem {
             }
             TriggerEffectHandler.handleTriggerEffect(
                 EffectContext(
-                    trigger = Trigger.OnDeath,
+                    trigger = OnDeath,
                     source = entityId,
                     target = owner
                 )
