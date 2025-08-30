@@ -1,6 +1,7 @@
 package com.sq.thed_ck_licker.ecs.systems.characterSystems
 
 import androidx.compose.runtime.mutableIntStateOf
+import com.sq.thed_ck_licker.dataStores.SettingsRepository
 import com.sq.thed_ck_licker.ecs.components.DiscardDeckComponent
 import com.sq.thed_ck_licker.ecs.components.DrawDeckComponent
 import com.sq.thed_ck_licker.ecs.components.MultiplierComponent
@@ -33,13 +34,15 @@ class PlayerSystemTest {
 
     var cardCreationSystem by Delegates.notNull<CardCreationSystem>()
 
+    var settings by Delegates.notNull<SettingsRepository>()
+
     @BeforeEach
     fun setUp() {
         cardCreationSystem = CardCreationSystem(
             gameNavigator = GameNavigator_Factory.newInstance()
         )
 
-        playerSystem = PlayerSystem(cardCreationSystem)
+        playerSystem = PlayerSystem(cardCreationSystem, settings)
 
         cardsSystem = CardsSystem_Factory.newInstance(playerSystem)
 

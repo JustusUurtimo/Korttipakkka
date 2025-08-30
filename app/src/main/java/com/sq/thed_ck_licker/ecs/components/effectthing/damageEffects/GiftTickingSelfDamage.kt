@@ -1,7 +1,7 @@
 package com.sq.thed_ck_licker.ecs.components.effectthing.damageEffects
 
 import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
-import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
+import com.sq.thed_ck_licker.ecs.components.effectthing.OnTick
 import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
 import com.sq.thed_ck_licker.ecs.components.misc.TickComponent
 import com.sq.thed_ck_licker.ecs.managers.add
@@ -24,7 +24,9 @@ data class GiftTickingSelfDamage(override val amount: Float) : DamageEffect() {
         subDeck.forEach { card ->
             val trigComp = card.getOrNull<TriggeredEffectsComponent>()
             check(trigComp != null) { "This card $card is missing all TrigComp things?" }
-            card add (trigComp.addEffects(Trigger.OnTick, listOf(TakeSelfDamage(1f),
+            card add (trigComp.addEffects(
+                OnTick, listOf(
+                    TakeSelfDamage(1f),
                 TakeSelfPercentageDamage(0.001f)))).removeNone()
 
             var tickComp: TickComponent? = card.getOrNull<TickComponent>()

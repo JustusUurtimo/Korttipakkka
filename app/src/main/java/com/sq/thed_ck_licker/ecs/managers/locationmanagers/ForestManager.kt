@@ -5,7 +5,11 @@ import com.sq.thed_ck_licker.ecs.components.Card
 import com.sq.thed_ck_licker.ecs.components.Forest
 import com.sq.thed_ck_licker.ecs.components.OwnerComponent
 import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
-import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
+import com.sq.thed_ck_licker.ecs.components.effectthing.OnCreation
+import com.sq.thed_ck_licker.ecs.components.effectthing.OnDeath
+import com.sq.thed_ck_licker.ecs.components.effectthing.OnPlay
+import com.sq.thed_ck_licker.ecs.components.effectthing.OnSpecial
+import com.sq.thed_ck_licker.ecs.components.effectthing.OnTurnStart
 import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
 import com.sq.thed_ck_licker.ecs.components.effectthing.conditionals.OnThresholdActivations
 import com.sq.thed_ck_licker.ecs.components.effectthing.damageEffects.DealDamageFromOwnHealth
@@ -47,7 +51,7 @@ object ForestManager {
         AddTempMultiplierToCardsInDeck(amount = 5f, size = 2f),
         CoActivation(
             newSource = null,
-            Trigger.OnPlay
+            OnPlay
         )
     )
     val negativeForestEffects = listOf(
@@ -92,7 +96,7 @@ object ForestManager {
         val multiArti = generateEntity()
         multiArti add ScoreComponent(100)
         multiArti add TriggeredEffectsComponent(
-            Trigger.OnTurnStart,
+            OnTurnStart,
             OnThresholdActivations(
                 threshold = 20,
                 effect = ManyEffectsHolder(
@@ -111,7 +115,7 @@ object ForestManager {
         val multiArti = generateEntity()
         multiArti add ScoreComponent(-200)
         multiArti add TriggeredEffectsComponent(
-            Trigger.OnTurnStart,
+            OnTurnStart,
             OnThresholdActivations(
                 threshold = 10,
                 effect = ManyEffectsHolder(
@@ -138,7 +142,7 @@ object ForestManager {
                 )
             )(cardId)
             (cardId get HealthComponent::class).setHealth(100f)
-            cardId add TriggeredEffectsComponent(Trigger.OnPlay, None)
+            cardId add TriggeredEffectsComponent(OnPlay, None)
         }
     }
 
@@ -154,9 +158,9 @@ object ForestManager {
                 )
             )(cardId)
             cardId add TriggeredEffectsComponent(
-                Trigger.OnPlay,
-                GiftEffects(amount = 2f, trigger = Trigger.OnPlay, effects = positiveForestEffects),
-                GiftEffects(amount = 2f, trigger = Trigger.OnPlay, effects = negativeForestEffects)
+                OnPlay,
+                GiftEffects(amount = 2f, trigger = OnPlay, effects = positiveForestEffects),
+                GiftEffects(amount = 2f, trigger = OnPlay, effects = negativeForestEffects)
             )
         }
     }
@@ -172,7 +176,7 @@ object ForestManager {
                     img = R.drawable.forest_card
                 )
             )(cardId)
-            cardId add TriggeredEffectsComponent(Trigger.OnPlay, HealEntitiesInDeckToFull(3f))
+            cardId add TriggeredEffectsComponent(OnPlay, HealEntitiesInDeckToFull(3f))
         }
     }
 
@@ -187,7 +191,7 @@ object ForestManager {
                     img = R.drawable.forest_card
                 )
             )(cardId)
-            cardId add TriggeredEffectsComponent(Trigger.OnPlay, MultiplyMaxHp(2f))
+            cardId add TriggeredEffectsComponent(OnPlay, MultiplyMaxHp(2f))
         }
     }
 
@@ -202,7 +206,7 @@ object ForestManager {
                     img = R.drawable.forest_card
                 )
             )(cardId)
-            cardId add TriggeredEffectsComponent(Trigger.OnPlay, GainSelfHpAsScore(0.25f))
+            cardId add TriggeredEffectsComponent(OnPlay, GainSelfHpAsScore(0.25f))
         }
     }
 
@@ -218,7 +222,7 @@ object ForestManager {
                 )
             )(cardId)
             cardId add TriggeredEffectsComponent(
-                Trigger.OnPlay,
+                OnPlay,
                 GiveCardInDeckMultiplier(3.5f)
             )
         }
@@ -236,7 +240,7 @@ object ForestManager {
                 )
             )(cardId)
             cardId add TriggeredEffectsComponent(
-                Trigger.OnPlay,
+                OnPlay,
                 AddTempMultiplierToCardsInDeck(amount = 5f, size = 2f)
             )
         }
@@ -253,13 +257,13 @@ object ForestManager {
 
         limitedMultiEntity add TriggeredEffectsComponent(
             mutableMapOf(
-                Trigger.OnCreation to mutableListOf(
+                OnCreation to mutableListOf(
                     AddMultiplier(multiplier)
                 ),
-                Trigger.OnSpecial to mutableListOf(
+                OnSpecial to mutableListOf(
                     TakeSelfDamage(1f)
                 ),
-                Trigger.OnDeath to mutableListOf(
+                OnDeath to mutableListOf(
                     RemoveMultiplier(multiplier)
                 )
             )
@@ -267,7 +271,7 @@ object ForestManager {
 
         TriggerEffectHandler.handleTriggerEffect(
             EffectContext(
-                trigger = Trigger.OnCreation,
+                trigger = OnCreation,
                 source = limitedMultiEntity,
                 target = targetEntityId
             )
@@ -287,14 +291,14 @@ object ForestManager {
                 )
             )(cardId)
             cardId add TriggeredEffectsComponent(
-                Trigger.OnPlay,
+                OnPlay,
                 CoActivation(
                     newSource = null,
-                    Trigger.OnPlay
+                    OnPlay
                 ),
                 CoActivation(
                     newSource = null,
-                    Trigger.OnPlay
+                    OnPlay
                 )
             )
         }
@@ -311,7 +315,7 @@ object ForestManager {
                     img = R.drawable.forest_card
                 )
             )(cardId)
-            cardId add TriggeredEffectsComponent(Trigger.OnPlay, TakeSelfPercentageDamage(0.10f))
+            cardId add TriggeredEffectsComponent(OnPlay, TakeSelfPercentageDamage(0.10f))
         }
     }
 
@@ -326,7 +330,7 @@ object ForestManager {
                     img = R.drawable.forest_card
                 )
             )(cardId)
-            cardId add TriggeredEffectsComponent(Trigger.OnPlay, GiftTickingSelfDamage(amount = 2f))
+            cardId add TriggeredEffectsComponent(OnPlay, GiftTickingSelfDamage(amount = 2f))
         }
     }
 
@@ -341,12 +345,12 @@ object ForestManager {
                 )
             )(cardId)
             cardId add TriggeredEffectsComponent(
-                Trigger.OnPlay, GiftEffects(
+                OnPlay, GiftEffects(
                     amount = 3f, trigger = null, effects = listOf(
                         GiftTickingSelfDamage(amount = 1f),
                         CoActivation(
                             newSource = null,
-                            Trigger.OnPlay
+                            OnPlay
                         ),
                         TakeSelfPercentageDamage(0.10f),
                         GiveCardInDeckMultiplier(0.5f),
@@ -368,7 +372,7 @@ object ForestManager {
                 )
             )(cardId)
             cardId add TriggeredEffectsComponent(
-                Trigger.OnPlay,
+                OnPlay,
                 DealDamageFromOwnHealth(amount = 0.1f)
             )
         }

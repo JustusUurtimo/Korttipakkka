@@ -2,7 +2,8 @@ package com.sq.thed_ck_licker.ecs.systems.cardSystems
 
 import androidx.compose.runtime.mutableIntStateOf
 import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
-import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
+import com.sq.thed_ck_licker.ecs.components.effectthing.OnDeactivation
+import com.sq.thed_ck_licker.ecs.components.effectthing.OnPlay
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
 import com.sq.thed_ck_licker.ecs.components.misc.LatestCardComponent
 import com.sq.thed_ck_licker.ecs.components.misc.ScoreComponent
@@ -37,7 +38,7 @@ class CardCreationSystemTest {
         owner add scoreComponent
 
         val context = EffectContext(
-            trigger = Trigger.OnPlay,
+            trigger = OnPlay,
             source = breakingCard,
             target = owner,
         )
@@ -63,7 +64,7 @@ class CardCreationSystemTest {
         owner add healthComponent
 
         val context = EffectContext(
-            trigger = Trigger.OnPlay,
+            trigger = OnPlay,
             source = damageCard,
             target = owner,
         )
@@ -82,7 +83,7 @@ class CardCreationSystemTest {
         owner add HealthComponent(10f)
 
         val context = EffectContext(
-            trigger = Trigger.OnPlay,
+            trigger = OnPlay,
             source = trapCard,
             target = owner,
         )
@@ -105,7 +106,7 @@ class CardCreationSystemTest {
         owner add scoreComponent
 
         val context = EffectContext(
-            trigger = Trigger.OnDeactivation,
+            trigger = OnDeactivation,
             source = trapCard,
             target = owner,
         )
@@ -129,12 +130,12 @@ class CardCreationSystemTest {
         owner add scoreComponent
 
         val context = EffectContext(
-            trigger = Trigger.OnDeactivation,
+            trigger = OnDeactivation,
             source = trapCard,
             target = owner,
         )
         val decontext = EffectContext(
-            trigger = Trigger.OnPlay,
+            trigger = OnPlay,
             source = trapCard,
             target = owner,
         )
@@ -158,7 +159,7 @@ class CardCreationSystemTest {
         MyRandom.random = FixedRandom(listOf(1))
 
         val context = EffectContext(
-            trigger = Trigger.OnPlay,
+            trigger = OnPlay,
             source = trapCard,
             target = owner,
         )
@@ -185,7 +186,7 @@ class CardCreationSystemTest {
 
 
         val context = EffectContext(
-            trigger = Trigger.OnPlay,
+            trigger = OnPlay,
             source = trapCard,
             target = owner,
         )
@@ -214,7 +215,7 @@ class CardCreationSystemTest {
         owner add scoreComponent
 
         val context = EffectContext(
-            trigger = Trigger.OnPlay,
+            trigger = OnPlay,
             source = basicScoreCard,
             target = owner,
         )
@@ -245,7 +246,7 @@ class CardCreationSystemTest {
         owner add healthComponent
 
         val context = EffectContext(
-            trigger = Trigger.OnPlay,
+            trigger = OnPlay,
             source = healingCard,
             target = owner,
         )
@@ -268,7 +269,7 @@ class CardCreationSystemTest {
         owner add ScoreComponent(0)
 
         val context = EffectContext(
-            trigger = Trigger.OnPlay,
+            trigger = OnPlay,
             source = deactCard,
             target = owner,
         )
@@ -286,7 +287,7 @@ class CardCreationSystemTest {
         owner add ScoreComponent(0)
 
         val context = EffectContext(
-            trigger = Trigger.OnDeactivation,
+            trigger = OnDeactivation,
             source = deactCard,
             target = owner,
         )
@@ -309,13 +310,13 @@ class CardCreationSystemTest {
         owner add scoreComp
 
         val actContext = EffectContext(
-            trigger = Trigger.OnPlay,
+            trigger = OnPlay,
             source = deactCard,
             target = owner,
         )
 
         val deActContext = EffectContext(
-            trigger = Trigger.OnDeactivation,
+            trigger = OnDeactivation,
             source = deactCard,
             target = owner,
         )
@@ -338,13 +339,13 @@ class CardCreationSystemTest {
         owner add scoreComp
 
         val actContext = EffectContext(
-            trigger = Trigger.OnPlay,
+            trigger = OnPlay,
             source = deactCard,
             target = owner,
         )
 
         val deActContext = EffectContext(
-            trigger = Trigger.OnDeactivation,
+            trigger = OnDeactivation,
             source = deactCard,
             target = owner,
         )

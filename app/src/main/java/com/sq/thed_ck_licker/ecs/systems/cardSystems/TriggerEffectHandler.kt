@@ -7,7 +7,6 @@ import com.sq.thed_ck_licker.ecs.managers.get
 
 object TriggerEffectHandler {
 
-   const val damageDealtKey = "damage dealt"
 
     fun handleTriggerEffect(context: EffectContext) {
         val trigEffComp = (context.source get TriggeredEffectsComponent::class)

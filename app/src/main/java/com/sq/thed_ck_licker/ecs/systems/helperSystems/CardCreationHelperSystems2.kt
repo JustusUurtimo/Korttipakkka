@@ -2,7 +2,10 @@ package com.sq.thed_ck_licker.ecs.systems.helperSystems
 
 import com.sq.thed_ck_licker.ecs.components.OwnerComponent
 import com.sq.thed_ck_licker.ecs.components.effectthing.EffectContext
-import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
+import com.sq.thed_ck_licker.ecs.components.effectthing.OnCreation
+import com.sq.thed_ck_licker.ecs.components.effectthing.OnDeath
+import com.sq.thed_ck_licker.ecs.components.effectthing.OnTick
+import com.sq.thed_ck_licker.ecs.components.effectthing.OnTurnStart
 import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
 import com.sq.thed_ck_licker.ecs.components.effectthing.damageEffects.TakeSelfDamage
 import com.sq.thed_ck_licker.ecs.components.effectthing.healthEffects.HealOnUnderThreshold
@@ -23,7 +26,7 @@ object CardCreationHelperSystems2 {
         val scoreComp = ScoreComponent(pointsPerCard)
         gainerEntity add scoreComp
         gainerEntity add TriggeredEffectsComponent(
-            Trigger.OnTurnStart,
+            OnTurnStart,
             GainScore(scoreComp.getScoreF())
         )
         gainerEntity add OwnerComponent(targetId)
@@ -35,7 +38,7 @@ object CardCreationHelperSystems2 {
         val limitedHealEntity = generateEntity()
         limitedHealEntity add HealthComponent(health)
         limitedHealEntity add TriggeredEffectsComponent(
-            Trigger.OnTick, HealOnUnderThreshold(health, threshold)
+            OnTick, HealOnUnderThreshold(health, threshold)
         )
         limitedHealEntity add OwnerComponent(targetId)
         return limitedHealEntity
@@ -53,20 +56,20 @@ object CardCreationHelperSystems2 {
 
         limitedMultiEntity add TriggeredEffectsComponent(
             mutableMapOf(
-                Trigger.OnCreation to mutableListOf(
+                OnCreation to mutableListOf(
                     AddMultiplier(multiplier)
                 ),
-                Trigger.OnTurnStart to mutableListOf(
+                OnTurnStart to mutableListOf(
                     TakeSelfDamage(1f)
                 ),
-                Trigger.OnDeath to mutableListOf(
+                OnDeath to mutableListOf(
                     RemoveMultiplier(multiplier)
                 )
             )
         )
 
         TriggerEffectHandler.handleTriggerEffect(EffectContext(
-            trigger = Trigger.OnCreation,
+            trigger = OnCreation,
             source = limitedMultiEntity,
             target = targetEntityId
         ))

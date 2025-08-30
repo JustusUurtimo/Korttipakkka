@@ -21,10 +21,7 @@ object CharacterSystemModule {
         cardCreationSystem: CardCreationSystem,
         settings: SettingsRepository
     ): PlayerSystem {
-        return PlayerSystem(cardCreationSystem, settings).apply {
-            loadSettingsBlocking()
-            initPlayer()
-        }
+        return PlayerSystem(cardCreationSystem, settings)
     }
 
     @Provides
@@ -34,8 +31,6 @@ object CharacterSystemModule {
         cardCreationSystem: CardCreationSystem,
         cardsSystem: CardsSystem
     ): MerchantSystem {
-        return MerchantSystem(cardCreationSystem, playerSystem, cardsSystem).apply {
-            initRegularMerchant()
-        }
+        return MerchantSystem(cardCreationSystem, playerSystem, cardsSystem)
     }
 }

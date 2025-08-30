@@ -1,7 +1,7 @@
 package com.sq.thed_ck_licker.ecs.systems.helperSystems
 
 import com.sq.thed_ck_licker.ecs.components.OwnerComponent
-import com.sq.thed_ck_licker.ecs.components.effectthing.Trigger
+import com.sq.thed_ck_licker.ecs.components.effectthing.OnTick
 import com.sq.thed_ck_licker.ecs.components.effectthing.TriggeredEffectsComponent
 import com.sq.thed_ck_licker.ecs.components.effectthing.damageEffects.TakeSelfDamage
 import com.sq.thed_ck_licker.ecs.components.misc.HealthComponent
@@ -23,7 +23,7 @@ class TickingSystemTest {
         ent add healthComponent
         ent add OwnerComponent(ent)
         ent add TickComponent(tickThreshold = 100)
-        ent add TriggeredEffectsComponent(Trigger.OnTick, TakeSelfDamage(1f))
+        ent add TriggeredEffectsComponent(OnTick, TakeSelfDamage(1f))
         system.tick(realTimePlayerDamageEnabled = true)
         assertEquals(9f, healthComponent.getHealth())
     }
@@ -35,7 +35,7 @@ class TickingSystemTest {
         ent add healthComponent
         ent add OwnerComponent(ent)
         ent add TickComponent(tickThreshold = 100)
-        ent add TriggeredEffectsComponent(Trigger.OnTick, TakeSelfDamage(1f))
+        ent add TriggeredEffectsComponent(OnTick, TakeSelfDamage(1f))
         system.tick(1000, true)
         assertEquals(1f, healthComponent.getHealth())
     }
