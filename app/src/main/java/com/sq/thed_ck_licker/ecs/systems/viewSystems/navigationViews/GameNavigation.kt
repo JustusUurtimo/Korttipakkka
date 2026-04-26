@@ -24,6 +24,7 @@ import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.Mer
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.PitScreen
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.RewardScreen
 import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.SettingsScreen
+import com.sq.thed_ck_licker.ecs.systems.viewSystems.navigationViews.screens.WitchScreen
 import com.sq.thed_ck_licker.helpers.navigation.GameNavigator
 import com.sq.thed_ck_licker.helpers.navigation.Screen
 import com.sq.thed_ck_licker.viewModels.GameViewModel
@@ -117,7 +118,11 @@ fun GameNavigation(
             val viewModel: RewardViewModel = hiltViewModel()
             RewardScreen(modifier, viewModel, gameNavigator)
         }
-
+        composable(route = Screen.WitchScreen.route)
+        {
+            val witchViewModel: PitViewModel = hiltViewModel()
+            WitchScreen(modifier, gameNavigator, witchViewModel)
+        }
 
     }
 }

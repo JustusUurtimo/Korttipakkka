@@ -24,6 +24,7 @@ class GameViewModel @Inject constructor(
                     is GameEvent.PlayerDied -> gameNavigator.navigateTo(Screen.DeathScreen.route)
                     is GameEvent.ShovelUsed -> gameNavigator.navigateTo(Screen.Pit.route)
                     is GameEvent.RewardTierChanged -> gameNavigator.navigateTo(Screen.RewardScreen.route)
+                    is GameEvent.WitchAppears -> gameNavigator.navigateTo(Screen.WitchScreen.route)
                 }
             }
         }

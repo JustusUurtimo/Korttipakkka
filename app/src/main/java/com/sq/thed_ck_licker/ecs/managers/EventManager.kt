@@ -9,6 +9,7 @@ sealed class GameEvent {
     object PlayerDied : GameEvent()
     object ShovelUsed : GameEvent()
     object RewardTierChanged : GameEvent()
+    object WitchAppears : GameEvent()
 }
 
 sealed class MerchantEvent {

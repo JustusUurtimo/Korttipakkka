@@ -42,10 +42,9 @@ class PlayerViewModel @Inject constructor(
                     GameEvents.tryEmit(GameEvent.RewardTierChanged)
                 }
                 if(playerSystem.isForestPackageAdded()) {
-                    val witchChance = playerData.score.div(66.6)
-                    if(MyRandom.getRandomInt(witchChance, 100)) {
-                        playerSystem.updateRewardTier(playerData.rewardTier + 1)
-                        GameEvents.tryEmit(GameEvent.RewardTierChanged)
+                    val witchChance = playerData.score.div(6.66)
+                    if(MyRandom.getRandomInt(0, 100) >= witchChance) {
+                        GameEvents.tryEmit(GameEvent.WitchAppears)
                     }
                 }
                 _playerState.value = playerData

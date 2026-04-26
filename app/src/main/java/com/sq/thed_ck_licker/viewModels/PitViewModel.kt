@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 @HiltViewModel
-class PitViewModel @Inject constructor(
+class  PitViewModel @Inject constructor(
     private val pitSystem: PitSystem,
 ) : ViewModel() {
 
